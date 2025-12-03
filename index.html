@@ -7,251 +7,257 @@
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <!-- Glowing mesh background (Venice wallet flow) -->
-  <div class="mesh-bg">
-    <canvas id="wallet-flow-canvas"></canvas>
-  </div>
+  <div class="app-root">
 
-  <!-- Main app shell -->
-  <div class="app-shell">
-    <!-- Top status + profile -->
-    <header class="app-header">
-      <div class="header-left">
-        <div class="mesh-avatar">
-          <span class="mesh-avatar-initial">S</span>
-        </div>
-        <div class="mesh-id">
-          <div class="mesh-id-label">MESH ID</div>
-          <div class="mesh-id-handle">@spawniz</div>
-        </div>
-      </div>
-      <div class="header-right">
-        <button class="icon-btn" id="btn-profile">
-          <span class="icon-circle"></span>
-        </button>
-        <button class="icon-btn" id="btn-menu">
-          <span class="icon-bars"></span>
-        </button>
-      </div>
-    </header>
-
-    <!-- Compact status row (Gemini suggestion) -->
-    <div class="status-strip">
-      <div class="status-pill">
-        <span class="status-label">GAS</span>
-        <span class="status-value" id="status-gas">~0.21 gwei est.</span>
-      </div>
-      <div class="status-pill">
-        <span class="status-label">MODE</span>
-        <span class="status-value">Single mesh</span>
-      </div>
-      <div class="status-pill">
-        <span class="status-label">SYNC</span>
-        <span class="status-value" id="status-sync">Local mock</span>
-      </div>
-      <div class="status-pill">
-        <span class="status-label">ACTIVE</span>
-        <span class="status-value" id="status-wallets">1 wallet</span>
-      </div>
+    <!-- Blurrad mesh-bakgrund -->
+    <div class="mesh-bg-wrap">
+      <canvas id="wallet-flow-canvas"></canvas>
     </div>
 
-    <!-- MAIN CARD / HUD -->
-    <main class="main-content">
-      <section class="hud-card">
-        <div class="hud-top-row">
-          <div class="hud-labels">
-            <div class="hud-meta">SPAWNENGINE · MESH HUD · v0.3</div>
-            <h1 class="hud-title">SpawnEngine — Mesh HUD</h1>
-            <p class="hud-subtitle">
-              Modular mesh for creator coins, packs, XP streams & onchain quests.
-            </p>
-            <div class="hud-tags">
-              <span class="tag">Base · Mesh ecosystems</span>
-              <span class="tag tag-soft">Farcaster ready</span>
-            </div>
-          </div>
-          <div class="hud-cta">
-            <div class="mesh-layer-pill">
-              <span class="dot-online"></span>
-              Mesh layer · v0.3
-            </div>
-            <button class="btn-primary" id="btn-connect">
-              Connect wallet
-            </button>
-          </div>
-        </div>
+    <!-- Sidomeny backdrop -->
+    <div id="side-menu-backdrop" class="side-menu-backdrop"></div>
 
-        <!-- CENTER: STREAK RING (Gemini: core ritual) -->
-        <div class="hud-middle">
-          <div class="streak-module">
-            <div class="streak-ring" id="streak-ring">
-              <div class="streak-inner">
-                <div class="streak-days" id="streak-days">1</div>
-                <div class="streak-caption">day streak</div>
-              </div>
-            </div>
-            <div class="streak-copy">
-              <div class="streak-label">Daily ritual</div>
-              <p id="streak-text">
-                Keep the streak for 6 more days for a full weekly run.
-              </p>
-              <button class="btn-glow" id="btn-checkin">Check-in</button>
-            </div>
-          </div>
-
-          <div class="hud-balances">
-            <div class="stat-card">
-              <div class="stat-label">XP BALANCE</div>
-              <div class="stat-value" id="xp-balance">1575 XP</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">SPAWN TOKEN</div>
-              <div class="stat-value" id="spawn-balance">497 SPN</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- VIEWS -->
-      <section class="view active" id="view-home">
-        <h2 class="view-title">Mesh snapshot</h2>
-        <div class="view-grid">
-          <div class="view-card">
-            <div class="view-card-header">
-              <span>XP orbit</span>
-              <span class="pill-soft">Single player mesh</span>
-            </div>
-            <p class="view-text">
-              Track your XP, streaks and daily rituals across Base. Every onchain
-              action can be turned into a tiny pulse in the mesh.
-            </p>
-          </div>
-          <div class="view-card">
-            <div class="view-card-header">
-              <span>Today’s signals</span>
-              <span class="pill-soft" id="signals-pill">4 events</span>
-            </div>
-            <ul class="signal-list" id="signal-list"></ul>
-          </div>
-        </div>
-      </section>
-
-      <section class="view" id="view-loot">
-        <h2 class="view-title">Loot & pulls</h2>
-        <div class="segmented-control">
-          <button class="seg-btn active" data-seg="packs">Packs</button>
-          <button class="seg-btn" data-seg="pull-lab">Pull Lab</button>
-        </div>
-        <div class="seg-view active" id="seg-packs">
-          <div class="view-card">
-            <div class="view-card-header">
-              <span>Creator packs</span>
-              <span class="pill-soft">Mock data</span>
-            </div>
-            <p class="view-text">
-              Preview how creator packs will dock into the mesh. Packs feed XP, relic
-              fragments and streak boosts into your orbit.
-            </p>
-            <button class="btn-secondary" id="btn-open-pack">
-              Simulate pack open
-            </button>
-          </div>
-        </div>
-        <div class="seg-view" id="seg-pull-lab">
-          <div class="view-card">
-            <div class="view-card-header">
-              <span>Entropy window</span>
-              <span class="pill-soft" id="entropy-pill">Stable</span>
-            </div>
-            <p class="view-text">
-              Pull Lab watches mesh entropy and highlights "luck windows" for Mythic
-              pulls. For now this is a visual mock wired to demo events.
-            </p>
-            <button class="btn-secondary" id="btn-entropy-ping">
-              Trigger high-entropy pulse
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <section class="view" id="view-quests">
-        <h2 class="view-title">Quests</h2>
-        <div class="view-card">
-          <div class="view-card-header">
-            <span>Base mesh quests</span>
-            <span class="pill-soft">Prototype</span>
-          </div>
-          <ul class="quest-list" id="quest-list">
-            <!-- filled by JS -->
-          </ul>
-        </div>
-      </section>
-
-      <section class="view" id="view-mesh">
-        <h2 class="view-title">Mesh explorer</h2>
-        <div class="view-card">
-          <div class="view-card-header">
-            <span>Wallet mesh</span>
-            <span class="pill-soft">Venice canvas</span>
-          </div>
-          <p class="view-text">
-            The glowing background shows wallet-to-wallet flows generated from mock
-            data. In v1 this will stream real creator coin, pack and XP movement.
-          </p>
-          <button class="btn-secondary" id="btn-mesh-full">
-            Open full Mesh Explorer
-          </button>
-        </div>
-
-        <div class="view-card">
-          <div class="view-card-header">
-            <span>Docked apps</span>
-            <span class="pill-soft" id="docked-count">3 apps</span>
-          </div>
-          <ul class="dock-list" id="dock-list"></ul>
-        </div>
-      </section>
-    </main>
-
-    <!-- Bottom navigation -->
-    <nav class="bottom-nav">
-      <button class="nav-item active" data-tab="home">
-        <span class="nav-label">Home</span>
-      </button>
-      <button class="nav-item" data-tab="loot">
-        <span class="nav-label">Loot</span>
-      </button>
-      <button class="nav-item" data-tab="quests">
-        <span class="nav-label">Quests</span>
-      </button>
-      <button class="nav-item" data-tab="mesh">
-        <span class="nav-label">Mesh</span>
-      </button>
-    </nav>
-
-    <!-- Slide-out menu (Farcaster-style) -->
-    <aside class="side-menu" id="side-menu">
+    <!-- Sidomeny -->
+    <aside id="side-menu" class="side-menu">
       <div class="side-menu-header">
-        <div class="mesh-avatar large">
-          <span class="mesh-avatar-initial">S</span>
-        </div>
-        <div>
-          <div class="mesh-id-handle">@spawniz</div>
-          <div class="side-menu-sub">Tiny Legends & Foil Realms</div>
+        <div class="side-avatar">S</div>
+        <div class="side-id">
+          <div class="side-handle">@spawniz</div>
+          <div class="side-sub">Mesh ID • Creator</div>
         </div>
       </div>
-      <ul class="side-menu-list">
-        <li>Referrals</li>
-        <li>Bookmarks</li>
-        <li>Earnings</li>
-        <li>Collectibles</li>
-        <li>Settings</li>
-      </ul>
-      <button class="side-menu-close" id="btn-menu-close">Close</button>
+
+      <nav class="side-menu-nav">
+        <button class="side-menu-item">Referrals</button>
+        <button class="side-menu-item">Bookmarks</button>
+        <button class="side-menu-item">Earnings</button>
+        <button class="side-menu-item">Collectibles</button>
+        <button class="side-menu-item">Settings</button>
+      </nav>
+
+      <div class="side-section-label">Wallet &amp; account</div>
+      <nav class="side-menu-nav">
+        <button id="btn-swap-wallet" class="side-menu-item">Swap wallet</button>
+        <button id="btn-logout" class="side-menu-item side-menu-item-danger">
+          Log out / Disconnect
+        </button>
+      </nav>
+
+      <button id="btn-menu-close" class="side-menu-close-btn">Close</button>
     </aside>
-    <div class="side-menu-backdrop" id="side-menu-backdrop"></div>
+
+    <!-- App shell -->
+    <div class="app-shell">
+
+      <!-- Top header / mesh id row -->
+      <header class="app-header">
+        <div class="mesh-id">
+          <div class="mesh-id-avatar">S</div>
+          <div class="mesh-id-meta">
+            <div class="mesh-id-label">MESH ID</div>
+            <div class="mesh-id-handle">@spawniz</div>
+          </div>
+        </div>
+
+        <button id="btn-menu" class="icon-button">
+          <span class="icon-lines"></span>
+        </button>
+      </header>
+
+      <!-- Huvudkortet -->
+      <main class="app-main">
+        <section class="hud-card">
+
+          <div class="hud-header-row">
+            <div class="hud-brand-col">
+              <div class="hud-logo-bar">
+                <div class="hud-logo-pill">SE</div>
+              </div>
+              <div class="hud-title-block">
+                <div class="hud-app-label">SpawnEngine · Mesh HUD</div>
+                <p class="hud-subtitle">
+                  Modular mesh for creator coins, packs, XP streams &amp; onchain quests.
+                </p>
+                <div class="hud-tags">
+                  <span class="hud-tag">Base · Mesh ecosystems</span>
+                  <span class="hud-tag hud-tag-outline">Farcaster ready</span>
+                </div>
+              </div>
+            </div>
+            <div class="hud-connect">
+              <div class="hud-status-chip">
+                <span class="hud-status-dot"></span>
+                <span class="hud-status-label">Mesh v0.3</span>
+              </div>
+              <button id="btn-connect" class="btn-primary" aria-label="Connect wallet">
+                Connect wallet
+              </button>
+            </div>
+          </div>
+
+          <!-- Kompakt statusrad (2 kolumner, ingen sidscroll) -->
+          <div class="status-grid">
+            <div class="status-pill">
+              <div class="status-label">GAS</div>
+              <div class="status-value">~0.21 gwei est.</div>
+            </div>
+            <div class="status-pill">
+              <div class="status-label">MODE</div>
+              <div class="status-value">Single mesh</div>
+            </div>
+            <div class="status-pill">
+              <div class="status-label">SYNC</div>
+              <div class="status-value">Local mock</div>
+            </div>
+            <div class="status-pill">
+              <div class="status-label">ACTIVE WALLETS</div>
+              <div class="status-value">1</div>
+            </div>
+          </div>
+
+          <!-- Tabs överst i kortet -->
+          <div class="tab-strip">
+            <button class="tab-pill nav-item active" data-tab="home">Home</button>
+            <button class="tab-pill nav-item" data-tab="loot">Loot</button>
+            <button class="tab-pill nav-item" data-tab="quests">Quests</button>
+            <button class="tab-pill nav-item" data-tab="mesh">Mesh</button>
+          </div>
+
+          <!-- Views -->
+          <div class="views">
+
+            <!-- HOME / DASHBOARD -->
+            <section id="view-home" class="view active">
+              <div class="section-header">
+                <div class="section-title">Mesh snapshot</div>
+                <div class="section-tag">Single player mesh</div>
+              </div>
+
+              <div class="metrics-row">
+                <div class="metric-card metric-card-xp">
+                  <div class="metric-label">XP BALANCE</div>
+                  <div id="xp-balance" class="metric-value metric-value-xp">1575 XP</div>
+                </div>
+                <div class="metric-card metric-card-spn">
+                  <div class="metric-label">SPAWN TOKEN</div>
+                  <div id="spawn-balance" class="metric-value">497 SPN</div>
+                </div>
+              </div>
+
+              <div class="streak-row">
+                <div class="streak-ring-wrap">
+                  <div id="streak-ring" class="streak-ring">
+                    <div class="streak-center">
+                      <div class="streak-label">DAY</div>
+                      <div id="streak-days" class="streak-number">1</div>
+                      <div class="streak-label">STREAK</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="streak-copy">
+                  <div class="metric-label">DAILY STREAK</div>
+                  <p id="streak-text" class="streak-text">
+                    Keep the streak for 6 more days for a full weekly run.
+                  </p>
+                  <button id="btn-checkin" class="btn-secondary">Check-in</button>
+                </div>
+              </div>
+            </section>
+
+            <!-- LOOT / PACKS -->
+            <section id="view-loot" class="view">
+              <div class="section-header">
+                <div class="section-title">Loot &amp; Pull Lab</div>
+                <div id="entropy-pill" class="section-tag section-tag-outline">
+                  Stable
+                </div>
+              </div>
+
+              <div class="segmented">
+                <button class="seg-btn active" data-seg="packs">Packs</button>
+                <button class="seg-btn" data-seg="pull-lab">Pull Lab</button>
+              </div>
+
+              <div id="seg-packs" class="seg-view active">
+                <p class="muted">
+                  Open creator packs from docked apps and feed the mesh with fragments,
+                  relics and mythics.
+                </p>
+                <button id="btn-open-pack" class="btn-primary full-width">
+                  Open pack
+                </button>
+              </div>
+
+              <div id="seg-pull-lab" class="seg-view">
+                <p class="muted">
+                  Entropy windows highlight “lucky” onchain moments where mythics are
+                  statistically more likely.
+                </p>
+                <button id="btn-entropy-ping" class="btn-secondary full-width">
+                  Toggle entropy window
+                </button>
+              </div>
+            </section>
+
+            <!-- QUESTS -->
+            <section id="view-quests" class="view">
+              <div class="section-header">
+                <div class="section-title">Quests</div>
+                <div class="section-tag">XP bounties</div>
+              </div>
+
+              <ul id="quest-list" class="quest-list"></ul>
+            </section>
+
+            <!-- MESH -->
+            <section id="view-mesh" class="view">
+
+              <!-- Live Mesh Explorer preview -->
+              <div class="mesh-preview-wrap">
+                <iframe src="./mesh.html" class="mesh-preview-frame" title="Mesh explorer preview"></iframe>
+              </div>
+
+              <div class="section-header section-header-spaced">
+                <div class="section-title">Mesh signals</div>
+                <div id="signals-pill" class="section-tag">0 events</div>
+              </div>
+
+              <ul id="signal-list" class="signal-list"></ul>
+
+              <div class="section-header section-header-spaced">
+                <div class="section-title">Docked apps</div>
+                <div id="docked-count" class="section-tag">0 apps</div>
+              </div>
+
+              <ul id="dock-list" class="dock-list"></ul>
+
+              <button id="btn-mesh-full" class="btn-secondary full-width">
+                Open full Mesh Explorer
+              </button>
+            </section>
+
+          </div>
+        </section>
+      </main>
+
+      <!-- Bottom nav -->
+      <nav class="bottom-nav">
+        <button class="bottom-item nav-item active" data-tab="home">
+          <span class="bottom-label">Home</span>
+        </button>
+        <button class="bottom-item nav-item" data-tab="loot">
+          <span class="bottom-label">Loot</span>
+        </button>
+        <button class="bottom-item nav-item" data-tab="quests">
+          <span class="bottom-label">Quests</span>
+        </button>
+        <button class="bottom-item nav-item" data-tab="mesh">
+          <span class="bottom-label">Mesh</span>
+        </button>
+      </nav>
+    </div>
   </div>
 
-  <script type="module" src="./app.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>
