@@ -49,24 +49,26 @@
     <!-- App shell -->
     <div class="app-shell">
 
-      <!-- Top header / mesh id row -->
+      <!-- Top header / liten SE + pfp -->
       <header class="app-header">
-        <div class="mesh-id">
-          <div class="mesh-id-avatar">S</div>
-          <div class="mesh-id-meta">
-            <div class="mesh-id-label">MESH ID</div>
-            <div class="mesh-id-handle">@spawniz</div>
-          </div>
-        </div>
-
-        <button id="btn-menu" class="icon-button">
-          <span class="icon-lines"></span>
+        <div class="app-logo-badge">SE</div>
+        <button id="btn-menu" class="profile-icon-btn" aria-label="Open profile">
+          <div class="profile-icon-avatar">S</div>
         </button>
       </header>
 
       <!-- Huvudkortet -->
       <main class="app-main">
         <section class="hud-card">
+
+          <!-- Mesh ID + pfp i huvudrutan -->
+          <div class="hud-profile-row">
+            <div class="hud-profile-avatar">S</div>
+            <div class="hud-profile-meta">
+              <div class="hud-profile-handle">@spawniz</div>
+              <div class="hud-profile-sub">Mesh ID • Creator</div>
+            </div>
+          </div>
 
           <div class="hud-header-row">
             <div class="hud-brand-col">
@@ -95,7 +97,7 @@
             </div>
           </div>
 
-          <!-- Kompakt statusrad (2 kolumner, ingen sidscroll) -->
+          <!-- Kompakt statusrad -->
           <div class="status-grid">
             <div class="status-pill">
               <div class="status-label">GAS</div>
@@ -115,7 +117,7 @@
             </div>
           </div>
 
-          <!-- Tabs överst i kortet -->
+          <!-- Tabs -->
           <div class="tab-strip">
             <button class="tab-pill nav-item active" data-tab="home">Home</button>
             <button class="tab-pill nav-item" data-tab="loot">Loot</button>
@@ -126,7 +128,7 @@
           <!-- Views -->
           <div class="views">
 
-            <!-- HOME / DASHBOARD -->
+            <!-- HOME -->
             <section id="view-home" class="view active">
               <div class="section-header">
                 <div class="section-title">Mesh snapshot</div>
@@ -164,7 +166,7 @@
               </div>
             </section>
 
-            <!-- LOOT / PACKS -->
+            <!-- LOOT -->
             <section id="view-loot" class="view">
               <div class="section-header">
                 <div class="section-title">Loot &amp; Pull Lab</div>
