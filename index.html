@@ -29,8 +29,7 @@
 
       <nav class="side-menu-nav">
         <button class="side-menu-item">Referrals</button>
-        <button class="side-menu-item">Bookmarks</button>
-        <button class="side-menu-item">Earnings</button>
+        <button class="side-menu-item">Earnings / PnL</button>
         <button class="side-menu-item">Collectibles</button>
         <button class="side-menu-item">Settings</button>
       </nav>
@@ -49,19 +48,17 @@
     <!-- App shell -->
     <div class="app-shell">
 
-      <!-- Top header / liten SE + pfp -->
-      <header class="app-header">
-        <div class="app-logo-badge">SE</div>
-        <button id="btn-menu" class="profile-icon-btn" aria-label="Open profile">
-          <div class="profile-icon-avatar">S</div>
-        </button>
-      </header>
+      <!-- INGEN stor header längre – allt är i huvudkortet -->
 
-      <!-- Huvudkortet -->
       <main class="app-main">
         <section class="hud-card">
 
-          <!-- Mesh ID + pfp i huvudrutan -->
+          <!-- Litet kugghjul (settings) högst upp till höger i kortet -->
+          <button id="btn-menu" class="hud-settings-btn" aria-label="Open settings">
+            ⚙
+          </button>
+
+          <!-- Mesh ID / profilrad -->
           <div class="hud-profile-row">
             <div class="hud-profile-avatar">S</div>
             <div class="hud-profile-meta">
@@ -70,6 +67,7 @@
             </div>
           </div>
 
+          <!-- Brand + connect -->
           <div class="hud-header-row">
             <div class="hud-brand-col">
               <div class="hud-logo-bar">
