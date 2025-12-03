@@ -8,7 +8,24 @@
 </head>
 <body>
   <div class="app-shell">
-    <!-- TOP HEADER -->
+
+    <!-- TOP BAR (avatar + menu like Farcaster) -->
+    <header class="top-bar">
+      <button id="btn-open-profile" class="top-bar-avatar">
+        <span class="avatar-circle">S</span>
+      </button>
+      <div class="top-bar-meta">
+        <span class="top-bar-label">Mesh ID</span>
+        <span class="top-bar-handle">@spawniz</span>
+      </div>
+      <button id="btn-open-menu" class="icon-btn ghost small" aria-label="Open menu">
+        <span class="menu-lines">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </header>
+
+    <!-- HERO HEADER CARD -->
     <header class="app-header">
       <div class="brand-block">
         <div class="brand-logo">SE</div>
@@ -56,7 +73,7 @@
       </div>
     </section>
 
-    <!-- TABS (två rader, ingen scroll) -->
+    <!-- TABS -->
     <nav class="tab-bar">
       <button class="tab active" data-tab="overview">Overview</button>
       <button class="tab" data-tab="mesh">Mesh</button>
@@ -161,26 +178,11 @@
           </p>
           <ul class="bullet-list">
             <li>Factory · Series · Guard · Router contracts stitched together.</li>
-            <li>Feeds from creator tokens, burns, swaps & Farcaster casts.</li>
+            <li>Feeds from creator coins, pack opens, burns & swaps.</li>
             <li>XP orbs floating between wallets based on actions.</li>
             <li>Mini-apps on Base & Farcaster frames plugged into the same mesh.</li>
           </ul>
-        </article>
-
-        <article class="card">
-          <header class="card-header">
-            <h2>Mesh Explorer</h2>
-            <span class="badge-soft">WebGL canvas</span>
-          </header>
-          <p class="card-copy">
-            Live holographic view of wallet flows, XP orbs and creator clusters.
-          </p>
-          <iframe
-            src="./mesh.html"
-            class="mesh-frame"
-            title="SpawnEngine Mesh Explorer"
-            loading="lazy"
-          ></iframe>
+          <a class="btn-link" href="./mesh.html" target="_blank">Open 3D Mesh Explorer</a>
         </article>
       </section>
 
@@ -257,11 +259,11 @@
           </header>
           <p class="card-copy">
             High-signal tasks from verified creators. Quest layer will surface
-            pack-based bounties and streak actions – this is where the “Spawn bot”
-            automations will live.
+            token- and pack-based bounties and streak actions – this is where the
+            “Spawn bot” automations will live.
           </p>
           <ul class="bullet-list">
-            <li>Open 3 packs with a creator token → earn streak XP.</li>
+            <li>Open 3 packs with a creator coin → earn streak XP.</li>
             <li>Burn 1 Rare for access to a new pack series.</li>
             <li>Follow a creator mesh on Farcaster to unlock quests.</li>
             <li>Pool pulls from a group mesh into a shared treasury.</li>
@@ -274,8 +276,8 @@
     <footer class="app-footer">
       <p>
         Built with <span class="accent">SpawnEngine</span> · Mesh HUD v0.2 ·
-        <a href="https://spawn-engine.vercel.app" target="_blank">Legacy preview v1</a> ·
-        <a href="https://warpcast.com" target="_blank">Farcaster</a>
+        <a href="https://spawnengine3-0.vercel.app" target="_blank">Live preview</a> ·
+        <a href="https://warpcast.com/spawniz" target="_blank">Farcaster</a>
       </p>
     </footer>
   </div>
@@ -306,6 +308,76 @@
         <button id="btn-skip-streak" class="btn-ghost wide">Later</button>
       </footer>
     </div>
+  </div>
+
+  <!-- PROFILE SHEET -->
+  <div id="profile-sheet" class="sheet-backdrop hidden">
+    <div class="sheet">
+      <header class="sheet-header">
+        <div class="sheet-profile">
+          <div class="avatar-circle large">S</div>
+          <div class="sheet-meta">
+            <span class="sheet-handle">@spawniz</span>
+            <span class="sheet-sub">Tiny Legends · Foil Realms · Base mesh</span>
+          </div>
+        </div>
+        <button id="btn-close-profile" class="icon-btn small" aria-label="Close profile">✕</button>
+      </header>
+      <div class="sheet-body">
+        <div class="sheet-stats">
+          <div class="sheet-stat">
+            <span class="sheet-stat-label">Total XP</span>
+            <span class="sheet-stat-value" id="sheet-xp">1575</span>
+          </div>
+          <div class="sheet-stat">
+            <span class="sheet-stat-label">Streak</span>
+            <span class="sheet-stat-value" id="sheet-streak">1 day</span>
+          </div>
+          <div class="sheet-stat">
+            <span class="sheet-stat-label">Active wallets</span>
+            <span class="sheet-stat-value" id="sheet-wallets">1</span>
+          </div>
+        </div>
+        <h3 class="sheet-section-title">Mesh bubbles</h3>
+        <div id="profile-bubbles" class="bubble-row"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDE MENU / DRAWER -->
+  <div id="side-drawer" class="drawer-backdrop hidden">
+    <aside class="drawer">
+      <header class="drawer-header">
+        <div class="drawer-profile">
+          <div class="avatar-circle small">S</div>
+          <div class="drawer-meta">
+            <span class="drawer-handle">@spawniz</span>
+            <span class="drawer-sub">SpawnEngine mesh</span>
+          </div>
+        </div>
+        <button id="btn-close-drawer" class="icon-btn small" aria-label="Close menu">✕</button>
+      </header>
+      <nav class="drawer-nav">
+        <button class="drawer-item">
+          <span>Referrals</span>
+        </button>
+        <button class="drawer-item">
+          <span>Bookmarks</span>
+        </button>
+        <button class="drawer-item">
+          <span>Earnings</span>
+        </button>
+        <button class="drawer-item">
+          <span>Collectibles</span>
+        </button>
+        <button class="drawer-item">
+          <span>Settings</span>
+        </button>
+        <button class="drawer-item logout">
+          <span>Log out</span>
+        </button>
+      </nav>
+    </aside>
   </div>
 
   <script src="./app.js"></script>
