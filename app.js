@@ -1,5 +1,5 @@
-// SpawnEngine v0.3 — Mesh HUD + Docking API + Venice wallet flow
-// Simple vanilla JS module, no bundler.
+// SpawnEngine v0.3 — Mesh HUD + Docking API + Venice wallet flow (tuned background)
+// Noder mindre & mjukare så bakgrunden inte känns för stor/suddig.
 
 // -------------------------------------------------------------
 // BASIC STATE
@@ -41,26 +41,7 @@ const QUESTS = [
 // SIMPLE MESH DOCKING API (v0.1 SPEC)
 // -------------------------------------------------------------
 
-/**
- * Docking API: allows external apps/protocols to register as mesh nodes.
- *
- * App descriptor shape:
- * {
- *   id: "zora",
- *   name: "Zora",
- *   kind: "market" | "packs" | "social" | "wallet" | "other",
- *   url: "https://zora.co",
- *   icon: "Z",
- *   streams: ["PACK_OPEN", "TOKEN_BUY", "XP_GAIN"],  // MeshEvent kinds
- *   actions: [
- *     { id: "open-profile", label: "Open profile", type: "deeplink" },
- *     { id: "mint", label: "Mint token", type: "transaction" }
- *   ]
- * }
- */
-
 const MeshDock = (() => {
-  /** @type {Array<any>} */
   const apps = [];
 
   function registerApp(app) {
@@ -70,20 +51,9 @@ const MeshDock = (() => {
     console.log("[MeshDock] Registered app:", app.id);
   }
 
-  /**
-   * Mesh signal (lightweight MeshEvent analogue)
-   * {
-   *   sourceApp: "zora",
-   *   kind: "TOKEN_BUY" | "PACK_OPEN" | ...,
-   *   wallet: "0xabc...",
-   *   payload: {...},
-   *   timestamp: number
-   * }
-   */
   function emitSignal(signal) {
     if (!signal) return;
     console.log("[MeshDock] Signal:", signal);
-    // For v0.3 we just push into state.signals and re-render Home view
     state.signals.unshift(signal);
     if (state.signals.length > 6) state.signals.pop();
     renderSignals();
@@ -96,7 +66,7 @@ const MeshDock = (() => {
   return { registerApp, emitSignal, listApps };
 })();
 
-// Register some core mesh apps (mock, but real structure)
+// Register some core mesh apps (mock)
 MeshDock.registerApp({
   id: "zora",
   name: "Zora",
@@ -139,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
   bindMesh();
   renderQuests();
   renderDockedApps();
-  renderSignals(); // empty at start
+  renderSignals();
 
   // Init wallet flow canvas mesh
   const canvas = document.getElementById("wallet-flow-canvas");
@@ -173,12 +143,10 @@ function bindNav() {
     });
   });
 
-  // Connect wallet (mock)
   const btnConnect = document.getElementById("btn-connect");
   if (btnConnect) {
     btnConnect.addEventListener("click", () => {
       if (!state.walletConnected) {
-        // mock short wallet
         state.walletConnected = true;
         state.walletAddress = "0xSpawn...mesh";
       } else {
@@ -255,7 +223,6 @@ function updateStreakUI() {
   }
   if (xpEl) xpEl.textContent = `${state.xp} XP`;
 
-  // conic-gradient based on streak out of 30
   const progress = Math.min(1, state.streakDays / 30);
   const deg = Math.floor(progress * 360);
   if (streakRing) {
@@ -269,7 +236,7 @@ function updateStreakUI() {
 function bindLoot() {
   const segButtons = document.querySelectorAll(".seg-btn");
   const segViews = {
-    "packs": document.getElementById("seg-packs"),
+    packs: document.getElementById("seg-packs"),
     "pull-lab": document.getElementById("seg-pull-lab"),
   };
   segButtons.forEach((btn) => {
@@ -286,7 +253,6 @@ function bindLoot() {
   const btnOpenPack = document.getElementById("btn-open-pack");
   if (btnOpenPack) {
     btnOpenPack.addEventListener("click", () => {
-      // mock pack open
       state.xp += 40;
       state.spawn += 3;
       emitPackSignal();
@@ -318,7 +284,7 @@ function updateEntropyUI() {
   }
 }
 
-function flashEntropy(reason) {
+function flashEntropy() {
   state.entropyHigh = true;
   updateEntropyUI();
   setTimeout(() => {
@@ -399,7 +365,6 @@ function renderSignals() {
   pill.textContent = `${state.signals.length} events`;
 }
 
-// Emit some demo mesh signals
 function emitStreakSignal() {
   MeshDock.emitSignal({
     sourceApp: "spawnengine",
@@ -421,12 +386,9 @@ function emitPackSignal() {
 }
 
 // -------------------------------------------------------------
-// VENICE WALLET FLOW CANVAS (simplified, integrated)
+// VENICE WALLET FLOW CANVAS (tweaked: mindre noder, mjukare glow)
 // -------------------------------------------------------------
 
-/**
- * flows: Array<{ from: string, to: string, volume: number, kind: "coin"|"pack"|"burn"|"xp" }>
- */
 function initWalletFlow(canvas, flows, options = {}) {
   const ctx = canvas.getContext("2d");
   const pixelRatio = options.pixelRatio || window.devicePixelRatio || 1;
@@ -447,7 +409,6 @@ function initWalletFlow(canvas, flows, options = {}) {
     burn: { r: 255, g: 120, b: 60 },
     xp: { r: 100, g: 255, b: 200 },
     node: { r: 255, g: 255, b: 255 },
-    background: { r: 0, g: 0, b: 0 },
   };
 
   class Node {
@@ -458,7 +419,8 @@ function initWalletFlow(canvas, flows, options = {}) {
       this.vx = 0;
       this.vy = 0;
       this.isCore = isCore;
-      this.radius = isCore ? 9 : 6;
+      // mindre noder
+      this.radius = isCore ? 6 : 4;
       this.pulsePhase = Math.random() * Math.PI * 2;
       this.connections = 0;
     }
@@ -496,9 +458,10 @@ function initWalletFlow(canvas, flows, options = {}) {
     }
 
     draw(ctx, t) {
-      const pulse = Math.sin(t * 0.002 + this.pulsePhase) * 0.2 + 1;
+      const pulse = Math.sin(t * 0.002 + this.pulsePhase) * 0.18 + 1;
       const r = this.radius * pulse;
-      const glow = this.connections > 4 ? 22 : 12;
+      // mindre glow
+      const glow = this.connections > 4 ? 14 : 9;
 
       const gradient = ctx.createRadialGradient(
         this.x,
@@ -510,11 +473,11 @@ function initWalletFlow(canvas, flows, options = {}) {
       );
       gradient.addColorStop(
         0,
-        `rgba(${colors.node.r},${colors.node.g},${colors.node.b},0.9)`
+        `rgba(${colors.node.r},${colors.node.g},${colors.node.b},0.85)`
       );
       gradient.addColorStop(
         0.5,
-        `rgba(${colors.node.r},${colors.node.g},${colors.node.b},0.25)`
+        `rgba(${colors.node.r},${colors.node.g},${colors.node.b},0.22)`
       );
       gradient.addColorStop(
         1,
@@ -526,7 +489,7 @@ function initWalletFlow(canvas, flows, options = {}) {
       ctx.arc(this.x, this.y, r + glow, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = `rgba(${colors.node.r},${colors.node.g},${colors.node.b},1)`;
+      ctx.fillStyle = `rgba(${colors.node.r},${colors.node.g},${colors.node.b},0.95)`;
       ctx.beginPath();
       ctx.arc(this.x, this.y, r, 0, Math.PI * 2);
       ctx.fill();
@@ -540,10 +503,10 @@ function initWalletFlow(canvas, flows, options = {}) {
       this.kind = kind;
       this.progress = Math.random();
       this.speed =
-        (Math.random() * 0.005 + 0.005) * (lowPower ? 0.5 : 1.0);
-      this.size = Math.random() * 2 + 1;
+        (Math.random() * 0.005 + 0.004) * (lowPower ? 0.5 : 1.0);
+      this.size = Math.random() * 1.7 + 0.8; // mindre partiklar
       this.offsetAngle = Math.random() * Math.PI * 2;
-      this.offsetRadius = Math.random() * 6;
+      this.offsetRadius = Math.random() * 5;
     }
 
     update() {
@@ -572,7 +535,7 @@ function initWalletFlow(canvas, flows, options = {}) {
         y,
         this.size * 3
       );
-      gradient.addColorStop(0, `rgba(${c.r},${c.g},${c.b},1)`);
+      gradient.addColorStop(0, `rgba(${c.r},${c.g},${c.b},0.9)`);
       gradient.addColorStop(1, `rgba(${c.r},${c.g},${c.b},0)`);
 
       ctx.fillStyle = gradient;
@@ -620,11 +583,12 @@ function initWalletFlow(canvas, flows, options = {}) {
     let i = 0;
     nodes.forEach((node) => {
       if (node.isCore) {
-        node.x = centerX + (Math.random() - 0.5) * 120;
-        node.y = centerY + (Math.random() - 0.5) * 120;
+        node.x = centerX + (Math.random() - 0.5) * 110;
+        node.y = centerY + (Math.random() - 0.5) * 110;
       } else {
         const angle = i * angleStep;
-        const radius = Math.min(width, height) * 0.33;
+        // mindre radie → känns mer “utzoomad”
+        const radius = Math.min(width, height) * 0.26;
         node.x = centerX + Math.cos(angle) * radius;
         node.y = centerY + Math.sin(angle) * radius;
         i++;
@@ -637,7 +601,7 @@ function initWalletFlow(canvas, flows, options = {}) {
       if (fromNode && toNode) {
         fromNode.connections++;
         toNode.connections++;
-        if (!lowPower || Math.random() > 0.4) {
+        if (!lowPower || Math.random() > 0.45) {
           particles.push(new Particle(fromNode, toNode, f.kind));
         }
       }
@@ -645,28 +609,26 @@ function initWalletFlow(canvas, flows, options = {}) {
   }
 
   function drawFrame(ts) {
-    const now = ts;
-    const delta = now - lastFrameTime;
+    const delta = ts - lastFrameTime;
     if (delta < frameInterval) {
       requestAnimationFrame(drawFrame);
       return;
     }
-    lastFrameTime = now;
+    lastFrameTime = ts;
     time += delta;
 
     ctx.clearRect(0, 0, width, height);
 
-    // subtle dark overlay gradient
     const bgGrad = ctx.createRadialGradient(
       width * 0.5,
-      height * 0.1,
+      height * 0.05,
       0,
       width * 0.5,
-      height * 0.7,
+      height * 0.8,
       Math.max(width, height)
     );
-    bgGrad.addColorStop(0, "rgba(43,29,121,0.28)");
-    bgGrad.addColorStop(1, "rgba(0,0,0,0.95)");
+    bgGrad.addColorStop(0, "rgba(43,29,121,0.24)");
+    bgGrad.addColorStop(1, "rgba(0,0,0,0.96)");
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, width, height);
 
@@ -678,7 +640,6 @@ function initWalletFlow(canvas, flows, options = {}) {
       node.update(centerX, centerY, bounds);
     });
 
-    // draw links
     ctx.save();
     ctx.globalCompositeOperation = "lighter";
     nodes.forEach((fromNode) => {
@@ -688,8 +649,9 @@ function initWalletFlow(canvas, flows, options = {}) {
           toNode.x - fromNode.x,
           toNode.y - fromNode.y
         );
-        if (dist < Math.min(width, height) * 0.5) {
-          const alpha = 0.04 * (1 - dist / (Math.min(width, height) * 0.5));
+        const maxDist = Math.min(width, height) * 0.45;
+        if (dist < maxDist) {
+          const alpha = 0.035 * (1 - dist / maxDist);
           ctx.strokeStyle = `rgba(100,180,255,${alpha})`;
           ctx.lineWidth = 1;
           ctx.beginPath();
@@ -717,7 +679,7 @@ function initWalletFlow(canvas, flows, options = {}) {
   requestAnimationFrame(drawFrame);
 }
 
-// build some mock wallet flows for background
+// demo flows för bakgrunden
 function buildDemoFlows() {
   const wallets = [
     "spawniz",
