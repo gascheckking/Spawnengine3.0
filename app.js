@@ -1,5 +1,4 @@
 // SpawnEngine v0.3 — Mesh HUD + Docking API + Venice wallet flow (tuned background)
-// Noder mindre & mjukare så bakgrunden inte känns för stor/suddig.
 
 // -------------------------------------------------------------
 // BASIC STATE
@@ -15,7 +14,7 @@ const state = {
   entropyHigh: false,
 };
 
-// Example quests (mock)
+// Example quests (no "demo" text)
 const QUESTS = [
   {
     id: "q1",
@@ -27,13 +26,13 @@ const QUESTS = [
     id: "q2",
     title: "Buy any creator coin on Base",
     reward: "+40 XP",
-    status: "Locked (demo)",
+    status: "Bonus",
   },
   {
     id: "q3",
-    title: "Open a pack in Vibe or Zora",
+    title: "Open a pack in a docked app",
     reward: "+60 XP",
-    status: "Locked (demo)",
+    status: "Weekly",
   },
 ];
 
@@ -122,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Bottom nav tabs
+// Bottom nav tabs + connect
 function bindNav() {
   const navItems = document.querySelectorAll(".nav-item");
   const views = {
@@ -132,14 +131,20 @@ function bindNav() {
     mesh: document.getElementById("view-mesh"),
   };
 
+  function activateTab(tab) {
+    navItems.forEach((b) => {
+      const t = b.getAttribute("data-tab");
+      b.classList.toggle("active", t === tab);
+    });
+    Object.keys(views).forEach((k) => {
+      views[k].classList.toggle("active", k === tab);
+    });
+  }
+
   navItems.forEach((btn) => {
     btn.addEventListener("click", () => {
       const tab = btn.getAttribute("data-tab");
-      navItems.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      Object.keys(views).forEach((k) => {
-        views[k].classList.toggle("active", k === tab);
-      });
+      activateTab(tab);
     });
   });
 
@@ -156,26 +161,36 @@ function bindNav() {
       updateWalletUI();
     });
   }
+
+  // default tab
+  activateTab("home");
 }
 
 function updateWalletUI() {
   const btnConnect = document.getElementById("btn-connect");
   if (!btnConnect) return;
   if (state.walletConnected) {
-    btnConnect.classList.add("connected");
-    btnConnect.textContent = state.walletAddress;
+    btnConnect.classList.add("connected", "wallet-icon-mode");
+    btnConnect.textContent = "";
+    btnConnect.setAttribute(
+      "aria-label",
+      `Wallet connected: ${state.walletAddress}`
+    );
   } else {
-    btnConnect.classList.remove("connected");
+    btnConnect.classList.remove("connected", "wallet-icon-mode");
     btnConnect.textContent = "Connect wallet";
+    btnConnect.setAttribute("aria-label", "Connect wallet");
   }
 }
 
-// Side menu
+// Side menu (incl. swap + logout)
 function bindMenu() {
   const btnMenu = document.getElementById("btn-menu");
   const btnClose = document.getElementById("btn-menu-close");
   const backdrop = document.getElementById("side-menu-backdrop");
   const menu = document.getElementById("side-menu");
+  const btnSwap = document.getElementById("btn-swap-wallet");
+  const btnLogout = document.getElementById("btn-logout");
 
   const open = () => {
     menu.classList.add("open");
@@ -189,6 +204,24 @@ function bindMenu() {
   if (btnMenu) btnMenu.addEventListener("click", open);
   if (btnClose) btnClose.addEventListener("click", close);
   if (backdrop) backdrop.addEventListener("click", close);
+
+  if (btnSwap) {
+    btnSwap.addEventListener("click", () => {
+      state.walletConnected = !state.walletConnected;
+      state.walletAddress = state.walletConnected ? "0xSpawn...mesh" : null;
+      updateWalletUI();
+      close();
+    });
+  }
+
+  if (btnLogout) {
+    btnLogout.addEventListener("click", () => {
+      state.walletConnected = false;
+      state.walletAddress = null;
+      updateWalletUI();
+      close();
+    });
+  }
 }
 
 // Streak + XP logic
@@ -239,6 +272,7 @@ function bindLoot() {
     packs: document.getElementById("seg-packs"),
     "pull-lab": document.getElementById("seg-pull-lab"),
   };
+
   segButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const seg = btn.getAttribute("data-seg");
@@ -259,7 +293,7 @@ function bindLoot() {
       updateStreakUI();
       const spawnEl = document.getElementById("spawn-balance");
       if (spawnEl) spawnEl.textContent = `${state.spawn} SPN`;
-      flashEntropy("Pack opened");
+      flashEntropy();
     });
   }
 
@@ -314,7 +348,7 @@ function renderQuests() {
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div>
           <div style="font-size:13px;font-weight:500;">${q.title}</div>
-          <div style="font-size:11px;color:#9aa0ff;">${q.reward}</div>
+          <div style="font-size:13px;color:#7fffd4;font-weight:600;">${q.reward}</div>
         </div>
         <span class="pill-soft">${q.status}</span>
       </div>
@@ -419,7 +453,6 @@ function initWalletFlow(canvas, flows, options = {}) {
       this.vx = 0;
       this.vy = 0;
       this.isCore = isCore;
-      // mindre noder
       this.radius = isCore ? 6 : 4;
       this.pulsePhase = Math.random() * Math.PI * 2;
       this.connections = 0;
@@ -460,7 +493,6 @@ function initWalletFlow(canvas, flows, options = {}) {
     draw(ctx, t) {
       const pulse = Math.sin(t * 0.002 + this.pulsePhase) * 0.18 + 1;
       const r = this.radius * pulse;
-      // mindre glow
       const glow = this.connections > 4 ? 14 : 9;
 
       const gradient = ctx.createRadialGradient(
@@ -504,7 +536,7 @@ function initWalletFlow(canvas, flows, options = {}) {
       this.progress = Math.random();
       this.speed =
         (Math.random() * 0.005 + 0.004) * (lowPower ? 0.5 : 1.0);
-      this.size = Math.random() * 1.7 + 0.8; // mindre partiklar
+      this.size = Math.random() * 1.7 + 0.8;
       this.offsetAngle = Math.random() * Math.PI * 2;
       this.offsetRadius = Math.random() * 5;
     }
@@ -587,7 +619,6 @@ function initWalletFlow(canvas, flows, options = {}) {
         node.y = centerY + (Math.random() - 0.5) * 110;
       } else {
         const angle = i * angleStep;
-        // mindre radie → känns mer “utzoomad”
         const radius = Math.min(width, height) * 0.26;
         node.x = centerX + Math.cos(angle) * radius;
         node.y = centerY + Math.sin(angle) * radius;
@@ -679,7 +710,7 @@ function initWalletFlow(canvas, flows, options = {}) {
   requestAnimationFrame(drawFrame);
 }
 
-// demo flows för bakgrunden
+// Demo flows
 function buildDemoFlows() {
   const wallets = [
     "spawniz",
