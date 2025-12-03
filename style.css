@@ -1,5 +1,3 @@
-/* Base layout */
-
 *,
 *::before,
 *::after {
@@ -27,7 +25,7 @@ body {
   justify-content: center;
 }
 
-/* Mesh background */
+/* Mesh bakgrund */
 
 .mesh-bg-wrap {
   position: fixed;
@@ -64,75 +62,42 @@ body {
   padding: 6px 4px 10px;
 }
 
-.mesh-id {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.mesh-id-avatar {
-  width: 32px;
-  height: 32px;
+.app-logo-badge {
+  width: 30px;
+  height: 30px;
   border-radius: 999px;
-  background: radial-gradient(circle at 30% 0%, #ff8be7, #6024ff);
+  background: radial-gradient(circle at 30% 0, #ff8be7, #6024ff);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 16px;
-}
-
-.mesh-id-meta {
-  display: flex;
-  flex-direction: column;
-}
-
-.mesh-id-label {
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  opacity: 0.65;
-}
-
-.mesh-id-handle {
   font-size: 14px;
-  font-weight: 600;
 }
 
-/* Icon button (menu) */
+/* pfp-knapp */
 
-.icon-button {
-  width: 32px;
-  height: 32px;
+.profile-icon-btn {
+  width: 30px;
+  height: 30px;
   border-radius: 999px;
   border: none;
+  padding: 0;
   background: rgba(5, 5, 20, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
 }
 
-.icon-lines,
-.icon-lines::before,
-.icon-lines::after {
-  content: "";
-  display: block;
-  width: 16px;
-  height: 2px;
+.profile-icon-avatar {
+  width: 24px;
+  height: 24px;
   border-radius: 999px;
-  background: #f7f2ff;
-  position: relative;
-}
-
-.icon-lines::before {
-  position: absolute;
-  top: -5px;
-}
-
-.icon-lines::after {
-  position: absolute;
-  top: 5px;
+  background: radial-gradient(circle at 30% 0, #ff8be7, #6024ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 /* HUD card */
@@ -145,7 +110,43 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* kompakt header */
+/* Mesh ID/profilrad i kortet */
+
+.hud-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.hud-profile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 0, #ff8be7, #6024ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.hud-profile-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.hud-profile-handle {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.hud-profile-sub {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+/* kompakt header i kortet */
 
 .hud-header-row {
   display: flex;
@@ -212,7 +213,7 @@ body {
   border: 1px solid rgba(0, 255, 255, 0.45);
 }
 
-/* Connect/status */
+/* Connect / status */
 
 .hud-connect {
   display: flex;
@@ -262,7 +263,7 @@ body {
   box-shadow: 0 0 16px rgba(255, 110, 214, 0.8);
 }
 
-/* wallet ikonläge när connected */
+/* wallet-ikonläge */
 
 .btn-primary.connected.wallet-icon-mode {
   background: rgba(7, 230, 189, 0.16);
@@ -409,8 +410,6 @@ body {
   padding: 8px 10px;
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
-
-/* XP prioriterad */
 
 .metric-card-xp {
   flex: 1.2;
@@ -753,7 +752,7 @@ body {
   cursor: pointer;
 }
 
-/* Misc */
+/* Småskärmar */
 
 @media (max-width: 360px) {
   .hud-header-row {
