@@ -22,14 +22,14 @@
     }
     #info-overlay {
       position: absolute;
-      top: 10px;
+      top: 8px;
       left: 10px;
       color: #00ffff;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 10px;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 6px 10px;
       border-radius: 8px;
       border: 1px solid #00ffff40;
-      font-size: 12px;
+      font-size: 10px;
       pointer-events: none;
       z-index: 100;
     }
@@ -39,486 +39,401 @@
   <canvas id="mesh-canvas"></canvas>
 
   <div id="info-overlay">
-    MESH STATUS: ACTIVE<br>
-    Nodes: 10 | XP Streams: 20
+    MESH STATUS: MOCK DEMO<br>
+    Nodes: 10 · XP Streams: 20
   </div>
 
   <script>
-    // ======================================================================
-    // MESH EXPLORER WEBGL MODULE
-    // ======================================================================
-
-    /**
-     * Initializes and runs the WebGL Mesh Explorer.
-     * @param {HTMLCanvasElement} canvasElement - The canvas element to draw on.
-     * @param {Object} options - Configuration options.
-     * @param {boolean} [options.lowGPU=false] - Enables low-performance mode (fewer particles).
-     */
+    // (din fulla WebGL-kod exakt som innan – inget ändrat i logiken)
     window.initMeshExplorer = function(canvasElement, options = {}) {
-        const gl = canvasElement.getContext('webgl', { antialias: true });
-        if (!gl) {
-            console.error("WebGL not supported, falling back to basic display.");
-            canvasElement.style.backgroundColor = '#101018';
-            return;
-        }
+      const gl = canvasElement.getContext('webgl', { antialias: true });
+      if (!gl) {
+          console.error("WebGL not supported, falling back to basic display.");
+          canvasElement.style.backgroundColor = '#101018';
+          return;
+      }
 
-        const opts = { lowGPU: false, ...options };
-        const NODE_COUNT = 10;
-        const ORB_COUNT = opts.lowGPU ? 150 : 350;
-        const PARALLAX_STRENGTH = 0.05;
-        const ORB_SPEED = opts.lowGPU ? 0.005 : 0.01;
+      const opts = { lowGPU: false, ...options };
+      const NODE_COUNT = 10;
+      const ORB_COUNT = opts.lowGPU ? 150 : 350;
+      const PARALLAX_STRENGTH = 0.05;
+      const ORB_SPEED = opts.lowGPU ? 0.005 : 0.01;
+      
+      let width = 0;
+      let height = 0;
+      let mouseX = 0;
+      let mouseY = 0;
+      let nodes = [];
+      let connections = [];
+      let orbs = [];
+      let program;
+      let uniformLocations = {};
+      let buffer = null;
+      let lastTime = 0;
+      let dataGenerated = false;
+
+      const vertexShaderSource = `
+        attribute vec4 a_position;
+        attribute vec4 a_color;
+        attribute float a_size;
+
+        uniform mat4 u_matrix;
+        uniform float u_time;
+        uniform vec2 u_resolution;
+        uniform vec2 u_parallaxOffset;
+
+        varying vec4 v_color;
         
-        let width = 0;
-        let height = 0;
-        let mouseX = 0;
-        let mouseY = 0;
-        let nodes = [];
-        let connections = [];
-        let orbs = [];
-        let program;
-        let uniformLocations = {};
-        let buffer = null;
-        let lastTime = 0;
-        let dataGenerated = false;
+        void main() {
+          vec4 position = a_position;
+          position.xy += u_parallaxOffset;
+          
+          gl_Position = u_matrix * position;
+          gl_PointSize = a_size * (u_resolution.y / 1000.0);
+          v_color = a_color;
+        }
+      `;
 
-        // --- GLSL Shaders ---
+      const fragmentShaderSource = `
+        precision highp float;
 
-        const vertexShaderSource = `
-            attribute vec4 a_position;
-            attribute vec4 a_color;
-            attribute float a_size;
+        uniform float u_time;
+        varying vec4 v_color;
 
-            uniform mat4 u_matrix;
-            uniform float u_time;
-            uniform vec2 u_resolution;
-            uniform vec2 u_parallaxOffset;
+        void main() {
+          vec4 color = v_color;
+          float dist = length(gl_PointCoord - 0.5);
+          float glow = 1.0 - smoothstep(0.4, 0.5, dist);
+          float pulse = 0.8 + 0.2 * sin(u_time * 5.0 * v_color.w);
+          color.rgb *= pulse;
+          color.a *= glow;
+          gl_FragColor = color;
+        }
+      `;
 
-            varying vec4 v_color;
-            
-            void main() {
-                // Apply parallax offset based on mouse position
-                vec4 position = a_position;
-                position.xy += u_parallaxOffset;
-                
-                gl_Position = u_matrix * position;
-                gl_PointSize = a_size * (u_resolution.y / 1000.0);
-                v_color = a_color;
-            }
-        `;
+      function createShader(type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+          console.error('Shader compilation error:', gl.getShaderInfoLog(shader));
+          gl.deleteShader(shader);
+          return null;
+        }
+        return shader;
+      }
 
-        const fragmentShaderSource = `
-            precision highp float;
+      function setupWebGL() {
+        const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
+        const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
 
-            uniform float u_time;
-            varying vec4 v_color;
+        program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
 
-            void main() {
-                vec4 color = v_color;
-
-                // Simple glow effect for points (Nodes and Orbs)
-                // This gives a softer, glowing edge when rendering POINTS
-                float dist = length(gl_PointCoord - 0.5);
-                float glow = 1.0 - smoothstep(0.4, 0.5, dist);
-
-                // Add time-based pulse/flicker for 'alive' feel
-                float pulse = 0.8 + 0.2 * sin(u_time * 5.0 * v_color.w);
-                color.rgb *= pulse;
-                
-                // Additive blending relies on high alpha/brightness
-                color.a *= glow;
-
-                gl_FragColor = color;
-            }
-        `;
-
-        // --- Core WebGL Functions ---
-
-        function createShader(type, source) {
-            const shader = gl.createShader(type);
-            gl.shaderSource(shader, source);
-            gl.compileShader(shader);
-            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-                console.error('Shader compilation error:', gl.getShaderInfoLog(shader));
-                gl.deleteShader(shader);
-                return null;
-            }
-            return shader;
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+          console.error('Program linking error:', gl.getProgramInfoLog(program));
+          return;
         }
 
-        function setupWebGL() {
-            const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
-            const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+        gl.useProgram(program);
 
-            program = gl.createProgram();
-            gl.attachShader(program, vertexShader);
-            gl.attachShader(program, fragmentShader);
-            gl.linkProgram(program);
+        uniformLocations.matrix = gl.getUniformLocation(program, 'u_matrix');
+        uniformLocations.time = gl.getUniformLocation(program, 'u_time');
+        uniformLocations.resolution = gl.getUniformLocation(program, 'u_resolution');
+        uniformLocations.parallaxOffset = gl.getUniformLocation(program, 'u_parallaxOffset');
 
-            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-                console.error('Program linking error:', gl.getProgramInfoLog(program));
-                return;
-            }
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+        gl.disable(gl.DEPTH_TEST);
 
-            gl.useProgram(program);
+        buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
-            // Get uniform locations
-            uniformLocations.matrix = gl.getUniformLocation(program, 'u_matrix');
-            uniformLocations.time = gl.getUniformLocation(program, 'u_time');
-            uniformLocations.resolution = gl.getUniformLocation(program, 'u_resolution');
-            uniformLocations.parallaxOffset = gl.getUniformLocation(program, 'u_parallaxOffset');
+        const a_position = gl.getAttribLocation(program, 'a_position');
+        const a_color = gl.getAttribLocation(program, 'a_color');
+        const a_size = gl.getAttribLocation(program, 'a_size');
+        const stride = 9 * Float32Array.BYTES_PER_ELEMENT;
 
-            // Set up GL state for premium glow (additive blending)
-            gl.enable(gl.BLEND);
-            gl.blendFunc(gl.SRC_ALPHA, gl.ONE); // Essential for the additive glow effect
-            gl.disable(gl.DEPTH_TEST);
-
-            // Create a general buffer
-            buffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-
-            // Get attribute locations (Position: 4, Color: 4, Size: 1 = 9 floats/vertex)
-            const a_position = gl.getAttribLocation(program, 'a_position');
-            const a_color = gl.getAttribLocation(program, 'a_color');
-            const a_size = gl.getAttribLocation(program, 'a_size');
-            const stride = 9 * Float32Array.BYTES_PER_ELEMENT;
-
-            // Attribute pointers
-            gl.vertexAttribPointer(a_position, 4, gl.FLOAT, false, stride, 0);
-            gl.enableVertexAttribArray(a_position);
-            
-            gl.vertexAttribPointer(a_color, 4, gl.FLOAT, false, stride, 4 * Float32Array.BYTES_PER_ELEMENT);
-            gl.enableVertexAttribArray(a_color);
-
-            gl.vertexAttribPointer(a_size, 1, gl.FLOAT, false, stride, 8 * Float32Array.BYTES_PER_ELEMENT);
-            gl.enableVertexAttribArray(a_size);
-
-            resize(); // Initial resize
-            dataGenerated = generateInitialData(); // Initial data generation
-            if (!dataGenerated) {
-                console.error("Failed to generate mesh data.");
-            }
-        }
-
-        // --- Data & Physics Model ---
-
-        function generateInitialData() {
-            // Helper for random color selection (Neon/Holographic palette)
-            const NEON_COLORS = [
-                [0.0, 1.0, 1.0, 0.9], // Cyan
-                [0.8, 0.2, 1.0, 0.9], // Violet
-                [0.2, 1.0, 0.6, 0.9]  // Mint
-            ];
-
-            // 1. Generate Nodes (Wallets/Clusters)
-            for (let i = 0; i < NODE_COUNT; i++) {
-                nodes.push({
-                    id: i,
-                    // Normalized screen coordinates (-1 to 1) for WebGL
-                    x: Math.random() * 2 - 1, 
-                    y: Math.random() * 2 - 1,
-                    size: 8 + Math.random() * 10,
-                    color: NEON_COLORS[i % NEON_COLORS.length],
-                    vx: 0, vy: 0, // Velocity for slow, organic drift
-                    pulse: 0.0, // Activity pulse magnitude (0 to 1)
-                    targetX: Math.random() * 2 - 1,
-                    targetY: Math.random() * 2 - 1,
-                    clusterId: i % 3 // Simple cluster grouping
-                });
-            }
-
-            // 2. Generate Connections (Active Trails/Flows)
-            for (let i = 0; i < NODE_COUNT * 2; i++) {
-                const fromNode = nodes[Math.floor(Math.random() * NODE_COUNT)];
-                const toNode = nodes[Math.floor(Math.random() * NODE_COUNT)];
-                if (fromNode.id !== toNode.id) {
-                    connections.push({
-                        from: fromNode,
-                        to: toNode,
-                        color: NEON_COLORS[Math.floor(Math.random() * NEON_COLORS.length)],
-                        strength: 0.1 + Math.random() * 0.5, // Connection visibility/thickness
-                        activeTime: 0, // For pulse animation
-                        duration: 500,
-                        id: i
-                    });
-                }
-            }
-
-            // 3. Generate XP Orbs (Flows)
-            for (let i = 0; i < ORB_COUNT; i++) {
-                const conn = connections[Math.floor(Math.random() * connections.length)];
-                orbs.push({
-                    connection: conn,
-                    progress: Math.random(), // Current position (0 to 1)
-                    size: 1 + Math.random() * 3,
-                    color: NEON_COLORS[Math.floor(Math.random() * NEON_COLORS.length)],
-                    speed: ORB_SPEED * (0.5 + Math.random())
-                });
-            }
-            return true;
-        }
-
-        function updatePhysics(deltaTime) {
-            const timeFactor = deltaTime / 1000.0;
-            const gravityStrength = 0.005;
-
-            // 1. Node Drift and Clustering
-            nodes.forEach(node => {
-                // Organic Drift: Move towards target (target resets every ~20s)
-                if (Math.random() < 0.0005) {
-                    node.targetX = Math.random() * 2 - 1;
-                    node.targetY = Math.random() * 2 - 1;
-                }
-                
-                const dx = node.targetX - node.x;
-                const dy = node.targetY - node.y;
-                node.vx += dx * 0.01 * timeFactor;
-                node.vy += dy * 0.01 * timeFactor;
-
-                // Simple Gravity Clustering (pull nodes with same clusterId closer)
-                nodes.forEach(other => {
-                    if (node.id !== other.id && node.clusterId === other.clusterId) {
-                        const distSq = (node.x - other.x)**2 + (node.y - other.y)**2;
-                        if (distSq < 0.1) { // Apply a small repulsion force if too close
-                            node.vx -= (other.x - node.x) * 0.005 * timeFactor;
-                            node.vy -= (other.y - node.y) * 0.005 * timeFactor;
-                        } else { // Apply an attractive force
-                            node.vx += (other.x - node.x) * gravityStrength * timeFactor;
-                            node.vy += (other.y - node.y) * gravityStrength * timeFactor;
-                        }
-                    }
-                });
-
-                // Apply friction and boundary check
-                node.vx *= 0.99;
-                node.vy *= 0.99;
-                node.x += node.vx * timeFactor * 0.5;
-                node.y += node.vy * timeFactor * 0.5;
-
-                node.x = Math.max(-1.0, Math.min(1.0, node.x));
-                node.y = Math.max(-1.0, Math.min(1.0, node.y));
-
-                // Decay pulse
-                node.pulse *= 0.9;
-            });
-
-            // 2. XP Orb Movement
-            orbs.forEach(orb => {
-                orb.progress += orb.speed * timeFactor;
-                if (orb.progress >= 1.0) {
-                    // Orb completed path, start new path or reset
-                    orb.progress = 0.0;
-                    orb.connection.activeTime = 1; // Pulse connection when orb passes
-                    orb.connection.to.pulse = 1.0; // Pulse destination node
-                }
-            });
-
-            // 3. Connection Pulse Decay
-            connections.forEach(conn => {
-                conn.strength = Math.max(0.1, conn.strength * 0.99); // Slow decay
-                conn.activeTime = Math.max(0, conn.activeTime - timeFactor * 0.005);
-            });
-            
-            // 4. Simulate Random Activity Spike (Pulses)
-            if (Math.random() < 0.005) {
-                const node = nodes[Math.floor(Math.random() * NODE_COUNT)];
-                node.pulse = 1.0;
-                // Find and pulse connected lines
-                connections.filter(c => c.from.id === node.id || c.to.id === node.id)
-                          .forEach(c => c.activeTime = 1);
-            }
-        }
-
-        // --- Rendering Loop Functions ---
-
-        function fillBuffer() {
-            // Buffer structure: [posX, posY, posZ, posW, r, g, b, a, size] (9 floats/vertex)
-            const vertexData = [];
-            const Z_NODE = 0.0;
-            const Z_ORB = 0.5; // Orbs are slightly "above" nodes
-            const Z_LINE = -0.5; // Lines are in the "back"
-
-            // 1. CONNECTIONS (Lines)
-            connections.forEach(conn => {
-                const color = conn.color;
-                const pulseBoost = conn.activeTime * 0.5; // Brighter when active
-                const alpha = conn.strength + pulseBoost;
-
-                // Line segment start
-                vertexData.push(conn.from.x, conn.from.y, Z_LINE, 1.0);
-                vertexData.push(color[0], color[1], color[2], alpha);
-                vertexData.push(conn.strength * 20.0); // Size/thickness attribute (ignored for LINES but needed for stride)
-
-                // Line segment end
-                vertexData.push(conn.to.x, conn.to.y, Z_LINE, 1.0);
-                vertexData.push(color[0], color[1], color[2], alpha);
-                vertexData.push(conn.strength * 20.0);
-            });
-
-            // 2. NODES (Points)
-            const lineCount = vertexData.length / 9; // Store line vertices count
-            nodes.forEach(node => {
-                const pulseSize = node.pulse * 20; // Size increase on pulse
-                const pulseAlpha = node.pulse * 0.3; // Alpha increase on pulse
-
-                // Node position
-                vertexData.push(node.x, node.y, Z_NODE, 1.0);
-                
-                // Color (node color + dynamic alpha)
-                vertexData.push(
-                    node.color[0], node.color[1], node.color[2], 
-                    node.color[3] + pulseAlpha // Base color alpha
-                );
-                
-                // Size
-                vertexData.push(node.size + pulseSize);
-            });
-
-            // 3. XP ORBS (Points)
-            const nodeCount = vertexData.length / 9 - lineCount; // Store node vertices count
-            orbs.forEach(orb => {
-                const start = orb.connection.from;
-                const end = orb.connection.to;
-                const progress = orb.progress;
-
-                // Interpolate position along the connection
-                const x = start.x + (end.x - start.x) * progress;
-                const y = start.y + (end.y - start.y) * progress;
-                
-                // Position
-                vertexData.push(x, y, Z_ORB, 1.0);
-                
-                // Color (Orbs are always full brightness/alpha for "XP" feel)
-                vertexData.push(orb.color[0], orb.color[1], orb.color[2], 1.0);
-                
-                // Size
-                vertexData.push(orb.size);
-            });
-
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.DYNAMIC_DRAW);
-            return {
-                totalVertices: vertexData.length / 9,
-                lineVertices: lineCount,
-                nodeVertices: nodeCount
-            };
-        }
-
-        function draw(time, vertexCounts) {
-            gl.viewport(0, 0, width, height);
-            gl.clearColor(0.03, 0.03, 0.05, 1.0); // Very dark, subtle blue/violet clear color
-            gl.clear(gl.COLOR_BUFFER_BIT);
-
-            gl.useProgram(program);
-
-            // Update Global Uniforms
-            gl.uniform1f(uniformLocations.time, time / 1000);
-            gl.uniform2f(uniformLocations.resolution, width, height);
-            gl.uniform2f(uniformLocations.parallaxOffset, mouseX * PARALLAX_STRENGTH, mouseY * PARALLAX_STRENGTH);
-
-            // Orthographic Projection Matrix (simple 2D view)
-            const matrix = [
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-            ];
-            gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
-
-            // --- DRAW CONNECTIONS (LINES) ---
-            const linesToDraw = vertexCounts.lineVertices;
-            if (linesToDraw > 0) {
-                // Connections use the LINE aesthetic (subtle neon trails)
-                gl.lineWidth(2.0); // Note: WebGL line width is often capped or ignored
-                gl.drawArrays(gl.LINES, 0, linesToDraw);
-            }
-            
-            // --- DRAW NODES & ORBS (POINTS) ---
-            const pointsStart = linesToDraw;
-            const pointsToDraw = vertexCounts.nodeVertices + (vertexCounts.totalVertices - (linesToDraw + vertexCounts.nodeVertices));
-            if (pointsToDraw > 0) {
-                // Nodes and Orbs use the POINT aesthetic (glowing orbs)
-                gl.drawArrays(gl.POINTS, pointsStart, pointsToDraw);
-            }
-        }
-
-        // --- Interaction & Responsiveness ---
-
-        function resize() {
-            width = canvasElement.clientWidth;
-            height = canvasElement.clientHeight;
-            canvasElement.width = width;
-            canvasElement.height = height;
-            gl.viewport(0, 0, width, height);
-        }
-
-        function handlePointerMove(event) {
-            event.preventDefault();
-            const clientX = event.clientX !== undefined ? event.clientX : event.touches[0].clientX;
-            const clientY = event.clientY !== undefined ? event.clientY : event.touches[0].clientY;
-
-            // Normalize mouse position to [-1, 1] relative to center
-            mouseX = (clientX / width) * 2 - 1;
-            mouseY = (clientY / height) * 2 - 1;
-        }
-
-        // --- Animation Loop ---
-
-        function animate(time) {
-            const deltaTime = time - lastTime;
-            lastTime = time;
-
-            if (dataGenerated) {
-                updatePhysics(deltaTime);
-                const vertexCounts = fillBuffer();
-                draw(time, vertexCounts);
-            }
-
-            requestAnimationFrame(animate);
-        }
-
-        // --- Initialization ---
-
-        function init() {
-            setupWebGL();
-            window.addEventListener('resize', resize);
-
-            // Handle both mouse and touch input for mobile-first parallax
-            canvasElement.addEventListener('mousemove', handlePointerMove);
-            canvasElement.addEventListener('touchmove', handlePointerMove);
-            
-            // Start the main loop
-            requestAnimationFrame(animate);
-
-            console.log(`SpawnEngine Mesh Explorer initialized. Low GPU Mode: ${opts.lowGPU}`);
-        }
-
-        init();
+        gl.vertexAttribPointer(a_position, 4, gl.FLOAT, false, stride, 0);
+        gl.enableVertexAttribArray(a_position);
         
-        // Return a cleanup function for graceful shutdown if needed
+        gl.vertexAttribPointer(a_color, 4, gl.FLOAT, false, stride, 4 * Float32Array.BYTES_PER_ELEMENT);
+        gl.enableVertexAttribArray(a_color);
+
+        gl.vertexAttribPointer(a_size, 1, gl.FLOAT, false, stride, 8 * Float32Array.BYTES_PER_ELEMENT);
+        gl.enableVertexAttribArray(a_size);
+
+        resize();
+        dataGenerated = generateInitialData();
+        if (!dataGenerated) {
+          console.error("Failed to generate mesh data.");
+        }
+      }
+
+      function generateInitialData() {
+        const NEON_COLORS = [
+          [0.0, 1.0, 1.0, 0.9],
+          [0.8, 0.2, 1.0, 0.9],
+          [0.2, 1.0, 0.6, 0.9]
+        ];
+
+        for (let i = 0; i < NODE_COUNT; i++) {
+          nodes.push({
+            id: i,
+            x: Math.random() * 2 - 1, 
+            y: Math.random() * 2 - 1,
+            size: 8 + Math.random() * 10,
+            color: NEON_COLORS[i % NEON_COLORS.length],
+            vx: 0, vy: 0,
+            pulse: 0.0,
+            targetX: Math.random() * 2 - 1,
+            targetY: Math.random() * 2 - 1,
+            clusterId: i % 3
+          });
+        }
+
+        for (let i = 0; i < NODE_COUNT * 2; i++) {
+          const fromNode = nodes[Math.floor(Math.random() * NODE_COUNT)];
+          const toNode = nodes[Math.floor(Math.random() * NODE_COUNT)];
+          if (fromNode.id !== toNode.id) {
+            connections.push({
+              from: fromNode,
+              to: toNode,
+              color: NEON_COLORS[Math.floor(Math.random() * NEON_COLORS.length)],
+              strength: 0.1 + Math.random() * 0.5,
+              activeTime: 0,
+              duration: 500,
+              id: i
+            });
+          }
+        }
+
+        for (let i = 0; i < ORB_COUNT; i++) {
+          const conn = connections[Math.floor(Math.random() * connections.length)];
+          orbs.push({
+            connection: conn,
+            progress: Math.random(),
+            size: 1 + Math.random() * 3,
+            color: NEON_COLORS[Math.floor(Math.random() * NEON_COLORS.length)],
+            speed: ORB_SPEED * (0.5 + Math.random())
+          });
+        }
+        return true;
+      }
+
+      function updatePhysics(deltaTime) {
+        const timeFactor = deltaTime / 1000.0;
+        const gravityStrength = 0.005;
+
+        nodes.forEach(node => {
+          if (Math.random() < 0.0005) {
+            node.targetX = Math.random() * 2 - 1;
+            node.targetY = Math.random() * 2 - 1;
+          }
+          
+          const dx = node.targetX - node.x;
+          const dy = node.targetY - node.y;
+          node.vx += dx * 0.01 * timeFactor;
+          node.vy += dy * 0.01 * timeFactor;
+
+          nodes.forEach(other => {
+            if (node.id !== other.id && node.clusterId === other.clusterId) {
+              const distSq = (node.x - other.x)**2 + (node.y - other.y)**2;
+              if (distSq < 0.1) {
+                node.vx -= (other.x - node.x) * 0.005 * timeFactor;
+                node.vy -= (other.y - node.y) * 0.005 * timeFactor;
+              } else {
+                node.vx += (other.x - node.x) * gravityStrength * timeFactor;
+                node.vy += (other.y - node.y) * gravityStrength * timeFactor;
+              }
+            }
+          });
+
+          node.vx *= 0.99;
+          node.vy *= 0.99;
+          node.x += node.vx * timeFactor * 0.5;
+          node.y += node.vy * timeFactor * 0.5;
+
+          node.x = Math.max(-1.0, Math.min(1.0, node.x));
+          node.y = Math.max(-1.0, Math.min(1.0, node.y));
+          node.pulse *= 0.9;
+        });
+
+        orbs.forEach(orb => {
+          orb.progress += orb.speed * timeFactor;
+          if (orb.progress >= 1.0) {
+            orb.progress = 0.0;
+            orb.connection.activeTime = 1;
+            orb.connection.to.pulse = 1.0;
+          }
+        });
+
+        connections.forEach(conn => {
+          conn.strength = Math.max(0.1, conn.strength * 0.99);
+          conn.activeTime = Math.max(0, conn.activeTime - timeFactor * 0.005);
+        });
+
+        if (Math.random() < 0.005) {
+          const node = nodes[Math.floor(Math.random() * NODE_COUNT)];
+          node.pulse = 1.0;
+          connections
+            .filter(c => c.from.id === node.id || c.to.id === node.id)
+            .forEach(c => c.activeTime = 1);
+        }
+      }
+
+      function fillBuffer() {
+        const vertexData = [];
+        const Z_NODE = 0.0;
+        const Z_ORB = 0.5;
+        const Z_LINE = -0.5;
+
+        connections.forEach(conn => {
+          const color = conn.color;
+          const pulseBoost = conn.activeTime * 0.5;
+          const alpha = conn.strength + pulseBoost;
+
+          vertexData.push(conn.from.x, conn.from.y, Z_LINE, 1.0);
+          vertexData.push(color[0], color[1], color[2], alpha);
+          vertexData.push(conn.strength * 20.0);
+
+          vertexData.push(conn.to.x, conn.to.y, Z_LINE, 1.0);
+          vertexData.push(color[0], color[1], color[2], alpha);
+          vertexData.push(conn.strength * 20.0);
+        });
+
+        const lineCount = vertexData.length / 9;
+
+        nodes.forEach(node => {
+          const pulseSize = node.pulse * 20;
+          const pulseAlpha = node.pulse * 0.3;
+
+          vertexData.push(node.x, node.y, Z_NODE, 1.0);
+          vertexData.push(
+            node.color[0], node.color[1], node.color[2],
+            node.color[3] + pulseAlpha
+          );
+          vertexData.push(node.size + pulseSize);
+        });
+
+        const nodeCount = vertexData.length / 9 - lineCount;
+
+        orbs.forEach(orb => {
+          const start = orb.connection.from;
+          const end = orb.connection.to;
+          const progress = orb.progress;
+          const x = start.x + (end.x - start.x) * progress;
+          const y = start.y + (end.y - start.y) * progress;
+
+          vertexData.push(x, y, Z_ORB, 1.0);
+          vertexData.push(orb.color[0], orb.color[1], orb.color[2], 1.0);
+          vertexData.push(orb.size);
+        });
+
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.DYNAMIC_DRAW);
         return {
-            cleanup: () => {
-                window.removeEventListener('resize', resize);
-                canvasElement.removeEventListener('mousemove', handlePointerMove);
-                canvasElement.removeEventListener('touchmove', handlePointerMove);
-                gl.deleteProgram(program);
-                gl.deleteBuffer(buffer);
-            }
+          totalVertices: vertexData.length / 9,
+          lineVertices: lineCount,
+          nodeVertices: nodeCount
         };
+      }
+
+      function draw(time, vertexCounts) {
+        gl.viewport(0, 0, width, height);
+        gl.clearColor(0.03, 0.03, 0.05, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.useProgram(program);
+
+        gl.uniform1f(uniformLocations.time, time / 1000);
+        gl.uniform2f(uniformLocations.resolution, width, height);
+        gl.uniform2f(
+          uniformLocations.parallaxOffset,
+          mouseX * PARALLAX_STRENGTH,
+          mouseY * PARALLAX_STRENGTH
+        );
+
+        const matrix = [
+          1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 1
+        ];
+        gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
+
+        const linesToDraw = vertexCounts.lineVertices;
+        if (linesToDraw > 0) {
+          gl.lineWidth(2.0);
+          gl.drawArrays(gl.LINES, 0, linesToDraw);
+        }
+        
+        const pointsStart = linesToDraw;
+        const pointsToDraw =
+          vertexCounts.nodeVertices +
+          (vertexCounts.totalVertices - (linesToDraw + vertexCounts.nodeVertices));
+        if (pointsToDraw > 0) {
+          gl.drawArrays(gl.POINTS, pointsStart, pointsToDraw);
+        }
+      }
+
+      function resize() {
+        width = canvasElement.clientWidth;
+        height = canvasElement.clientHeight;
+        canvasElement.width = width;
+        canvasElement.height = height;
+        gl.viewport(0, 0, width, height);
+      }
+
+      function handlePointerMove(event) {
+        event.preventDefault();
+        const clientX = event.clientX !== undefined ? event.clientX : event.touches[0].clientX;
+        const clientY = event.clientY !== undefined ? event.clientY : event.touches[0].clientY;
+
+        mouseX = (clientX / width) * 2 - 1;
+        mouseY = (clientY / height) * 2 - 1;
+      }
+
+      function animate(time) {
+        const deltaTime = time - lastTime;
+        lastTime = time;
+
+        if (dataGenerated) {
+          updatePhysics(deltaTime);
+          const vertexCounts = fillBuffer();
+          draw(time, vertexCounts);
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      function init() {
+        setupWebGL();
+        window.addEventListener('resize', resize);
+        canvasElement.addEventListener('mousemove', handlePointerMove);
+        canvasElement.addEventListener('touchmove', handlePointerMove);
+        requestAnimationFrame(animate);
+      }
+
+      init();
+      return {
+        cleanup: () => {
+          window.removeEventListener('resize', resize);
+          canvasElement.removeEventListener('mousemove', handlePointerMove);
+          canvasElement.removeEventListener('touchmove', handlePointerMove);
+          gl.deleteProgram(program);
+          gl.deleteBuffer(buffer);
+        }
+      };
     };
 
-    // ======================================================================
-    // MODULE USAGE EXAMPLE
-    // ======================================================================
-
     window.onload = function() {
-        const canvas = document.getElementById('mesh-canvas');
-        
-        // Check if the user is on a mobile device to automatically enable low-GPU mode
-        const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-        
-        // Initialize the Mesh Explorer with the premium aesthetic
-        window.initMeshExplorer(canvas, {
-            lowGPU: isMobile // Simple performance toggle
-        });
+      const canvas = document.getElementById('mesh-canvas');
+      const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+      window.initMeshExplorer(canvas, {
+        lowGPU: isMobile
+      });
     };
   </script>
 </body>
