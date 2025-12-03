@@ -3,6 +3,7 @@ const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
 document.addEventListener("DOMContentLoaded", () => {
+  setupShellUI();
   setupTabs();
   setupWalletConnectMock();
   setupMeshLoad();
@@ -13,6 +14,66 @@ document.addEventListener("DOMContentLoaded", () => {
   setupStreak();
   setupPullLab();
 });
+
+/* TOP BAR, PROFILE SHEET & SIDE MENU */
+
+function setupShellUI() {
+  const btnOpenProfile = $("#btn-open-profile");
+  const btnCloseProfile = $("#btn-close-profile");
+  const profileSheet = $("#profile-sheet");
+  const profileBubbles = $("#profile-bubbles");
+  const sheetXp = $("#sheet-xp");
+  const sheetStreak = $("#sheet-streak");
+  const sheetWallets = $("#sheet-wallets");
+
+  const btnOpenMenu = $("#btn-open-menu");
+  const btnCloseDrawer = $("#btn-close-drawer");
+  const drawer = $("#side-drawer");
+
+  // open / close helpers
+  const openSheet = () => profileSheet.classList.remove("hidden");
+  const closeSheet = () => profileSheet.classList.add("hidden");
+  const openDrawer = () => drawer.classList.remove("hidden");
+  const closeDrawer = () => drawer.classList.add("hidden");
+
+  if (btnOpenProfile && profileSheet) {
+    btnOpenProfile.addEventListener("click", () => {
+      // sync stats from overview
+      const xpText = $("#metric-xp")?.textContent || "0 XP";
+      const streakText = $("#streak-counter")?.textContent || "0 days";
+      const walletCount = $("#chip-active")?.textContent || "0";
+
+      sheetXp.textContent = xpText.replace(" XP", "");
+      sheetStreak.textContent = streakText;
+      sheetWallets.textContent = walletCount;
+
+      // clone bubble pills into profile
+      const src = $("#bubble-row");
+      if (src && profileBubbles) {
+        profileBubbles.innerHTML = src.innerHTML;
+      }
+
+      openSheet();
+    });
+  }
+
+  if (btnCloseProfile && profileSheet) {
+    btnCloseProfile.addEventListener("click", closeSheet);
+    profileSheet.addEventListener("click", (e) => {
+      if (e.target === profileSheet) closeSheet();
+    });
+  }
+
+  if (btnOpenMenu && drawer) {
+    btnOpenMenu.addEventListener("click", openDrawer);
+  }
+  if (btnCloseDrawer && drawer) {
+    btnCloseDrawer.addEventListener("click", closeDrawer);
+    drawer.addEventListener("click", (e) => {
+      if (e.target === drawer) closeDrawer();
+    });
+  }
+}
 
 /* TABS */
 
@@ -42,6 +103,8 @@ function setupWalletConnectMock() {
   const label = $("#connect-label");
   const walletChip = $("#chip-active");
 
+  if (!btn || !label || !walletChip) return;
+
   let connected = false;
 
   btn.addEventListener("click", () => {
@@ -63,6 +126,8 @@ function setupMeshLoad() {
   const text = $("#activity-text");
   const gasChip = $("#chip-gas");
   const btn = $("#btn-refresh-activity");
+
+  if (!fill || !text || !gasChip || !btn) return;
 
   function pulse() {
     const load = Math.floor(Math.random() * 101); // 0–100
@@ -89,6 +154,8 @@ function setupMeshLoad() {
 
 function setupBubbles() {
   const row = $("#bubble-row");
+  if (!row) return;
+
   const sample = [
     { addr: "0xA9c...91f3", status: "Hot pulls" },
     { addr: "rainbow.vibe", status: "Swap spree" },
@@ -113,25 +180,27 @@ function setupBubbles() {
 
 function setupEvents() {
   const list = $("#overview-events");
+  if (!list) return;
+
   const events = [
     {
-      type: "pack_open",
+      type: "PACK_OPEN",
       label: "0xA93…e1c2 → Neon Fragments (Rare)",
       ago: "10s ago",
     },
     {
-      type: "burn",
-      label: "0x4B1…aa32 → Void Keys (Common)",
+      type: "BURN_COMMON",
+      label: "0x4B1…aa32 → 3 commons → entropy fed",
       ago: "25s ago",
     },
     {
-      type: "swap",
-      label: "0xD29…b81d → Shard Forge (Legendary)",
+      type: "TOKEN_BUY",
+      label: "0xD29…b81d → 420 SPAWN",
       ago: "1m ago",
     },
     {
-      type: "zora_buy",
-      label: "0x91F…ccd0 → Base Relics (Epic)",
+      type: "QUEST_COMPLETE",
+      label: "0x91F…ccd0 → Daily mesh quest",
       ago: "2m ago",
     },
   ];
@@ -231,6 +300,21 @@ function setupStreak() {
   const btnClaim = $("#btn-claim-streak");
   const btnSkip = $("#btn-skip-streak");
 
+  if (
+    !counter ||
+    !fill ||
+    !copy ||
+    !modal ||
+    !modalFill ||
+    !modalText ||
+    !btnOpen ||
+    !btnClose ||
+    !btnClaim ||
+    !btnSkip
+  ) {
+    return;
+  }
+
   function updateUI() {
     counter.textContent = `${streakDays} day${streakDays === 1 ? "" : "s"}`;
     const pct = Math.min((streakDays / 7) * 100, 100);
@@ -269,7 +353,7 @@ function setupPullLab() {
   const fill = $("#lab-fill");
   const text = $("#lab-text");
   const btn = $("#btn-roll-luck");
-  if (!fill || !btn) return;
+  if (!fill || !btn || !text) return;
 
   btn.addEventListener("click", () => {
     const val = 20 + Math.random() * 60;
