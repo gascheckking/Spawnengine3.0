@@ -1,741 +1,268 @@
-// SpawnEngine v0.3 — Mesh HUD + Docking API + Venice wallet flow (tuned background)
-
-// -------------------------------------------------------------
-// BASIC STATE
-// -------------------------------------------------------------
-
+// Simple mock state
 const state = {
-  walletConnected: false,
-  walletAddress: null,
+  connected: false,
   xp: 1575,
   spawn: 497,
   streakDays: 1,
-  signals: [],
-  entropyHigh: false,
+  walletCount: 1,
 };
 
-// Example quests (no "demo" text)
-const QUESTS = [
-  {
-    id: "q1",
-    title: "Cast once on Farcaster",
-    reward: "+25 XP",
-    status: "Ready",
-  },
-  {
-    id: "q2",
-    title: "Buy any creator coin on Base",
-    reward: "+40 XP",
-    status: "Bonus",
-  },
-  {
-    id: "q3",
-    title: "Open a pack in a docked app",
-    reward: "+60 XP",
-    status: "Weekly",
-  },
-];
+// === DOM HELPERS ===
+function $(sel) {
+  return document.querySelector(sel);
+}
+function $all(sel) {
+  return Array.from(document.querySelectorAll(sel));
+}
 
-// -------------------------------------------------------------
-// SIMPLE MESH DOCKING API (v0.1 SPEC)
-// -------------------------------------------------------------
-
-const MeshDock = (() => {
-  const apps = [];
-
-  function registerApp(app) {
-    if (!app || !app.id) return;
-    if (apps.find((a) => a.id === app.id)) return;
-    apps.push(app);
-    console.log("[MeshDock] Registered app:", app.id);
-  }
-
-  function emitSignal(signal) {
-    if (!signal) return;
-    console.log("[MeshDock] Signal:", signal);
-    state.signals.unshift(signal);
-    if (state.signals.length > 6) state.signals.pop();
-    renderSignals();
-  }
-
-  function listApps() {
-    return [...apps];
-  }
-
-  return { registerApp, emitSignal, listApps };
-})();
-
-// Register some core mesh apps (mock)
-MeshDock.registerApp({
-  id: "zora",
-  name: "Zora",
-  kind: "market",
-  url: "https://zora.co",
-  icon: "Z",
-  streams: ["TOKEN_BUY", "TOKEN_SELL", "PACK_OPEN"],
-  actions: [{ id: "open", label: "Open on Zora", type: "deeplink" }],
-});
-
-MeshDock.registerApp({
-  id: "vibe",
-  name: "VibeMarket",
-  kind: "packs",
-  url: "https://vibechain.com",
-  icon: "V",
-  streams: ["PACK_OPEN", "BURN_COMMON", "BURN_RARE"],
-  actions: [{ id: "open-pack", label: "Open pack", type: "deeplink" }],
-});
-
-MeshDock.registerApp({
-  id: "tba",
-  name: "The Base App",
-  kind: "activity",
-  url: "https://base.org",
-  icon: "B",
-  streams: ["XP_GAIN", "STREAK_TICK"],
-  actions: [{ id: "open-feed", label: "Open activity", type: "deeplink" }],
-});
-
-// -------------------------------------------------------------
-// DOM & UI BINDING
-// -------------------------------------------------------------
-
-document.addEventListener("DOMContentLoaded", () => {
-  bindNav();
-  bindMenu();
-  bindStreak();
-  bindLoot();
-  bindMesh();
-  renderQuests();
-  renderDockedApps();
-  renderSignals();
-
-  // Init wallet flow canvas mesh
-  const canvas = document.getElementById("wallet-flow-canvas");
-  if (canvas) {
-    const demoFlows = buildDemoFlows();
-    initWalletFlow(canvas, demoFlows, {
-      lowPower: true,
-      pixelRatio: window.devicePixelRatio || 1,
-    });
-  }
-});
-
-// Bottom nav tabs + connect
-function bindNav() {
-  const navItems = document.querySelectorAll(".nav-item");
+// === TABS ===
+function initTabs() {
+  const buttons = $all(".tab-button");
   const views = {
-    home: document.getElementById("view-home"),
-    loot: document.getElementById("view-loot"),
-    quests: document.getElementById("view-quests"),
-    mesh: document.getElementById("view-mesh"),
+    home: $("#view-home"),
+    loot: $("#view-loot"),
+    quests: $("#view-quests"),
+    mesh: $("#view-mesh"),
   };
 
-  function activateTab(tab) {
-    navItems.forEach((b) => {
-      const t = b.getAttribute("data-tab");
-      b.classList.toggle("active", t === tab);
-    });
-    Object.keys(views).forEach((k) => {
-      views[k].classList.toggle("active", k === tab);
-    });
-  }
-
-  navItems.forEach((btn) => {
+  buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      const tab = btn.getAttribute("data-tab");
-      activateTab(tab);
-    });
-  });
-
-  const btnConnect = document.getElementById("btn-connect");
-  if (btnConnect) {
-    btnConnect.addEventListener("click", () => {
-      if (!state.walletConnected) {
-        state.walletConnected = true;
-        state.walletAddress = "0xSpawn...mesh";
-      } else {
-        state.walletConnected = false;
-        state.walletAddress = null;
-      }
-      updateWalletUI();
-    });
-  }
-
-  // default tab
-  activateTab("home");
-}
-
-function updateWalletUI() {
-  const btnConnect = document.getElementById("btn-connect");
-  if (!btnConnect) return;
-  if (state.walletConnected) {
-    btnConnect.classList.add("connected", "wallet-icon-mode");
-    btnConnect.textContent = "";
-    btnConnect.setAttribute(
-      "aria-label",
-      `Wallet connected: ${state.walletAddress}`
-    );
-  } else {
-    btnConnect.classList.remove("connected", "wallet-icon-mode");
-    btnConnect.textContent = "Connect wallet";
-    btnConnect.setAttribute("aria-label", "Connect wallet");
-  }
-}
-
-// Side menu (incl. swap + logout)
-function bindMenu() {
-  const btnMenu = document.getElementById("btn-menu");
-  const btnClose = document.getElementById("btn-menu-close");
-  const backdrop = document.getElementById("side-menu-backdrop");
-  const menu = document.getElementById("side-menu");
-  const btnSwap = document.getElementById("btn-swap-wallet");
-  const btnLogout = document.getElementById("btn-logout");
-
-  const open = () => {
-    menu.classList.add("open");
-    backdrop.classList.add("open");
-  };
-  const close = () => {
-    menu.classList.remove("open");
-    backdrop.classList.remove("open");
-  };
-
-  if (btnMenu) btnMenu.addEventListener("click", open);
-  if (btnClose) btnClose.addEventListener("click", close);
-  if (backdrop) backdrop.addEventListener("click", close);
-
-  if (btnSwap) {
-    btnSwap.addEventListener("click", () => {
-      state.walletConnected = !state.walletConnected;
-      state.walletAddress = state.walletConnected ? "0xSpawn...mesh" : null;
-      updateWalletUI();
-      close();
-    });
-  }
-
-  if (btnLogout) {
-    btnLogout.addEventListener("click", () => {
-      state.walletConnected = false;
-      state.walletAddress = null;
-      updateWalletUI();
-      close();
-    });
-  }
-}
-
-// Streak + XP logic
-function bindStreak() {
-  const btnCheckin = document.getElementById("btn-checkin");
-  if (!btnCheckin) return;
-  btnCheckin.addEventListener("click", () => {
-    state.streakDays += 1;
-    state.xp += 25;
-    emitStreakSignal();
-    updateStreakUI();
-  });
-  updateStreakUI();
-}
-
-function updateStreakUI() {
-  const daysEl = document.getElementById("streak-days");
-  const textEl = document.getElementById("streak-text");
-  const xpEl = document.getElementById("xp-balance");
-  const streakRing = document.getElementById("streak-ring");
-
-  if (daysEl) daysEl.textContent = state.streakDays.toString();
-  if (textEl) {
-    const remaining = Math.max(0, 7 - state.streakDays);
-    if (remaining > 0) {
-      textEl.textContent = `Keep the streak for ${remaining} more day${
-        remaining === 1 ? "" : "s"
-      } for a full weekly run.`;
-    } else {
-      textEl.textContent = "Weekly run complete — orbit is fully charged.";
-    }
-  }
-  if (xpEl) xpEl.textContent = `${state.xp} XP`;
-
-  const progress = Math.min(1, state.streakDays / 30);
-  const deg = Math.floor(progress * 360);
-  if (streakRing) {
-    streakRing.style.background =
-      `radial-gradient(circle at center, #05050d 48%, transparent 49%),` +
-      `conic-gradient(#00ffff 0deg, #ff7bff ${deg}deg, rgba(40,40,70,0.8) ${deg}deg)`;
-  }
-}
-
-// Loot / Pull Lab actions
-function bindLoot() {
-  const segButtons = document.querySelectorAll(".seg-btn");
-  const segViews = {
-    packs: document.getElementById("seg-packs"),
-    "pull-lab": document.getElementById("seg-pull-lab"),
-  };
-
-  segButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const seg = btn.getAttribute("data-seg");
-      segButtons.forEach((b) => b.classList.remove("active"));
+      const view = btn.dataset.view;
+      buttons.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
-      Object.keys(segViews).forEach((k) => {
-        segViews[k].classList.toggle("active", k === seg);
-      });
+      Object.values(views).forEach((v) => v.classList.remove("active"));
+      views[view].classList.add("active");
     });
   });
-
-  const btnOpenPack = document.getElementById("btn-open-pack");
-  if (btnOpenPack) {
-    btnOpenPack.addEventListener("click", () => {
-      state.xp += 40;
-      state.spawn += 3;
-      emitPackSignal();
-      updateStreakUI();
-      const spawnEl = document.getElementById("spawn-balance");
-      if (spawnEl) spawnEl.textContent = `${state.spawn} SPN`;
-      flashEntropy();
-    });
-  }
-
-  const btnEntropy = document.getElementById("btn-entropy-ping");
-  if (btnEntropy) {
-    btnEntropy.addEventListener("click", () => {
-      state.entropyHigh = !state.entropyHigh;
-      updateEntropyUI();
-    });
-  }
 }
 
-function updateEntropyUI() {
-  const pill = document.getElementById("entropy-pill");
-  if (!pill) return;
-  if (state.entropyHigh) {
-    pill.textContent = "High entropy window";
-    pill.style.borderColor = "#ffb86c";
+// === SIDE DRAWER ===
+function initDrawer() {
+  const drawer = $("#side-drawer");
+  $("#btn-open-drawer").addEventListener("click", () => {
+    drawer.classList.add("open");
+  });
+  $("#btn-close-drawer").addEventListener("click", () => {
+    drawer.classList.remove("open");
+  });
+
+  $("#btn-logout").addEventListener("click", () => {
+    state.connected = false;
+    updateWalletUi();
+    alert("Wallet disconnected (demo).");
+    drawer.classList.remove("open");
+  });
+
+  $("#btn-swap-wallet").addEventListener("click", () => {
+    alert("Swap wallet — in real mesh, this opens your wallet selector.");
+  });
+
+  $("#btn-settings").addEventListener("click", () => {
+    drawer.classList.add("open");
+  });
+}
+
+// === WALLET MOCK ===
+function updateWalletUi() {
+  const btn = $("#btn-connect");
+  const wallets = $("#status-wallets");
+  if (state.connected) {
+    btn.textContent = "Wallet connected";
+    btn.classList.add("connected");
+    wallets.textContent = state.walletCount.toString();
   } else {
-    pill.textContent = "Stable";
-    pill.style.borderColor = "rgba(0,255,255,0.4)";
+    btn.textContent = "Connect wallet";
+    btn.classList.remove("connected");
+    wallets.textContent = "0";
   }
 }
 
-function flashEntropy() {
-  state.entropyHigh = true;
-  updateEntropyUI();
-  setTimeout(() => {
-    state.entropyHigh = false;
-    updateEntropyUI();
-  }, 2500);
-}
-
-// Mesh tab
-function bindMesh() {
-  const btnMeshFull = document.getElementById("btn-mesh-full");
-  if (btnMeshFull) {
-    btnMeshFull.addEventListener("click", () => {
-      window.location.href = "./mesh.html";
-    });
-  }
-}
-
-function renderQuests() {
-  const list = document.getElementById("quest-list");
-  if (!list) return;
-  list.innerHTML = "";
-  QUESTS.forEach((q) => {
-    const li = document.createElement("li");
-    li.className = "quest-item";
-    li.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-size:13px;font-weight:500;">${q.title}</div>
-          <div style="font-size:13px;color:#7fffd4;font-weight:600;">${q.reward}</div>
-        </div>
-        <span class="pill-soft">${q.status}</span>
-      </div>
-    `;
-    list.appendChild(li);
+function initWallet() {
+  $("#btn-connect").addEventListener("click", () => {
+    if (!state.connected) {
+      // mock connect
+      state.connected = true;
+      state.walletCount = 1;
+      updateWalletUi();
+      pushActivityHome({
+        app: "SpawnEngine",
+        title: "Wallet connected",
+        subtitle: "Mesh orbit initialized for @spawniz.",
+        ago: "Just now",
+      });
+    } else {
+      alert("Already connected (demo).");
+    }
   });
 }
 
-function renderDockedApps() {
-  const list = document.getElementById("dock-list");
-  const count = document.getElementById("docked-count");
-  if (!list || !count) return;
-  const apps = MeshDock.listApps();
-  list.innerHTML = "";
-  apps.forEach((app) => {
-    const li = document.createElement("li");
-    li.className = "dock-item";
-    li.innerHTML = `
-      <div style="display:flex;align-items:center;gap:8px;font-size:12px;">
-        <div style="width:22px;height:22px;border-radius:999px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">
-          ${app.icon || "?"}
-        </div>
-        <div>
-          <div style="font-weight:500;">${app.name}</div>
-          <div style="font-size:11px;color:#9aa0ff;">Streams: ${app.streams.join(
-            ", "
-          )}</div>
-        </div>
-      </div>
-    `;
-    list.appendChild(li);
-  });
-  count.textContent = `${apps.length} apps`;
+// === XP / STREAK ===
+function refreshStats() {
+  $("#xp-balance").textContent = `${state.xp} XP`;
+  $("#spawn-balance").textContent = `${state.spawn} SPN`;
+  $("#streak-days").textContent = state.streakDays.toString();
+  const remaining = Math.max(0, 7 - state.streakDays);
+  $("#streak-copy").textContent =
+    remaining > 0
+      ? `Keep the streak for ${remaining} more day${
+          remaining === 1 ? "" : "s"
+        } for a full weekly run.`
+      : "Weekly run complete — entropy loves your consistency.";
 }
 
-function renderSignals() {
-  const list = document.getElementById("signal-list");
-  const pill = document.getElementById("signals-pill");
-  if (!list || !pill) return;
-  list.innerHTML = "";
-  state.signals.forEach((sig) => {
-    const li = document.createElement("li");
-    li.className = "signal-item";
-    const ts = new Date(sig.timestamp).toLocaleTimeString();
-    li.textContent = `[${ts}] ${sig.sourceApp} · ${sig.kind}`;
-    list.appendChild(li);
+function initCheckin() {
+  $("#btn-checkin").addEventListener("click", () => {
+    state.streakDays += 1;
+    const gained = 15;
+    state.xp += gained;
+    refreshStats();
+    pushActivityHome({
+      app: "Daily",
+      title: "Streak check-in",
+      subtitle: `You gained +${gained} XP and extended your streak.`,
+      ago: "Just now",
+    });
   });
-  pill.textContent = `${state.signals.length} events`;
-}
 
-function emitStreakSignal() {
-  MeshDock.emitSignal({
-    sourceApp: "spawnengine",
-    kind: "STREAK_TICK",
-    wallet: state.walletAddress || "0xspawn-mock",
-    payload: { streakDays: state.streakDays },
-    timestamp: Date.now(),
-  });
-}
-
-function emitPackSignal() {
-  MeshDock.emitSignal({
-    sourceApp: "vibe",
-    kind: "PACK_OPEN",
-    wallet: state.walletAddress || "0xspawn-mock",
-    payload: { collection: "Foil Realms", rarity: "RARE" },
-    timestamp: Date.now(),
-  });
-}
-
-// -------------------------------------------------------------
-// VENICE WALLET FLOW CANVAS (tweaked: mindre noder, mjukare glow)
-// -------------------------------------------------------------
-
-function initWalletFlow(canvas, flows, options = {}) {
-  const ctx = canvas.getContext("2d");
-  const pixelRatio = options.pixelRatio || window.devicePixelRatio || 1;
-  const lowPower = options.lowPower || false;
-
-  let width = 0;
-  let height = 0;
-  let nodes = new Map();
-  let particles = [];
-  let time = 0;
-  let lastFrameTime = 0;
-  const targetFPS = lowPower ? 24 : 60;
-  const frameInterval = 1000 / targetFPS;
-
-  const colors = {
-    coin: { r: 0, g: 255, b: 255 },
-    pack: { r: 200, g: 100, b: 255 },
-    burn: { r: 255, g: 120, b: 60 },
-    xp: { r: 100, g: 255, b: 200 },
-    node: { r: 255, g: 255, b: 255 },
-  };
-
-  class Node {
-    constructor(id, isCore = false) {
-      this.id = id;
-      this.x = 0;
-      this.y = 0;
-      this.vx = 0;
-      this.vy = 0;
-      this.isCore = isCore;
-      this.radius = isCore ? 6 : 4;
-      this.pulsePhase = Math.random() * Math.PI * 2;
-      this.connections = 0;
-    }
-
-    update(centerX, centerY, bounds) {
-      if (this.isCore) {
-        const dx = centerX - this.x;
-        const dy = centerY - this.y;
-        this.vx += dx * 0.02;
-        this.vy += dy * 0.02;
-      }
-
-      this.x += this.vx;
-      this.y += this.vy;
-      this.vx *= 0.85;
-      this.vy *= 0.85;
-
-      const margin = this.radius + 10;
-      if (this.x < margin) {
-        this.x = margin;
-        this.vx *= -0.5;
-      }
-      if (this.x > bounds.width - margin) {
-        this.x = bounds.width - margin;
-        this.vx *= -0.5;
-      }
-      if (this.y < margin) {
-        this.y = margin;
-        this.vy *= -0.5;
-      }
-      if (this.y > bounds.height - margin) {
-        this.y = bounds.height - margin;
-        this.vy *= -0.5;
-      }
-    }
-
-    draw(ctx, t) {
-      const pulse = Math.sin(t * 0.002 + this.pulsePhase) * 0.18 + 1;
-      const r = this.radius * pulse;
-      const glow = this.connections > 4 ? 14 : 9;
-
-      const gradient = ctx.createRadialGradient(
-        this.x,
-        this.y,
-        0,
-        this.x,
-        this.y,
-        r + glow
-      );
-      gradient.addColorStop(
-        0,
-        `rgba(${colors.node.r},${colors.node.g},${colors.node.b},0.85)`
-      );
-      gradient.addColorStop(
-        0.5,
-        `rgba(${colors.node.r},${colors.node.g},${colors.node.b},0.22)`
-      );
-      gradient.addColorStop(
-        1,
-        `rgba(${colors.node.r},${colors.node.g},${colors.node.b},0)`
-      );
-
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, r + glow, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = `rgba(${colors.node.r},${colors.node.g},${colors.node.b},0.95)`;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  class Particle {
-    constructor(fromNode, toNode, kind) {
-      this.fromNode = fromNode;
-      this.toNode = toNode;
-      this.kind = kind;
-      this.progress = Math.random();
-      this.speed =
-        (Math.random() * 0.005 + 0.004) * (lowPower ? 0.5 : 1.0);
-      this.size = Math.random() * 1.7 + 0.8;
-      this.offsetAngle = Math.random() * Math.PI * 2;
-      this.offsetRadius = Math.random() * 5;
-    }
-
-    update() {
-      this.progress += this.speed;
-      if (this.progress > 1) this.progress = 0;
-    }
-
-    draw(ctx) {
-      const dx = this.toNode.x - this.fromNode.x;
-      const dy = this.toNode.y - this.fromNode.y;
-      const x =
-        this.fromNode.x +
-        dx * this.progress +
-        Math.cos(this.offsetAngle) * this.offsetRadius;
-      const y =
-        this.fromNode.y +
-        dy * this.progress +
-        Math.sin(this.offsetAngle) * this.offsetRadius;
-
-      const c = colors[this.kind] || colors.coin;
-      const gradient = ctx.createRadialGradient(
-        x,
-        y,
-        0,
-        x,
-        y,
-        this.size * 3
-      );
-      gradient.addColorStop(0, `rgba(${c.r},${c.g},${c.b},0.9)`);
-      gradient.addColorStop(1, `rgba(${c.r},${c.g},${c.b},0)`);
-
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(x, y, this.size * 3, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  function resize() {
-    const rect = canvas.getBoundingClientRect();
-    width = rect.width;
-    height = rect.height;
-    canvas.width = width * pixelRatio;
-    canvas.height = height * pixelRatio;
-    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-  }
-
-  function processData(flows) {
-    nodes.clear();
-    particles = [];
-
-    const walletVolumes = {};
-    flows.forEach((f) => {
-      walletVolumes[f.from] = (walletVolumes[f.from] || 0) + f.volume;
-      walletVolumes[f.to] = (walletVolumes[f.to] || 0) + f.volume;
-    });
-
-    const sortedWallets = Object.entries(walletVolumes).sort(
-      ([, a], [, b]) => b - a
-    );
-    const coreWalletIds = new Set(
-      sortedWallets
-        .slice(0, Math.max(1, Math.floor(sortedWallets.length * 0.2)))
-        .map(([id]) => id)
-    );
-
-    sortedWallets.forEach(([id]) => {
-      nodes.set(id, new Node(id, coreWalletIds.has(id)));
-    });
-
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const angleStep = (Math.PI * 2) / nodes.size;
-    let i = 0;
-    nodes.forEach((node) => {
-      if (node.isCore) {
-        node.x = centerX + (Math.random() - 0.5) * 110;
-        node.y = centerY + (Math.random() - 0.5) * 110;
-      } else {
-        const angle = i * angleStep;
-        const radius = Math.min(width, height) * 0.26;
-        node.x = centerX + Math.cos(angle) * radius;
-        node.y = centerY + Math.sin(angle) * radius;
-        i++;
-      }
-    });
-
-    flows.forEach((f) => {
-      const fromNode = nodes.get(f.from);
-      const toNode = nodes.get(f.to);
-      if (fromNode && toNode) {
-        fromNode.connections++;
-        toNode.connections++;
-        if (!lowPower || Math.random() > 0.45) {
-          particles.push(new Particle(fromNode, toNode, f.kind));
-        }
-      }
-    });
-  }
-
-  function drawFrame(ts) {
-    const delta = ts - lastFrameTime;
-    if (delta < frameInterval) {
-      requestAnimationFrame(drawFrame);
-      return;
-    }
-    lastFrameTime = ts;
-    time += delta;
-
-    ctx.clearRect(0, 0, width, height);
-
-    const bgGrad = ctx.createRadialGradient(
-      width * 0.5,
-      height * 0.05,
-      0,
-      width * 0.5,
-      height * 0.8,
-      Math.max(width, height)
-    );
-    bgGrad.addColorStop(0, "rgba(43,29,121,0.24)");
-    bgGrad.addColorStop(1, "rgba(0,0,0,0.96)");
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, width, height);
-
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const bounds = { width, height };
-
-    nodes.forEach((node) => {
-      node.update(centerX, centerY, bounds);
-    });
-
-    ctx.save();
-    ctx.globalCompositeOperation = "lighter";
-    nodes.forEach((fromNode) => {
-      nodes.forEach((toNode) => {
-        if (fromNode === toNode) return;
-        const dist = Math.hypot(
-          toNode.x - fromNode.x,
-          toNode.y - fromNode.y
-        );
-        const maxDist = Math.min(width, height) * 0.45;
-        if (dist < maxDist) {
-          const alpha = 0.035 * (1 - dist / maxDist);
-          ctx.strokeStyle = `rgba(100,180,255,${alpha})`;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(fromNode.x, fromNode.y);
-          ctx.lineTo(toNode.x, toNode.y);
-          ctx.stroke();
-        }
+  // Quest button that uses XP
+  $all(".quest-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const xp = parseInt(btn.dataset.xp || "0", 10);
+      state.xp += xp;
+      refreshStats();
+      pushActivityHome({
+        app: "Quest",
+        title: "Quest complete",
+        subtitle: `You completed a ritual quest and earned +${xp} XP.`,
+        ago: "Just now",
       });
     });
-    ctx.restore();
-
-    particles.forEach((p) => {
-      p.update();
-      p.draw(ctx);
-    });
-
-    nodes.forEach((node) => node.draw(ctx, time));
-
-    requestAnimationFrame(drawFrame);
-  }
-
-  resize();
-  processData(flows);
-  window.addEventListener("resize", resize);
-  requestAnimationFrame(drawFrame);
+  });
 }
 
-// Demo flows
-function buildDemoFlows() {
-  const wallets = [
-    "spawniz",
-    "vibemarket",
-    "zora",
-    "base-app",
-    "collector-1",
-    "collector-2",
-    "creator-x",
-    "creator-y",
-  ];
-  const kinds = ["coin", "pack", "burn", "xp"];
-  const flows = [];
-  for (let i = 0; i < 32; i++) {
-    const from = wallets[Math.floor(Math.random() * wallets.length)];
-    let to = wallets[Math.floor(Math.random() * wallets.length)];
-    if (to === from) {
-      to = wallets[(wallets.indexOf(from) + 1) % wallets.length];
+// === LOOT / PACKS ===
+function initLoot() {
+  const segPacks = $("#seg-packs");
+  const segPull = $("#seg-pull");
+  const viewPacks = $("#loot-packs");
+  const viewPull = $("#loot-pull");
+
+  function setSeg(target) {
+    [segPacks, segPull].forEach((b) => b.classList.remove("active"));
+    [viewPacks, viewPull].forEach((v) => v.classList.remove("active"));
+    if (target === "packs") {
+      segPacks.classList.add("active");
+      viewPacks.classList.add("active");
+    } else {
+      segPull.classList.add("active");
+      viewPull.classList.add("active");
     }
-    flows.push({
-      from,
-      to,
-      volume: Math.floor(Math.random() * 10) + 1,
-      kind: kinds[Math.floor(Math.random() * kinds.length)],
-    });
   }
-  return flows;
+
+  segPacks.addEventListener("click", () => setSeg("packs"));
+  segPull.addEventListener("click", () => setSeg("pull"));
+
+  $("#btn-open-pack").addEventListener("click", () => {
+    // mock pack open
+    const rarities = ["COMMON", "RARE", "EPIC", "LEGENDARY"];
+    const r = rarities[Math.floor(Math.random() * rarities.length)];
+    const xpGain = r === "COMMON" ? 10 : r === "RARE" ? 25 : r === "EPIC" ? 55 : 120;
+    state.xp += xpGain;
+    refreshStats();
+
+    pushLootLog({
+      title: `Pack opened · ${r}`,
+      subtitle: `You pulled a ${r.toLowerCase()} fragment · +${xpGain} XP.`,
+      ago: "Just now",
+    });
+
+    pushActivityMesh({
+      app: "Loot",
+      title: `${r} fragment pulled`,
+      subtitle: `New shard added to your mesh inventory.`,
+      ago: "Just now",
+    });
+  });
 }
+
+// === ACTIVITY FEEDS ===
+
+const homeList = $("#activity-list-home");
+const meshList = $("#activity-list-mesh");
+const lootLog = $("#loot-log");
+
+function createActivityElement({ app, title, subtitle, ago }) {
+  const li = document.createElement("li");
+  li.className = "activity-item";
+  li.innerHTML = `
+    <div class="activity-icon"></div>
+    <div class="activity-content">
+      <div class="activity-title">${title}</div>
+      <div class="activity-sub">${subtitle}</div>
+      <div class="activity-meta">${app} · ${ago}</div>
+    </div>
+  `;
+  return li;
+}
+
+function pushActivityHome(item) {
+  if (!homeList) return;
+  const li = createActivityElement(item);
+  homeList.prepend(li);
+}
+
+function pushActivityMesh(item) {
+  if (!meshList) return;
+  const li = createActivityElement(item);
+  meshList.prepend(li);
+}
+
+function pushLootLog(item) {
+  if (!lootLog) return;
+  const li = createActivityElement(item);
+  lootLog.prepend(li);
+}
+
+// seed some mock events
+function seedActivity() {
+  pushActivityHome({
+    app: "WarpLet",
+    title: "WarpLet Universe Expansion",
+    subtitle: "New boxes bring neon monsters into your mesh.",
+    ago: "9m",
+  });
+
+  pushActivityHome({
+    app: "BETR",
+    title: "FREE Spin-to-Claim is live",
+    subtitle: "Spin the flywheel and compound your $BETR rewards.",
+    ago: "20m",
+  });
+
+  pushActivityMesh({
+    app: "Mesh",
+    title: "Alpha cluster detected",
+    subtitle: "3 wallets opened packs in the last 2 minutes.",
+    ago: "2m",
+  });
+
+  pushActivityMesh({
+    app: "SpawnEngine",
+    title: "Mesh layer booted",
+    subtitle: "Demo mesh v0.3 is running on local mock.",
+    ago: "Just now",
+  });
+}
+
+// === INIT ===
+
+window.addEventListener("DOMContentLoaded", () => {
+  initTabs();
+  initDrawer();
+  initWallet();
+  initCheckin();
+  initLoot();
+  refreshStats();
+  updateWalletUi();
+  seedActivity();
+});
