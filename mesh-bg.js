@@ -1,6 +1,5 @@
-// Full WebGL Mesh Explorer used as animated background.
-// IMPORTANT: we do NOT call it automatically here;
-// app.js anropar window.initMeshExplorer(canvas, {lowGPU: ...})
+// mesh-bg.js
+// WebGL-baserad mesh-bakgrund för SpawnEngine — Mesh HUD
 
 window.initMeshExplorer = function (canvasElement, options = {}) {
   const gl = canvasElement.getContext("webgl", { antialias: true });
@@ -332,7 +331,12 @@ window.initMeshExplorer = function (canvasElement, options = {}) {
       mouseY * PARALLAX_STRENGTH
     );
 
-    const matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+    const matrix = [
+      1, 0, 0, 0, //
+      0, 1, 0, 0, //
+      0, 0, 1, 0, //
+      0, 0, 0, 1,
+    ];
     gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
 
     const linesToDraw = vertexCounts.lineVertices;
@@ -354,17 +358,16 @@ window.initMeshExplorer = function (canvasElement, options = {}) {
     const rect = canvasElement.getBoundingClientRect();
     width = rect.width;
     height = rect.height;
-    canvasElement.width = width;
-    canvasElement.height = height;
-    gl.viewport(0, 0, width, height);
+    canvasElement.width = width * window.devicePixelRatio;
+    canvasElement.height = height * window.devicePixelRatio;
+    gl.viewport(0, 0, canvasElement.width, canvasElement.height);
   }
 
   function handlePointerMove(event) {
     event.preventDefault();
-    const clientX =
-      event.clientX !== undefined ? event.clientX : event.touches[0].clientX;
-    const clientY =
-      event.clientY !== undefined ? event.clientY : event.touches[0].clientY;
+    const e = event.touches ? event.touches[0] : event;
+    const clientX = e.clientX;
+    const clientY = e.clientY;
 
     mouseX = (clientX / width) * 2 - 1;
     mouseY = (clientY / height) * 2 - 1;
@@ -386,8 +389,9 @@ window.initMeshExplorer = function (canvasElement, options = {}) {
   function init() {
     setupWebGL();
     window.addEventListener("resize", resize);
-    canvasElement.addEventListener("mousemove", handlePointerMove);
-    canvasElement.addEventListener("touchmove", handlePointerMove);
+    canvasElement.addEventListener("mousemove", handlePointerMove, { passive: false });
+    canvasElement.addEventListener("touchmove", handlePointerMove, { passive: false });
+    resize();
     requestAnimationFrame(animate);
   }
 
@@ -403,3 +407,13 @@ window.initMeshExplorer = function (canvasElement, options = {}) {
     },
   };
 };
+
+// auto-init när sidan laddar
+window.addEventListener("load", function () {
+  const canvas = document.getElementById("mesh-canvas");
+  if (!canvas) return;
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  window.initMeshExplorer(canvas, {
+    lowGPU: isMobile,
+  });
+});
