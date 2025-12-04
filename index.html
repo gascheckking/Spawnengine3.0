@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SpawnEngine • Mesh HUD</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+  <title>SpawnEngine · Mesh HUD v0.3</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="app-body">
@@ -12,15 +15,16 @@
     <canvas id="mesh-canvas"></canvas>
   </div>
 
-  <!-- Dark overlay to keep HUD readable -->
+  <!-- Dark overlay above mesh so HUD is läsbar -->
   <div class="mesh-overlay"></div>
 
-  <!-- Main app shell -->
+  <!-- MAIN APP SHELL -->
   <div class="app-shell">
-    <div class="hud-card">
-      <!-- Top row: profile + settings -->
+    <!-- Top HUD card -->
+    <div class="hud-card hud-card-header">
+      <!-- Top row: avatar + settings -->
       <div class="hud-top-row">
-        <button id="btn-account" class="avatar-chip">
+        <button id="btn-account" class="avatar-chip" aria-label="Account sheet">
           <div class="avatar-circle">S</div>
           <div class="avatar-meta">
             <div class="avatar-handle">@spawniz</div>
@@ -28,12 +32,16 @@
           </div>
         </button>
 
-        <button id="btn-settings" class="icon-button" aria-label="Settings">
+        <button
+          id="btn-settings"
+          class="icon-button"
+          aria-label="Settings"
+        >
           <span class="icon-gear"></span>
         </button>
       </div>
 
-      <!-- Mesh status + wallet -->
+      <!-- Mesh status + tags -->
       <div class="hud-header-row">
         <div class="hud-tags">
           <span class="pill pill-soft">Base · Mesh ecosystems</span>
@@ -48,12 +56,12 @@
       <div class="hud-title-block">
         <h1 class="hud-title">SpawnEngine · Mesh HUD</h1>
         <p class="hud-subtitle">
-          Modular mesh for creator coins, packs, XP streams &amp; onchain quests.
+          Modular mesh for creator coins, packs, XP streams, quests &amp; support.
         </p>
       </div>
 
-      <!-- Gas + mode -->
-      <div class="hud-grid hud-grid-2">
+      <!-- Stat row -->
+      <div class="hud-grid hud-grid-4">
         <div class="hud-stat">
           <div class="hud-stat-label">GAS</div>
           <div class="hud-stat-value" id="gasEstimate">~0.21 gwei est.</div>
@@ -73,9 +81,9 @@
       </div>
     </div>
 
-    <!-- Tab content -->
+    <!-- TAB CONTENT -->
     <main id="tab-content" class="tab-content">
-      <!-- Home -->
+      <!-- HOME -->
       <section id="tab-home" class="tab-panel tab-panel-active">
         <div class="hud-card">
           <header class="section-header">
@@ -88,10 +96,9 @@
           <div class="hud-grid hud-grid-2">
             <div class="metric-card metric-xp">
               <div class="metric-label">XP BALANCE</div>
-              <div class="metric-value" id="xpBalance">1575 XP</div>
+              <div class="metric-value" id="xpBalance">1650 XP</div>
               <p class="metric-sub">Every onchain action feeds your mesh.</p>
             </div>
-
             <div class="metric-card">
               <div class="metric-label">SPAWN TOKEN</div>
               <div class="metric-value" id="spawnBalance">497 SPN</div>
@@ -103,16 +110,19 @@
             <div class="streak-wheel">
               <div class="streak-circle">
                 <div class="streak-day-label">DAY</div>
-                <div class="streak-day-value" id="streakDays">1</div>
+                <div class="streak-day-value" id="streakDays">4</div>
                 <div class="streak-day-label">STREAK</div>
               </div>
             </div>
             <div class="streak-copy">
               <div class="streak-title">Daily ritual</div>
               <p class="streak-sub">
-                Keep the streak for <span id="streakRemaining">6</span> more days
+                Keep the streak for <span id="streakRemaining">3</span> more days
                 for a full weekly run.
               </p>
+              <div class="streak-bar">
+                <div id="streakBarFill" class="streak-bar-fill"></div>
+              </div>
               <button id="btn-checkin" class="btn-outline">Check-in</button>
             </div>
           </div>
@@ -121,7 +131,7 @@
             <header class="section-header">
               <div>
                 <h2>Today’s signals</h2>
-                <p class="section-sub">Mesh events · Last 10 demo actions</p>
+                <p class="section-sub">Mesh events · last 10 demo actions</p>
               </div>
             </header>
             <ul id="homeActivityList" class="activity-list"></ul>
@@ -129,28 +139,30 @@
         </div>
       </section>
 
-      <!-- Loot -->
+      <!-- LOOT -->
       <section id="tab-loot" class="tab-panel">
         <div class="hud-card">
           <header class="section-header">
             <div>
-              <h2>Loot & packs</h2>
+              <h2>Loot &amp; packs</h2>
               <p class="section-sub">Fragments · Shards · Relics</p>
             </div>
           </header>
 
           <div class="segmented">
-            <button class="segmented-btn segmented-btn-active" data-loot-view="packs">
+            <button
+              class="segmented-btn segmented-btn-active"
+              data-loot-view="packs"
+            >
               Packs
             </button>
-            <button class="segmented-btn" data-loot-view="lab">
-              Pull Lab
-            </button>
+            <button class="segmented-btn" data-loot-view="lab">Pull Lab</button>
             <button class="segmented-btn" data-loot-view="inventory">
               Inventory
             </button>
           </div>
 
+          <!-- Packs view -->
           <div id="lootView-packs" class="loot-view loot-view-active">
             <p class="section-sub">
               Demo packs only. Opening a pack adds XP and mesh activity.
@@ -158,7 +170,9 @@
             <div class="pack-row">
               <div class="pack-card">
                 <div class="pack-title">Starter mesh pack</div>
-                <div class="pack-sub">Contains 3–5 Fragments, chance for Shard.</div>
+                <div class="pack-sub">
+                  Contains 3–5 Fragments, chance for Shard.
+                </div>
                 <button class="btn-primary" id="btn-open-pack">
                   Simulate pack open
                 </button>
@@ -167,9 +181,11 @@
             <ul id="lootEvents" class="activity-list"></ul>
           </div>
 
+          <!-- Pull lab -->
           <div id="lootView-lab" class="loot-view">
             <p class="section-sub">
-              Combine Fragments & Shards into higher-tier Relics. Demo synth only.
+              Combine Fragments &amp; Shards into higher-tier Relics. Demo synth
+              only.
             </p>
             <button class="btn-outline" id="btn-simulate-synth">
               Run mock synthesis
@@ -177,6 +193,7 @@
             <div id="labResult" class="lab-result"></div>
           </div>
 
+          <!-- Inventory -->
           <div id="lootView-inventory" class="loot-view">
             <p class="section-sub">Tier summary · demo balances</p>
             <ul class="tier-list">
@@ -188,37 +205,40 @@
         </div>
       </section>
 
-      <!-- Quests -->
+      <!-- QUESTS -->
       <section id="tab-quests" class="tab-panel">
         <div class="hud-card">
           <header class="section-header">
             <div>
-              <h2>Quests</h2>
+              <h2>Creator quests</h2>
               <p class="section-sub">
-                Daily & weekly mesh tasks. All mock for now.
+                High-signal tasks from verified creators. All mock for now.
               </p>
             </div>
           </header>
-
           <ul id="questList" class="quest-list"></ul>
         </div>
       </section>
 
-      <!-- Mesh -->
+      <!-- MESH -->
       <section id="tab-mesh" class="tab-panel">
         <div class="hud-card">
           <header class="section-header">
             <div>
               <h2>Mesh explorer</h2>
               <p class="section-sub">
-                Wallet-to-wallet flows rendered as a living mesh. Demo data only.
+                Wallet-to-wallet flows rendered as a living mesh. Demo data
+                only.
               </p>
             </div>
             <div class="section-tagline">Wallet flows · Demo</div>
           </header>
 
           <div class="segmented">
-            <button class="segmented-btn segmented-btn-active" data-mesh-mode="alpha">
+            <button
+              class="segmented-btn segmented-btn-active"
+              data-mesh-mode="alpha"
+            >
               Alpha hunters
             </button>
             <button class="segmented-btn" data-mesh-mode="new">
@@ -262,18 +282,178 @@
           </div>
         </div>
       </section>
+
+      <!-- SUPPORT / SUPCAST -->
+      <section id="tab-support" class="tab-panel">
+        <div class="hud-card">
+          <header class="section-header">
+            <div>
+              <h2>SupCast · Support mesh</h2>
+              <p class="section-sub">
+                Ask, claim and solve questions tied to real packs, games &amp;
+                creators.
+              </p>
+            </div>
+            <div class="section-tagline">Support · XP · Reputation</div>
+          </header>
+
+          <!-- Context selector -->
+          <div class="supcast-context">
+            <label class="field-label" for="supcastContext">
+              Context
+            </label>
+            <select id="supcastContext" class="field-input">
+              <option value="spawn_core">Spawn Core · Boosterbox</option>
+              <option value="tiny_legends">Tiny Legends · Game</option>
+              <option value="vibe_packs">$VIBE · Pack Series</option>
+              <option value="zora_creators">Zora · Creator coins</option>
+            </select>
+            <p class="section-sub supcast-context-sub">
+              Each context is tagged with contractAddress, gameId and
+              creatorWallet in the SupCast engine (mocked here).
+            </p>
+          </div>
+
+          <!-- Ask question -->
+          <div class="supcast-block supcast-ask">
+            <h3 class="supcast-title">Ask</h3>
+            <p class="section-sub">
+              Ask about this pack / game / creator. Experts can claim and solve
+              for XP.
+            </p>
+            <form id="supcastAskForm" class="supcast-form">
+              <div class="supcast-form-row">
+                <div class="supcast-field">
+                  <label class="field-label" for="supcastApp">App</label>
+                  <select id="supcastApp" class="field-input">
+                    <option value="vibe">Vibe</option>
+                    <option value="zora">Zora</option>
+                    <option value="warp">WarpAI</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div class="supcast-field">
+                  <label class="field-label" for="supcastChain">Chain</label>
+                  <select id="supcastChain" class="field-input">
+                    <option value="base">Base</option>
+                    <option value="optimism">Optimism</option>
+                    <option value="ethereum">Ethereum</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="supcast-field">
+                <label class="field-label" for="supcastDevice">Device</label>
+                <select id="supcastDevice" class="field-input">
+                  <option value="iphone">iPhone</option>
+                  <option value="android">Android</option>
+                  <option value="desktop">Desktop</option>
+                </select>
+              </div>
+
+              <div class="supcast-field">
+                <label class="field-label" for="supcastTags">
+                  Tags (comma separated)
+                </label>
+                <input
+                  id="supcastTags"
+                  class="field-input"
+                  type="text"
+                  placeholder="wallet, gas, claim, pack_open"
+                />
+              </div>
+
+              <div class="supcast-field">
+                <label class="field-label" for="supcastBody">
+                  Describe the problem
+                </label>
+                <textarea
+                  id="supcastBody"
+                  class="field-input field-textarea"
+                  rows="3"
+                  placeholder="Describe what went wrong, what you tried and any tx hashes…"
+                ></textarea>
+              </div>
+
+              <button type="submit" class="btn-primary supcast-submit">
+                Post question
+              </button>
+            </form>
+          </div>
+
+          <!-- Feed + Experts -->
+          <div class="supcast-layout">
+            <!-- Feed -->
+            <div class="supcast-block">
+              <h3 class="supcast-title">Feed</h3>
+              <p class="section-sub">
+                Open questions for the current context. Claim, solve, earn XP.
+              </p>
+              <ul id="supcastFeed" class="supcast-feed"></ul>
+            </div>
+
+            <!-- Experts -->
+            <div class="supcast-block supcast-experts">
+              <h3 class="supcast-title">Experts</h3>
+              <p class="section-sub">
+                Wallets with most solved cases in this context (mock).
+              </p>
+              <ul id="supcastExperts" class="supcast-expert-list"></ul>
+
+              <div class="supcast-profile">
+                <h4 class="supcast-title">Your support profile</h4>
+                <p class="section-sub">
+                  Global XP &amp; solved count across SpawnEngine3 modules.
+                </p>
+                <div class="supcast-profile-grid">
+                  <div>
+                    <div class="metric-label">Support XP</div>
+                    <div
+                      id="supcastProfileXp"
+                      class="metric-value metric-small"
+                    >
+                      0
+                    </div>
+                  </div>
+                  <div>
+                    <div class="metric-label">Solved</div>
+                    <div
+                      id="supcastProfileSolved"
+                      class="metric-value metric-small"
+                    >
+                      0
+                    </div>
+                  </div>
+                  <div>
+                    <div class="metric-label">Rating</div>
+                    <div
+                      id="supcastProfileRating"
+                      class="metric-value metric-small"
+                    >
+                      5.0
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <!-- Bottom nav -->
+    <!-- BOTTOM NAV -->
     <nav id="bottom-nav" class="bottom-nav">
-      <button class="nav-btn nav-btn-active" data-tab-target="home">Home</button>
+      <button class="nav-btn nav-btn-active" data-tab-target="home">
+        Home
+      </button>
       <button class="nav-btn" data-tab-target="loot">Loot</button>
       <button class="nav-btn" data-tab-target="quests">Quests</button>
       <button class="nav-btn" data-tab-target="mesh">Mesh</button>
+      <button class="nav-btn" data-tab-target="support">Support</button>
     </nav>
   </div>
 
-  <!-- Account sheet -->
+  <!-- ACCOUNT SHEET -->
   <div id="account-sheet" class="sheet-backdrop" aria-hidden="true">
     <div class="sheet">
       <div class="sheet-header">
@@ -285,6 +465,7 @@
           </div>
         </div>
       </div>
+
       <div class="sheet-section-label">Account</div>
       <button class="sheet-row" data-action="referrals">
         <span>Referrals</span><span class="chevron">›</span>
@@ -308,11 +489,15 @@
     </div>
   </div>
 
-  <!-- Settings overlay -->
+  <!-- SETTINGS SHEET -->
   <div id="settings-sheet" class="sheet-backdrop" aria-hidden="true">
     <div class="settings-panel">
       <header class="settings-header">
-        <button id="btn-settings-back" class="icon-back" aria-label="Back">
+        <button
+          id="btn-settings-back"
+          class="icon-back"
+          aria-label="Back from settings"
+        >
           ‹
         </button>
         <h2>Settings</h2>
@@ -340,10 +525,12 @@
     </div>
   </div>
 
-  <!-- Toast -->
+  <!-- TOAST -->
   <div id="toast" class="toast"></div>
 
+  <!-- SCRIPTS -->
   <script src="mesh-bg.js"></script>
+  <script src="supcast.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
