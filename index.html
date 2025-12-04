@@ -1,339 +1,406 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>SpawnEngine — Mesh HUD</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
-<body class="app-body">
+<body>
+  <!-- Animated mesh background -->
+  <div id="mesh-bg">
+    <canvas id="wallet-flow-canvas"></canvas>
+  </div>
+
+  <!-- App shell -->
   <div class="app-shell">
-    <!-- TOP HEADER -->
-    <header class="app-header">
-      <div class="header-left">
-        <div class="avatar-pill">
-          <span>S</span>
-        </div>
-        <div class="header-id">
-          <div class="mesh-id-label">Mesh ID</div>
-          <div class="mesh-id-handle">@spawniz</div>
+    <!-- TOP PROFILE + ACTIONS -->
+    <header class="top-header">
+      <div class="profile-mini">
+        <div class="avatar-mini">S</div>
+        <div class="profile-mini-text">
+          <div class="profile-mini-handle">@spawniz</div>
+          <div class="profile-mini-sub">Mesh ID · Creator</div>
         </div>
       </div>
-      <div class="header-right">
-        <button id="btn-header-gear" class="icon-button" aria-label="Settings">
-          ⚙
+      <div class="top-header-actions">
+        <button id="btn-settings" class="icon-btn" aria-label="Settings">
+          <span class="icon-gear"></span>
         </button>
-        <button id="btn-header-menu" class="icon-button icon-burger" aria-label="Account menu">
-          <span></span><span></span><span></span>
+        <button id="btn-account" class="icon-btn" aria-label="Account menu">
+          <span class="icon-menu"></span>
         </button>
       </div>
     </header>
 
-    <!-- SCROLL CONTENT -->
-    <main class="main-scroll">
-      <!-- HERO / HUD CARD -->
-      <section class="hero-card">
-        <div class="hero-header-row">
-          <div class="hero-title-block">
-            <div class="hero-mini-row">
-              <div class="avatar-pill small">S</div>
-              <div class="hero-mini-text">
-                <div class="hero-mini-handle">@spawniz</div>
-                <div class="hero-mini-sub">Mesh ID · Creator</div>
+    <!-- MAIN HUD CARD -->
+    <main class="hud-wrapper">
+      <section class="hud-card">
+        <!-- HUD header block inside card -->
+        <div class="hud-card-header">
+          <div class="hud-owner">
+            <div class="avatar-large">S</div>
+            <div>
+              <div class="owner-handle">@spawniz</div>
+              <div class="owner-sub">Mesh ID · Creator</div>
+            </div>
+          </div>
+          <div class="hud-status-pill">
+            <span class="status-dot"></span>
+            Mesh v0.3
+          </div>
+        </div>
+
+        <div class="hud-tag-row">
+          <span class="tag-pill">Base · Mesh ecosystems</span>
+          <span class="tag-pill tag-pill-secondary">Farcaster ready</span>
+        </div>
+
+        <div class="hud-top-row">
+          <div class="hud-title">
+            <h1>SpawnEngine · Mesh HUD</h1>
+            <p>Modular mesh for creator coins, packs, XP streams &amp; onchain quests.</p>
+          </div>
+          <button id="btn-connect" class="primary-cta">
+            Connect wallet
+          </button>
+        </div>
+
+        <!-- STATUS STRIP -->
+        <div class="status-grid">
+          <div class="status-chip">
+            <div class="status-label">Gas</div>
+            <div class="status-value" id="gas-est">~0.21 gwei est.</div>
+          </div>
+          <div class="status-chip">
+            <div class="status-label">Mode</div>
+            <div class="status-value">Single mesh</div>
+          </div>
+          <div class="status-chip">
+            <div class="status-label">Sync</div>
+            <div class="status-value" id="sync-source">Local mock</div>
+          </div>
+          <div class="status-chip">
+            <div class="status-label">Active wallets</div>
+            <div class="status-value" id="active-wallets">0</div>
+          </div>
+        </div>
+
+        <!-- TOP TAB STRIP -->
+        <div class="top-tab-strip">
+          <button class="top-tab is-active" data-tab="home">Home</button>
+          <button class="top-tab" data-tab="loot">Loot</button>
+          <button class="top-tab" data-tab="quests">Quests</button>
+          <button class="top-tab" data-tab="mesh">Mesh</button>
+        </div>
+
+        <!-- TAB PANELS -->
+        <section id="tab-home" class="tab-panel is-active">
+          <header class="section-header">
+            <div class="section-title">Mesh snapshot</div>
+            <div class="section-pill">Single player mesh</div>
+          </header>
+
+          <div class="snapshot-grid">
+            <div class="snapshot-card snapshot-card-main">
+              <div class="snapshot-label">XP BALANCE</div>
+              <div class="snapshot-value" id="xp-balance">1575 XP</div>
+              <div class="snapshot-sub">XP drives streaks, quests &amp; mesh rank.</div>
+            </div>
+            <div class="snapshot-card">
+              <div class="snapshot-label">SPAWN TOKEN</div>
+              <div class="snapshot-value" id="spn-balance">497 SPN</div>
+              <div class="snapshot-sub">Utility &amp; streak insurance.</div>
+            </div>
+          </div>
+
+          <div class="streak-row">
+            <div class="streak-gauge">
+              <div class="streak-circle">
+                <div class="streak-day">1</div>
+                <div class="streak-caption">
+                  <span>DAY</span>
+                  <span>STREAK</span>
+                </div>
               </div>
             </div>
-            <h1 class="hero-title">SpawnEngine · Mesh HUD</h1>
-            <p class="hero-subtitle">
-              Modular mesh for creator coins, packs, XP streams &amp; onchain quests.
-            </p>
-            <div class="hero-chips-row">
-              <span class="chip chip-outline">Base · Mesh ecosystems</span>
-              <span class="chip chip-outline">Farcaster ready</span>
+            <div class="streak-copy">
+              <div class="streak-label">DAILY RITUAL</div>
+              <p id="streak-text">Keep the streak for 6 more days for a full weekly run.</p>
+              <button id="btn-checkin" class="secondary-cta">Check-in</button>
             </div>
           </div>
-          <div class="hero-status-block">
-            <div class="mesh-status-pill">
-              <span class="mesh-status-dot"></span>
-              Mesh v0.3
+
+          <div class="activity-feed">
+            <div class="activity-header">
+              <span>Mesh activity</span>
+              <span class="activity-sub">Demo feed · Local mock</span>
             </div>
-            <button id="btn-connect" class="btn-primary">
-              Connect wallet
+            <ul id="activity-list" class="activity-list"></ul>
+          </div>
+
+          <div class="activity-feed oracle-feed">
+            <div class="activity-header">
+              <span>Oracle feed (Sentient mesh · demo)</span>
+              <span class="activity-sub">AI hints only, no real data yet</span>
+            </div>
+            <ul id="oracle-list" class="activity-list"></ul>
+          </div>
+        </section>
+
+        <section id="tab-loot" class="tab-panel">
+          <header class="section-header">
+            <div class="section-title">Loot &amp; Pull Lab</div>
+            <div class="section-pill">Fragments · shards · relics</div>
+          </header>
+
+          <div class="segmented-toggle">
+            <button class="segmented-btn is-active" data-loot-view="packs">Packs</button>
+            <button class="segmented-btn" data-loot-view="lab">Pull Lab</button>
+          </div>
+
+          <div id="loot-view-packs" class="loot-view is-active">
+            <div class="info-copy">
+              Spawn packs bundle your fragments, shards &amp; relic pulls into quick openable stacks.
+            </div>
+            <button id="btn-open-pack" class="primary-cta full-width">
+              Simulate pack open
+            </button>
+            <div class="info-small">
+              Demo only: pack opens will spawn mock mesh events &amp; XP.
+            </div>
+          </div>
+
+          <div id="loot-view-lab" class="loot-view">
+            <div class="info-copy">
+              Pull Lab is where fragments, shards and relic cores can be fused into booster NFTs with XP multipliers.
+            </div>
+            <ul class="lab-list">
+              <li>• Fuse 5 fragments → 1 shard boost (XP x1.5 for 24h)</li>
+              <li>• Fuse 3 shards → 1 relic key (unlock creator quests)</li>
+              <li>• Burn unwanted pulls to feed entropy &amp; future drops.</li>
+            </ul>
+            <button class="secondary-cta full-width" disabled>
+              Fusion goes on-chain in v1
             </button>
           </div>
-        </div>
-        <div class="hero-stat-grid">
-          <div class="stat-pill">
-            <div class="stat-label">Gas</div>
-            <div class="stat-value" id="stat-gas">~0.21 gwei est.</div>
-          </div>
-          <div class="stat-pill">
-            <div class="stat-label">Mode</div>
-            <div class="stat-value" id="stat-mode">Single mesh</div>
-          </div>
-          <div class="stat-pill">
-            <div class="stat-label">Sync</div>
-            <div class="stat-value" id="stat-sync">Local mock</div>
-          </div>
-          <div class="stat-pill">
-            <div class="stat-label">Active wallets</div>
-            <div class="stat-value" id="stat-wallets">1</div>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- HOME VIEW -->
-      <section id="view-home" class="view-content active">
-        <h2 class="section-title">Mesh snapshot</h2>
-        <div class="snapshot-grid">
-          <div class="snapshot-card primary">
-            <div class="snapshot-label">XP BALANCE</div>
-            <div class="snapshot-value" id="xp-balance">1575 XP</div>
-            <div class="snapshot-sub">Earned across packs, quests &amp; streaks.</div>
-          </div>
-          <div class="snapshot-card">
-            <div class="snapshot-label">SPAWN TOKEN</div>
-            <div class="snapshot-value" id="spn-balance">497 SPN</div>
-            <div class="snapshot-sub">Simulated mesh treasury position.</div>
-          </div>
-        </div>
+        <section id="tab-quests" class="tab-panel">
+          <header class="section-header">
+            <div class="section-title">Quests</div>
+            <div class="section-pill">Daily &amp; creator bounties</div>
+          </header>
 
-        <div class="streak-card">
-          <div class="streak-left">
-            <div class="streak-ring">
-              <div class="streak-ring-inner">
-                <div class="streak-ring-day">DAY</div>
-                <div class="streak-ring-count" id="streak-count">1</div>
-                <div class="streak-ring-label">STREAK</div>
-              </div>
+          <div class="quest-card">
+            <div class="quest-main">
+              <div class="quest-title">Daily mesh check-in</div>
+              <div class="quest-reward">+25 XP</div>
             </div>
-          </div>
-          <div class="streak-right">
-            <div class="streak-title">Daily ritual</div>
-            <p class="streak-text">
-              Keep the streak for <span id="streak-remaining">6</span> more days for a full weekly run.
+            <p class="quest-desc">
+              Keep your orbit tight by checking in once per day. Missing a day breaks the streak.
             </p>
-            <button id="btn-checkin" class="btn-secondary">
-              Check-in
+            <button class="secondary-cta" id="quest-checkin-btn">
+              Use today’s check-in
             </button>
           </div>
-        </div>
 
-        <div class="feed-card">
-          <div class="feed-header">
-            <h3 class="feed-title">Mesh activity</h3>
-            <span class="feed-sub">Local demo feed</span>
+          <div class="quest-card">
+            <div class="quest-main">
+              <div class="quest-title">Open a spawn pack</div>
+              <div class="quest-reward">+40 XP</div>
+            </div>
+            <p class="quest-desc">
+              Trigger at least one pack open in Loot. Rewards scale with fragment quality.
+            </p>
+            <button class="secondary-cta" disabled>Complete via Loot</button>
           </div>
-          <ul id="activity-feed" class="feed-list">
-            <!-- Fylls av app.js -->
-          </ul>
-        </div>
+
+          <div class="quest-card quest-secondary">
+            <div class="quest-main">
+              <div class="quest-title">Tribe / guild streak (demo)</div>
+              <div class="quest-reward">+250 XP · relic key</div>
+            </div>
+            <p class="quest-desc">
+              Form a Tribe where your streaks stack. Hit the weekly group target to unlock relic-level rewards.
+            </p>
+            <button class="secondary-cta" disabled>
+              Tribe streaks unlock in social v1
+            </button>
+          </div>
+        </section>
+
+        <section id="tab-mesh" class="tab-panel">
+          <header class="section-header">
+            <div class="section-title">Mesh explorer</div>
+            <div class="section-pill">Wallet flows · Demo</div>
+          </header>
+
+          <div class="segmented-toggle mesh-filter-toggle">
+            <button class="segmented-btn is-active" data-mesh-filter="alpha">
+              Alpha hunters
+            </button>
+            <button class="segmented-btn" data-mesh-filter="new">
+              New creators
+            </button>
+            <button class="segmented-btn" data-mesh-filter="gravity">
+              Gravity clusters
+            </button>
+          </div>
+
+          <div class="mesh-explorer-card">
+            <p class="mesh-explorer-copy" id="mesh-filter-copy">
+              Viewing mesh demo in <strong>Alpha hunters</strong> mode — high pack activity wallets glow brighter.
+            </p>
+            <div class="mesh-legend">
+              <span class="legend-dot legend-coin"></span> Coin flows
+              <span class="legend-dot legend-pack"></span> Pack pulls
+              <span class="legend-dot legend-burn"></span> Burns
+              <span class="legend-dot legend-xp"></span> XP streams
+            </div>
+            <p class="mesh-explorer-sub">
+              Tap a node (in full explorer) to enter focus mode — latest pack, transaction and streak for that wallet.
+            </p>
+          </div>
+
+          <div class="activity-feed mesh-feed">
+            <div class="activity-header">
+              <span>Mesh events</span>
+              <span class="activity-sub">Last 10 demo actions</span>
+            </div>
+            <ul id="mesh-event-list" class="activity-list"></ul>
+          </div>
+
+          <a class="mini-link" href="mesh.html" target="_blank" rel="noopener">
+            Open full WebGL Mesh Explorer ↗
+          </a>
+        </section>
       </section>
 
-      <!-- LOOT VIEW -->
-      <section id="view-loot" class="view-content">
-        <h2 class="section-title">Loot &amp; Packs</h2>
-
-        <div class="segmented-control" id="loot-toggle">
-          <button class="segmented-button active" data-mode="packs">Packs</button>
-          <button class="segmented-button" data-mode="pull">Pull Lab</button>
-        </div>
-
-        <div id="loot-packs" class="loot-section active">
-          <p class="section-blurb">
-            Open packs to spawn fragments and shards. Fuse up through core and prime tiers — hunt for rare relic pulls.
-          </p>
-
-          <div class="card-row">
-            <div class="loot-card">
-              <div class="loot-tag common">Fragment</div>
-              <h3 class="loot-title">Common mesh packs</h3>
-              <p class="loot-text">
-                Lightweight packs that drip fragments. Perfect for warming up your streak and stacking XP slowly.
-              </p>
-              <button class="btn-ghost">Simulate fragment pull</button>
-            </div>
-
-            <div class="loot-card">
-              <div class="loot-tag rare">Shard</div>
-              <h3 class="loot-title">Shard bundles</h3>
-              <p class="loot-text">
-                Higher gravity packs with a better chance to land shard-tier pieces. Ideal for mid-range runs.
-              </p>
-              <button class="btn-ghost">Simulate shard pull</button>
-            </div>
-          </div>
-
-          <div class="card-row">
-            <div class="loot-card">
-              <div class="loot-tag epic">Core</div>
-              <h3 class="loot-title">Core channels</h3>
-              <p class="loot-text">
-                Premium pulls that can jump directly into core or prime pieces. Best used with active XP streaks.
-              </p>
-              <button class="btn-ghost">Simulate core pull</button>
-            </div>
-
-            <div class="loot-card">
-              <div class="loot-tag legendary">Prime</div>
-              <h3 class="loot-title">Prime runs</h3>
-              <p class="loot-text">
-                Limited runs tuned for collectors hunting prime artifacts before they become relic-tier lore.
-              </p>
-              <button class="btn-ghost">Simulate prime pull</button>
-            </div>
-          </div>
-        </div>
-
-        <div id="loot-pull" class="loot-section">
-          <p class="section-blurb">
-            Pull Lab lets you fuse fragments, shards and cores into higher-tier pieces. Relics live here.
-          </p>
-
-          <div class="lab-card">
-            <h3 class="lab-title">Fragment → Shard fusion</h3>
-            <p class="lab-text">
-              Trade <strong>5 fragments</strong> for a chance at 1–2 shards. Better odds while your streak is active.
-            </p>
-            <button class="btn-primary btn-small">Mock fuse</button>
-          </div>
-
-          <div class="lab-card">
-            <h3 class="lab-title">Shard → Core synthesis</h3>
-            <p class="lab-text">
-              Consume <strong>3 shards</strong> to stabilize a core. Small chance to jump straight to prime.
-            </p>
-            <button class="btn-primary btn-small">Mock synth</button>
-          </div>
-
-          <div class="lab-card highlight">
-            <h3 class="lab-title">Relic channel</h3>
-            <p class="lab-text">
-              Feed primes and excess cores into the relic channel. When it pings, the mesh mints a single relic.
-            </p>
-            <button class="btn-secondary btn-small">Preview relic odds</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- QUESTS VIEW -->
-      <section id="view-quests" class="view-content">
-        <h2 class="section-title">Quests</h2>
-        <p class="section-blurb">
-          Daily and weekly quests turn your onchain habits into XP, fragments and streak boosts.
-        </p>
-
-        <div class="quest-card">
-          <div class="quest-main">
-            <h3 class="quest-title">Daily check-in</h3>
-            <p class="quest-text">Tap Check-in on Home to keep your mesh orbit stable.</p>
-          </div>
-          <div class="quest-meta">
-            <span class="quest-xp">+25 XP</span>
-            <button class="btn-ghost btn-small">View on Home</button>
-          </div>
-        </div>
-
-        <div class="quest-card">
-          <div class="quest-main">
-            <h3 class="quest-title">Open any pack</h3>
-            <p class="quest-text">Trigger at least one pack simulation in Loot today.</p>
-          </div>
-          <div class="quest-meta">
-            <span class="quest-xp">+40 XP</span>
-            <button class="btn-ghost btn-small">Jump to Loot</button>
-          </div>
-        </div>
-
-        <div class="quest-card">
-          <div class="quest-main">
-            <h3 class="quest-title">Seven-day orbit</h3>
-            <p class="quest-text">
-              Maintain a streak for 7 days in a row. Unlock a relic-channel preview and bonus spawn.
-            </p>
-          </div>
-          <div class="quest-meta">
-            <span class="quest-xp">+120 XP</span>
-            <button class="btn-ghost btn-small">Track progress</button>
-          </div>
-        </div>
-
-        <div class="quest-card disabled">
-          <div class="quest-main">
-            <h3 class="quest-title">Creator mesh bounty</h3>
-            <p class="quest-text">
-              Sponsored quest slots will appear here when creators dock into SpawnEngine.
-            </p>
-          </div>
-          <div class="quest-meta">
-            <span class="quest-soon">Soon</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- MESH VIEW -->
-      <section id="view-mesh" class="view-content">
-        <h2 class="section-title">Mesh explorer</h2>
-        <p class="section-blurb">
-          Wallet-to-wallet flows rendered as a living mesh. Demo data for now — XP and pack pulls will plug in later.
-        </p>
-
-        <div class="mesh-card">
-          <canvas id="meshCanvas"></canvas>
-          <div class="mesh-overlay">
-            <div class="mesh-overlay-row">
-              <span class="mesh-label">Demo mesh · Local mock</span>
-              <span class="mesh-pill">XP streams: <span id="mesh-xp-count">0</span></span>
-            </div>
-            <p class="mesh-overlay-text">
-              Tap other tabs, then come back here to watch flows respawn with your actions.
-            </p>
-          </div>
-        </div>
-      </section>
+      <!-- BOTTOM TABS -->
+      <nav class="bottom-tabs">
+        <button class="bottom-tab is-active" data-tab="home">Home</button>
+        <button class="bottom-tab" data-tab="loot">Loot</button>
+        <button class="bottom-tab" data-tab="quests">Quests</button>
+        <button class="bottom-tab" data-tab="mesh">Mesh</button>
+      </nav>
     </main>
-
-    <!-- BOTTOM TABS -->
-    <nav class="tabbar">
-      <button class="tab-button active" data-target="view-home">Home</button>
-      <button class="tab-button" data-target="view-loot">Loot</button>
-      <button class="tab-button" data-target="view-quests">Quests</button>
-      <button class="tab-button" data-target="view-mesh">Mesh</button>
-    </nav>
   </div>
 
-  <!-- SETTINGS / ACCOUNT DRAWER -->
-  <div id="settings-drawer" class="drawer hidden">
-    <div class="drawer-backdrop"></div>
-    <div class="drawer-panel">
-      <div class="drawer-header">
-        <div class="drawer-avatar">
-          <span>S</span>
+  <!-- ACCOUNT SHEET (hamburger) -->
+  <div id="account-sheet" class="sheet sheet-hidden">
+    <div class="sheet-inner">
+      <header class="sheet-header">
+        <div class="sheet-profile">
+          <div class="avatar-large">S</div>
+          <div>
+            <div class="owner-handle">@spawniz</div>
+            <div class="owner-sub">Mesh ID · Creator</div>
+          </div>
         </div>
-        <div class="drawer-id">
-          <div class="drawer-handle">@spawniz</div>
-          <div class="drawer-sub">Mesh ID · Creator</div>
+      </header>
+
+      <div class="sheet-section">
+        <div class="sheet-section-title">Account</div>
+        <button class="sheet-row" data-open-settings="referrals">
+          <span>Referrals</span>
+          <span class="sheet-row-chevron">›</span>
+        </button>
+        <button class="sheet-row" data-open-settings="earnings">
+          <span>Earnings</span>
+          <span class="sheet-row-chevron">›</span>
+        </button>
+        <button class="sheet-row" data-open-settings="collectibles">
+          <span>Collectibles</span>
+          <span class="sheet-row-chevron">›</span>
+        </button>
+      </div>
+
+      <div class="sheet-section">
+        <div class="sheet-section-title">Wallet &amp; account</div>
+        <button class="sheet-row" data-open-settings="swap-wallet">
+          <span>Swap wallet</span>
+          <span class="sheet-row-chevron">›</span>
+        </button>
+        <button class="sheet-row sheet-row-danger" id="btn-logout">
+          <span>Log out / Disconnect</span>
+        </button>
+      </div>
+
+      <button class="sheet-close-btn" data-close-sheet="account">Close</button>
+    </div>
+  </div>
+
+  <!-- SETTINGS SHEET (gear) -->
+  <div id="settings-sheet" class="sheet sheet-hidden">
+    <div class="sheet-inner">
+      <header class="sheet-header">
+        <button class="sheet-back" data-settings-back>‹</button>
+        <div class="sheet-title">Settings</div>
+      </header>
+
+      <div id="settings-root">
+        <!-- main list -->
+        <div class="sheet-section">
+          <div class="sheet-section-title">Profile &amp; account</div>
+          <button class="sheet-row" data-settings-view="social">
+            <span>Social profiles</span>
+            <span class="sheet-row-chevron">›</span>
+          </button>
+          <button class="sheet-row" data-settings-view="notifications">
+            <span>Notifications</span>
+            <span class="sheet-row-chevron">›</span>
+          </button>
+          <button class="sheet-row" data-settings-view="feeds">
+            <span>Feeds &amp; Oracle feed</span>
+            <span class="sheet-row-chevron">›</span>
+          </button>
+        </div>
+
+        <div class="sheet-section">
+          <div class="sheet-section-title">Wallet &amp; collectibles</div>
+          <button class="sheet-row" data-settings-view="preferred-wallet">
+            <span>Preferred wallet</span>
+            <span class="sheet-row-chevron">›</span>
+          </button>
+          <button class="sheet-row" data-settings-view="verified-addresses">
+            <span>Verified addresses</span>
+            <span class="sheet-row-chevron">›</span>
+          </button>
+          <button class="sheet-row" data-settings-view="warp-links">
+            <span>Docked apps &amp; XP SDK</span>
+            <span class="sheet-row-chevron">›</span>
+          </button>
+          <button class="sheet-row" data-settings-view="premium-filters">
+            <span>Premium mesh filters</span>
+            <span class="sheet-row-chevron">›</span>
+          </button>
+        </div>
+
+        <div class="sheet-section">
+          <div class="sheet-section-title">Other</div>
+          <button class="sheet-row" data-settings-view="theme">
+            <span>Theme</span>
+            <span class="sheet-row-chevron">›</span>
+          </button>
+          <button class="sheet-row" data-settings-view="support">
+            <span>Support</span>
+            <span class="sheet-row-chevron">›</span>
+          </button>
+          <button class="sheet-row" data-settings-view="launchpad">
+            <span>SpawnEngine Launchpad</span>
+            <span class="sheet-row-chevron">›</span>
+          </button>
         </div>
       </div>
 
-      <div class="drawer-section">
-        <div class="drawer-section-title">Account</div>
-        <button class="drawer-item" data-action="referrals">Referrals</button>
-        <button class="drawer-item" data-action="bookmarks">Bookmarks</button>
-        <button class="drawer-item" data-action="earnings">Earnings</button>
-        <button class="drawer-item" data-action="collectibles">Collectibles</button>
-        <button class="drawer-item" data-action="settings">Settings</button>
+      <!-- detail view -->
+      <div id="settings-detail" class="settings-detail hidden">
+        <div class="detail-title" id="settings-detail-title"></div>
+        <p class="detail-body" id="settings-detail-body"></p>
       </div>
 
-      <div class="drawer-section">
-        <div class="drawer-section-title">Wallet &amp; account</div>
-        <button class="drawer-item" data-action="swap">Swap wallet</button>
-        <button class="drawer-item danger" data-action="logout">Log out / Disconnect</button>
-      </div>
-
-      <button id="drawer-close" class="drawer-close">Close</button>
+      <button class="sheet-close-btn" data-close-sheet="settings">Close</button>
     </div>
   </div>
 
