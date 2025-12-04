@@ -1,160 +1,278 @@
 // app.js
-// SpawnEngine — Mesh HUD v0.3 (frontend-logik)
+// SpawnEngine · Mesh HUD — UI-logik, mock-data, feeds, sheets
 
 (function () {
-  // -----------------------------
-  // STATE
-  // -----------------------------
-  let xp = 1575;
-  let spawnBalance = 497;
-  let streakDays = 1;
-  let streakWeeklyTarget = 7;
-  let homeActivity = [];
-  let meshActivity = [];
-  let lootActivity = [];
+  // ---------- STATE ----------
 
-  let invFragments = 12;
-  let invShards = 3;
-  let invRelics = 1;
+  const state = {
+    xp: 1575,
+    spawn: 497,
+    streakDays: 1,
+    weeklyTarget: 7,
+    fragments: 12,
+    shards: 3,
+    relics: 1,
+    homeEvents: [],
+    lootEvents: [],
+    meshEvents: [],
+    quests: [],
+  };
 
-  let hasCheckedInToday = false;
+  // ---------- UTIL ----------
 
-  // För enkel mock av gas och wallets
-  let gasEstimateValue = 0.21;
-  let activeWalletsValue = 1;
-
-  // -----------------------------
-  // DOM HELPERS
-  // -----------------------------
-  function $(selector) {
-    return document.querySelector(selector);
+  function $(sel) {
+    return document.querySelector(sel);
   }
 
-  function $all(selector) {
-    return Array.from(document.querySelectorAll(selector));
+  function $all(sel) {
+    return Array.from(document.querySelectorAll(sel));
   }
-
-  function setText(id, value) {
-    const el = typeof id === "string" ? document.getElementById(id) : id;
-    if (el) el.textContent = value;
-  }
-
-  function showElement(el) {
-    if (!el) return;
-    el.style.display = "flex";
-  }
-
-  function hideElement(el) {
-    if (!el) return;
-    el.style.display = "none";
-  }
-
-  // -----------------------------
-  // TOAST
-  // -----------------------------
-  let toastTimeout = null;
 
   function showToast(message) {
     const toast = $("#toast");
     if (!toast) return;
     toast.textContent = message;
     toast.classList.add("toast-visible");
-
-    if (toastTimeout) clearTimeout(toastTimeout);
-    toastTimeout = setTimeout(() => {
-      toast.classList.remove("toast-visible");
-    }, 2600);
+    setTimeout(() => toast.classList.remove("toast-visible"), 2200);
   }
 
-  // -----------------------------
-  // ACTIVITY LOGGING
-  // -----------------------------
-  function addActivity(list, item) {
-    list.unshift(item);
-    // cap 20 entries per list
-    if (list.length > 20) list.pop();
+  function formatTime() {
+    const d = new Date();
+    return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
   }
 
-  function renderActivityList(list, ulEl) {
+  // ---------- RENDER HELPERS ----------
+
+  function renderHeaderStats() {
+    const gasEl = $("#gasEstimate");
+    const activeWalletsEl = $("#activeWallets");
+
+    if (gasEl) {
+      // enkel fejk-gas
+      const base = 0.18;
+      const jitter = (Math.random() * 0.06).toFixed(2);
+      gasEl.textContent = `~${(base + Number(jitter)).toFixed(2)} gwei est.`;
+    }
+
+    if (activeWalletsEl) {
+      activeWalletsEl.textContent = "1";
+    }
+  }
+
+  function renderMeshSnapshot() {
+    const xpEl = $("#xpBalance");
+    const spawnEl = $("#spawnBalance");
+    const streakDaysEl = $("#streakDays");
+    const streakRemEl = $("#streakRemaining");
+
+    if (xpEl) xpEl.textContent = `${state.xp} XP`;
+    if (spawnEl) spawnEl.textContent = `${state.spawn} SPN`;
+    if (streakDaysEl) streakDaysEl.textContent = state.streakDays;
+    if (streakRemEl) {
+      const remaining = Math.max(state.weeklyTarget - state.streakDays, 0);
+      streakRemEl.textContent = remaining;
+    }
+  }
+
+  function pushEvent(list, payload, max = 12) {
+    list.unshift(payload);
+    if (list.length > max) list.length = max;
+  }
+
+  function renderActivityList(ulEl, list) {
     if (!ulEl) return;
     ulEl.innerHTML = "";
+
     list.forEach((item) => {
       const li = document.createElement("li");
       li.className = "activity-item";
-      li.dataset.type = item.type || "misc";
 
-      const title = document.createElement("div");
-      title.className = "activity-title";
-      title.textContent = item.title;
+      const typeSpan = document.createElement("span");
+      typeSpan.className = `activity-tag activity-tag-${item.kind || "generic"}`;
+      typeSpan.textContent = item.label;
+
+      const main = document.createElement("div");
+      main.className = "activity-main";
+      main.textContent = item.text;
 
       const meta = document.createElement("div");
       meta.className = "activity-meta";
-      meta.textContent = item.meta;
+      meta.textContent = `${item.time} · ${item.meta || ""}`.trim();
 
-      li.appendChild(title);
+      li.appendChild(typeSpan);
+      li.appendChild(main);
       li.appendChild(meta);
+
       ulEl.appendChild(li);
     });
   }
 
-  function logMeshEvent(title, meta, type = "mesh") {
-    const entry = {
-      title,
-      meta,
-      type,
-      ts: Date.now(),
-    };
-    addActivity(meshActivity, entry);
-    const meshList = document.getElementById("meshEvents");
-    renderActivityList(meshActivity, meshList);
+  function renderInventory() {
+    const f = $("#invFragments");
+    const s = $("#invShards");
+    const r = $("#invRelics");
+    if (f) f.textContent = state.fragments;
+    if (s) s.textContent = state.shards;
+    if (r) r.textContent = state.relics;
   }
 
-  function logHomeEvent(title, meta, type = "general") {
-    const entry = {
-      title,
-      meta,
-      type,
-      ts: Date.now(),
-    };
-    addActivity(homeActivity, entry);
-    const homeList = document.getElementById("homeActivityList");
-    renderActivityList(homeActivity, homeList);
+  function renderQuests() {
+    const ul = $("#questList");
+    if (!ul) return;
+    ul.innerHTML = "";
+
+    state.quests.forEach((quest, index) => {
+      const li = document.createElement("li");
+      li.className = "quest-item";
+
+      const top = document.createElement("div");
+      top.className = "quest-main";
+
+      const title = document.createElement("div");
+      title.className = "quest-title";
+      title.textContent = quest.title;
+
+      const sub = document.createElement("div");
+      sub.className = "quest-sub";
+      sub.textContent = quest.desc;
+
+      top.appendChild(title);
+      top.appendChild(sub);
+
+      const meta = document.createElement("div");
+      meta.className = "quest-meta";
+      meta.textContent = `+${quest.reward} XP`;
+
+      const btn = document.createElement("button");
+      btn.className = "btn-outline quest-btn";
+      btn.textContent = quest.completed ? "Completed" : "Complete (mock)";
+      btn.disabled = quest.completed;
+
+      btn.addEventListener("click", () => {
+        if (quest.completed) return;
+        quest.completed = true;
+        state.xp += quest.reward;
+        pushEvent(state.homeEvents, {
+          kind: "quest",
+          label: "QUEST",
+          text: quest.title,
+          time: formatTime(),
+          meta: `+${quest.reward} XP`,
+        });
+        showToast(`Quest completed · +${quest.reward} XP`);
+        renderMeshSnapshot();
+        renderQuests();
+        renderActivityList($("#homeActivityList"), state.homeEvents);
+      });
+
+      const right = document.createElement("div");
+      right.className = "quest-right";
+      right.appendChild(meta);
+      right.appendChild(btn);
+
+      li.appendChild(top);
+      li.appendChild(right);
+      ul.appendChild(li);
+    });
   }
 
-  function logLootEvent(title, meta, type = "loot") {
-    const entry = {
-      title,
-      meta,
-      type,
-      ts: Date.now(),
-    };
-    addActivity(lootActivity, entry);
-    const lootList = document.getElementById("lootEvents");
-    renderActivityList(lootActivity, lootList);
+  // ---------- INIT MOCK DATA ----------
+
+  function initQuests() {
+    state.quests = [
+      {
+        title: "Check in your daily mesh ritual",
+        desc: "Open SpawnEngine and hit Check-in once today.",
+        reward: 25,
+        completed: false,
+      },
+      {
+        title: "Open a starter mesh pack",
+        desc: "Simulate at least one pack open in Loot.",
+        reward: 40,
+        completed: false,
+      },
+      {
+        title: "Explore Mesh view",
+        desc: "Switch through Alpha/New/Gravity modes in Mesh explorer.",
+        reward: 30,
+        completed: false,
+      },
+      {
+        title: "Keep your streak alive",
+        desc: "Reach 3 days streak in a row (mock).",
+        reward: 60,
+        completed: false,
+      },
+    ];
   }
 
-  // -----------------------------
-  // STATS / METRICS RENDER
-  // -----------------------------
-  function renderStats() {
-    setText("xpBalance", `${xp} XP`);
-    setText("spawnBalance", `${spawnBalance} SPN`);
-    setText("streakDays", streakDays);
-    const remaining = Math.max(streakWeeklyTarget - streakDays, 0);
-    setText("streakRemaining", remaining);
+  function seedHomeEvents() {
+    const base = [
+      {
+        kind: "xp",
+        label: "XP",
+        text: "You checked in and fed your mesh.",
+        meta: "+15 XP",
+      },
+      {
+        kind: "pack",
+        label: "PACK",
+        text: "Opened Starter mesh pack · 4 Fragments, 1 Shard.",
+        meta: "+45 XP",
+      },
+      {
+        kind: "social",
+        label: "CAST",
+        text: "Shared your streak to Farcaster (mock).",
+        meta: "Mesh share",
+      },
+      {
+        kind: "mesh",
+        label: "MESH",
+        text: "Gravity cluster updated around your wallet.",
+        meta: "XP streams bending",
+      },
+    ];
 
-    setText("gasEstimate", `~${gasEstimateValue.toFixed(2)} gwei est.`);
-    setText("activeWallets", activeWalletsValue);
-    setText("invFragments", invFragments);
-    setText("invShards", invShards);
-    setText("invRelics", invRelics);
+    state.homeEvents = base.map((e) => ({
+      ...e,
+      time: formatTime(),
+    }));
   }
 
-  // -----------------------------
-  // BOTTOM NAV / TABS
-  // -----------------------------
-  function initTabs() {
-    const navButtons = $all(".bottom-nav .nav-btn");
+  function seedMeshEvents() {
+    const items = [
+      {
+        kind: "mesh",
+        label: "MESH",
+        text: "Wallet 0x…abc joined starter mesh.",
+        meta: "XP stream linked",
+      },
+      {
+        kind: "pack",
+        label: "PACK",
+        text: "Creator X cluster opened 12 packs.",
+        meta: "Alpha hunters spike",
+      },
+      {
+        kind: "burn",
+        label: "BURN",
+        text: "Wallet 0x…def burned 50% of Creator Z.",
+        meta: "Gravity shift",
+      },
+    ];
+    state.meshEvents = items.map((e) => ({ ...e, time: formatTime() }));
+  }
+
+  function seedLootEvents() {
+    state.lootEvents = [];
+  }
+
+  // ---------- INTERACTION LOGIC ----------
+
+  function setupTabs() {
+    const navButtons = $all(".nav-btn");
     const panels = $all(".tab-panel");
 
     navButtons.forEach((btn) => {
@@ -172,534 +290,357 @@
             panel.classList.remove("tab-panel-active");
           }
         });
+
+        if (target === "home") {
+          renderActivityList($("#homeActivityList"), state.homeEvents);
+        }
+        if (target === "loot") {
+          renderInventory();
+          renderActivityList($("#lootEvents"), state.lootEvents);
+        }
+        if (target === "quests") {
+          renderQuests();
+        }
+        if (target === "mesh") {
+          renderActivityList($("#meshEvents"), state.meshEvents);
+        }
       });
     });
   }
 
-  // -----------------------------
-  // HOME: CHECK-IN
-  // -----------------------------
-  function initCheckIn() {
+  function setupStreak() {
     const btn = $("#btn-checkin");
     if (!btn) return;
 
     btn.addEventListener("click", () => {
-      if (hasCheckedInToday) {
-        showToast("You already checked in · streak saved");
-        return;
-      }
+      state.streakDays = Math.min(state.streakDays + 1, state.weeklyTarget);
+      const gained = 15;
+      state.xp += gained;
 
-      hasCheckedInToday = true;
-      streakDays += 1;
-      xp += 25; // base XP reward
-      spawnBalance += 3; // liten bonus
+      pushEvent(state.homeEvents, {
+        kind: "xp",
+        label: "XP",
+        text: "Daily mesh ritual check-in completed.",
+        time: formatTime(),
+        meta: `+${gained} XP`,
+      });
 
-      renderStats();
-      logHomeEvent("Daily check-in complete", "+25 XP · streak advanced", "quest");
-      logMeshEvent(
-        "Streak ping recorded",
-        "Mesh stream updated from daily ritual",
-        "mesh"
-      );
-
-      showToast("Streak +1 · XP +25");
+      renderMeshSnapshot();
+      renderActivityList($("#homeActivityList"), state.homeEvents);
+      showToast("Check-in logged · streak +1");
     });
   }
 
-  // -----------------------------
-  // LOOT / PACKS / LAB / INVENTORY
-  // -----------------------------
-  function initLootViews() {
-    const segmentedButtons = $all(".segmented-btn[data-loot-view]");
-    const lootViews = $all(".loot-view");
+  function setupLoot() {
+    // segmented views
+    const segButtons = $all(".segmented-btn[data-loot-view]");
+    const views = $all(".loot-view");
 
-    segmentedButtons.forEach((btn) => {
+    segButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const view = btn.getAttribute("data-loot-view");
-        segmentedButtons.forEach((b) =>
-          b.classList.remove("segmented-btn-active")
-        );
-        btn.classList.add("segmented-btn-active");
+        if (!view) return;
 
-        lootViews.forEach((lv) => {
-          if (lv.id === `lootView-${view}`) {
-            lv.classList.add("loot-view-active");
-          } else {
-            lv.classList.remove("loot-view-active");
-          }
+        segButtons.forEach((b) =>
+          b.classList.toggle("segmented-btn-active", b === btn)
+        );
+        views.forEach((v) => {
+          v.classList.toggle("loot-view-active", v.id === `lootView-${view}`);
         });
+
+        if (view === "inventory") {
+          renderInventory();
+        }
       });
     });
 
-    // PACK OPEN
-    const btnOpenPack = $("#btn-open-pack");
-    if (btnOpenPack) {
-      btnOpenPack.addEventListener("click", () => {
-        // enkel mock: 3–5 fragments, chans på shard/relic
-        const fragmentCount = 3 + Math.floor(Math.random() * 3);
-        const gotShard = Math.random() < 0.4;
-        const gotRelic = !gotShard && Math.random() < 0.12;
+    // simulate pack open
+    const openBtn = $("#btn-open-pack");
+    if (openBtn) {
+      openBtn.addEventListener("click", () => {
+        // mock pack result
+        const fragmentsGained = 2 + Math.floor(Math.random() * 4); // 2–5
+        const shardDrop = Math.random() < 0.35; // 35% chans
+        const xpGain = 30 + Math.floor(Math.random() * 35); // 30–64
 
-        invFragments += fragmentCount;
-        if (gotShard) invShards += 1;
-        if (gotRelic) invRelics += 1;
+        state.fragments += fragmentsGained;
+        if (shardDrop) state.shards += 1;
+        state.xp += xpGain;
 
-        const gainedXP = 40 + Math.floor(Math.random() * 40);
-        xp += gainedXP;
+        const textParts = [`${fragmentsGained} Fragments`];
+        if (shardDrop) textParts.push("1 Shard");
 
-        renderStats();
+        pushEvent(state.lootEvents, {
+          kind: "pack",
+          label: "PACK",
+          text: `Opened Starter mesh pack · ${textParts.join(", ")}.`,
+          time: formatTime(),
+          meta: `+${xpGain} XP`,
+        });
 
-        const summaryParts = [`+${fragmentCount} Fragments`];
-        if (gotShard) summaryParts.push("+1 Shard");
-        if (gotRelic) summaryParts.push("+1 Relic");
+        pushEvent(state.homeEvents, {
+          kind: "pack",
+          label: "PACK",
+          text: "Loot activity strengthened your mesh.",
+          time: formatTime(),
+          meta: `+${xpGain} XP`,
+        });
 
-        const summary = summaryParts.join(" · ");
-
-        logLootEvent("Opened Starter mesh pack", `${summary} · +${gainedXP} XP`);
-        logHomeEvent("Pack opened", summary, "pack");
-        logMeshEvent("Pack stream pulse", "New loot opened in the mesh", "pack");
-
-        showToast("Pack opened · loot added");
+        renderMeshSnapshot();
+        renderInventory();
+        renderActivityList($("#lootEvents"), state.lootEvents);
+        renderActivityList($("#homeActivityList"), state.homeEvents);
+        showToast("Pack opened (mock) · rewards added");
       });
     }
 
-    // LAB SYNTH
-    const btnSynth = $("#btn-simulate-synth");
+    // synth lab
+    const synthBtn = $("#btn-simulate-synth");
     const labResult = $("#labResult");
-    if (btnSynth && labResult) {
-      btnSynth.addEventListener("click", () => {
-        if (invFragments < 3 && invShards < 1) {
-          labResult.textContent = "Not enough Fragments/Shards to synthesize.";
+    if (synthBtn && labResult) {
+      synthBtn.addEventListener("click", () => {
+        if (state.fragments < 5 || state.shards < 1) {
+          labResult.textContent =
+            "Not enough Fragments/Shards to synth a Relic (mock requirement: 5F + 1S).";
           return;
         }
 
-        let result;
-        if (invShards >= 1 && Math.random() < 0.6) {
-          // shard → relic
-          invShards -= 1;
-          invRelics += 1;
-          xp += 80;
-          result = "Shard fused into a new Relic · +80 XP";
-        } else {
-          // fragments → shard
-          const cost = Math.min(5, invFragments);
-          invFragments -= cost;
-          invShards += 1;
-          xp += 45;
-          result = `${cost} Fragments fused into a Shard · +45 XP`;
-        }
+        state.fragments -= 5;
+        state.shards -= 1;
+        state.relics += 1;
+        const xpGain = 80;
+        state.xp += xpGain;
 
-        renderStats();
-        labResult.textContent = result;
-        logLootEvent("Pull Lab synthesis", result, "lab");
-        logMeshEvent("Lab event", "Synthesis update in mesh state", "lab");
-        logHomeEvent("Lab action", result, "lab");
-        showToast("Synthesis complete");
+        labResult.textContent =
+          "Synthesis successful · 5 Fragments + 1 Shard → 1 Relic (mock).";
+
+        pushEvent(state.lootEvents, {
+          kind: "relic",
+          label: "RELIC",
+          text: "Synthesized a Relic in Pull Lab.",
+          time: formatTime(),
+          meta: `+${xpGain} XP`,
+        });
+
+        pushEvent(state.homeEvents, {
+          kind: "relic",
+          label: "RELIC",
+          text: "Relic synced into your mesh orbit.",
+          time: formatTime(),
+          meta: `+${xpGain} XP`,
+        });
+
+        renderMeshSnapshot();
+        renderInventory();
+        renderActivityList($("#lootEvents"), state.lootEvents);
+        renderActivityList($("#homeActivityList"), state.homeEvents);
+        showToast("Relic created (mock) · XP boosted");
       });
     }
   }
 
-  // -----------------------------
-  // QUESTS
-  // -----------------------------
-  function initQuests() {
-    const questList = $("#questList");
-    if (!questList) return;
-
-    const quests = [
-      {
-        id: "q-checkin",
-        title: "Daily ritual · Check in",
-        desc: "Hit your daily streak check-in inside the mesh HUD.",
-        xp: 20,
-      },
-      {
-        id: "q-pack-open",
-        title: "Open 1 mesh pack",
-        desc: "Simulate at least one Starter mesh pack today.",
-        xp: 40,
-      },
-      {
-        id: "q-share",
-        title: "Share your mesh",
-        desc: "Share a screenshot or cast of your mesh HUD.",
-        xp: 35,
-      },
-      {
-        id: "q-explore",
-        title: "Tap through the Mesh explorer",
-        desc: "Open the Mesh tab and trigger at least one mesh event.",
-        xp: 30,
-      },
-      {
-        id: "q-support",
-        title: "Answer a SupCast-style question",
-        desc: "Mock: imagine claiming & solving a support case.",
-        xp: 50,
-      },
-    ];
-
-    questList.innerHTML = "";
-
-    quests.forEach((q) => {
-      const li = document.createElement("li");
-      li.className = "quest-item";
-      li.dataset.questId = q.id;
-
-      const title = document.createElement("div");
-      title.className = "quest-title";
-      title.textContent = q.title;
-
-      const desc = document.createElement("div");
-      desc.className = "quest-desc";
-      desc.textContent = q.desc;
-
-      const footer = document.createElement("div");
-      footer.className = "quest-footer";
-
-      const xpTag = document.createElement("span");
-      xpTag.className = "quest-xp";
-      xpTag.textContent = `+${q.xp} XP`;
-
-      const btn = document.createElement("button");
-      btn.className = "btn-outline quest-complete-btn";
-      btn.textContent = "Complete (mock)";
-      btn.addEventListener("click", () => {
-        if (btn.disabled) return;
-        btn.disabled = true;
-        btn.textContent = "Completed";
-
-        xp += q.xp;
-        renderStats();
-        showToast(`Quest complete · +${q.xp} XP`);
-
-        logHomeEvent(q.title, `Completed · +${q.xp} XP`, "quest");
-        logMeshEvent("Quest pulse", `${q.id} completed`, "quest");
-      });
-
-      footer.appendChild(xpTag);
-      footer.appendChild(btn);
-
-      li.appendChild(title);
-      li.appendChild(desc);
-      li.appendChild(footer);
-      questList.appendChild(li);
-    });
-  }
-
-  // -----------------------------
-  // MESH TAB (mode copy)
-  // -----------------------------
-  function initMeshTab() {
+  function setupMeshModes() {
     const buttons = $all(".segmented-btn[data-mesh-mode]");
     const copyEl = $("#meshModeCopy");
-    if (!buttons.length || !copyEl) return;
-
-    const copyMap = {
-      alpha:
-        "Viewing mesh demo in Alpha hunters mode — wallets with aggressive pack activity flare brighter.",
-      new: "Viewing mesh demo in New creators mode — fresh contracts and spin-up clusters bubble to the surface.",
-      gravity:
-        "Viewing mesh demo in Gravity clusters mode — wallets with the largest XP streams bend the mesh around them.",
-    };
 
     buttons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const mode = btn.getAttribute("data-mesh-mode");
-        buttons.forEach((b) => b.classList.remove("segmented-btn-active"));
-        btn.classList.add("segmented-btn-active");
+        if (!mode || !copyEl) return;
 
-        const text = copyMap[mode] || copyMap.gravity;
-        copyEl.innerHTML = text.replace(
-          "Gravity clusters",
-          "<strong>Gravity clusters</strong>"
+        buttons.forEach((b) =>
+          b.classList.toggle("segmented-btn-active", b === btn)
         );
 
-        logMeshEvent(
-          "Mesh mode switched",
-          `User selected ${mode} mesh filter`,
-          "mesh-mode"
-        );
+        if (mode === "alpha") {
+          copyEl.innerHTML =
+            'Viewing mesh demo in <strong>Alpha hunters</strong> mode — wallets opening high volumes of packs cluster at the edges.';
+        } else if (mode === "new") {
+          copyEl.innerHTML =
+            'Viewing mesh demo in <strong>New creators</strong> mode — fresh tokens and wallets appear as pulsing nodes.';
+        } else {
+          copyEl.innerHTML =
+            'Viewing mesh demo in <strong>Gravity clusters</strong> mode — wallets with the largest XP streams bend the mesh around them.';
+        }
+
+        pushEvent(state.meshEvents, {
+          kind: "mesh",
+          label: "MESH",
+          text: `Switched mesh mode to ${mode}.`,
+          time: formatTime(),
+          meta: "View changed (mock)",
+        });
+
+        renderActivityList($("#meshEvents"), state.meshEvents);
       });
     });
 
-    const btnFullMesh = $("#btn-open-full-mesh");
-    if (btnFullMesh) {
-      btnFullMesh.addEventListener("click", () => {
-        logMeshEvent(
-          "Full Mesh Explorer",
-          "User opened full-screen mesh demo (mock)",
-          "mesh"
-        );
-        showToast("Full Mesh Explorer is mock-only for now");
-        // Här kan du senare: window.location.href = "/mesh.html";
+    const fullMeshBtn = $("#btn-open-full-mesh");
+    if (fullMeshBtn) {
+      fullMeshBtn.addEventListener("click", () => {
+        // här kan du senare länka till mesh.html eller extern viewer
+        showToast("Full Mesh Explorer is not wired yet (demo).");
       });
     }
   }
 
-  // -----------------------------
-  // ACCOUNT SHEET
-  // -----------------------------
-  function initAccountSheet() {
-    const btnAccount = $("#btn-account");
+  function setupAccountSheet() {
     const sheet = $("#account-sheet");
+    const btnAccount = $("#btn-account");
     const btnClose = $("#btn-close-account");
-    if (!btnAccount || !sheet || !btnClose) return;
+    if (!sheet || !btnAccount || !btnClose) return;
 
-    function openSheet() {
-      showElement(sheet);
-
-      // push state så back-knappen kan stänga
-      history.pushState({ sheet: "account" }, "", "#account");
+    function open() {
+      sheet.setAttribute("aria-hidden", "false");
+      sheet.classList.add("sheet-backdrop-visible");
     }
 
-    function closeSheet(fromPopState = false) {
-      hideElement(sheet);
-      if (!fromPopState && location.hash === "#account") {
-        history.back();
-      }
+    function close() {
+      sheet.setAttribute("aria-hidden", "true");
+      sheet.classList.remove("sheet-backdrop-visible");
     }
 
-    btnAccount.addEventListener("click", openSheet);
-    btnClose.addEventListener("click", () => closeSheet(false));
+    btnAccount.addEventListener("click", open);
+    btnClose.addEventListener("click", close);
 
     sheet.addEventListener("click", (e) => {
-      if (e.target === sheet) {
-        closeSheet(false);
-      }
+      if (e.target === sheet) close();
     });
 
-    // Sheet actions
-    sheet.addEventListener("click", (e) => {
-      const row = e.target.closest(".sheet-row");
-      if (!row) return;
-      const action = row.getAttribute("data-action");
-      if (!action) return;
-
-      switch (action) {
-        case "referrals":
-          showToast("Referrals panel (mock) · track earned XP & SPN");
-          logHomeEvent(
-            "Opened Referrals",
-            "Referral dashboard accessed (mock)",
-            "referral"
-          );
-          break;
-        case "earnings":
-          showToast("Earnings overview (mock) · mesh rewards summary");
-          logHomeEvent(
-            "Opened Earnings",
-            "Earnings dashboard accessed (mock)",
-            "earnings"
-          );
-          break;
-        case "collectibles":
-          showToast("Collectibles (mock) · packs & onchain items");
-          logHomeEvent(
-            "Opened Collectibles",
-            "Collectibles overview accessed (mock)",
-            "collectibles"
-          );
-          break;
-        case "swap-wallet":
-          showToast("Swap wallet (mock) · choose another Base address");
-          logHomeEvent(
-            "Swap wallet",
-            "Wallet swap flow opened (mock)",
-            "wallet"
-          );
-          break;
-        case "logout":
-          showToast("Disconnected (mock) · wallet/session cleared");
-          logHomeEvent(
-            "Log out",
-            "User disconnected from HUD (mock)",
-            "session"
-          );
-          break;
-        default:
-          break;
-      }
-    });
-
-    // Popstate för back-knapp
-    window.addEventListener("popstate", (event) => {
-      if (event.state && event.state.sheet === "account") {
-        // state försvinner när vi backar, så bara se till att det är stängt
-        hideElement(sheet);
-      }
+    const rows = sheet.querySelectorAll(".sheet-row");
+    rows.forEach((row) => {
+      row.addEventListener("click", () => {
+        const action = row.getAttribute("data-action");
+        if (action === "referrals") {
+          showToast("Referrals panel (mock) · coming soon.");
+        } else if (action === "earnings") {
+          showToast("Earnings (mock) · will link to mesh earnings/PNL.");
+        } else if (action === "collectibles") {
+          showToast("Collectibles (mock) · card view later.");
+        } else if (action === "swap-wallet") {
+          showToast("Swap wallet (mock) · connects to wallet selector later.");
+        } else if (action === "logout") {
+          showToast("Logged out / disconnected (mock).");
+          close();
+        }
+      });
     });
   }
 
-  // -----------------------------
-  // SETTINGS SHEET
-  // -----------------------------
-  function initSettingsSheet() {
-    const btnSettings = $("#btn-settings");
+  function setupSettingsSheet() {
     const sheet = $("#settings-sheet");
-    const btnClose = $("#btn-close-settings");
+    const btnOpen = $("#btn-settings");
     const btnBack = $("#btn-settings-back");
+    const btnClose = $("#btn-close-settings");
+    if (!sheet || !btnOpen || !btnBack || !btnClose) return;
 
-    if (!btnSettings || !sheet || !btnClose || !btnBack) return;
-
-    function openSheet() {
-      showElement(sheet);
-      history.pushState({ sheet: "settings" }, "", "#settings");
+    function open() {
+      sheet.setAttribute("aria-hidden", "false");
+      sheet.classList.add("sheet-backdrop-visible");
     }
 
-    function closeSheet(fromPopState = false) {
-      hideElement(sheet);
-      if (!fromPopState && location.hash === "#settings") {
-        history.back();
-      }
+    function close() {
+      sheet.setAttribute("aria-hidden", "true");
+      sheet.classList.remove("sheet-backdrop-visible");
     }
 
-    btnSettings.addEventListener("click", openSheet);
-    btnClose.addEventListener("click", () => closeSheet(false));
-    btnBack.addEventListener("click", () => closeSheet(false));
+    btnOpen.addEventListener("click", open);
+    btnBack.addEventListener("click", close);
+    btnClose.addEventListener("click", close);
 
     sheet.addEventListener("click", (e) => {
-      if (e.target === sheet) {
-        closeSheet(false);
-      }
+      if (e.target === sheet) close();
     });
 
-    // Exempel: klick på settings-rader
     const rows = sheet.querySelectorAll(".settings-row");
     rows.forEach((row) => {
       row.addEventListener("click", () => {
-        const label = row.textContent.trim();
-        showToast(`Settings: ${label} (mock)`);
-        logHomeEvent("Settings interaction", label, "settings");
+        const text = row.textContent.trim();
+        showToast(`${text} · not wired (demo).`);
       });
     });
 
-    window.addEventListener("popstate", (event) => {
-      if (event.state && event.state.sheet === "settings") {
-        hideElement(sheet);
-      }
-    });
+    // support-rad i settings kan senare peka mot SupCast-modulen
   }
 
-  // -----------------------------
-  // BOTTOM NAV: HIDES ON SCROLL
-  // -----------------------------
-  function initBottomNavScrollHide() {
-    const nav = $("#bottom-nav");
-    if (!nav) return;
+  // ---------- LIVE MOCK PULSE ----------
 
-    let lastY = window.scrollY;
-
-    window.addEventListener("scroll", () => {
-      const y = window.scrollY;
-      if (y > lastY + 12) {
-        nav.classList.add("bottom-nav-hidden");
-      } else if (y < lastY - 12) {
-        nav.classList.remove("bottom-nav-hidden");
-      }
-      lastY = y;
-    });
-  }
-
-  // -----------------------------
-  // REAL-TIME ACTIVITY PULSE (mock)
-  // -----------------------------
-  function initLivePulse() {
-    const types = ["pack", "quest", "social", "xp", "mesh"];
-
-    function randomItem(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    const titles = [
-      "Wallet bridged XP",
-      "Pack opened on Base",
-      "New creator coin ping",
-      "Mesh streak updated",
-      "SupCast-style support ping",
-    ];
-
-    const metas = [
-      "+12 XP · small pulse",
-      "+40 XP · pack streak",
-      "Creator hook event",
-      "XP stream rebalanced",
-      "Support answered · +25 XP",
-    ];
-
+  function setupLivePulse() {
+    // enkel live-signal var 12–20 sek
     setInterval(() => {
-      // liten chans för fake event, inte hela tiden
-      if (Math.random() < 0.4) {
-        const t = randomItem(titles);
-        const m = randomItem(metas);
-        const type = randomItem(types);
+      const kinds = ["xp", "pack", "mesh", "quest", "social"];
+      const pick = kinds[Math.floor(Math.random() * kinds.length)];
 
-        logHomeEvent(t, m, type);
+      let payload;
+      if (pick === "xp") {
+        payload = {
+          kind: "xp",
+          label: "XP",
+          text: "Background XP trickle from docked app (mock).",
+          meta: "+5 XP",
+        };
+        state.xp += 5;
+      } else if (pick === "pack") {
+        payload = {
+          kind: "pack",
+          label: "PACK",
+          text: "Random wallet opened a mesh-aligned pack.",
+          meta: "External source",
+        };
+      } else if (pick === "mesh") {
+        payload = {
+          kind: "mesh",
+          label: "MESH",
+          text: "New node linked into your extended graph.",
+          meta: "Sentient Mesh mock",
+        };
+      } else if (pick === "quest") {
+        payload = {
+          kind: "quest",
+          label: "QUEST",
+          text: "A side-quest was completed by a docked app user.",
+          meta: "Global feed",
+        };
+      } else {
+        payload = {
+          kind: "social",
+          label: "CAST",
+          text: "Farcaster friend joined a SpawnEngine quest.",
+          meta: "Social mesh",
+        };
       }
-    }, 5500);
+
+      pushEvent(state.homeEvents, {
+        ...payload,
+        time: formatTime(),
+      });
+
+      renderMeshSnapshot();
+      renderActivityList($("#homeActivityList"), state.homeEvents);
+    }, 14000 + Math.random() * 6000);
   }
 
-  // -----------------------------
-  // OPTIONAL: ACTIVITY FILTERS (om HTML har dem)
-  // -----------------------------
-  function initActivityFilters() {
-    const filterButtons = $all("[data-activity-filter]");
-    const list = $("#homeActivityList");
-    if (!filterButtons.length || !list) return;
+  // ---------- INIT ----------
 
-    function applyFilter(filter) {
-      const items = list.querySelectorAll(".activity-item");
-      items.forEach((li) => {
-        const type = li.dataset.type || "general";
-        if (filter === "all" || type === filter) {
-          li.style.display = "";
-        } else {
-          li.style.display = "none";
-        }
-      });
-    }
-
-    filterButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const filter = btn.getAttribute("data-activity-filter");
-        filterButtons.forEach((b) =>
-          b.classList.remove("activity-filter-active")
-        );
-        btn.classList.add("activity-filter-active");
-        applyFilter(filter || "all");
-      });
-    });
-
-    // default
-    applyFilter("all");
-  }
-
-  // -----------------------------
-  // INIT
-  // -----------------------------
-  document.addEventListener("DOMContentLoaded", () => {
-    renderStats();
-    initTabs();
-    initCheckIn();
-    initLootViews();
+  window.addEventListener("DOMContentLoaded", () => {
+    renderHeaderStats();
     initQuests();
-    initMeshTab();
-    initAccountSheet();
-    initSettingsSheet();
-    initBottomNavScrollHide();
-    initLivePulse();
-    initActivityFilters();
+    seedHomeEvents();
+    seedMeshEvents();
+    seedLootEvents();
 
-    // Seed: visa några start-events så listorna inte är tomma
-    logHomeEvent(
-      "Mesh HUD booted",
-      "SpawnEngine v0.3 mock mesh online",
-      "system"
-    );
-    logMeshEvent(
-      "Mesh background running",
-      "WebGL nodes/orbits initialized (demo)",
-      "system"
-    );
+    renderMeshSnapshot();
+    renderActivityList($("#homeActivityList"), state.homeEvents);
+    renderActivityList($("#meshEvents"), state.meshEvents);
+    renderInventory();
+    renderQuests();
+
+    setupTabs();
+    setupStreak();
+    setupLoot();
+    setupMeshModes();
+    setupAccountSheet();
+    setupSettingsSheet();
+    setupLivePulse();
   });
 })();
