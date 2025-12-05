@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -6,7 +6,7 @@
     name="viewport"
     content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   />
-    <link rel="manifest" href="/manifest.json" />
+  <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#0af2ff" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -19,34 +19,26 @@
   <div id="mesh-bg">
     <canvas id="mesh-canvas"></canvas>
   </div>
-
-  <!-- Dark overlay above mesh so HUD is läsbar -->
   <div class="mesh-overlay"></div>
 
-  <!-- MAIN APP SHELL -->
   <div class="app-shell">
-    <!-- Top HUD card -->
-    <div class="hud-card hud-card-header">
+    <!-- MAIN HUD CARD -->
+    <div class="hud-card">
       <!-- Top row: avatar + settings -->
       <div class="hud-top-row">
-        <button id="btn-account" class="avatar-chip" aria-label="Account sheet">
+        <button id="btn-account" class="avatar-chip">
           <div class="avatar-circle">S</div>
           <div class="avatar-meta">
-            <div class="avatar-handle">@spawniz</div>
-            <div class="avatar-sub">Mesh ID · Creator</div>
+            <span class="avatar-handle">@spawniz</span>
+            <span class="avatar-sub">Mesh ID · Creator</span>
           </div>
         </button>
-
-        <button
-          id="btn-settings"
-          class="icon-button"
-          aria-label="Settings"
-        >
-          <span class="icon-gear"></span>
+        <button id="btn-settings" class="icon-button" aria-label="Settings">
+          <div class="icon-gear"></div>
         </button>
       </div>
 
-      <!-- Mesh status + tags -->
+      <!-- badges / tags -->
       <div class="hud-header-row">
         <div class="hud-tags">
           <span class="pill pill-soft">Base · Mesh ecosystems</span>
@@ -54,10 +46,11 @@
         </div>
         <div class="mesh-status-pill">
           <span class="status-dot"></span>
-          Mesh v0.3
+          <span>Mesh v0.3</span>
         </div>
       </div>
 
+      <!-- title block -->
       <div class="hud-title-block">
         <h1 class="hud-title">SpawnEngine · Mesh HUD</h1>
         <p class="hud-subtitle">
@@ -65,295 +58,263 @@
         </p>
       </div>
 
-      <!-- Stat row -->
+      <!-- platform strip -->
+      <div class="platform-strip">
+        <span class="platform-pill">
+          GAS <span id="gasEstimate" class="platform-pill-value">~0.20 gwei est.</span>
+        </span>
+        <span class="platform-pill">
+          MODE <span class="platform-pill-value">Single mesh</span>
+        </span>
+        <span class="platform-pill">
+          WALLETS <span id="activeWallets" class="platform-pill-value">1</span>
+        </span>
+      </div>
+
+      <!-- stats grid -->
       <div class="hud-grid hud-grid-4">
         <div class="hud-stat">
-          <div class="hud-stat-label">GAS</div>
-          <div class="hud-stat-value" id="gasEstimate">~0.21 gwei est.</div>
+          <div class="hud-stat-label">XP Balance</div>
+          <div id="xpBalance" class="hud-stat-value">0 XP</div>
         </div>
         <div class="hud-stat">
-          <div class="hud-stat-label">MODE</div>
-          <div class="hud-stat-value">Single mesh</div>
+          <div class="hud-stat-label">SPN Balance</div>
+          <div id="spawnBalance" class="hud-stat-value">0 SPN</div>
         </div>
         <div class="hud-stat">
-          <div class="hud-stat-label">SYNC</div>
+          <div class="hud-stat-label">Sync</div>
           <div class="hud-stat-value">Local mock</div>
         </div>
         <div class="hud-stat">
-          <div class="hud-stat-label">ACTIVE WALLETS</div>
-          <div class="hud-stat-value" id="activeWallets">1</div>
+          <div class="hud-stat-label">Active wallets</div>
+          <div id="activeWalletsStat" class="hud-stat-value">1</div>
         </div>
       </div>
-    </div>
 
-    <!-- TAB CONTENT -->
-    <main id="tab-content" class="tab-content">
-      <!-- HOME -->
-      <section id="tab-home" class="tab-panel tab-panel-active">
-        <div class="hud-card">
-          <header class="section-header">
-            <div>
-              <h2>Mesh snapshot</h2>
-              <p class="section-sub">Single player mesh</p>
-            </div>
-          </header>
-
-          <div class="hud-grid hud-grid-2">
-            <div class="metric-card metric-xp">
-              <div class="metric-label">XP BALANCE</div>
-              <div class="metric-value" id="xpBalance">1650 XP</div>
-              <p class="metric-sub">Every onchain action feeds your mesh.</p>
-            </div>
-            <div class="metric-card">
-              <div class="metric-label">SPAWN TOKEN</div>
-              <div class="metric-value" id="spawnBalance">497 SPN</div>
-              <p class="metric-sub">Mock balance · demo only.</p>
-            </div>
-          </div>
-
-          <div class="streak-row">
-            <div class="streak-wheel">
-              <div class="streak-circle">
-                <div class="streak-day-label">DAY</div>
-                <div class="streak-day-value" id="streakDays">4</div>
-                <div class="streak-day-label">STREAK</div>
-              </div>
-            </div>
-            <div class="streak-copy">
-  <div class="streak-title">Daily ritual</div>
-  <p id="streakCopyText" class="streak-sub">
-    Keep the streak for <span id="streakRemaining">3</span> more days
-    for a full weekly run.
-  </p>
-  <div class="streak-bar">
-    <div id="streakBarFill" class="streak-bar-fill"></div>
-  </div>
-  <button id="btn-checkin" class="btn-outline">Check-in</button>
-</div>
-          </div>
-
-          <div class="activity-feed">
-            <header class="section-header">
-              <div>
-                <h2>Today’s signals</h2>
-                <p class="section-sub">Mesh events · last 10 demo actions</p>
-              </div>
-            </header>
-            <ul id="homeActivityList" class="activity-list"></ul>
+      <!-- streak -->
+      <div class="streak-row">
+        <div class="streak-wheel">
+          <div class="streak-circle">
+            <div class="streak-day-label">DAY</div>
+            <div class="streak-day-value" id="streakDays">1</div>
+            <div class="streak-day-label">STREAK</div>
           </div>
         </div>
-      </section>
-
-      <!-- LOOT -->
-      <section id="tab-loot" class="tab-panel">
-        <div class="hud-card">
-          <header class="section-header">
-            <div>
-              <h2>Loot &amp; packs</h2>
-              <p class="section-sub">Fragments · Shards · Relics</p>
-            </div>
-          </header>
-
-          <div class="segmented">
-            <button
-              class="segmented-btn segmented-btn-active"
-              data-loot-view="packs"
-            >
-              Packs
-            </button>
-            <button class="segmented-btn" data-loot-view="lab">Pull Lab</button>
-            <button class="segmented-btn" data-loot-view="inventory">
-              Inventory
-            </button>
-          </div>
-
-          <!-- Packs view -->
-          <div id="lootView-packs" class="loot-view loot-view-active">
-            <p class="section-sub">
-              Demo packs only. Opening a pack adds XP and mesh activity.
-            </p>
-            <div class="pack-row">
-              <div class="pack-card">
-                <div class="pack-title">Starter mesh pack</div>
-                <div class="pack-sub">
-                  Contains 3–5 Fragments, chance for Shard.
-                </div>
-                <button class="btn-primary" id="btn-open-pack">
-                  Simulate pack open
-                </button>
-              </div>
-            </div>
-            <ul id="lootEvents" class="activity-list"></ul>
-          </div>
-
-          <!-- Pull lab -->
-          <div id="lootView-lab" class="loot-view">
-            <p class="section-sub">
-              Combine Fragments &amp; Shards into higher-tier Relics. Demo synth
-              only.
-            </p>
-            <button class="btn-outline" id="btn-simulate-synth">
-              Run mock synthesis
-            </button>
-            <div id="labResult" class="lab-result"></div>
-          </div>
-
-          <!-- Inventory -->
-          <div id="lootView-inventory" class="loot-view">
-            <p class="section-sub">Tier summary · demo balances</p>
-            <ul class="tier-list">
-              <li><span>Fragments</span><span id="invFragments">12</span></li>
-              <li><span>Shards</span><span id="invShards">3</span></li>
-              <li><span>Relics</span><span id="invRelics">1</span></li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <!-- QUESTS -->
-      <section id="tab-quests" class="tab-panel">
-        <div class="hud-card">
-          <header class="section-header">
-            <div>
-              <h2>Creator quests</h2>
-              <p class="section-sub">
-                High-signal tasks from verified creators. All mock for now.
-              </p>
-            </div>
-          </header>
-          <ul id="questList" class="quest-list"></ul>
-        </div>
-      </section>
-
-      <!-- MESH -->
-      <section id="tab-mesh" class="tab-panel">
-        <div class="hud-card">
-          <header class="section-header">
-            <div>
-              <h2>Mesh explorer</h2>
-              <p class="section-sub">
-                Wallet-to-wallet flows rendered as a living mesh. Demo data
-                only.
-              </p>
-            </div>
-            <div class="section-tagline">Wallet flows · Demo</div>
-          </header>
-
-          <div class="segmented">
-            <button
-              class="segmented-btn segmented-btn-active"
-              data-mesh-mode="alpha"
-            >
-              Alpha hunters
-            </button>
-            <button class="segmented-btn" data-mesh-mode="new">
-              New creators
-            </button>
-            <button class="segmented-btn" data-mesh-mode="gravity">
-              Gravity clusters
-            </button>
-          </div>
-
-          <p id="meshModeCopy" class="section-sub">
-            Viewing mesh demo in <strong>Gravity clusters</strong> mode — wallets
-            with the largest XP streams bend the mesh around them.
+        <div class="streak-copy">
+          <div class="streak-title">Daily ritual</div>
+          <p id="streakCopyText" class="streak-sub">
+            Keep the streak for <span id="streakRemaining">6</span> more days
+            for a full weekly run.
           </p>
-
-          <div class="legend-row">
-            <span class="legend-dot legend-coin"></span> Coin flows
-            <span class="legend-dot legend-pack"></span> Pack pulls
-            <span class="legend-dot legend-burn"></span> Burns
-            <span class="legend-dot legend-xp"></span> XP streams
+          <div class="streak-bar">
+            <div id="streakBarFill" class="streak-bar-fill"></div>
           </div>
-
-          <div class="mesh-mini-card">
-            <p>
-              Tap a node in full explorer to enter focus mode — latest pack,
-              transaction and streak for that wallet. (Mock copy)
-            </p>
-            <button class="btn-outline" id="btn-open-full-mesh">
-              Open full Mesh Explorer
-            </button>
-          </div>
-
-          <div class="activity-feed">
-            <header class="section-header">
-              <div>
-                <h2>Mesh events</h2>
-                <p class="section-sub">Last 10 demo actions</p>
-              </div>
-            </header>
-            <ul id="meshEvents" class="activity-list"></ul>
-          </div>
+          <button id="btn-checkin" class="btn-outline">Check-in</button>
         </div>
-      </section>
+      </div>
 
-      <!-- SUPPORT / SUPCAST -->
-      <section id="tab-support" class="tab-panel">
-        <div class="hud-card">
+      <!-- HOME activity feed -->
+      <div id="tab-home" class="tab-panel tab-panel-active">
+        <div class="activity-feed">
           <header class="section-header">
             <div>
-              <h2>SupCast · Support mesh</h2>
-              <p class="section-sub">
-                Ask, claim and solve questions tied to real packs, games &amp;
-                creators.
-              </p>
+              <h2>Mesh feed</h2>
+              <p class="section-sub">XP, packs &amp; social mesh around your wallet.</p>
             </div>
-            <div class="section-tagline">Support · XP · Reputation</div>
+            <div class="section-tagline">Platform · Live mock</div>
           </header>
+          <ul id="homeActivityList" class="activity-list"></ul>
+        </div>
+      </div>
 
-          <!-- Context selector -->
-          <div class="supcast-context">
-            <label class="field-label" for="supcastContext">
-              Context
-            </label>
-            <select id="supcastContext" class="field-input">
-              <option value="spawn_core">Spawn Core · Boosterbox</option>
-              <option value="tiny_legends">Tiny Legends · Game</option>
-              <option value="vibe_packs">$VIBE · Pack Series</option>
-              <option value="zora_creators">Zora · Creator coins</option>
-            </select>
-            <p class="section-sub supcast-context-sub">
-              Each context is tagged with contractAddress, gameId and
-              creatorWallet in the SupCast engine (mocked here).
+      <!-- LOOT TAB -->
+      <div id="tab-loot" class="tab-panel">
+        <header class="section-header">
+          <div>
+            <h2>Loot &amp; Pull Lab</h2>
+            <p class="section-sub">
+              Packs, synthesis and mock inventory for SpawnEngine mesh.
             </p>
           </div>
+          <div class="section-tagline">Pillar · Packs</div>
+        </header>
 
-          <!-- Ask question -->
-          <div class="supcast-block supcast-ask">
-            <h3 class="supcast-title">Ask</h3>
+        <div class="segmented">
+          <button
+            class="segmented-btn segmented-btn-active"
+            data-loot-view="packs"
+          >
+            Packs
+          </button>
+          <button class="segmented-btn" data-loot-view="lab">Pull Lab</button>
+          <button class="segmented-btn" data-loot-view="inventory">
+            Inventory
+          </button>
+        </div>
+
+        <!-- Packs view -->
+        <div id="lootView-packs" class="loot-view loot-view-active">
+          <div class="pack-row">
+            <div class="pack-card">
+              <div class="pack-title">Starter mesh pack</div>
+              <div class="pack-sub">
+                Simulated pack open with Fragments, Shards &amp; Relic chances.
+              </div>
+              <button id="btn-open-pack" class="btn-full-width">
+                Simulate pack open
+              </button>
+            </div>
+          </div>
+          <ul id="lootEvents" class="activity-list"></ul>
+        </div>
+
+        <!-- Pull Lab -->
+        <div id="lootView-lab" class="loot-view">
+          <div class="pack-card">
+            <div class="pack-title">Pull Lab synthesis</div>
+            <div class="pack-sub">
+              Burn Fragments and Shards into a Relic (all mock, for UX only).
+            </div>
+
+            <div class="hud-grid hud-grid-3">
+              <div class="hud-stat">
+                <div class="hud-stat-label">Fragments</div>
+                <div id="invFragments" class="hud-stat-value">0</div>
+              </div>
+              <div class="hud-stat">
+                <div class="hud-stat-label">Shards</div>
+                <div id="invShards" class="hud-stat-value">0</div>
+              </div>
+              <div class="hud-stat">
+                <div class="hud-stat-label">Relics</div>
+                <div id="invRelics" class="hud-stat-value">0</div>
+              </div>
+            </div>
+
+            <button id="btn-simulate-synth" class="btn-full-width">
+              Run synthesis (mock)
+            </button>
+            <p id="labResult" class="lab-result">
+              Requires 5 Fragments + 1 Shard (mock requirement).
+            </p>
+          </div>
+        </div>
+
+        <!-- Inventory -->
+        <div id="lootView-inventory" class="loot-view">
+          <div class="mesh-mini-card">
+            Inventory view is mocked — values above reflect your simulated pulls.
+          </div>
+        </div>
+      </div>
+
+      <!-- QUESTS TAB -->
+      <div id="tab-quests" class="tab-panel">
+        <header class="section-header">
+          <div>
+            <h2>Quest mesh</h2>
             <p class="section-sub">
+              Daily, weekly and support quests feeding your XP streams.
+            </p>
+          </div>
+          <div class="section-tagline">Pillar · Quests</div>
+        </header>
+        <ul id="questList" class="quest-list"></ul>
+      </div>
+
+      <!-- MESH TAB -->
+      <div id="tab-mesh" class="tab-panel">
+        <header class="section-header">
+          <div>
+            <h2>Mesh explorer</h2>
+            <p class="section-sub">
+              Demo of Alpha / New / Gravity modes hooked to your mesh.
+            </p>
+          </div>
+          <div class="section-tagline">Pillar · Mesh</div>
+        </header>
+
+        <div class="segmented">
+          <button
+            class="segmented-btn segmented-btn-active"
+            data-mesh-mode="alpha"
+          >
+            Alpha hunters
+          </button>
+          <button class="segmented-btn" data-mesh-mode="new">
+            New creators
+          </button>
+          <button class="segmented-btn" data-mesh-mode="gravity">
+            Gravity clusters
+          </button>
+        </div>
+
+        <p id="meshModeCopy" class="hud-subtitle">
+          Viewing mesh demo in <strong>Alpha hunters</strong> mode — wallets
+          opening high volumes of packs cluster at the edges.
+        </p>
+
+        <div class="legend-row">
+          <span><span class="legend-dot legend-coin"></span>XP streams</span>
+          <span><span class="legend-dot legend-pack"></span>Pack pulls</span>
+          <span><span class="legend-dot legend-burn"></span>Burn events</span>
+          <span><span class="legend-dot legend-xp"></span>Creator flows</span>
+        </div>
+
+        <div class="mesh-mini-card">
+          Mesh WebGL view is mocked here. In v1.0 it renders a 3D mesh synced to
+          real wallets and packs.
+        </div>
+
+        <ul id="meshEvents" class="activity-list"></ul>
+
+        <button id="btn-open-full-mesh" class="btn-full-width">
+          Open full Mesh Explorer (platform)
+        </button>
+      </div>
+
+      <!-- SUPPORT / SUPCAST TAB -->
+      <div id="tab-support" class="tab-panel">
+        <header class="section-header">
+          <div>
+            <h2>SupCast · Support mesh</h2>
+            <p class="section-sub">
+              Ask, claim and solve questions tied to real packs, games &amp;
+              creators.
+            </p>
+          </div>
+          <div class="section-tagline">Support · XP · Reputation</div>
+        </header>
+
+        <div class="supcast-layout">
+          <!-- ASK BLOCK -->
+          <div class="supcast-block">
+            <h3 class="supcast-title">Ask</h3>
+            <p class="hud-subtitle supcast-context-sub">
               Ask about this pack / game / creator. Experts can claim and solve
               for XP.
             </p>
-            <form id="supcastAskForm" class="supcast-form">
-              <div class="supcast-form-row">
-                <div class="supcast-field">
-                  <label class="field-label" for="supcastApp">App</label>
-                  <select id="supcastApp" class="field-input">
-                    <option value="vibe">Vibe</option>
-                    <option value="zora">Zora</option>
-                    <option value="warp">WarpAI</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-                <div class="supcast-field">
-                  <label class="field-label" for="supcastChain">Chain</label>
-                  <select id="supcastChain" class="field-input">
-                    <option value="base">Base</option>
-                    <option value="optimism">Optimism</option>
-                    <option value="ethereum">Ethereum</option>
-                  </select>
-                </div>
+
+            <div class="supcast-form">
+              <div class="supcast-field">
+                <label class="field-label" for="supcastContext">Context</label>
+                <select id="supcastContext" class="field-input">
+                  <option>Spawn Core · Boosterbox</option>
+                  <option>WarpAI · Onchain Activitys</option>
+                  <option>Vibe · Packs</option>
+                </select>
               </div>
 
               <div class="supcast-field">
-                <label class="field-label" for="supcastDevice">Device</label>
-                <select id="supcastDevice" class="field-input">
-                  <option value="iphone">iPhone</option>
-                  <option value="android">Android</option>
-                  <option value="desktop">Desktop</option>
-                </select>
+                <label class="field-label" for="supcastTitle">
+                  Short title
+                </label>
+                <input
+                  id="supcastTitle"
+                  class="field-input"
+                  type="text"
+                  placeholder="Gas failed when opening pack…"
+                />
               </div>
 
               <div class="supcast-field">
@@ -369,94 +330,62 @@
               </div>
 
               <div class="supcast-field">
-                <label class="field-label" for="supcastBody">
+                <label class="field-label" for="supcastDescription">
                   Describe the problem
                 </label>
                 <textarea
-                  id="supcastBody"
+                  id="supcastDescription"
                   class="field-input field-textarea"
-                  rows="3"
                   placeholder="Describe what went wrong, what you tried and any tx hashes…"
                 ></textarea>
               </div>
 
-              <button type="submit" class="btn-primary supcast-submit">
-                Post question
-              </button>
-            </form>
+              <div class="supcast-submit">
+                <button id="supcastSubmit" class="btn-full-width">
+                  Post question (mock)
+                </button>
+              </div>
+            </div>
           </div>
 
-          <!-- Feed + Experts -->
-          <div class="supcast-layout">
-            <!-- Feed -->
-            <div class="supcast-block">
-              <h3 class="supcast-title">Feed</h3>
-              <p class="section-sub">
-                Open questions for the current context. Claim, solve, earn XP.
-              </p>
-              <ul id="supcastFeed" class="supcast-feed"></ul>
-            </div>
+          <!-- FEED / EXPERTS BLOCK -->
+          <div class="supcast-block supcast-experts">
+            <h3 class="supcast-title">Feed · Latest questions</h3>
+            <ul id="supcastFeed" class="supcast-feed"></ul>
 
-            <!-- Experts -->
-            <div class="supcast-block supcast-experts">
-              <h3 class="supcast-title">Experts</h3>
-              <p class="section-sub">
-                Wallets with most solved cases in this context (mock).
-              </p>
-              <ul id="supcastExperts" class="supcast-expert-list"></ul>
-
-              <div class="supcast-profile">
-                <h4 class="supcast-title">Your support profile</h4>
-                <p class="section-sub">
-                  Global XP &amp; solved count across SpawnEngine3 modules.
-                </p>
-                <div class="supcast-profile-grid">
-                  <div>
-                    <div class="metric-label">Support XP</div>
-                    <div
-                      id="supcastProfileXp"
-                      class="metric-value metric-small"
-                    >
-                      0
-                    </div>
-                  </div>
-                  <div>
-                    <div class="metric-label">Solved</div>
-                    <div
-                      id="supcastProfileSolved"
-                      class="metric-value metric-small"
-                    >
-                      0
-                    </div>
-                  </div>
-                  <div>
-                    <div class="metric-label">Rating</div>
-                    <div
-                      id="supcastProfileRating"
-                      class="metric-value metric-small"
-                    >
-                      5.0
-                    </div>
-                  </div>
+            <div class="supcast-profile">
+              <h4 class="supcast-title">SupCast profile (mock)</h4>
+              <div class="supcast-profile-grid">
+                <div class="mesh-mini-card">
+                  Cases solved
+                  <br /><strong>7</strong>
+                </div>
+                <div class="mesh-mini-card">
+                  Support XP
+                  <br /><strong>350</strong>
+                </div>
+                <div class="mesh-mini-card">
+                  Rating
+                  <br /><strong>4.5★</strong>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
-    </main>
-
-    <!-- BOTTOM NAV -->
-    <nav id="bottom-nav" class="bottom-nav">
-      <button class="nav-btn nav-btn-active" data-tab-target="home">
-        Home
-      </button>
-      <button class="nav-btn" data-tab-target="loot">Loot</button>
-      <button class="nav-btn" data-tab-target="quests">Quests</button>
-      <button class="nav-btn" data-tab-target="mesh">Mesh</button>
-      <button class="nav-btn" data-tab-target="support">Support</button>
-    </nav>
+      </div>
+      <!-- /SUPPORT TAB -->
+    </div>
+    <!-- /hud-card -->
   </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn nav-btn-active" data-tab-target="home">Home</button>
+    <button class="nav-btn" data-tab-target="loot">Loot</button>
+    <button class="nav-btn" data-tab-target="quests">Quests</button>
+    <button class="nav-btn" data-tab-target="mesh">Mesh</button>
+    <button class="nav-btn" data-tab-target="support">SupCast</button>
+  </nav>
 
   <!-- ACCOUNT SHEET -->
   <div id="account-sheet" class="sheet-backdrop" aria-hidden="true">
@@ -464,69 +393,84 @@
       <div class="sheet-header">
         <div class="sheet-avatar-row">
           <div class="avatar-circle">S</div>
-          <div>
-            <div class="avatar-handle">@spawniz</div>
-            <div class="avatar-sub">Mesh ID · Creator</div>
+          <div class="avatar-meta">
+            <span class="avatar-handle">@spawniz</span>
+            <span class="avatar-sub">Mesh ID · Creator</span>
           </div>
         </div>
       </div>
 
-      <div class="sheet-section-label">Account</div>
-      <button class="sheet-row" data-action="referrals">
-        <span>Referrals</span><span class="chevron">›</span>
-      </button>
+      <div class="sheet-section-label">Account &amp; rewards</div>
       <button class="sheet-row" data-action="earnings">
-        <span>Earnings</span><span class="chevron">›</span>
+        <span>Total mesh earnings</span>
+        <span class="chevron">›</span>
       </button>
       <button class="sheet-row" data-action="collectibles">
-        <span>Collectibles</span><span class="chevron">›</span>
+        <span>Collectibles overview</span>
+        <span class="chevron">›</span>
       </button>
 
-      <div class="sheet-section-label">Wallet &amp; account</div>
+      <div class="sheet-section-label">Wallet</div>
       <button class="sheet-row" data-action="swap-wallet">
-        <span>Swap wallet</span><span class="chevron">›</span>
-      </button>
-      <button class="sheet-row sheet-row-danger" data-action="logout">
-        <span>Log out / Disconnect</span>
+        <span>Switch wallet</span>
+        <span class="chevron">›</span>
       </button>
 
-      <button id="btn-close-account" class="btn-full-width">Close</button>
+      <button id="btn-close-account" class="btn-full-width">
+        Close
+      </button>
     </div>
   </div>
 
   <!-- SETTINGS SHEET -->
   <div id="settings-sheet" class="sheet-backdrop" aria-hidden="true">
     <div class="settings-panel">
-      <header class="settings-header">
-        <button
-          id="btn-settings-back"
-          class="icon-back"
-          aria-label="Back from settings"
-        >
-          ‹
-        </button>
-        <h2>Settings</h2>
-      </header>
+      <div class="settings-header">
+        <button id="btn-settings-back" class="icon-back">‹</button>
+        <h2>Settings &amp; API</h2>
+      </div>
 
       <div class="settings-scroll">
         <div class="settings-section-label">Profile &amp; account</div>
-        <button class="settings-row">Connected socials & feeds</button>
-        <button class="settings-row">Notifications</button>
-        <button class="settings-row">Feeds &amp; Oracle feed</button>
+        <button class="settings-row">
+          Connected socials
+        </button>
+        <button class="settings-row">
+          Notifications
+        </button>
+        <button class="settings-row">
+          Feeds &amp; oracle feed
+        </button>
 
         <div class="settings-section-label">Wallet &amp; collectibles</div>
-        <button class="settings-row">Preferred wallet</button>
-        <button class="settings-row">Verified addresses</button>
-        <button class="settings-row">Docked apps &amp; XP SDK</button>
-        <button class="settings-row">Premium mesh filters</button>
+        <button class="settings-row">
+          Preferred wallet
+        </button>
+        <button class="settings-row">
+          Verified addresses
+        </button>
+        <button class="settings-row">
+          Docked apps &amp; XP SDK
+        </button>
+        <button class="settings-row">
+          Premium mesh filters
+        </button>
 
         <div class="settings-section-label">Other</div>
-        <button class="settings-row">Theme</button>
-        <button class="settings-row">Support</button>
-        <button class="settings-row">SpawnEngine Launchpad</button>
-      </div>
+        <button class="settings-row">
+          Theme
+        </button>
+        <button class="settings-row">
+          Support
+        </button>
+        <button class="settings-row">
+          SpawnEngine Launchpad
+        </button>
 
-      <button id="btn-close-settings" class="btn-full-width">Close</button>
+        <button id="btn-close-settings" class="btn-full-width">
+          Close
+        </button>
+      </div>
     </div>
   </div>
 
@@ -537,7 +481,7 @@
   <script src="mesh-bg.js"></script>
   <script src="supcast.js"></script>
   <script src="app.js"></script>
-    <script>
+  <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker
