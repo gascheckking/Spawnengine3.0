@@ -1,23 +1,15 @@
 {
   "name": "SpawnEngine · Mesh HUD",
   "short_name": "SpawnEngine",
-  "description": "Mesh HUD · XP · Packs · Quests · SupCast · Onchain activity",
   "start_url": "/",
-  "scope": "/",
   "display": "standalone",
-  "background_color": "#05050d",
+  "background_color": "#020208",
   "theme_color": "#0af2ff",
-  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/logo.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "/logo.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ]
 }
