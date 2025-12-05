@@ -25,9 +25,12 @@ function showToast(message) {
   const toast = $("#toast");
   if (!toast) return;
   toast.textContent = message;
-  toast.classList.add("toast-visible");
-  setTimeout(() => toast.classList.remove("toast-visible"), 2200);
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2200);
 }
+
+// expose for other scripts if needed
+window.spawnToast = showToast;
 
 function formatTime() {
   const d = new Date();
@@ -44,6 +47,7 @@ function pushEvent(list, payload, max = 16) {
 function renderHeaderStats() {
   const gasEl = $("#gasEstimate");
   const activeWalletsEl = $("#activeWallets");
+  const activeWalletsStat = $("#activeWalletsStat");
 
   if (gasEl) {
     const base = 0.18;
@@ -51,6 +55,7 @@ function renderHeaderStats() {
     gasEl.textContent = `~${(base + Number(jitter)).toFixed(2)} gwei est.`;
   }
   if (activeWalletsEl) activeWalletsEl.textContent = "1";
+  if (activeWalletsStat) activeWalletsStat.textContent = "1";
 }
 
 function renderMeshSnapshot() {
@@ -59,6 +64,7 @@ function renderMeshSnapshot() {
   const streakDaysEl = $("#streakDays");
   const streakRemEl = $("#streakRemaining");
   const streakCopyEl = $("#streakCopyText");
+  const streakBarFill = $("#streakBarFill");
 
   if (xpEl) xpEl.textContent = `${state.xp} XP`;
   if (spawnEl) spawnEl.textContent = `${state.spawn} SPN`;
@@ -70,6 +76,10 @@ function renderMeshSnapshot() {
   if (streakCopyEl) {
     const remaining = Math.max(state.weeklyTarget - state.streakDays, 0);
     streakCopyEl.textContent = `Keep the streak for ${remaining} more days for a full weekly run.`;
+  }
+  if (streakBarFill) {
+    const progress = (state.streakDays / state.weeklyTarget) * 100;
+    streakBarFill.style.width = `${Math.min(progress, 100)}%`;
   }
 }
 
@@ -88,7 +98,6 @@ function renderActivityList(ulEl, list) {
 
   if (!list.length) {
     const li = document.createElement("li");
-    li.className = "activity-item activity-item-empty";
     li.textContent = "No recent signals yet.";
     ulEl.appendChild(li);
     return;
@@ -96,18 +105,14 @@ function renderActivityList(ulEl, list) {
 
   list.forEach((item) => {
     const li = document.createElement("li");
-    li.className = "activity-item";
 
     const tag = document.createElement("span");
-    tag.className = `activity-tag activity-tag-${item.kind || "generic"}`;
     tag.textContent = item.label;
 
     const main = document.createElement("div");
-    main.className = "activity-main";
     main.textContent = item.text;
 
     const meta = document.createElement("div");
-    meta.className = "activity-meta";
     meta.textContent = `${item.time} · ${item.meta || ""}`.trim();
 
     li.appendChild(tag);
@@ -308,7 +313,6 @@ function setupTabs() {
     } else if (target === "mesh") {
       renderActivityList($("#meshEvents"), state.meshEvents);
     } else if (target === "support") {
-      // koppla quest "q-support"
       const q = state.quests.find((q) => q.id === "q-support");
       if (q && !q.completed) {
         q.completed = true;
@@ -335,7 +339,6 @@ function setupTabs() {
     });
   });
 
-  // default
   activate("home");
 }
 
@@ -385,7 +388,7 @@ function setupLoot() {
   const openBtn = $("#btn-open-pack");
   if (openBtn) {
     openBtn.addEventListener("click", () => {
-      const fragmentsGained = 2 + Math.floor(Math.random() * 4); // 2–5
+      const fragmentsGained = 2 + Math.floor(Math.random() * 4);
       const shardDrop = Math.random() < 0.35;
       const xpGain = 30 + Math.floor(Math.random() * 35);
 
@@ -503,13 +506,12 @@ function setupMeshModes() {
   const fullMeshBtn = $("#btn-open-full-mesh");
   if (fullMeshBtn) {
     fullMeshBtn.addEventListener("click", () => {
-      // senare: window.location.href = "mesh.html";
       showToast("Full Mesh Explorer is not wired yet (demo).");
     });
   }
 }
 
-// ---------- ACCOUNT / SETTINGS SHEETS (valfritt, om de finns i HTML) ----------
+// ---------- ACCOUNT / SETTINGS SHEETS ----------
 
 function setupAccountSheet() {
   const sheet = $("#account-sheet");
@@ -519,11 +521,11 @@ function setupAccountSheet() {
 
   function open() {
     sheet.setAttribute("aria-hidden", "false");
-    sheet.classList.add("sheet-backdrop-visible");
+    sheet.classList.add("open");
   }
   function close() {
     sheet.setAttribute("aria-hidden", "true");
-    sheet.classList.remove("sheet-backdrop-visible");
+    sheet.classList.remove("open");
   }
 
   btnAccount.addEventListener("click", open);
@@ -561,11 +563,11 @@ function setupSettingsSheet() {
 
   function open() {
     sheet.setAttribute("aria-hidden", "false");
-    sheet.classList.add("sheet-backdrop-visible");
+    sheet.classList.add("open");
   }
   function close() {
     sheet.setAttribute("aria-hidden", "true");
-    sheet.classList.remove("sheet-backdrop-visible");
+    sheet.classList.remove("open");
   }
 
   btnOpen.addEventListener("click", open);
