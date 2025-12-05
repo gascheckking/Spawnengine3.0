@@ -427,7 +427,7 @@ body.app-body {
   transition: width 0.25s ease-out;
 }
 
-/* ACTIVITY LIST */
+/* ACTIVITY LIST WRAPPER */
 
 .activity-feed {
   margin-top: 10px;
@@ -437,93 +437,6 @@ body.app-body {
   list-style: none;
   margin: 6px 0 0;
   padding: 0;
-}
-
-/* li har redan styling, men vi separerar class också för tydlighet */
-.activity-item {
-  padding: 7px 8px;
-  border-radius: 10px;
-  margin-bottom: 4px;
-  background: rgba(11, 16, 38, 0.9);
-  border: 1px solid rgba(90, 128, 210, 0.5);
-  font-size: 11px;
-}
-
-.activity-item-empty {
-  text-align: center;
-  color: #8a96d8;
-}
-
-.activity-list li {
-  padding: 7px 8px;
-  border-radius: 10px;
-  margin-bottom: 4px;
-  background: rgba(11, 16, 38, 0.9);
-  border: 1px solid rgba(90, 128, 210, 0.5);
-  font-size: 11px;
-}
-
-.activity-tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 46px;
-  padding: 2px 6px;
-  margin-right: 6px;
-  border-radius: 999px;
-  font-size: 9px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.activity-main {
-  display: block;
-  margin-top: 2px;
-}
-
-.activity-meta {
-  margin-top: 2px;
-  font-size: 10px;
-  color: #9aa7e5;
-}
-
-/* färger per typ */
-
-.activity-tag-xp {
-  background: rgba(0, 255, 200, 0.1);
-  border: 1px solid rgba(0, 255, 200, 0.7);
-  color: #7dffd9;
-}
-
-.activity-tag-pack {
-  background: rgba(255, 200, 80, 0.1);
-  border: 1px solid rgba(255, 200, 80, 0.7);
-  color: #ffd47a;
-}
-
-.activity-tag-mesh {
-  background: rgba(120, 180, 255, 0.1);
-  border: 1px solid rgba(120, 180, 255, 0.8);
-  color: #c6ddff;
-}
-
-.activity-tag-quest {
-  background: rgba(185, 120, 255, 0.1);
-  border: 1px solid rgba(185, 120, 255, 0.8);
-  color: #e0c7ff;
-}
-
-.activity-tag-social,
-.activity-tag-cast {
-  background: rgba(140, 255, 255, 0.08);
-  border: 1px solid rgba(140, 255, 255, 0.8);
-  color: #c3ffff;
-}
-
-.activity-tag-burn {
-  background: rgba(255, 80, 130, 0.1);
-  border: 1px solid rgba(255, 80, 130, 0.8);
-  color: #ffbbd0;
 }
 
 /* BUTTONS */
@@ -678,20 +591,6 @@ button {
   background: rgba(12, 18, 44, 0.9);
   border: 1px solid rgba(134, 178, 255, 0.6);
   margin-bottom: 4px;
-  display: flex;
-  justify-content: space-between;
-  gap: 6px;
-}
-
-.quest-main {
-  flex: 1;
-}
-
-.quest-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
 }
 
 .quest-title {
@@ -709,10 +608,6 @@ button {
   font-size: 10px;
   display: flex;
   justify-content: space-between;
-}
-
-.quest-btn-completed {
-  opacity: 0.7;
 }
 
 /* MESH LEGEND */
@@ -823,9 +718,8 @@ button {
   transition: opacity 0.2s ease-out;
 }
 
-/* gammal klass + den JS använder nu */
-.sheet-backdrop.open,
-.sheet-backdrop-visible {
+/* matchar klassen som JS använder */
+.sheet-backdrop.sheet-backdrop-visible {
   opacity: 1;
   pointer-events: auto;
 }
@@ -965,7 +859,7 @@ button {
   transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
-/* gammal + ny klass, funkar för båda varianter */
+/* både .show och .toast-visible funkar */
 .toast.show,
 .toast-visible {
   opacity: 1;
@@ -1112,4 +1006,83 @@ button {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 4px;
   margin-top: 4px;
+}
+
+/* ACTIVITY ITEMS (HOME / LOOT / MESH) — plattformsfeed */
+
+.activity-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 8px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  background: rgba(11, 16, 38, 0.9);
+  border: 1px solid rgba(90, 128, 210, 0.5);
+  font-size: 11px;
+}
+
+.activity-item-empty {
+  text-align: center;
+  color: #8f9be0;
+  font-style: italic;
+}
+
+.activity-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 1px;
+}
+
+.activity-main {
+  font-size: 11px;
+}
+
+.activity-meta {
+  font-size: 10px;
+  color: #99a6e8;
+}
+
+/* Tag-färger */
+
+.activity-tag-xp {
+  background: rgba(61, 242, 255, 0.15);
+  color: #9bfffb;
+  border: 1px solid rgba(61, 242, 255, 0.6);
+}
+
+.activity-tag-pack {
+  background: rgba(255, 200, 87, 0.16);
+  color: #ffe2a3;
+  border: 1px solid rgba(255, 200, 87, 0.7);
+}
+
+.activity-tag-mesh {
+  background: rgba(124, 168, 250, 0.18);
+  color: #d7e2ff;
+  border: 1px solid rgba(124, 168, 250, 0.7);
+}
+
+.activity-tag-quest {
+  background: rgba(155, 255, 176, 0.16);
+  color: #d9ffdc;
+  border: 1px solid rgba(155, 255, 176, 0.7);
+}
+
+.activity-tag-social {
+  background: rgba(188, 140, 255, 0.18);
+  color: #f2ddff;
+  border: 1px solid rgba(188, 140, 255, 0.7);
+}
+
+.activity-tag-generic {
+  background: rgba(120, 144, 255, 0.18);
+  color: #dde3ff;
+  border: 1px solid rgba(120, 144, 255, 0.7);
 }
