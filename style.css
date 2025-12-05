@@ -18,7 +18,6 @@ body.app-body {
   color: #f5f5ff;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
-  overscroll-behavior-y: none;
 }
 
 /* BACKGROUND MESH */
@@ -238,6 +237,29 @@ body.app-body {
   color: #bec9ff;
 }
 
+/* PLATFORM STRIP */
+
+.platform-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 10px;
+  font-size: 10px;
+}
+
+.platform-pill {
+  border-radius: 999px;
+  padding: 3px 8px;
+  background: rgba(6, 10, 30, 0.95);
+  border: 1px solid rgba(134, 176, 255, 0.7);
+  color: #a9b5ff;
+}
+
+.platform-pill-value {
+  margin-left: 4px;
+  color: #f6fbff;
+}
+
 /* STATS GRID */
 
 .hud-grid {
@@ -253,6 +275,10 @@ body.app-body {
   .hud-grid-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+}
+
+.hud-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .hud-grid-2 {
@@ -427,7 +453,7 @@ body.app-body {
   transition: width 0.25s ease-out;
 }
 
-/* ACTIVITY LIST WRAPPER */
+/* ACTIVITY LIST */
 
 .activity-feed {
   margin-top: 10px;
@@ -437,6 +463,15 @@ body.app-body {
   list-style: none;
   margin: 6px 0 0;
   padding: 0;
+}
+
+.activity-list li {
+  padding: 7px 8px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  background: rgba(11, 16, 38, 0.9);
+  border: 1px solid rgba(90, 128, 210, 0.5);
+  font-size: 11px;
 }
 
 /* BUTTONS */
@@ -562,20 +597,6 @@ button {
   color: #cde6ff;
 }
 
-.tier-list {
-  list-style: none;
-  padding: 0;
-  margin: 4px 0 0;
-  font-size: 11px;
-}
-
-.tier-list li {
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 0;
-  border-bottom: 1px dashed rgba(112, 142, 220, 0.5);
-}
-
 /* QUESTS */
 
 .quest-list {
@@ -591,6 +612,13 @@ button {
   background: rgba(12, 18, 44, 0.9);
   border: 1px solid rgba(134, 178, 255, 0.6);
   margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.quest-main {
+  flex: 1;
 }
 
 .quest-title {
@@ -604,10 +632,20 @@ button {
   color: #aab6f8;
 }
 
+.quest-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
 .quest-meta {
   font-size: 10px;
-  display: flex;
-  justify-content: space-between;
+  display: block;
+}
+
+.quest-btn-completed {
+  opacity: 0.6;
 }
 
 /* MESH LEGEND */
@@ -718,8 +756,7 @@ button {
   transition: opacity 0.2s ease-out;
 }
 
-/* matchar klassen som JS använder */
-.sheet-backdrop.sheet-backdrop-visible {
+.sheet-backdrop.open {
   opacity: 1;
   pointer-events: auto;
 }
@@ -859,9 +896,7 @@ button {
   transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
-/* både .show och .toast-visible funkar */
-.toast.show,
-.toast-visible {
+.toast.show {
   opacity: 1;
   pointer-events: auto;
   transform: translateX(-50%) translateY(-4px);
@@ -1008,81 +1043,8 @@ button {
   margin-top: 4px;
 }
 
-/* ACTIVITY ITEMS (HOME / LOOT / MESH) — plattformsfeed */
+/* SCROLL BEHAVIOR */
 
-.activity-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 7px 8px;
-  border-radius: 10px;
-  margin-bottom: 4px;
-  background: rgba(11, 16, 38, 0.9);
-  border: 1px solid rgba(90, 128, 210, 0.5);
-  font-size: 11px;
-}
-
-.activity-item-empty {
-  text-align: center;
-  color: #8f9be0;
-  font-style: italic;
-}
-
-.activity-tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2px 7px;
-  border-radius: 999px;
-  font-size: 9px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  margin-bottom: 1px;
-}
-
-.activity-main {
-  font-size: 11px;
-}
-
-.activity-meta {
-  font-size: 10px;
-  color: #99a6e8;
-}
-
-/* Tag-färger */
-
-.activity-tag-xp {
-  background: rgba(61, 242, 255, 0.15);
-  color: #9bfffb;
-  border: 1px solid rgba(61, 242, 255, 0.6);
-}
-
-.activity-tag-pack {
-  background: rgba(255, 200, 87, 0.16);
-  color: #ffe2a3;
-  border: 1px solid rgba(255, 200, 87, 0.7);
-}
-
-.activity-tag-mesh {
-  background: rgba(124, 168, 250, 0.18);
-  color: #d7e2ff;
-  border: 1px solid rgba(124, 168, 250, 0.7);
-}
-
-.activity-tag-quest {
-  background: rgba(155, 255, 176, 0.16);
-  color: #d9ffdc;
-  border: 1px solid rgba(155, 255, 176, 0.7);
-}
-
-.activity-tag-social {
-  background: rgba(188, 140, 255, 0.18);
-  color: #f2ddff;
-  border: 1px solid rgba(188, 140, 255, 0.7);
-}
-
-.activity-tag-generic {
-  background: rgba(120, 144, 255, 0.18);
-  color: #dde3ff;
-  border: 1px solid rgba(120, 144, 255, 0.7);
+body.app-body {
+  overscroll-behavior-y: none;
 }
