@@ -130,7 +130,7 @@
         a_color,
         4,
         gl.FLOAT,
-        false,
+        false, 
         stride,
         4 * Float32Array.BYTES_PER_ELEMENT
       );
