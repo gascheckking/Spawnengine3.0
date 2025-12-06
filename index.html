@@ -436,50 +436,64 @@
     </div>
   </div>
 
-  <!-- SETTINGS SHEET -->
-  <div id="settings-sheet" class="sheet-backdrop" aria-hidden="true">
-    <div class="settings-panel">
-      <div class="settings-header">
-        <button id="btn-settings-back" class="icon-back">‹</button>
-        <h2>Settings &amp; API</h2>
-      </div>
+  <!-- PROFILE & ACCOUNT -->
+<div class="sheet-section-label">PROFILE & ACCOUNT</div>
 
-      <div class="settings-scroll">
-        <div class="settings-section-label">Profile &amp; account</div>
-        <button class="settings-row">
-          Connected socials
-        </button>
-        <button class="settings-row">
-          Notifications
-        </button>
-        <button class="settings-row">
-          Feeds &amp; oracle feed
-        </button>
+<button class="sheet-row" data-setting="connectedSocials">
+  <span>Connected socials</span>
+  <span class="chevron">&rsaquo;</span>
+</button>
 
-        <div class="settings-section-label">Wallet &amp; collectibles</div>
-        <button class="settings-row">
-          Preferred wallet
-        </button>
-        <button class="settings-row">
-          Verified addresses
-        </button>
-        <button class="settings-row">
-          Docked apps &amp; XP SDK
-        </button>
-        <button class="settings-row">
-          Premium mesh filters
-        </button>
+<button class="sheet-row" data-setting="notifications">
+  <span>Notifications</span>
+  <span class="chevron">&rsaquo;</span>
+</button>
 
-        <div class="settings-section-label">Other</div>
-        <button class="settings-row">
-          Theme
-        </button>
-        <button class="settings-row">
-          Support
-        </button>
-        <button class="settings-row">
-          SpawnEngine Launchpad
-        </button>
+<button class="sheet-row" data-setting="feeds">
+  <span>Feeds &amp; oracle feed</span>
+  <span class="chevron">&rsaquo;</span>
+</button>
+
+<!-- WALLET & COLLECTIBLES -->
+<div class="sheet-section-label">WALLET &amp; COLLECTIBLES</div>
+
+<button class="sheet-row" data-setting="preferredWallet">
+  <span>Preferred wallet</span>
+  <span class="chevron">&rsaquo;</span>
+</button>
+
+<button class="sheet-row" data-setting="verifiedAddresses">
+  <span>Verified addresses</span>
+  <span class="chevron">&rsaquo;</span>
+</button>
+
+<button class="sheet-row" data-setting="dockedApps">
+  <span>Docked apps &amp; XP SDK</span>
+  <span class="chevron">&rsaquo;</span>
+</button>
+
+<button class="sheet-row" data-setting="premiumFilters">
+  <span>Premium mesh filters</span>
+  <span class="chevron">&rsaquo;</span>
+</button>
+
+<!-- OTHER -->
+<div class="sheet-section-label">OTHER</div>
+
+<button class="sheet-row" data-setting="theme">
+  <span>Theme</span>
+  <span class="chevron">&rsaquo;</span>
+</button>
+
+<button class="sheet-row" data-setting="support">
+  <span>Support</span>
+  <span class="chevron">&rsaquo;</span>
+</button>
+
+<button class="sheet-row" data-setting="launchpad">
+  <span>SpawnEngine Launchpad</span>
+  <span class="chevron">&rsaquo;</span>
+</button>
 
         <button id="btn-close-settings" class="btn-full-width">
           Close
