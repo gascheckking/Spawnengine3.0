@@ -1,83 +1,128 @@
-// supcast.js — enkel lokal SupCast-mock
+// supcast.js — SupCast · Support mesh (mock backend)
 
-(function () {
-  function initSupCast() {
-    const titleEl = document.getElementById("supcastTitle");
-    const descEl = document.getElementById("supcastDescription");
-    const tagsEl = document.getElementById("supcastTags");
-    const ctxEl = document.getElementById("supcastContext");
-    const btn = document.getElementById("supcastSubmit");
-    const feed = document.getElementById("supcastFeed");
+// Enkel in-memory feed
+const supcastState = {
+  items: [],
+};
 
-    if (!titleEl || !descEl || !btn || !feed) return;
+function supcastFormatTime() {
+  const d = new Date();
+  return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+}
 
-    const localFeed = [];
+function renderSupcastFeed() {
+  const feed = document.getElementById("supcastFeed");
+  if (!feed) return;
 
-    function renderFeed() {
-      feed.innerHTML = "";
-      if (!localFeed.length) {
-        const li = document.createElement("li");
-        li.className = "supcast-feed-item";
-        li.textContent = "No questions yet. Post your first SupCast.";
-        feed.appendChild(li);
-        return;
-      }
+  feed.innerHTML = "";
 
-      localFeed.forEach((item) => {
-        const li = document.createElement("li");
-        li.className = "supcast-feed-item";
+  if (!supcastState.items.length) {
+    const li = document.createElement("li");
+    li.className = "supcast-feed-item";
+    li.innerHTML =
+      "<div class='supcast-feed-title'>No questions yet</div><div class='supcast-feed-meta'><span>Post a mock case above</span><span>SpawnEngine</span></div>";
+    feed.appendChild(li);
+    return;
+  }
 
-        const title = document.createElement("div");
-        title.className = "supcast-feed-title";
-        title.textContent = item.title;
+  supcastState.items.forEach((item) => {
+    const li = document.createElement("li");
+    li.className = "supcast-feed-item";
 
-        const body = document.createElement("div");
-        body.textContent = item.desc;
+    const title = document.createElement("div");
+    title.className = "supcast-feed-title";
+    title.textContent = item.title;
 
-        const meta = document.createElement("div");
-        meta.className = "supcast-feed-meta";
-        meta.innerHTML = `<span>${item.context}</span><span>${item.tags}</span>`;
+    const meta = document.createElement("div");
+    meta.className = "supcast-feed-meta";
+    meta.innerHTML = `
+      <span>${item.context} · ${item.tags}</span>
+      <span>${item.time}</span>
+    `;
 
-        li.appendChild(title);
-        li.appendChild(body);
-        li.appendChild(meta);
-        feed.appendChild(li);
-      });
+    li.appendChild(title);
+
+    if (item.description) {
+      const desc = document.createElement("div");
+      desc.style.marginTop = "4px";
+      desc.textContent = item.description;
+      li.appendChild(desc);
     }
 
-    renderFeed();
+    li.appendChild(meta);
+    feed.appendChild(li);
+  });
+}
 
-    btn.addEventListener("click", () => {
-      const title = titleEl.value.trim();
-      const desc = descEl.value.trim();
-      const tags = (tagsEl.value || "").trim();
-      const ctx = ctxEl.value || "Context";
+function seedSupcast() {
+  supcastState.items = [
+    {
+      context: "Spawn Core · Boosterbox",
+      title: "Pack stuck in pending state",
+      tags: "pack, pending, claim",
+      description:
+        "Mint succeeded but pack never showed up in my inventory. TX looks fine.",
+      time: supcastFormatTime(),
+    },
+    {
+      context: "WarpAI · Onchain Activitys",
+      title: "XP not updating after streak",
+      tags: "xp, streak, bug",
+      description:
+        "Checked in 3 times this week but streak only shows 1 day in HUD.",
+      time: supcastFormatTime(),
+    },
+  ];
+}
 
-      if (!title || !desc) {
-        if (window.spawnToast) window.spawnToast("Title + description required");
-        return;
-      }
+// Setup när DOM är redo
+function initSupcast() {
+  const ctx = document.getElementById("supcastContext");
+  const title = document.getElementById("supcastTitle");
+  const tags = document.getElementById("supcastTags");
+  const desc = document.getElementById("supcastDescription");
+  const submit = document.getElementById("supcastSubmit");
 
-      localFeed.unshift({
-        title,
-        desc,
-        tags: tags || "no_tags",
-        context: ctx,
-      });
-      if (localFeed.length > 20) localFeed.length = 20;
+  if (!ctx || !title || !tags || !desc || !submit) {
+    return;
+  }
 
-      titleEl.value = "";
-      descEl.value = "";
-      tagsEl.value = "";
+  seedSupcast();
+  renderSupcastFeed();
 
-      renderFeed();
-      if (window.spawnToast) window.spawnToast("SupCast posted (mock)");
+  submit.addEventListener("click", () => {
+    const contextValue = ctx.value || "Spawn Core · Boosterbox";
+    const titleValue = title.value.trim() || "Untitled question";
+    const tagsValue = tags.value.trim() || "mesh, support";
+    const descValue = desc.value.trim();
+
+    supcastState.items.unshift({
+      context: contextValue,
+      title: titleValue,
+      tags: tagsValue,
+      description: descValue,
+      time: supcastFormatTime(),
     });
-  }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initSupCast);
-  } else {
-    initSupCast();
-  }
-})();
+    // Begränsa feeden lite
+    if (supcastState.items.length > 20) {
+      supcastState.items.length = 20;
+    }
+
+    renderSupcastFeed();
+
+    title.value = "";
+    tags.value = "";
+    desc.value = "";
+
+    if (window.spawnToast) {
+      window.spawnToast("SupCast question posted (mock)");
+    }
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initSupcast);
+} else {
+  initSupcast();
+}
