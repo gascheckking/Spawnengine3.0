@@ -1233,6 +1233,8 @@ button {
   font-size: 11px;
   color: #9fd5ff;
 }
+/* WALLET STRIP UNDER PLATFORM STRIP */
+
 .wallet-strip {
   display: flex;
   align-items: center;
@@ -1241,9 +1243,16 @@ button {
   font-size: 11px;
 }
 
+.wallet-strip .btn-outline {
+  flex-shrink: 0;
+}
+
 .wallet-address {
   flex: 1;
   opacity: 0.9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .wallet-balance {
