@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -24,7 +25,7 @@
       </div>
 
       <div class="settings-section">
-        <h3>Profile & XP</h3>
+        <h3>Profile &amp; XP</h3>
         <div class="settings-card-grid">
           <div class="settings-card">
             <p class="label">Mesh ID</p>
@@ -75,15 +76,13 @@
     </div>
   </div>
 
-  <!-- SETTINGS BUTTON IN HEADER -->
-  <button id="settings-btn" class="settings-icon">⚙️</button>
   <!-- MESH BACKGROUND (WEBGL) -->
   <div id="mesh-bg">
     <canvas id="mesh-canvas"></canvas>
   </div>
   <div class="mesh-overlay"></div>
 
-  <!-- APP SHELL – ALLT INNE I V3 HUD -->
+  <!-- APP SHELL -->
   <div class="app-shell" id="app-container">
     <div class="hud-card">
       <!-- Top row: avatar + settings -->
@@ -95,7 +94,7 @@
             <span class="avatar-sub">Mesh ID · Creator</span>
           </div>
         </button>
-        <button id="btn-settings" class="icon-button" aria-label="Settings">
+        <button id="settings-btn" class="icon-button" aria-label="Settings">
           <div class="icon-gear"></div>
         </button>
       </div>
@@ -120,7 +119,7 @@
         </p>
       </div>
 
-            <!-- platform strip -->
+      <!-- platform strip -->
       <div class="platform-strip">
         <span class="platform-pill">
           GAS <span id="gasEstimate" class="platform-pill-value">~0.20 gwei est.</span>
@@ -133,7 +132,7 @@
         </span>
       </div>
 
-      <!-- wallet connect row (ny) -->
+      <!-- wallet connect row -->
       <div class="wallet-strip">
         <button id="btn-connect-wallet" class="btn-outline">Connect</button>
         <span class="wallet-address">Not connected</span>
@@ -182,10 +181,9 @@
         </div>
       </div>
 
-      <!-- TAB PANELS WRAPPED I EN CONTAINER -->
+      <!-- TAB PANELS -->
       <div class="tab-content">
-
-        <!-- HOME activity feed -->
+        <!-- HOME -->
         <div id="tab-home" class="tab-panel tab-panel-active">
           <div class="activity-feed">
             <header class="section-header">
@@ -199,7 +197,7 @@
           </div>
         </div>
 
-        <!-- LOOT TAB -->
+        <!-- LOOT -->
         <div id="tab-loot" class="tab-panel">
           <header class="section-header">
             <div>
@@ -280,7 +278,7 @@
           </div>
         </div>
 
-        <!-- QUESTS TAB -->
+        <!-- QUESTS -->
         <div id="tab-quests" class="tab-panel">
           <header class="section-header">
             <div>
@@ -294,7 +292,7 @@
           <ul id="questList" class="quest-list"></ul>
         </div>
 
-        <!-- MESH TAB -->
+        <!-- MESH -->
         <div id="tab-mesh" class="tab-panel">
           <header class="section-header">
             <div>
@@ -345,7 +343,7 @@
           </button>
         </div>
 
-        <!-- SUPPORT / SUPCAST TAB -->
+        <!-- SUPPORT / SUPCAST -->
         <div id="tab-support" class="tab-panel">
           <header class="section-header">
             <div>
@@ -445,7 +443,7 @@
             </div>
           </div>
         </div>
-        <!-- /SUPPORT TAB -->
+        <!-- /SUPPORT -->
       </div>
       <!-- /tab-content -->
     </div>
@@ -497,77 +495,10 @@
     </div>
   </div>
 
-  <!-- PROFILE & ACCOUNT -->
-<div class="sheet-section-label">PROFILE & ACCOUNT</div>
-
-<button class="sheet-row" data-setting="connectedSocials">
-  <span>Connected socials</span>
-  <span class="chevron">&rsaquo;</span>
-</button>
-
-<button class="sheet-row" data-setting="notifications">
-  <span>Notifications</span>
-  <span class="chevron">&rsaquo;</span>
-</button>
-
-<button class="sheet-row" data-setting="feeds">
-  <span>Feeds &amp; oracle feed</span>
-  <span class="chevron">&rsaquo;</span>
-</button>
-
-<!-- WALLET & COLLECTIBLES -->
-<div class="sheet-section-label">WALLET &amp; COLLECTIBLES</div>
-
-<button class="sheet-row" data-setting="preferredWallet">
-  <span>Preferred wallet</span>
-  <span class="chevron">&rsaquo;</span>
-</button>
-
-<button class="sheet-row" data-setting="verifiedAddresses">
-  <span>Verified addresses</span>
-  <span class="chevron">&rsaquo;</span>
-</button>
-
-<button class="sheet-row" data-setting="dockedApps">
-  <span>Docked apps &amp; XP SDK</span>
-  <span class="chevron">&rsaquo;</span>
-</button>
-
-<button class="sheet-row" data-setting="premiumFilters">
-  <span>Premium mesh filters</span>
-  <span class="chevron">&rsaquo;</span>
-</button>
-
-<!-- OTHER -->
-<div class="sheet-section-label">OTHER</div>
-
-<button class="sheet-row" data-setting="theme">
-  <span>Theme</span>
-  <span class="chevron">&rsaquo;</span>
-</button>
-
-<button class="sheet-row" data-setting="support">
-  <span>Support</span>
-  <span class="chevron">&rsaquo;</span>
-</button>
-
-<button class="sheet-row" data-setting="launchpad">
-  <span>SpawnEngine Launchpad</span>
-  <span class="chevron">&rsaquo;</span>
-</button>
-
-        <button id="btn-close-settings" class="btn-full-width">
-          Close
-        </button>
-      </div>
-    </div>
-  </div>
-
-    <!-- TOAST -->
+  <!-- TOAST -->
   <div id="toast" class="toast"></div>
 
   <!-- SCRIPTS -->
-  <!-- Ethers måste laddas före app.js -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="mesh-bg.js"></script>
   <script src="supcast.js"></script>
@@ -581,26 +512,16 @@
       });
     }
   </script>
-  <!-- MARKET LISTING DETAILS PANEL -->
-<div id="marketDetailsBackdrop" class="sheet-backdrop">
-  <div class="settings-panel">
-    <div class="settings-header">
-      <button class="icon-back" id="marketDetailsBack">&larr;</button>
-      <h2 id="marketDetailsTitle">Listing</h2>
-    </div>
-    <div class="settings-scroll" id="marketDetailsBody"></div>
-  </div>
-</div>
 
-<!-- SETTINGS SUBPAGE PANEL -->
-<div id="settingsPanelBackdrop" class="sheet-backdrop">
-  <div class="settings-panel">
-    <div class="settings-header">
-      <button class="icon-back" id="settingsPanelBack">&larr;</button>
-      <h2 id="settingsPanelTitle">Settings</h2>
+  <!-- MARKET LISTING DETAILS PANEL -->
+  <div id="marketDetailsBackdrop" class="sheet-backdrop">
+    <div class="settings-panel">
+      <div class="settings-header">
+        <button class="icon-back" id="marketDetailsBack">&larr;</button>
+        <h2 id="marketDetailsTitle">Listing</h2>
+      </div>
+      <div class="settings-scroll" id="marketDetailsBody"></div>
     </div>
-    <div class="settings-scroll" id="settingsPanelBody"></div>
   </div>
-</div>
 </body>
 </html>
