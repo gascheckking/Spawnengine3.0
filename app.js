@@ -213,9 +213,9 @@ function initQuests() {
       completed: false,
     },
     {
-      id: "q-support",
-      title: "Open Support / SupCast",
-      desc: "Visit the Support tab once.",
+      id: "q-supcast",
+      title: "Open SupCast support",
+      desc: "Visit the SupCast tab once.",
       reward: 20,
       completed: false,
     },
@@ -312,15 +312,15 @@ function setupTabs() {
       renderQuests();
     } else if (target === "mesh") {
       renderActivityList($("#meshEvents"), state.meshEvents);
-    } else if (target === "support") {
-      const q = state.quests.find((q) => q.id === "q-support");
+    } else if (target === "supcast") {
+      const q = state.quests.find((q) => q.id === "q-supcast");
       if (q && !q.completed) {
         q.completed = true;
         state.xp += q.reward;
         pushEvent(state.homeEvents, {
           kind: "quest",
           label: "QUEST",
-          text: "Visited Support / SupCast",
+          text: "Visited SupCast support",
           time: formatTime(),
           meta: `+${q.reward} XP`,
         });
