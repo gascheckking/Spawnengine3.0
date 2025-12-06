@@ -1002,3 +1002,257 @@ if (document.readyState === "loading") {
 } else {
   initSpawnEngine();
 }
+// -------- MARKET DETAILS --------
+
+function openMarketDetails(card) {
+  const backdrop = document.getElementById('marketDetailsBackdrop');
+  const titleEl = document.getElementById('marketDetailsTitle');
+  const bodyEl = document.getElementById('marketDetailsBody');
+
+  const title = card.querySelector('.market-card-title')?.textContent.trim() || 'Listing';
+  const desc = card.querySelector('.market-card-desc')?.textContent.trim() || '';
+  const price = card.querySelector('.market-card-price')?.textContent.trim() || '';
+  const participants = card.querySelector('.market-card-participants')?.textContent.trim() || '';
+
+  titleEl.textContent = title;
+
+  bodyEl.innerHTML = `
+    <p class="section-sub">${desc}</p>
+    <div class="metric-card" style="margin-top:8px;">
+      <div class="metric-label">Price</div>
+      <div class="metric-value metric-small">${price || 'TBA'}</div>
+      <p class="metric-sub">${participants || 'Mesh curated slot'}</p>
+    </div>
+
+    <div class="supcast-context" style="margin-top:10px;">
+      <p class="section-sub">
+        This is a SpawnEngine market slot. In production this page will expose:
+      </p>
+      <ul class="quest-list">
+        <li class="quest-item">
+          <div class="quest-main">
+            <div class="quest-title">Onchain actions</div>
+            <p class="quest-sub">Mint / buy / swap / open events streamed from Base.</p>
+          </div>
+          <div class="quest-right">
+            <span class="quest-meta">Live feed</span>
+          </div>
+        </li>
+        <li class="quest-item">
+          <div class="quest-main">
+            <div class="quest-title">Embed API</div>
+            <p class="quest-sub">Drop this listing as a widget into any miniapp.</p>
+          </div>
+          <div class="quest-right">
+            <span class="quest-meta">Copy snippet</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <button class="btn-full-width">Copy embed snippet (mock)</button>
+  `;
+
+  backdrop.classList.add('open');
+}
+
+document.querySelectorAll('.market-card-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const card = btn.closest('.market-card');
+    if (card) openMarketDetails(card);
+  });
+});
+
+const marketDetailsBackdrop = document.getElementById('marketDetailsBackdrop');
+const marketDetailsBack = document.getElementById('marketDetailsBack');
+
+if (marketDetailsBack) {
+  marketDetailsBack.addEventListener('click', () => {
+    marketDetailsBackdrop.classList.remove('open');
+  });
+}
+
+if (marketDetailsBackdrop) {
+  marketDetailsBackdrop.addEventListener('click', (e) => {
+    if (e.target === marketDetailsBackdrop) {
+      marketDetailsBackdrop.classList.remove('open');
+    }
+  });
+}
+
+// -------- SETTINGS SUBPAGES --------
+
+const settingsContent = {
+  connectedSocials: {
+    title: 'Connected socials',
+    body: `
+      <p class="section-sub">
+        Link Farcaster, X, Warpcast miniapps and more to your mesh identity.
+      </p>
+      <div class="supcast-block">
+        <div class="supcast-title">Farcaster</div>
+        <p class="supcast-context-sub">Connect your cast feed for XP and quests.</p>
+        <button class="btn-full-width">Connect Farcaster (mock)</button>
+      </div>
+      <div class="supcast-block">
+        <div class="supcast-title">X / Twitter</div>
+        <p class="supcast-context-sub">Sync posts for future social quests.</p>
+        <button class="btn-full-width">Connect X (mock)</button>
+      </div>
+    `
+  },
+  notifications: {
+    title: 'Notifications',
+    body: `
+      <p class="section-sub">Control alerts from packs, tokens and quests.</p>
+      <div class="supcast-block">
+        <div class="supcast-title">Push & in-app alerts</div>
+        <p class="supcast-context-sub">Coming when SpawnEngine ships the full mesh client.</p>
+        <button class="btn-full-width">Enable all (mock)</button>
+      </div>
+    `
+  },
+  feeds: {
+    title: 'Feeds & oracle feed',
+    body: `
+      <p class="section-sub">Configure price, entropy and XP oracles.</p>
+      <div class="supcast-block">
+        <div class="supcast-title">Mesh oracle</div>
+        <p class="supcast-context-sub">Single endpoint for gas, prices and pack entropy.</p>
+        <button class="btn-full-width">View API docs (mock)</button>
+      </div>
+    `
+  },
+  preferredWallet: {
+    title: 'Preferred wallet',
+    body: `
+      <p class="section-sub">Choose which wallet is primary for actions.</p>
+      <div class="supcast-block">
+        <div class="supcast-title">Wallet priority</div>
+        <ul class="supcast-expert-list">
+          <li class="supcast-expert-item">
+            <span>Creator treasury</span><span>Primary</span>
+          </li>
+          <li class="supcast-expert-item">
+            <span>Sniper wallet</span><span>Secondary</span>
+          </li>
+          <li class="supcast-expert-item">
+            <span>Vault</span><span>Cold</span>
+          </li>
+        </ul>
+        <button class="btn-full-width">Change order (mock)</button>
+      </div>
+    `
+  },
+  verifiedAddresses: {
+    title: 'Verified addresses',
+    body: `
+      <p class="section-sub">Mark which wallets officially represent you.</p>
+      <div class="supcast-block">
+        <div class="supcast-title">SpawnEngine mesh</div>
+        <p class="supcast-context-sub">Verified wallets will be shown on your public profile.</p>
+        <button class="btn-full-width">Add verified address (mock)</button>
+      </div>
+    `
+  },
+  dockedApps: {
+    title: 'Docked apps & XP SDK',
+    body: `
+      <p class="section-sub">
+        Manage miniapps and SDK integrations connected to your mesh.
+      </p>
+      <div class="supcast-block">
+        <div class="supcast-title">XP SDK</div>
+        <p class="supcast-context-sub">Drop-in library to award mesh XP from your own app.</p>
+        <button class="btn-full-width">Copy install snippet (mock)</button>
+      </div>
+    `
+  },
+  premiumFilters: {
+    title: 'Premium mesh filters',
+    body: `
+      <p class="section-sub">Advanced filters for whales, snipers and XP whales.</p>
+      <div class="supcast-block">
+        <div class="supcast-title">Alpha hunter mode</div>
+        <p class="supcast-context-sub">Unlock wallet + pack filters across Base.</p>
+        <button class="btn-full-width">Preview premium (mock)</button>
+      </div>
+    `
+  },
+  theme: {
+    title: 'Theme',
+    body: `
+      <p class="section-sub">Switch between SpawnEngine themes.</p>
+      <div class="supcast-block">
+        <div class="supcast-title">Appearance</div>
+        <p class="supcast-context-sub">Right now: Dark mesh · Base mode.</p>
+        <button class="btn-full-width">Light mode (mock)</button>
+      </div>
+    `
+  },
+  support: {
+    title: 'Support',
+    body: `
+      <p class="section-sub">Need help? Mesh into support.</p>
+      <div class="supcast-block">
+        <div class="supcast-title">SpawnEngine support</div>
+        <p class="supcast-context-sub">Contact via Farcaster, email or onchain ticket.</p>
+        <button class="btn-full-width">Open support center (mock)</button>
+      </div>
+    `
+  },
+  launchpad: {
+    title: 'SpawnEngine Launchpad',
+    body: `
+      <p class="section-sub">
+        Launch new tokens, packs, quests and miniapps directly from SpawnEngine.
+      </p>
+      <div class="supcast-block">
+        <div class="supcast-title">Creator launch flow</div>
+        <p class="supcast-context-sub">
+          In v3.0 this becomes the one-click OS for Base creators.
+        </p>
+        <button class="btn-full-width">Start launch flow (mock)</button>
+      </div>
+    `
+  }
+};
+
+function openSettingsPanel(key) {
+  const conf = settingsContent[key];
+  if (!conf) return;
+
+  const backdrop = document.getElementById('settingsPanelBackdrop');
+  const titleEl = document.getElementById('settingsPanelTitle');
+  const bodyEl = document.getElementById('settingsPanelBody');
+
+  titleEl.textContent = conf.title;
+  bodyEl.innerHTML = conf.body;
+
+  backdrop.classList.add('open');
+}
+
+document.querySelectorAll('.sheet-row[data-setting]').forEach(row => {
+  row.addEventListener('click', () => {
+    const key = row.getAttribute('data-setting');
+    openSettingsPanel(key);
+  });
+});
+
+const settingsPanelBackdrop = document.getElementById('settingsPanelBackdrop');
+const settingsPanelBack = document.getElementById('settingsPanelBack');
+
+if (settingsPanelBack) {
+  settingsPanelBack.addEventListener('click', () => {
+    settingsPanelBackdrop.classList.remove('open');
+  });
+}
+
+if (settingsPanelBackdrop) {
+  settingsPanelBackdrop.addEventListener('click', (e) => {
+    if (e.target === settingsPanelBackdrop) {
+      settingsPanelBackdrop.classList.remove('open');
+    }
+  });
+}
