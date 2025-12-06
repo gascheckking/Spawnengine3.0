@@ -15,49 +15,53 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="app-body">
-  <!-- Gemini mesh background -->
-  <canvas id="mesh-bg"></canvas>
 
-  <div id="app-shell" class="app-shell">
-    <!-- resten av din app -->
-  </div>
-</body>
-  <!-- WebGL mesh background -->
+  <!-- MESH BACKGROUND (WEBGL) -->
   <div id="mesh-bg">
     <canvas id="mesh-canvas"></canvas>
   </div>
   <div class="mesh-overlay"></div>
 
-  <div class="app-shell">
-    <!-- MAIN HUD CARD -->
-    <div class="hud-card">
-      <!-- Top row: avatar + settings -->
-      <div class="hud-top-row">
-        <button id="btn-account" class="avatar-chip">
-          <div class="avatar-circle">S</div>
-          <div class="avatar-meta">
-            <span class="avatar-handle">@spawniz</span>
-            <span class="avatar-sub">Mesh ID · Creator</span>
-          </div>
-        </button>
-        <button id="btn-settings" class="icon-button" aria-label="Settings">
-          <div class="icon-gear"></div>
-        </button>
-      </div>
+  <!-- APP SHELL – ALLT INNE I V3 HUD -->
+  <div class="app-shell" id="app-container">
+    <!-- MAIN HUD CARD / MARKET / ALLA FLIKAR -->
+  </div>
 
-      <!-- badges / tags -->
-      <div class="hud-header-row">
-        <div class="hud-tags">
-          <span class="pill pill-soft">Base · Mesh ecosystems</span>
-          <span class="pill pill-outline">Farcaster ready</span>
-        </div>
-        <div class="mesh-status-pill">
-          <span class="status-dot"></span>
-          <span>Mesh v0.3</span>
-        </div>
-      </div>
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <!-- nav buttons -->
+  </nav>
 
-      <!-- title block -->
+</body>
+
+<div class="hud-card">
+  <!-- Top row: avatar + settings -->
+  <div class="hud-top-row">
+    <button id="btn-account" class="avatar-chip">
+      <div class="avatar-circle">S</div>
+      <div class="avatar-meta">
+        <span class="avatar-handle">@spawniz</span>
+        <span class="avatar-sub">Mesh ID · Creator</span>
+      </div>
+    </button>
+    <button id="btn-settings" class="icon-button" aria-label="Settings">
+      <div class="icon-gear"></div>
+    </button>
+  </div>
+
+  <!-- badges / tags -->
+  <div class="hud-header-row">
+    <div class="hud-tags">
+      <span class="pill pill-soft">Base · Mesh ecosystems</span>
+      <span class="pill pill-outline">Farcaster ready</span>
+    </div>
+    <div class="mesh-status-pill">
+      <span class="status-dot"></span>
+      <span>Mesh v0.3</span>
+    </div>
+  </div>
+
+  <!-- title block -->
       <div class="hud-title-block">
         <h1 class="hud-title">SpawnEngine · Mesh HUD</h1>
         <p class="hud-subtitle">
