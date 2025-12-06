@@ -1233,3 +1233,19 @@ button {
   font-size: 11px;
   color: #9fd5ff;
 }
+.wallet-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 10px;
+  font-size: 11px;
+}
+
+.wallet-address {
+  flex: 1;
+  opacity: 0.9;
+}
+
+.wallet-balance {
+  font-weight: 600;
+}
