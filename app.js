@@ -1,4 +1,4 @@
-// app.js — SpawnEngine3.0 · Mesh HUD v0.3 + SupCast shell
+// app.js — SpawnEngine3.0 · Mesh HUD v0.3 + SupCast + Settings views
 
 // ---------- STATE ----------
 
@@ -29,7 +29,7 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove("show"), 2200);
 }
 
-// expose for other scripts if needed
+// expose for other scripts (SupCast etc)
 window.spawnToast = showToast;
 
 function formatTime() {
@@ -213,9 +213,9 @@ function initQuests() {
       completed: false,
     },
     {
-      id: "q-supcast",
-      title: "Open SupCast support",
-      desc: "Visit the SupCast tab once.",
+      id: "q-support",
+      title: "Open Support / SupCast",
+      desc: "Visit the Support tab once.",
       reward: 20,
       completed: false,
     },
@@ -312,15 +312,15 @@ function setupTabs() {
       renderQuests();
     } else if (target === "mesh") {
       renderActivityList($("#meshEvents"), state.meshEvents);
-    } else if (target === "supcast") {
-      const q = state.quests.find((q) => q.id === "q-supcast");
+    } else if (target === "support") {
+      const q = state.quests.find((q) => q.id === "q-support");
       if (q && !q.completed) {
         q.completed = true;
         state.xp += q.reward;
         pushEvent(state.homeEvents, {
           kind: "quest",
           label: "QUEST",
-          text: "Visited SupCast support",
+          text: "Visited Support / SupCast",
           time: formatTime(),
           meta: `+${q.reward} XP`,
         });
@@ -561,9 +561,178 @@ function setupSettingsSheet() {
   const btnClose = $("#btn-close-settings");
   if (!sheet || !btnOpen || !btnBack || !btnClose) return;
 
+  const scroll = sheet.querySelector(".settings-scroll");
+  if (!scroll) return;
+
+  // Spara original-layouten så vi kan gå tillbaka
+  const baseMarkup = scroll.innerHTML;
+
+  const PAGES = {
+    "Connected socials": {
+      title: "Connected socials",
+      body: `
+        <p>Link your Farcaster, X, Zora and other socials so SpawnEngine can pull avatars, handles and mesh XP.</p>
+        <ul>
+          <li>Farcaster · used for casts, XP and quests.</li>
+          <li>Zora · pack mints, coins and creator stats.</li>
+          <li>X / Twitter · optional, for reach &amp; support.</li>
+        </ul>
+        <p><em>v0.3 is mock only – in v1.0 this is a full wallet + social link flow.</em></p>
+      `,
+    },
+    Notifications: {
+      title: "Notifications",
+      body: `
+        <p>Configure how SpawnEngine pings you when things happen:</p>
+        <ul>
+          <li>Pack opened · you or followed creators.</li>
+          <li>Quest completed · daily/weekly streak status.</li>
+          <li>SupCast answers · replies on your support cases.</li>
+        </ul>
+        <p>In v0.3 this is a preview – no push is sent yet.</p>
+      `,
+    },
+    "Feeds & oracle feed": {
+      title: "Feeds & oracle feed",
+      body: `
+        <p>Control what goes into your mesh feed:</p>
+        <ul>
+          <li>Onchain packs &amp; coins from Vibe / Zora.</li>
+          <li>Trusted oracle feeds with XP signals.</li>
+          <li>Experimental &quot;weird&quot; feeds for degen mode.</li>
+        </ul>
+        <p>Later this becomes a full filter-builder tied to contracts.</p>
+      `,
+    },
+    "Preferred wallet": {
+      title: "Preferred wallet",
+      body: `
+        <p>Set which wallet is your main mesh identity on Base.</p>
+        <ul>
+          <li>Pick primary wallet for XP and quests.</li>
+          <li>Mark &quot;viewer only&quot; wallets for scouting.</li>
+          <li>In v1.0 you&#39;ll be able to quick-switch from here.</li>
+        </ul>
+      `,
+    },
+    "Verified addresses": {
+      title: "Verified addresses",
+      body: `
+        <p>Mark addresses you really control so rewards can flow safely.</p>
+        <ul>
+          <li>Creator payout wallets.</li>
+          <li>Pack treasury / multisig.</li>
+          <li>Cold storage addresses.</li>
+        </ul>
+        <p>Verification in v0.3 is mock – this page is the design spec.</p>
+      `,
+    },
+    "Docked apps & XP SDK": {
+      title: "Docked apps & XP SDK",
+      body: `
+        <p>Dock external apps into the mesh so they can earn/give XP.</p>
+        <ul>
+          <li>WarpAI, Tiny Legends, Vibe packs, custom games.</li>
+          <li>Each app gets an XP key and limits.</li>
+          <li>Activity flows into this HUD as streaks and quests.</li>
+        </ul>
+      `,
+    },
+    "Premium mesh filters": {
+      title: "Premium mesh filters",
+      body: `
+        <p>Advanced filters for hunters and builders:</p>
+        <ul>
+          <li>Show only verified creators.</li>
+          <li>Filter on pack odds, volume, or XP yield.</li>
+          <li>Save custom presets as &quot;Warp paths&quot;.</li>
+        </ul>
+      `,
+    },
+    Theme: {
+      title: "Theme",
+      body: `
+        <p>Pick how SpawnEngine should look:</p>
+        <ul>
+          <li>Mesh Neon (current).</li>
+          <li>Terminal Mono (dev mode).</li>
+          <li>Vibe Retro (pack arcade).</li>
+        </ul>
+        <p>Color modes are mock – but the choices are real.</p>
+      `,
+    },
+    Support: {
+      title: "Support",
+      body: `
+        <p>Short path into SupCast and other support layers:</p>
+        <ul>
+          <li>Jump into SupCast with context attached.</li>
+          <li>Open docs, FAQ and example flows.</li>
+          <li>Ping core team when something truly explodes.</li>
+        </ul>
+      `,
+    },
+    "SpawnEngine Launchpad": {
+      title: "SpawnEngine Launchpad",
+      body: `
+        <p>Creator-side view for spinning up new meshes:</p>
+        <ul>
+          <li>Create pack series, coins and quests in one flow.</li>
+          <li>Preview XP curves and reward ladders.</li>
+          <li>Connect to Vibe / Zora / Base contracts.</li>
+        </ul>
+        <p>This is where SpawnEngine becomes a full protocol, not just a HUD.</p>
+      `,
+    },
+  };
+
+  function renderSettingsList() {
+    scroll.innerHTML = baseMarkup;
+    const rows = scroll.querySelectorAll(".settings-row");
+    rows.forEach((row) => {
+      row.addEventListener("click", () => {
+        const label = row.textContent.trim();
+        const page = PAGES[label];
+        if (!page) {
+          showToast(`${label} · not wired (demo).`);
+          return;
+        }
+        renderSettingsDetail(page);
+      });
+    });
+
+    const closeBtn = $("#btn-close-settings");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        sheet.setAttribute("aria-hidden", "true");
+        sheet.classList.remove("open");
+      });
+    }
+  }
+
+  function renderSettingsDetail(page) {
+    scroll.innerHTML = `
+      <div class="settings-section-label">${page.title}</div>
+      <div class="mesh-mini-card">
+        ${page.body}
+      </div>
+      <button id="settings-back-to-list" class="btn-full-width">
+        Back to settings
+      </button>
+    `;
+
+    const backListBtn = $("#settings-back-to-list");
+    if (backListBtn) {
+      backListBtn.addEventListener("click", () => {
+        renderSettingsList();
+      });
+    }
+  }
+
   function open() {
     sheet.setAttribute("aria-hidden", "false");
     sheet.classList.add("open");
+    renderSettingsList();
   }
   function close() {
     sheet.setAttribute("aria-hidden", "true");
@@ -571,18 +740,13 @@ function setupSettingsSheet() {
   }
 
   btnOpen.addEventListener("click", open);
-  btnBack.addEventListener("click", close);
+  btnBack.addEventListener("click", () => {
+    // Om vi står i en detail, gå tillbaka till listan
+    renderSettingsList();
+  });
   btnClose.addEventListener("click", close);
   sheet.addEventListener("click", (e) => {
     if (e.target === sheet) close();
-  });
-
-  const rows = sheet.querySelectorAll(".settings-row");
-  rows.forEach((row) => {
-    row.addEventListener("click", () => {
-      const text = row.textContent.trim();
-      showToast(`${text} · not wired (demo).`);
-    });
   });
 }
 
