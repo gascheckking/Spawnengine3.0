@@ -1,3 +1,5 @@
+/* style.css */
+
 /* RESET / BASE */
 
 *,
@@ -749,7 +751,7 @@ button {
   border-color: rgba(168, 240, 255, 0.9);
 }
 
-/* SHEETS (ACCOUNT + SETTINGS) */
+/* SHEETS (ACCOUNT + MARKET) */
 
 .sheet-backdrop {
   position: fixed;
@@ -817,7 +819,7 @@ button {
   font-size: 14px;
 }
 
-/* SETTINGS PANEL */
+/* SETTINGS PANEL (used by market details) */
 
 .settings-panel {
   width: 100%;
@@ -862,27 +864,6 @@ button {
   overflow-y: auto;
   margin-top: 2px;
   padding-right: 4px;
-}
-
-.settings-section-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #808ad6;
-  margin: 8px 0 4px;
-}
-
-.settings-row {
-  width: 100%;
-  text-align: left;
-  padding: 8px 4px;
-  border-radius: 8px;
-  background: rgba(12, 16, 40, 0.92);
-  border: 1px solid rgba(114, 156, 240, 0.6);
-  color: #f1f3ff;
-  font-size: 13px;
-  margin-bottom: 5px;
-  cursor: pointer;
 }
 
 /* TOAST */
@@ -1062,7 +1043,7 @@ button {
   color: #b9fffb;
 }
 
-/* ------- MARKET TAB ------- */
+/* ------- MARKET STYLES (future use) ------- */
 
 .market-header {
   margin-bottom: 12px;
@@ -1233,6 +1214,7 @@ button {
   font-size: 11px;
   color: #9fd5ff;
 }
+
 /* WALLET STRIP UNDER PLATFORM STRIP */
 
 .wallet-strip {
@@ -1258,13 +1240,17 @@ button {
 .wallet-balance {
   font-weight: 600;
 }
+
 /* SETTINGS POPUP */
-.hidden { display: none !important; }
+
+.hidden {
+  display: none !important;
+}
 
 .settings-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -1279,26 +1265,12 @@ button {
   border-radius: 24px 24px 0 0;
   padding: 20px;
   overflow-y: auto;
-  box-shadow: 0 -20px 40px rgba(0,0,0,0.7);
+  box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.7);
   color: #fff;
 }
 
-.settings-icon {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  padding: 6px 10px;
-  font-size: 24px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.07);
-  border: none;
-  color: white;
-}
-
-.settings-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.settings-title {
+  font-size: 14px;
 }
 
 .settings-close-btn {
@@ -1306,9 +1278,13 @@ button {
   background: none;
   border: none;
   color: white;
+  cursor: pointer;
 }
 
-.settings-section { margin-top: 20px; }
+.settings-section {
+  margin-top: 20px;
+}
+
 .settings-section h3 {
   font-size: 14px;
   opacity: 0.75;
@@ -1328,11 +1304,24 @@ button {
   padding: 10px;
 }
 
-.settings-card.small { padding: 8px; }
+.settings-card.small {
+  padding: 8px;
+}
 
-.label { font-size: 10px; opacity: 0.6; }
-.main { font-size: 15px; font-weight: 600; }
-.sub { font-size: 12px; opacity: 0.7; }
+.label {
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+.main {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.sub {
+  font-size: 12px;
+  opacity: 0.7;
+}
 
 .bar {
   width: 100%;
@@ -1342,15 +1331,17 @@ button {
   overflow: hidden;
   margin: 6px 0;
 }
+
 .bar-fill {
   height: 100%;
-  background: linear-gradient(90deg,#51f6ff,#9a7bff,#ff61f2);
+  background: linear-gradient(90deg, #51f6ff, #9a7bff, #ff61f2);
 }
 
 .settings-list {
   list-style: none;
   padding: 0;
 }
+
 .settings-list li {
   padding: 10px 0;
   border-bottom: 1px solid #2a314b;
@@ -1363,6 +1354,18 @@ button {
   font-size: 10px;
   margin-top: 4px;
 }
-.green { background:#0f5132; color:#6ee7b7; }
-.amber { background:#7c5800; color:#fcd34d; }
-.purple { background:#5b2d7d; color:#c084fc; }
+
+.green {
+  background: #0f5132;
+  color: #6ee7b7;
+}
+
+.amber {
+  background: #7c5800;
+  color: #fcd34d;
+}
+
+.purple {
+  background: #5b2d7d;
+  color: #c084fc;
+}
