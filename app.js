@@ -1,4 +1,23 @@
-// app.js — SpawnEngine3.0 · Mesh HUD v0.3 + SupCast + Settings views
+// app.js — SpawnEngine3.0 · Mesh HUD v0.3 + basic wallet/onchain hook + SupCast + Settings
+
+// ---------- ONCHAIN CONFIG (NYTT) ----------
+
+const SPAWN_CONFIG = {
+  RPC_URL: "https://mainnet.base.org", // publik Base RPC (ingen nyckel behövs)
+  CHAIN_ID: 8453,
+  CHAIN_NAME: "Base",
+};
+
+// Wallet-state
+let spawnProvider = null;
+let spawnSigner = null;
+let spawnAddress = null;
+
+// smidigt helper
+function shortenAddress(addr, chars = 4) {
+  if (!addr) return "";
+  return `${addr.slice(0, chars + 2)}...${addr.slice(-chars)}`;
+}
 
 // ---------- STATE ----------
 
@@ -29,7 +48,7 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove("show"), 2200);
 }
 
-// expose for other scripts (SupCast etc)
+// expose för SupCast / andra scripts
 window.spawnToast = showToast;
 
 function formatTime() {
@@ -54,8 +73,8 @@ function renderHeaderStats() {
     const jitter = (Math.random() * 0.06).toFixed(2);
     gasEl.textContent = `~${(base + Number(jitter)).toFixed(2)} gwei est.`;
   }
-  if (activeWalletsEl) activeWalletsEl.textContent = "1";
-  if (activeWalletsStat) activeWalletsStat.textContent = "1";
+  if (activeWalletsEl) activeWalletsEl.textContent = spawnAddress ? "1" : "0";
+  if (activeWalletsStat) activeWalletsStat.textContent = spawnAddress ? "1" : "0";
 }
 
 function renderMeshSnapshot() {
@@ -81,6 +100,10 @@ function renderMeshSnapshot() {
     const progress = (state.streakDays / state.weeklyTarget) * 100;
     streakBarFill.style.width = `${Math.min(progress, 100)}%`;
   }
+
+  // uppdatera ev. header-XP om du har nåt där
+  const headerXp = $("#meshHeaderXp");
+  if (headerXp) headerXp.textContent = `${state.xp} XP`;
 }
 
 function renderInventory() {
@@ -284,7 +307,7 @@ function seedLootEvents() {
   state.lootEvents = [];
 }
 
-// ---------- INTERACTION ----------
+// ---------- INTERACTION (TABS / LOOT / MESH / STREAK) ----------
 
 function setupTabs() {
   const navButtons = $$("[data-tab-target]");
@@ -564,7 +587,6 @@ function setupSettingsSheet() {
   const scroll = sheet.querySelector(".settings-scroll");
   if (!scroll) return;
 
-  // Spara original-layouten så vi kan gå tillbaka
   const baseMarkup = scroll.innerHTML;
 
   const PAGES = {
@@ -741,7 +763,6 @@ function setupSettingsSheet() {
 
   btnOpen.addEventListener("click", open);
   btnBack.addEventListener("click", () => {
-    // Om vi står i en detail, gå tillbaka till listan
     renderSettingsList();
   });
   btnClose.addEventListener("click", close);
@@ -806,6 +827,150 @@ function setupLivePulse() {
   }, 14000 + Math.random() * 6000);
 }
 
+// ---------- WALLET / ONCHAIN (NYTT) ----------
+
+function setupWallet() {
+  const btnConnect = $("#btn-connect-wallet");   // t.ex. knapp i header
+  const addrEls = $$(".wallet-address");        // alla element som ska visa adress
+  const xpSourceEl = $("#walletXpSource");      // liten text: "XP from Base tx"
+
+  if (!btnConnect) {
+    // om du inte gjort HTML ännu så bryter inget
+    return;
+  }
+
+  function updateWalletUI() {
+    const label = spawnAddress ? "Disconnect" : "Connect";
+    btnConnect.textContent = label;
+
+    const short = spawnAddress ? shortenAddress(spawnAddress) : "Not connected";
+    addrEls.forEach((el) => (el.textContent = short));
+
+    if (xpSourceEl) {
+      xpSourceEl.textContent = spawnAddress
+        ? "XP synced from your Base tx history (mock formula)."
+        : "XP currently running on demo values.";
+    }
+
+    renderHeaderStats();
+  }
+
+  async function connect() {
+    if (!window.ethers || !window.ethereum) {
+      showToast("No wallet provider found (MetaMask/Rabby).");
+      return;
+    }
+
+    try {
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      if (!accounts || !accounts.length) {
+        showToast("No accounts available.");
+        return;
+      }
+
+      spawnProvider = new ethers.providers.Web3Provider(window.ethereum);
+      const net = await spawnProvider.getNetwork();
+      if (net.chainId !== SPAWN_CONFIG.CHAIN_ID) {
+        // försök byta nät
+        try {
+          await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: ethers.utils.hexValue(SPAWN_CONFIG.CHAIN_ID) }],
+          });
+        } catch (err) {
+          showToast("Switch to Base in your wallet.");
+          console.error(err);
+        }
+      }
+
+      spawnSigner = spawnProvider.getSigner();
+      spawnAddress = await spawnSigner.getAddress();
+      showToast(`Connected ${shortenAddress(spawnAddress)}`);
+
+      updateWalletUI();
+      await loadOnchainData(updateWalletUI);
+
+      window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+      window.ethereum.on("accountsChanged", handleAccountsChanged);
+    } catch (e) {
+      console.error(e);
+      showToast("Wallet connection failed.");
+    }
+  }
+
+  async function disconnect() {
+    spawnProvider = null;
+    spawnSigner = null;
+    spawnAddress = null;
+    showToast("Disconnected (local only).");
+    updateWalletUI();
+  }
+
+  async function handleAccountsChanged(accounts) {
+    if (!accounts || !accounts.length) {
+      await disconnect();
+    } else {
+      spawnAddress = accounts[0];
+      updateWalletUI();
+      await loadOnchainData(updateWalletUI);
+    }
+  }
+
+  btnConnect.addEventListener("click", () => {
+    if (spawnAddress) disconnect();
+    else connect();
+  });
+
+  updateWalletUI();
+}
+
+// läser riktig Base-data och mappar till din mesh-XP
+async function loadOnchainData(updateWalletUI) {
+  if (!spawnAddress) return;
+  try {
+    const rpc = new ethers.providers.JsonRpcProvider(SPAWN_CONFIG.RPC_URL);
+    const [txCount, balance, gasPrice] = await Promise.all([
+      rpc.getTransactionCount(spawnAddress),
+      rpc.getBalance(spawnAddress),
+      rpc.getGasPrice(),
+    ]);
+
+    // enkel XP-formel: grund-XP + tx-count * 10
+    const baseXp = 200;
+    state.xp = baseXp + txCount * 10;
+
+    // uppdatera lite UI-grejer
+    const gasEl = $("#gasEstimate");
+    if (gasEl) {
+      const gwei = parseFloat(ethers.utils.formatUnits(gasPrice, "gwei"));
+      gasEl.textContent = `~${gwei.toFixed(2)} gwei`;
+    }
+
+    const balanceEl = $("#walletBalanceEth");
+    if (balanceEl) {
+      const eth = parseFloat(ethers.utils.formatEther(balance));
+      balanceEl.textContent = `${eth.toFixed(4)} ETH`;
+    }
+
+    pushEvent(state.homeEvents, {
+      kind: "xp",
+      label: "XP",
+      text: "Mesh synced to your Base wallet activity.",
+      time: formatTime(),
+      meta: `txCount=${txCount}`,
+    });
+
+    renderMeshSnapshot();
+    renderActivityList($("#homeActivityList"), state.homeEvents);
+    if (updateWalletUI) updateWalletUI();
+  } catch (e) {
+    console.error(e);
+    showToast("Could not load onchain data.");
+  }
+}
+
 // ---------- INIT ----------
 
 function initSpawnEngine() {
@@ -828,6 +993,7 @@ function initSpawnEngine() {
   setupAccountSheet();
   setupSettingsSheet();
   setupLivePulse();
+  setupWallet(); // <— nya wallet-delen
 }
 
 // Kör oavsett var scriptet ligger
