@@ -1,8 +1,11 @@
 {
   "name": "SpawnEngine · Mesh HUD",
   "short_name": "SpawnEngine",
+  "description": "Onchain mesh HUD for packs, quests and SupCast.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#020208",
   "theme_color": "#0af2ff",
   "icons": [
