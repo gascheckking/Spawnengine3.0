@@ -1,128 +1,199 @@
-// supcast.js — SupCast · Support mesh (mock backend)
+// supcast.js — SupCast · Support mesh logik
+// Hanterar formulär, feed och enkla "claim"–interaktioner.
 
-// Enkel in-memory feed
-const supcastState = {
-  items: [],
-};
+(function () {
+  // Liten helper
+  const $ = (sel) => document.querySelector(sel);
 
-function supcastFormatTime() {
-  const d = new Date();
-  return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
-}
+  // In-memory feed (mock)
+  const supcastState = {
+    items: [],
+  };
 
-function renderSupcastFeed() {
-  const feed = document.getElementById("supcastFeed");
-  if (!feed) return;
-
-  feed.innerHTML = "";
-
-  if (!supcastState.items.length) {
-    const li = document.createElement("li");
-    li.className = "supcast-feed-item";
-    li.innerHTML =
-      "<div class='supcast-feed-title'>No questions yet</div><div class='supcast-feed-meta'><span>Post a mock case above</span><span>SpawnEngine</span></div>";
-    feed.appendChild(li);
-    return;
+  function formatTime() {
+    const d = new Date();
+    return d.toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" });
   }
 
-  supcastState.items.forEach((item) => {
-    const li = document.createElement("li");
-    li.className = "supcast-feed-item";
+  function toast(msg) {
+    if (typeof window.spawnToast === "function") {
+      window.spawnToast(msg);
+    } else {
+      console.log("[SupCast]", msg);
+    }
+  }
 
-    const title = document.createElement("div");
-    title.className = "supcast-feed-title";
-    title.textContent = item.title;
+  // Seed med några exempel
+  function seedSupcastItems() {
+    supcastState.items = [
+      {
+        id: "ex1",
+        context: "Spawn Core · Boosterbox",
+        title: "Pack öppnades men XP syns inte?",
+        tags: ["xp", "pack", "delay"],
+        createdAt: formatTime(),
+        status: "open",
+      },
+      {
+        id: "ex2",
+        context: "WarpAI · Onchain Activitys",
+        title: "Base gas flippade när jag skulle köpa coin",
+        tags: ["gas", "wallet", "purchase"],
+        createdAt: formatTime(),
+        status: "claimed",
+      },
+      {
+        id: "ex3",
+        context: "Vibe · Packs",
+        title: "Hur funkar royalties om jag gör egna packs?",
+        tags: ["creator", "royalties"],
+        createdAt: formatTime(),
+        status: "open",
+      },
+    ];
+  }
 
-    const meta = document.createElement("div");
-    meta.className = "supcast-feed-meta";
-    meta.innerHTML = `
-      <span>${item.context} · ${item.tags}</span>
-      <span>${item.time}</span>
-    `;
+  function renderSupcastFeed() {
+    const ul = $("#supcastFeed");
+    if (!ul) return;
 
-    li.appendChild(title);
+    ul.innerHTML = "";
 
-    if (item.description) {
-      const desc = document.createElement("div");
-      desc.style.marginTop = "4px";
-      desc.textContent = item.description;
-      li.appendChild(desc);
+    if (!supcastState.items.length) {
+      const li = document.createElement("li");
+      li.className = "supcast-feed-item";
+      li.textContent = "Inga frågor inlagda ännu. Posta den första från formuläret.";
+      ul.appendChild(li);
+      return;
     }
 
-    li.appendChild(meta);
-    feed.appendChild(li);
-  });
-}
+    supcastState.items.forEach((item) => {
+      const li = document.createElement("li");
+      li.className = "supcast-feed-item";
 
-function seedSupcast() {
-  supcastState.items = [
-    {
-      context: "Spawn Core · Boosterbox",
-      title: "Pack stuck in pending state",
-      tags: "pack, pending, claim",
-      description:
-        "Mint succeeded but pack never showed up in my inventory. TX looks fine.",
-      time: supcastFormatTime(),
-    },
-    {
-      context: "WarpAI · Onchain Activitys",
-      title: "XP not updating after streak",
-      tags: "xp, streak, bug",
-      description:
-        "Checked in 3 times this week but streak only shows 1 day in HUD.",
-      time: supcastFormatTime(),
-    },
-  ];
-}
+      const title = document.createElement("div");
+      title.className = "supcast-feed-title";
+      title.textContent = item.title;
 
-// Setup när DOM är redo
-function initSupcast() {
-  const ctx = document.getElementById("supcastContext");
-  const title = document.getElementById("supcastTitle");
-  const tags = document.getElementById("supcastTags");
-  const desc = document.getElementById("supcastDescription");
-  const submit = document.getElementById("supcastSubmit");
+      const metaRow = document.createElement("div");
+      metaRow.className = "supcast-feed-meta";
 
-  if (!ctx || !title || !tags || !desc || !submit) {
-    return;
-  }
+      const leftMeta = document.createElement("span");
+      leftMeta.textContent = `${item.context} · ${item.createdAt}`;
 
-  seedSupcast();
-  renderSupcastFeed();
+      const rightMeta = document.createElement("span");
+      rightMeta.textContent =
+        item.status === "claimed" ? "Claimed (mock)" : "Open · Tap to claim";
 
-  submit.addEventListener("click", () => {
-    const contextValue = ctx.value || "Spawn Core · Boosterbox";
-    const titleValue = title.value.trim() || "Untitled question";
-    const tagsValue = tags.value.trim() || "mesh, support";
-    const descValue = desc.value.trim();
+      metaRow.appendChild(leftMeta);
+      metaRow.appendChild(rightMeta);
 
-    supcastState.items.unshift({
-      context: contextValue,
-      title: titleValue,
-      tags: tagsValue,
-      description: descValue,
-      time: supcastFormatTime(),
+      // Tagrad under
+      if (item.tags && item.tags.length) {
+        const tagRow = document.createElement("div");
+        tagRow.style.marginTop = "4px";
+        tagRow.style.display = "flex";
+        tagRow.style.flexWrap = "wrap";
+        tagRow.style.gap = "4px";
+
+        item.tags.forEach((t) => {
+          const tag = document.createElement("span");
+          tag.textContent = t;
+          tag.style.fontSize = "10px";
+          tag.style.padding = "2px 6px";
+          tag.style.borderRadius = "999px";
+          tag.style.background = "rgba(30, 40, 90, 0.9)";
+          tag.style.border = "1px solid rgba(140, 180, 255, 0.7)";
+          tagRow.appendChild(tag);
+        });
+
+        li.appendChild(tagRow);
+      }
+
+      li.prepend(metaRow);
+      li.prepend(title);
+
+      li.addEventListener("click", () => {
+        if (item.status === "claimed") {
+          toast("Den här SupCasten är redan claimed (mock).");
+          return;
+        }
+        item.status = "claimed";
+        toast("Du claimed caset (mock) · support XP +50");
+        renderSupcastFeed();
+      });
+
+      ul.appendChild(li);
     });
+  }
 
-    // Begränsa feeden lite
-    if (supcastState.items.length > 20) {
-      supcastState.items.length = 20;
-    }
+  function setupSupcastForm() {
+    const contextEl = $("#supcastContext");
+    const titleEl = $("#supcastTitle");
+    const tagsEl = $("#supcastTags");
+    const descEl = $("#supcastDescription");
+    const submitBtn = $("#supcastSubmit");
 
+    if (!submitBtn) return;
+
+    submitBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const context = contextEl?.value?.trim() || "Base · General";
+      const title = titleEl?.value?.trim() || "";
+      const tagsRaw = tagsEl?.value?.trim() || "";
+      const desc = descEl?.value?.trim() || "";
+
+      if (!title || !desc) {
+        toast("Titel + beskrivning behövs för en SupCast.");
+        return;
+      }
+
+      const tags =
+        tagsRaw.length > 0
+          ? tagsRaw
+              .split(",")
+              .map((t) => t.trim())
+              .filter(Boolean)
+          : [];
+
+      const item = {
+        id: `sup_${Date.now()}`,
+        context,
+        title,
+        tags,
+        createdAt: formatTime(),
+        status: "open",
+        desc,
+      };
+
+      // nyast först
+      supcastState.items.unshift(item);
+      renderSupcastFeed();
+
+      if (titleEl) titleEl.value = "";
+      if (tagsEl) tagsEl.value = "";
+      if (descEl) descEl.value = "";
+
+      toast("SupCast postad (mock) · syns nu i feeden");
+    });
+  }
+
+  function initSupCast() {
+    seedSupcastItems();
     renderSupcastFeed();
+    setupSupcastForm();
+  }
 
-    title.value = "";
-    tags.value = "";
-    desc.value = "";
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSupCast);
+  } else {
+    initSupCast();
+  }
 
-    if (window.spawnToast) {
-      window.spawnToast("SupCast question posted (mock)");
-    }
-  });
-}
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initSupcast);
-} else {
-  initSupcast();
-}
+  // Litet debug-handtag globalt om du vill leka i konsolen
+  window.supcastDebug = {
+    state: supcastState,
+    rerender: renderSupcastFeed,
+  };
+})();
