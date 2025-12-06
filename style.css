@@ -1258,3 +1258,111 @@ button {
 .wallet-balance {
   font-weight: 600;
 }
+/* SETTINGS POPUP */
+.hidden { display: none !important; }
+
+.settings-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 99999;
+}
+
+.settings-sheet {
+  width: 100%;
+  max-width: 520px;
+  max-height: 80vh;
+  background: #0b0f1f;
+  border-radius: 24px 24px 0 0;
+  padding: 20px;
+  overflow-y: auto;
+  box-shadow: 0 -20px 40px rgba(0,0,0,0.7);
+  color: #fff;
+}
+
+.settings-icon {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 6px 10px;
+  font-size: 24px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.07);
+  border: none;
+  color: white;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-close-btn {
+  font-size: 20px;
+  background: none;
+  border: none;
+  color: white;
+}
+
+.settings-section { margin-top: 20px; }
+.settings-section h3 {
+  font-size: 14px;
+  opacity: 0.75;
+  margin-bottom: 8px;
+}
+
+.settings-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.settings-card {
+  background: #151c33;
+  border: 1px solid #2b3252;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.settings-card.small { padding: 8px; }
+
+.label { font-size: 10px; opacity: 0.6; }
+.main { font-size: 15px; font-weight: 600; }
+.sub { font-size: 12px; opacity: 0.7; }
+
+.bar {
+  width: 100%;
+  height: 5px;
+  background: #20263d;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 6px 0;
+}
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg,#51f6ff,#9a7bff,#ff61f2);
+}
+
+.settings-list {
+  list-style: none;
+  padding: 0;
+}
+.settings-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid #2a314b;
+}
+
+.chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  margin-top: 4px;
+}
+.green { background:#0f5132; color:#6ee7b7; }
+.amber { background:#7c5800; color:#fcd34d; }
+.purple { background:#5b2d7d; color:#c084fc; }
