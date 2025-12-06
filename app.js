@@ -1256,3 +1256,114 @@ if (settingsPanelBackdrop) {
     }
   });
 }
+// -------- MARKET DETAILS --------
+
+function openMarketDetails(card) {
+  const backdrop = document.getElementById('marketDetailsBackdrop');
+  const titleEl = document.getElementById('marketDetailsTitle');
+  const bodyEl = document.getElementById('marketDetailsBody');
+
+  const title = card.querySelector('.market-card-title')?.textContent.trim() || 'Listing';
+  const desc = card.querySelector('.market-card-desc')?.textContent.trim() || '';
+  const price = card.querySelector('.market-card-price')?.textContent.trim() || '';
+  const participants = card.querySelector('.market-card-participants')?.textContent.trim() || '';
+
+  titleEl.textContent = title;
+
+  bodyEl.innerHTML = `
+    <p class="section-sub">${desc}</p>
+    <div class="metric-card" style="margin-top:8px;">
+      <div class="metric-label">Price</div>
+      <div class="metric-value metric-small">${price || 'TBA'}</div>
+      <p class="metric-sub">${participants || 'Mesh curated slot'}</p>
+    </div>
+  `;
+
+  backdrop.classList.add('open');
+}
+
+document.querySelectorAll('.market-card-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const card = btn.closest('.market-card');
+    if (card) openMarketDetails(card);
+  });
+});
+
+document.getElementById('marketDetailsBack').onclick = () =>
+  document.getElementById('marketDetailsBackdrop').classList.remove('open');
+
+document.getElementById('marketDetailsBackdrop').onclick = (e) => {
+  if (e.target.id === 'marketDetailsBackdrop') {
+    e.target.classList.remove('open');
+  }
+};
+
+
+// -------- SETTINGS SUBPAGES --------
+
+const settingsContent = {
+  connectedSocials: {
+    title: 'Connected socials',
+    body: `<p class="section-sub">Link Farcaster, X and more.</p>`
+  },
+  notifications: {
+    title: 'Notifications',
+    body: `<p class="section-sub">Notification settings.</p>`
+  },
+  feeds: {
+    title: 'Feeds & oracle feed',
+    body: `<p class="section-sub">Oracle and data feeds.</p>`
+  },
+  preferredWallet: {
+    title: 'Preferred wallet',
+    body: `<p class="section-sub">Select primary wallet.</p>`
+  },
+  verifiedAddresses: {
+    title: 'Verified addresses',
+    body: `<p class="section-sub">Manage verified wallets.</p>`
+  },
+  dockedApps: {
+    title: 'Docked apps & XP SDK',
+    body: `<p class="section-sub">Apps connected to your mesh.</p>`
+  },
+  premiumFilters: {
+    title: 'Premium mesh filters',
+    body: `<p class="section-sub">Mesh-level advanced filters.</p>`
+  },
+  theme: {
+    title: 'Theme',
+    body: `<p class="section-sub">Switch themes.</p>`
+  },
+  support: {
+    title: 'Support',
+    body: `<p class="section-sub">Support center.</p>`
+  },
+  launchpad: {
+    title: 'SpawnEngine Launchpad',
+    body: `<p class="section-sub">Launch tokens, packs, quests.</p>`
+  }
+};
+
+document.querySelectorAll('.sheet-row[data-setting]').forEach(row => {
+  row.addEventListener('click', () => {
+    const key = row.getAttribute('data-setting');
+    const panel = document.getElementById('settingsPanelBackdrop');
+    const title = document.getElementById('settingsPanelTitle');
+    const body = document.getElementById('settingsPanelBody');
+
+    title.textContent = settingsContent[key].title;
+    body.innerHTML = settingsContent[key].body;
+
+    panel.classList.add('open');
+  });
+});
+
+document.getElementById('settingsPanelBack').onclick = () =>
+  document.getElementById('settingsPanelBackdrop').classList.remove('open');
+
+document.getElementById('settingsPanelBackdrop').onclick = (e) => {
+  if (e.target.id === 'settingsPanelBackdrop') {
+    e.target.classList.remove('open');
+  }
+};
