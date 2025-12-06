@@ -15,7 +15,68 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="app-body">
+  <!-- SETTINGS POPUP -->
+  <div id="settings-backdrop" class="settings-backdrop hidden">
+    <div id="settings-sheet" class="settings-sheet">
+      <div class="settings-header">
+        <span class="settings-title">Mesh Settings</span>
+        <button id="settings-close" class="settings-close-btn">✕</button>
+      </div>
 
+      <div class="settings-section">
+        <h3>Profile & XP</h3>
+        <div class="settings-card-grid">
+          <div class="settings-card">
+            <p class="label">Mesh ID</p>
+            <p class="main">@spawniz</p>
+            <p class="sub">Creator · Base mesh</p>
+            <div class="bar">
+              <div class="bar-fill" style="width: 45%"></div>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <p class="label">XP</p>
+            <p class="main">1575 XP</p>
+            <p class="sub">+10% bonus</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Connected Services</h3>
+        <div class="settings-card-grid">
+          <div class="settings-card small">
+            <p class="label">Farcaster</p>
+            <p class="main">WarpAI Miniapp</p>
+            <span class="chip green">Active</span>
+          </div>
+          <div class="settings-card small">
+            <p class="label">VibeMarket</p>
+            <p class="main">Pack sync</p>
+            <span class="chip amber">Planned</span>
+          </div>
+          <div class="settings-card small">
+            <p class="label">Zora</p>
+            <p class="main">Creator mints</p>
+            <span class="chip purple">Docked</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Account</h3>
+        <ul class="settings-list">
+          <li>Connected socials</li>
+          <li>Preferred wallet</li>
+          <li>Notifications</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS BUTTON IN HEADER -->
+  <button id="settings-btn" class="settings-icon">⚙️</button>
   <!-- MESH BACKGROUND (WEBGL) -->
   <div id="mesh-bg">
     <canvas id="mesh-canvas"></canvas>
