@@ -1367,3 +1367,21 @@ document.getElementById('settingsPanelBackdrop').onclick = (e) => {
     e.target.classList.remove('open');
   }
 };
+// SETTINGS POPUP LOGIC
+const settingsBtn = document.getElementById("settings-btn");
+const settingsBackdrop = document.getElementById("settings-backdrop");
+const settingsClose = document.getElementById("settings-close");
+
+settingsBtn.addEventListener("click", () => {
+  settingsBackdrop.classList.remove("hidden");
+});
+
+settingsClose.addEventListener("click", () => {
+  settingsBackdrop.classList.add("hidden");
+});
+
+settingsBackdrop.addEventListener("click", (e) => {
+  if (e.target === settingsBackdrop) {
+    settingsBackdrop.classList.add("hidden");
+  }
+});
