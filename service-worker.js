@@ -2,6 +2,7 @@
 
 const CACHE_NAME = "spawnengine-mesh-v1";
 
+// Utökad lista över tillgångar (App Shell + kritiska API-mock-filer)
 const ASSETS = [
   "/",
   "/index.html",
@@ -10,11 +11,18 @@ const ASSETS = [
   "/supcast.js",
   "/mesh-bg.js",
   "/manifest.json",
-  "/logo.png"
+  "/logo.png",
+  // Inkludera de viktigaste API-mock-filerna för offline-funktionalitet
+  "/api/mesh-feed.js",
+  "/api/pack-actions.js",
+  "/api/user-profile.js",
+  "/api/spawnengine-token.js",
+  "/api/activity.js"
 ];
 
 // Install – cacha shellen
 self.addEventListener("install", (event) => {
+  console.log('[SW] Installing and caching assets...');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
@@ -23,6 +31,7 @@ self.addEventListener("install", (event) => {
 
 // Activate – rensa gamla cacher
 self.addEventListener("activate", (event) => {
+  console.log('[SW] Activating new service worker and cleaning old caches...');
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
@@ -49,11 +58,12 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) {
-        // Uppdatera i bakgrunden
+        // Cache-First: Uppdatera i bakgrunden (Stale-While-Revalidate)
         event.waitUntil(
           fetch(request)
             .then((response) => {
               return caches.open(CACHE_NAME).then((cache) => {
+                // console.log(`[SW] Updating cache for: ${request.url}`);
                 cache.put(request, response.clone());
               });
             })
@@ -72,7 +82,8 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => {
-          // Offline fallback: visa index.html
+          // Offline fallback: visa index.html (App Shell)
+          console.log('[SW] Fetch failed, serving App Shell.');
           return caches.match("/index.html");
         });
     })
