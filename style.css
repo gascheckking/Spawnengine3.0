@@ -884,7 +884,7 @@ button {
 
 .role-sheet {
   max-height: 70vh;
-  margin-bottom: 65px; /* +20px högre */
+  margin-bottom: 60px; /* +20px högre */
 }
 
 #role-backdrop {
