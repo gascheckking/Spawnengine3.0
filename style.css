@@ -882,14 +882,15 @@ button {
   color: #ff6b99;
 }
 
-/* Role sheet: sit above bottom nav and pop up a bit higher */
-/* OBS: själva popupen lyfts av både .role-sheet och #role-backdrop */
+/* Role sheet popup – lyft den rejält över bottom-nav */
 .role-sheet {
   max-height: 70vh;
+  margin-bottom: 140px; /* HÖJER hela popupen */
 }
 
+/* Backdropens padding styr hur högt hela grejen ligger */
 #role-backdrop {
-  padding-bottom: 110px; /* lyft popupen över bottom-nav */
+  padding-bottom: 150px; /* Justera här för mer/mindre höjd */
 }
 
 .chevron {
