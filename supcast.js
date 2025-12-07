@@ -1,121 +1,144 @@
-// SupCast — enkel lokal Base-helpline
-// all data i localStorage, redo att kopplas mot riktig backend
+// supcast.js — SupCast · Support mesh (local mock storage)
 
 (function () {
-  const STORAGE_KEY = "se_supcast_threads";
+  const STORAGE_KEY = "se_supcast_cases_v1";
 
-  let threads = loadThreads();
-  let activeTopic = "base";
+  let cases = loadCases();
 
-  const TOPICS = [
-    { id: "base", label: "Base chain" },
-    { id: "zora", label: "Zora / tokens" },
-    { id: "farcaster", label: "Farcaster / frames" },
-    { id: "wallets", label: "Wallets & bridges" },
-    { id: "packs", label: "Packs / SpawnEngine" },
-  ];
-
-  function loadThreads() {
+  function loadCases() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return [];
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
     }
   }
 
-  function saveThreads() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(threads));
+  function saveCases() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cases));
+    } catch {
+      // ignore quota errors etc
+    }
   }
 
-  function byTopic(topicId) {
-    return threads.filter((t) => t.topic === topicId);
+  function notify(msg) {
+    if (window.spawnToast) {
+      window.spawnToast(msg);
+    }
   }
 
-  function renderTopics() {
-    const ul = document.getElementById("supcastTopicList");
+  function renderFeed() {
+    const ul = document.getElementById("supcastFeed");
     if (!ul) return;
+
     ul.innerHTML = "";
-    TOPICS.forEach((t) => {
+
+    if (!cases.length) {
       const li = document.createElement("li");
-      li.className =
-        "supcast-topic" + (t.id === activeTopic ? " supcast-topic-active" : "");
-      const count = byTopic(t.id).length;
-      li.innerHTML = `<span>${t.label}</span><span>${count}</span>`;
-      li.dataset.topicId = t.id;
+      li.className = "supcast-feed-item";
+      const title = document.createElement("div");
+      title.className = "supcast-feed-title";
+      title.textContent = "No questions yet.";
+      const meta = document.createElement("div");
+      meta.className = "supcast-feed-meta";
+      meta.innerHTML =
+        "<span>SupCast</span><span>Be first to ask something.</span>";
+
+      li.appendChild(title);
+      li.appendChild(meta);
       ul.appendChild(li);
-    });
-
-    ul.addEventListener("click", (e) => {
-      const li = e.target.closest(".supcast-topic");
-      if (!li) return;
-      activeTopic = li.dataset.topicId || "base";
-      renderTopics();
-      renderThread();
-    });
-  }
-
-  function renderThread() {
-    const box = document.getElementById("supcastThread");
-    if (!box) return;
-    const list = byTopic(activeTopic);
-    box.innerHTML = "";
-    if (!list.length) {
-      const empty = document.createElement("div");
-      empty.className = "supcast-item";
-      empty.innerHTML =
-        "<div class='supcast-question'>No questions yet.</div><div class='supcast-meta'><span>Ask the first question for this topic.</span></div>";
-      box.appendChild(empty);
       return;
     }
-    list
+
+    // visa senaste först
+    cases
       .slice()
       .reverse()
-      .forEach((q) => {
-        const div = document.createElement("div");
-        div.className = "supcast-item";
-        div.innerHTML = `
-          <div class="supcast-question">${q.text}</div>
-          <div class="supcast-meta">
-            <span>${q.topicLabel}</span>
-            <span>${q.time}</span>
-          </div>
-        `;
-        box.appendChild(div);
+      .forEach((c) => {
+        const li = document.createElement("li");
+        li.className = "supcast-feed-item";
+
+        const title = document.createElement("div");
+        title.className = "supcast-feed-title";
+        title.textContent = c.title || "(no title)";
+
+        const metaTop = document.createElement("div");
+        metaTop.className = "supcast-feed-meta";
+        metaTop.innerHTML = `<span>${c.context || "Other"}</span><span>${c.time}</span>`;
+
+        const body = document.createElement("p");
+        body.textContent = c.description || "";
+
+        const metaBottom = document.createElement("div");
+        metaBottom.className = "supcast-feed-meta";
+        metaBottom.innerHTML = `<span>${c.tags || "no_tags"}</span><span>#${c.shortId}</span>`;
+
+        li.appendChild(title);
+        li.appendChild(metaTop);
+        li.appendChild(body);
+        li.appendChild(metaBottom);
+
+        ul.appendChild(li);
       });
   }
 
   function initForm() {
-    const form = document.getElementById("supcastForm");
-    const textarea = document.getElementById("supcastQuestion");
-    if (!form || !textarea) return;
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const text = textarea.value.trim();
-      if (!text) return;
-      const topic = TOPICS.find((t) => t.id === activeTopic) || TOPICS[0];
+    const ctxEl = document.getElementById("supcastContext");
+    const titleEl = document.getElementById("supcastTitle");
+    const tagsEl = document.getElementById("supcastTags");
+    const descEl = document.getElementById("supcastDescription");
+    const btn = document.getElementById("supcastSubmit");
+
+    if (!btn || !ctxEl || !titleEl || !tagsEl || !descEl) return;
+
+    btn.addEventListener("click", () => {
+      const title = (titleEl.value || "").trim();
+      const description = (descEl.value || "").trim();
+      const tags = (tagsEl.value || "").trim();
+      const context = ctxEl.value || "Spawn Core · Boosterbox";
+
+      if (!title && !description) {
+        notify("Write a short title or description first.");
+        return;
+      }
+
       const now = new Date();
-      threads.push({
-        id: "q_" + Date.now(),
-        text,
-        topic: topic.id,
-        topicLabel: topic.label,
+      const id = "q_" + Date.now();
+      const shortId = id.slice(-4);
+
+      const entry = {
+        id,
+        shortId,
+        title,
+        description,
+        tags,
+        context,
         time: now.toLocaleTimeString("sv-SE", {
           hour: "2-digit",
           minute: "2-digit",
         }),
-      });
-      saveThreads();
-      textarea.value = "";
-      renderTopics();
-      renderThread();
+      };
+
+      cases.push(entry);
+      saveCases();
+      renderFeed();
+
+      // rensa inputs
+      // lämna context som det är, så man kan posta flera på rad
+      titleEl.value = "";
+      tagsEl.value = "";
+      descEl.value = "";
+
+      notify("Question posted to SupCast (mock).");
     });
   }
 
+  // Publik init-funktion som du anropar från app.js
   window.initSupcast = function () {
-    renderTopics();
-    renderThread();
+    renderFeed();
     initForm();
   };
 })();
