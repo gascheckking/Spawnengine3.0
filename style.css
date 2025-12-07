@@ -882,10 +882,9 @@ button {
   color: #ff6b99;
 }
 
-/* Role sheet popup – lyft den rejält över bottom-nav */
 .role-sheet {
   max-height: 70vh;
-  margin-bottom: 80px;
+  margin-bottom: 80px; /* +20px högre */
 }
 
 #role-backdrop {
