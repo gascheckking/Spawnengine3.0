@@ -885,12 +885,11 @@ button {
 /* Role sheet popup – lyft den rejält över bottom-nav */
 .role-sheet {
   max-height: 70vh;
-  margin-bottom: 140px; /* HÖJER hela popupen */
+  margin-bottom: 60px;
 }
 
-/* Backdropens padding styr hur högt hela grejen ligger */
 #role-backdrop {
-  padding-bottom: 250px; /* Justera här för mer/mindre höjd */
+  padding-bottom: 200px;
 }
 
 .chevron {
