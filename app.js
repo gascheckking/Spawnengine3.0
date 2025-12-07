@@ -385,7 +385,57 @@ function setupStreak() {
     showToast("Check-in logged · streak +1");
   });
 }
+const PACK_STATS_KEY = "spawnengine_pack_stats";
 
+let packStats = loadPackStats();
+
+function loadPackStats() {
+  try {
+    const raw = localStorage.getItem(PACK_STATS_KEY);
+    if (!raw) return {};
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
+
+function savePackStats() {
+  localStorage.setItem(PACK_STATS_KEY, JSON.stringify(packStats));
+}
+
+function registerPackOpen(seriesId, wallet, priceEth) {
+  const now = Date.now();
+  const hour = Math.floor(now / (1000 * 60 * 60));
+  const day = Math.floor(now / (1000 * 60 * 60 * 24));
+  const week = Math.floor(now / (1000 * 60 * 60 * 24 * 7));
+
+  if (!packStats[seriesId]) {
+    packStats[seriesId] = {
+      potEth: 0,
+      opensHour: {},
+      opensDay: {},
+      opensWeek: {},
+      topCurrentHour: null,
+      topCurrentDay: null,
+      topCurrentWeek: null,
+    };
+  }
+
+  const s = packStats[seriesId];
+
+  s.potEth += priceEth * 0.01;
+
+  s.opensHour[hour] = s.opensHour[hour] || {};
+  s.opensHour[hour][wallet] = (s.opensHour[hour][wallet] || 0) + 1;
+
+  s.opensDay[day] = s.opensDay[day] || {};
+  s.opensDay[day][wallet] = (s.opensDay[day][wallet] || 0) + 1;
+
+  s.opensWeek[week] = s.opensWeek[week] || {};
+  s.opensWeek[week][wallet] = (s.opensWeek[week][wallet] || 0) + 1;
+
+  savePackStats();
+}
 function setupLoot() {
   const segButtons = $$("[data-loot-view]");
   const views = $$(".loot-view");
