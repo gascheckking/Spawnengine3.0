@@ -1,1 +1,14 @@
--
+// pwa/sw-config.json (Mock-konfiguration)
+{
+  "cacheName": "spawnengine-mesh-v1",
+  "globPatterns": [
+    "**/*.{html,css,js,png,json}"
+  ],
+  "runtimeCaching": [
+    {
+      "urlPattern": "/api/",
+      "handler": "CacheFirst"
+    }
+  ],
+  "description": "Configuration used for generating the Service Worker."
+}
