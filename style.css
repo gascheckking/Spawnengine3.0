@@ -1428,7 +1428,38 @@ button {
   padding: 10px 0;
   border-bottom: 1px solid #2a314b;
 }
+.settings-small-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
+.settings-small-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #22273a;
+}
+
+.settings-small-item:last-child {
+  border-bottom: none;
+}
+
+.s-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.s-left strong {
+  font-size: 12px;
+}
+
+.s-sub {
+  font-size: 10px;
+  opacity: 0.65;
+}
 .chip {
   display: inline-block;
   padding: 2px 8px;
