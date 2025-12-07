@@ -1,1 +1,41 @@
--
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SpawnEngine SlotMachine · Module</title>
+  <link rel="stylesheet" href="./slot.css" /> 
+</head>
+<body>
+  <div id="slot-root" class="slot-root">
+    <h1 class="slot-title">🔥 SPN SlotMachine</h1>
+    <p class="slot-sub">
+      Stake 100 SPN to spin the reels and win Packs, XP, or rare MESH items.
+    </p>
+
+    <div class="slot-machine">
+      <div class="slot-stake-info">
+        Insats: **100 SPN**
+        <span id="slot-status-tx" class="slot-status-tx"></span>
+      </div>
+
+      <div class="slot-window">
+        <div class="slot-reel" id="slot-reel-1"></div>
+        <div class="slot-reel" id="slot-reel-2"></div>
+        <div class="slot-reel" id="slot-reel-3"></div>
+      </div>
+      
+      <button id="slot-spin-btn" class="slot-spin-btn" disabled>
+        Ansluter plånbok...
+      </button>
+
+      <p id="slot-result" class="slot-result">Välkommen till SpawnEngine. Anslut för att börja.</p>
+    </div>
+
+    <p class="slot-foot">
+      I produktion hanteras staking/utbetalning helt on-chain via Base.
+    </p>
+  </div>
+
+  <script src="./slot.js"></script>
+</body>
+</html>
