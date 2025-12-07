@@ -808,10 +808,31 @@ function setupRoleSelect() {
 }
 
 function updateRoleDisplay() {
-  const role = localStorage.getItem("spawnengine_role");
-  const sub = document.querySelector(".avatar-sub");
-  if (role && sub) {
-    sub.textContent = "Role · " + role;
+  const chip = document.getElementById("mesh-role-chip");
+  const iconSpan = document.getElementById("meshRoleIcon");
+
+  if (!chip) return;
+
+  const role = state.role || "hunter";
+
+  const labelMap = {
+    dev: "Dev / Builder",
+    creator: "Creator / Artist",
+    hunter: "Alpha hunter / Trader",
+    collector: "Collector / Fan",
+  };
+
+  const iconMap = {
+    dev: "🧪",
+    creator: "🎨",
+    hunter: "🗡️",
+    collector: "📦",
+  };
+
+  chip.textContent = labelMap[role] || "Alpha hunter / Trader";
+
+  if (iconSpan) {
+    iconSpan.textContent = iconMap[role] || "";
   }
 }
 // ---------- END ROLE SELECT ----------
