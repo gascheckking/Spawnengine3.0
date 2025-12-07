@@ -882,10 +882,14 @@ button {
   color: #ff6b99;
 }
 
-/* Role sheet — lyfts upp över bottom-nav */
+.sheet-row-danger {
+  color: #ff6b99;
+}
+
+/* Role sheet: sit above bottom nav and pop up a bit higher */
 .role-sheet {
   max-height: 70vh;
-  margin-bottom: 70px;
+  margin-bottom: 110px; /* tidigare 70px – lyfter upp den mer */
 }
 
 .chevron {
