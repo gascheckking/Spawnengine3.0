@@ -209,6 +209,38 @@ body.app-body {
   background: rgba(40, 30, 90, 0.5);
 }
 
+/* ROLE CHIP + STATUS (NY) */
+
+.hud-role-and-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.role-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(10, 22, 48, 0.95);
+  border: 1px solid rgba(136, 176, 255, 0.8);
+  font-size: 10px;
+  color: #d4deff;
+}
+
+.role-icon {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: conic-gradient(from 200deg, #3cf6ff, #b9ff7a, #ff7adb, #3cf6ff);
+  box-shadow: 0 0 10px rgba(60, 246, 255, 0.8);
+}
+
+.role-label {
+  white-space: nowrap;
+}
+
 .mesh-status-pill {
   display: inline-flex;
   align-items: center;
@@ -332,6 +364,14 @@ body.app-body {
   margin: 0;
   color: #aeb7ef;
 }
+
+/* XP source label (under stats) */
+
+#xp-source-label {
+  margin-top: 6px;
+}
+
+/* Tagline-pill */
 
 .section-tagline {
   font-size: 11px;
@@ -835,6 +875,7 @@ button {
 .sheet-row-danger {
   color: #ff6b99;
 }
+
 /* Role sheet: sit above bottom nav and pop up a bit higher */
 .role-sheet {
   max-height: 70vh;
@@ -1296,6 +1337,15 @@ button {
   flex-shrink: 0;
 }
 
+.wallet-status {
+  min-width: 0;
+  color: #aeb9ff;
+}
+
+.wallet-status.connected {
+  color: #6dffb7;
+}
+
 .wallet-address {
   flex: 1;
   opacity: 0.9;
@@ -1433,6 +1483,7 @@ button {
   padding: 10px 0;
   border-bottom: 1px solid #2a314b;
 }
+
 .settings-small-list {
   list-style: none;
   padding: 0;
@@ -1465,6 +1516,7 @@ button {
   font-size: 10px;
   opacity: 0.65;
 }
+
 .chip {
   display: inline-block;
   padding: 2px 8px;
@@ -1487,6 +1539,7 @@ button {
   background: #5b2d7d;
   color: #c084fc;
 }
+
 .role-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
