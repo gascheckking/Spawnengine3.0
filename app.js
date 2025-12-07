@@ -1298,7 +1298,7 @@ function initSpawnEngine() {
   renderInventory();
   renderQuests();
 
-  setupTabs();
+    setupTabs();
   setupStreak();
   setupLoot();
   setupMeshModes();
@@ -1307,6 +1307,10 @@ function initSpawnEngine() {
   setupWallet();
   setupInlineSettingsPopup();
   setupMarketDetails();
+  setupRoleSelect();
+  setupSupcast();
+  updateRoleDisplay();
+}
 
   // ROLE SELECT
   setupRoleSelect();
