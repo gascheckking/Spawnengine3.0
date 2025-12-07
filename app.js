@@ -1,4 +1,4 @@
-// app.js — SpawnEngine3.0 · Mesh HUD v0.3 + wallet/onchain hook + SupCast + Settings Popup
+// app.js — SpawnEngine3.0 · Mesh HUD v0.4 (Modulkompatibel)
 
 // ---------- ONCHAIN CONFIG ----------
 
@@ -465,44 +465,12 @@ function setupLoot() {
     });
   });
 
+  // Hårdkodad mock-öppning, ersatt av modulen
   const openBtn = $("#btn-open-pack");
   if (openBtn) {
     openBtn.addEventListener("click", () => {
-      const fragmentsGained = 2 + Math.floor(Math.random() * 4);
-      const shardDrop = Math.random() < 0.35;
-      const xpGain = 30 + Math.floor(Math.random() * 35);
-
-      state.fragments += fragmentsGained;
-      if (shardDrop) state.shards += 1;
-      state.xp += xpGain;
-
-      // TRACK PACK OPEN EVENT
-      registerPackOpen("VIBES-1", spawnAddress || "guest", 0.01);
-
-      const textParts = [`${fragmentsGained} Fragments`];
-      if (shardDrop) textParts.push("1 Shard");
-
-      pushEvent(state.lootEvents, {
-        kind: "pack",
-        label: "PACK",
-        text: `Opened Starter mesh pack · ${textParts.join(", ")}.`,
-        time: formatTime(),
-        meta: `+${xpGain} XP`,
-      });
-
-      pushEvent(state.homeEvents, {
-        kind: "pack",
-        label: "PACK",
-        text: "Loot activity strengthened your mesh.",
-        time: formatTime(),
-        meta: `+${xpGain} XP`,
-      });
-
-      renderMeshSnapshot();
-      renderInventory();
-      renderActivityList($("#lootEvents"), state.lootEvents);
-      renderActivityList($("#homeActivityList"), state.homeEvents);
-      showToast("Pack opened (mock) · rewards added");
+      showToast("Pack opening is now handled by the PackWidget module.");
+      // Denna knapp borde tas bort/ersättas av packwidget i HTML
     });
   }
 
@@ -864,6 +832,15 @@ function loadStoredRoles() {
   return [];
 }
 
+// Mock-funktion för att spara rollen on-chain/API
+async function saveRoleOnchain(roles) {
+    showToast(`Saving roles ${roles.join(', ')}... (Mock TX)`);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Här skulle du anropa din riktiga API/kontrakt
+    console.log(`[API MOCK] Roles saved: ${roles.join(', ')}`);
+    return true;
+}
+
 // Öppna sheet bara om ingen roll är vald än
 function showRoleSheetIfNeeded() {
   const backdrop = document.getElementById("role-backdrop");
@@ -890,7 +867,7 @@ function setupRoleSelect() {
   cards.forEach((card) => {
     const role = card.getAttribute("data-role");
     if (role && selectedRoles.has(role)) {
-      card.classList.add("active");
+      card.classList.add("selected"); // Använder 'selected' klassen från roles.css
     }
   });
 
@@ -910,10 +887,10 @@ function setupRoleSelect() {
 
       if (selectedRoles.has(role)) {
         selectedRoles.delete(role);
-        card.classList.remove("active");
+        card.classList.remove("selected");
       } else {
         selectedRoles.add(role);
-        card.classList.add("active");
+        card.classList.add("selected");
       }
 
       // Minst 1 roll krävs för att spara
@@ -922,16 +899,22 @@ function setupRoleSelect() {
   });
 
   // Spara roller
-  saveBtn.addEventListener("click", () => {
+  saveBtn.addEventListener("click", async () => {
     if (!selectedRoles.size) return;
 
     const arr = Array.from(selectedRoles);
-    localStorage.setItem("spawnengine_roles", JSON.stringify(arr));
-    localStorage.removeItem("spawnengine_role"); // städa gammal nyckel
+    
+    // Anropa mock on-chain sparning
+    const saved = await saveRoleOnchain(arr);
 
-    backdrop.classList.remove("open");
-    showToast("Roles updated");
-    updateRoleDisplay();
+    if (saved) {
+        localStorage.setItem("spawnengine_roles", JSON.stringify(arr));
+        localStorage.removeItem("spawnengine_role"); // städa gammal nyckel
+
+        backdrop.classList.remove("open");
+        showToast("Roles updated and synced on-chain!");
+        updateRoleDisplay();
+    }
   });
 
   // Stäng-knapp
@@ -954,29 +937,27 @@ function updateRoleDisplay() {
   const roles = loadStoredRoles();
 
   const labelMap = {
-    dev: "Dev / Builder",
-    creator: "Creator / Artist",
-    hunter: "Alpha hunter / Trader",
-    collector: "Collector / Fan",
+    Builder: "Mesh Builder",
+    Strategist: "Token Strategist",
+    Gatherer: "Data Gatherer",
   };
 
   const iconMap = {
-    dev: "🧪",
-    creator: "🎨",
-    hunter: "⚡",
-    collector: "🎴",
+    Builder: "🏗️",
+    Strategist: "🧠",
+    Gatherer: "⛏️",
   };
 
   // Default om inget är valt
   if (!roles.length) {
-    roleSpan.textContent = "⚡ Alpha hunter / Trader";
+    roleSpan.textContent = "❓ Unknown Role";
     return;
   }
 
   const primary = roles[0];
   const extraCount = roles.length - 1;
-  const label = labelMap[primary] || "Alpha hunter / Trader";
-  const icon = iconMap[primary] || "⚡";
+  const label = labelMap[primary] || primary;
+  const icon = iconMap[primary] || "❓";
 
   if (extraCount > 0) {
     roleSpan.textContent = `${icon} ${label} +${extraCount}`;
@@ -1217,6 +1198,27 @@ function setupMarketDetails() {
   });
 }
 
+// ---------- MODULE INTEGRATION (NYTT) ----------
+
+function initModules() {
+    // 1. SlotMachine (Mesh view)
+    if (window.SpawnSlotMachine) {
+        window.SpawnSlotMachine.init('slot-module-embed');
+    } else {
+        console.warn("SpawnSlotMachine module not loaded.");
+    }
+    
+    // 2. Pack Reveal Widget (Loot view)
+    if (window.SpawnPackReveal) {
+        window.SpawnPackReveal.init('pack-module-embed');
+    } else {
+        console.warn("SpawnPackReveal module not loaded.");
+    }
+    
+    // 3. Rolls (Initieras via setupRoleSelect i huvudsakliga appen)
+    // De individuella rollkorten på backdropen är redan HTML-renderade och ansluts i setupRoleSelect.
+}
+
 // ---------- INIT ----------
 
 function initSpawnEngine() {
@@ -1244,7 +1246,10 @@ function initSpawnEngine() {
   setupRoleSelect();
   setupSupcast();
   updateRoleDisplay();
-  showRoleSheetIfNeeded(); // öppna roll-sheet om ingen roll är vald
+  
+  // Nya funktionsanrop
+  initModules(); 
+  showRoleSheetIfNeeded(); 
 }
 
 // ---------- READY STATE ----------
