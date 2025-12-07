@@ -466,6 +466,8 @@ function setupLoot() {
       state.fragments += fragmentsGained;
       if (shardDrop) state.shards += 1;
       state.xp += xpGain;
+      // TRACK PACK OPEN EVENT
+registerPackOpen("VIBES-1", spawnAddress || "guest", 0.01);
 
       const textParts = [`${fragmentsGained} Fragments`];
       if (shardDrop) textParts.push("1 Shard");
