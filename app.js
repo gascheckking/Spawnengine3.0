@@ -1001,8 +1001,118 @@ function updateRoleDisplay() {
     roleSpan.textContent = `${icon} ${label}`;
   }
 }
+// ---------- END ROLE SELECT -----------
 // ---------- END ROLE SELECT ----------
 
+// ---------- SUPCAST (INLINE FORM) ----------
+
+const SUPCAST_STORAGE_KEY = "spawnengine_supcast_threads_v1";
+let supcastThreads = [];
+
+function loadSupcastThreads() {
+  try {
+    const raw = localStorage.getItem(SUPCAST_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveSupcastThreads() {
+  localStorage.setItem(SUPCAST_STORAGE_KEY, JSON.stringify(supcastThreads));
+}
+
+function renderSupcastFeed() {
+  const feed = document.getElementById("supcastFeed");
+  if (!feed) return;
+
+  feed.innerHTML = "";
+
+  if (!supcastThreads.length) {
+    const li = document.createElement("li");
+    li.className = "supcast-feed-item";
+    li.innerHTML = `
+      <div class="supcast-feed-title">No questions yet.</div>
+      <div class="supcast-feed-meta">
+        <span>Be the first to ask something about your mesh.</span>
+        <span></span>
+      </div>
+    `;
+    feed.appendChild(li);
+    return;
+  }
+
+  supcastThreads
+    .slice()
+    .reverse()
+    .forEach((q) => {
+      const li = document.createElement("li");
+      li.className = "supcast-feed-item";
+      li.innerHTML = `
+        <div class="supcast-feed-title">${q.title}</div>
+        <div class="supcast-feed-meta">
+          <span>${q.context} · ${q.tags || "no tags"}</span>
+          <span>${q.time}</span>
+        </div>
+        <p class="section-sub" style="margin-top:4px;">${q.description}</p>
+      `;
+      feed.appendChild(li);
+    });
+}
+
+function setupSupcast() {
+  const ctxSel = document.getElementById("supcastContext");
+  const titleInput = document.getElementById("supcastTitle");
+  const tagsInput = document.getElementById("supcastTags");
+  const descInput = document.getElementById("supcastDescription");
+  const submitBtn = document.getElementById("supcastSubmit");
+
+  if (!ctxSel || !titleInput || !tagsInput || !descInput || !submitBtn) return;
+
+  // ladda gammal data
+  supcastThreads = loadSupcastThreads();
+  renderSupcastFeed();
+
+  submitBtn.addEventListener("click", () => {
+    const title = titleInput.value.trim();
+    const description = descInput.value.trim();
+
+    if (!title || !description) {
+      showToast("Fill in title + description first.");
+      return;
+    }
+
+    const context = ctxSel.value;
+    const tags = tagsInput.value.trim();
+    const now = new Date();
+    const time = now.toLocaleTimeString("sv-SE", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    supcastThreads.push({
+      id: "sup_" + Date.now(),
+      context,
+      title,
+      tags,
+      description,
+      time,
+    });
+
+    saveSupcastThreads();
+    renderSupcastFeed();
+
+    titleInput.value = "";
+    tagsInput.value = "";
+    descInput.value = "";
+
+    showToast("SupCast question posted (mock).");
+  });
+}
+
+// ---------- SETTINGS POPUP (Mesh Settings) ----------
 // ---------- SETTINGS POPUP (Mesh Settings) ----------
 
 function setupInlineSettingsPopup() {
