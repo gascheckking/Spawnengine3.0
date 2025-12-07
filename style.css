@@ -882,14 +882,14 @@ button {
   color: #ff6b99;
 }
 
-.sheet-row-danger {
-  color: #ff6b99;
-}
-
 /* Role sheet: sit above bottom nav and pop up a bit higher */
+/* OBS: själva popupen lyfts av både .role-sheet och #role-backdrop */
 .role-sheet {
   max-height: 70vh;
-  margin-bottom: 110px; /* tidigare 70px – lyfter upp den mer */
+}
+
+#role-backdrop {
+  padding-bottom: 110px; /* lyft popupen över bottom-nav */
 }
 
 .chevron {
