@@ -229,16 +229,21 @@ body.app-body {
   color: #d4deff;
 }
 
-.role-icon {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: conic-gradient(from 200deg, #3cf6ff, #b9ff7a, #ff7adb, #3cf6ff);
-  box-shadow: 0 0 10px rgba(60, 246, 255, 0.8);
+.avatar-handle {
+  font-size: 13px;
+  font-weight: 600;
 }
 
-.role-label {
-  white-space: nowrap;
+.role-icon {
+  margin-left: 6px;
+  font-size: 11px;
+  color: #b5c3ff;
+  opacity: 0.9;
+}
+
+.avatar-sub {
+  font-size: 11px;
+  color: #a5b3ff;
 }
 
 .mesh-status-pill {
