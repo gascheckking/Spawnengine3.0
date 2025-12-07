@@ -890,7 +890,7 @@ button {
 
 /* Backdropens padding styr hur högt hela grejen ligger */
 #role-backdrop {
-  padding-bottom: 150px; /* Justera här för mer/mindre höjd */
+  padding-bottom: 250px; /* Justera här för mer/mindre höjd */
 }
 
 .chevron {
