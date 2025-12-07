@@ -885,7 +885,7 @@ button {
 /* Role sheet popup – lyft den rejält över bottom-nav */
 .role-sheet {
   max-height: 70vh;
-  margin-bottom: 60px;
+  margin-bottom: 80px;
 }
 
 #role-backdrop {
