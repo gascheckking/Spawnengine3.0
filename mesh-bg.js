@@ -12,7 +12,7 @@
     }
 
     const opts = { lowGPU: false, ...options };
-    const NODE_COUNT = 10;
+    const NODE_COUNT = 15; // Ökat nodantal för ett tätare nät
     const ORB_COUNT = opts.lowGPU ? 150 : 350;
     const PARALLAX_STRENGTH = 0.05;
     const ORB_SPEED = opts.lowGPU ? 0.005 : 0.01;
@@ -20,7 +20,7 @@
     let width = 0;
     let height = 0;
     let mouseX = 0;
-    let mouseY = 0;
+    let mouseY = 0; // Inverteras i hanteraren
     let nodes = [];
     let connections = [];
     let orbs = [];
@@ -29,6 +29,8 @@
     let buffer = null;
     let lastTime = 0;
     let dataGenerated = false;
+
+    // --- Shaders ---
 
     const vertexShaderSource = `
       attribute vec4 a_position;
@@ -44,9 +46,14 @@
       
       void main() {
         vec4 position = a_position;
-        position.xy += u_parallaxOffset;
+        // Z-värdet används för parallax, lägre Z rör sig mindre (mock)
+        float parallaxFactor = mix(u_parallaxOffset.x, u_parallaxOffset.x * 0.5, position.z);
+        
+        position.xy += u_parallaxOffset * (1.0 - position.z); // Använd Z för djup/parallax
         
         gl_Position = u_matrix * position;
+        
+        // Skala point size baserat på upplösning för konsistent utseende
         gl_PointSize = a_size * (u_resolution.y / 1000.0);
         v_color = a_color;
       }
@@ -60,14 +67,23 @@
 
       void main() {
         vec4 color = v_color;
-        float dist = length(gl_PointCoord - 0.5);
-        float glow = 1.0 - smoothstep(0.4, 0.5, dist);
-        float pulse = 0.8 + 0.2 * sin(u_time * 5.0 * v_color.w);
-        color.rgb *= pulse;
-        color.a *= glow;
+        
+        // Om det är en punkt (gl_PointCoord existerar), applicera glow/puls
+        if (gl_FrontFacing) {
+            float dist = length(gl_PointCoord - 0.5);
+            float glow = 1.0 - smoothstep(0.4, 0.5, dist);
+            
+            // Variabel färg.w (alpha i a_color) används som pulsfrekvens
+            float pulse = 0.8 + 0.2 * sin(u_time * 5.0 * v_color.w);
+            color.rgb *= pulse;
+            color.a *= glow; 
+        }
+        
         gl_FragColor = color;
       }
     `;
+    
+    // --- WebGL Setup ---
 
     function createShader(type, source) {
       const shader = gl.createShader(type);
@@ -100,6 +116,7 @@
 
       gl.useProgram(program);
 
+      // Hämta Uniforms
       uniformLocations.matrix = gl.getUniformLocation(program, "u_matrix");
       uniformLocations.time = gl.getUniformLocation(program, "u_time");
       uniformLocations.resolution = gl.getUniformLocation(
@@ -111,17 +128,21 @@
         "u_parallaxOffset"
       );
 
+      // Globala inställningar
       gl.enable(gl.BLEND);
-      gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE); // Additive blending för glow-effekt
       gl.disable(gl.DEPTH_TEST);
 
       buffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
+      // Definiera attribut-layout
       const a_position = gl.getAttribLocation(program, "a_position");
       const a_color = gl.getAttribLocation(program, "a_color");
       const a_size = gl.getAttribLocation(program, "a_size");
-      const stride = 9 * Float32Array.BYTES_PER_ELEMENT;
+      
+      const elementSize = Float32Array.BYTES_PER_ELEMENT;
+      const stride = (4 + 4 + 1) * elementSize; // Pos(4) + Färg(4) + Storlek(1) = 9 floats
 
       gl.vertexAttribPointer(a_position, 4, gl.FLOAT, false, stride, 0);
       gl.enableVertexAttribArray(a_position);
@@ -132,17 +153,18 @@
         gl.FLOAT,
         false, 
         stride,
-        4 * Float32Array.BYTES_PER_ELEMENT
+        4 * elementSize // Börjar efter a_position (4 floats)
       );
       gl.enableVertexAttribArray(a_color);
 
+      // Notera: a_size används inte av gl.LINES, men data måste ändå skickas
       gl.vertexAttribPointer(
         a_size,
         1,
         gl.FLOAT,
         false,
         stride,
-        8 * Float32Array.BYTES_PER_ELEMENT
+        8 * elementSize // Börjar efter a_position + a_color (8 floats)
       );
       gl.enableVertexAttribArray(a_size);
 
@@ -153,11 +175,13 @@
       }
     }
 
+    // --- Data / Fysik ---
+
     function generateInitialData() {
       const NEON_COLORS = [
-        [0.0, 1.0, 1.0, 0.9],
-        [0.8, 0.2, 1.0, 0.9],
-        [0.2, 1.0, 0.6, 0.9],
+        [0.0, 1.0, 1.0, 0.9], // Cyan
+        [0.8, 0.2, 1.0, 0.9], // Magenta
+        [0.2, 1.0, 0.6, 0.9], // Grön
       ];
 
       for (let i = 0; i < NODE_COUNT; i++) {
@@ -176,21 +200,27 @@
         });
       }
 
-      for (let i = 0; i < NODE_COUNT * 2; i++) {
-        const fromNode = nodes[Math.floor(Math.random() * NODE_COUNT)];
-        const toNode = nodes[Math.floor(Math.random() * NODE_COUNT)];
-        if (fromNode.id !== toNode.id) {
-          connections.push({
-            from: fromNode,
-            to: toNode,
-            color: NEON_COLORS[Math.floor(Math.random() * NEON_COLORS.length)],
-            strength: 0.1 + Math.random() * 0.5,
-            activeTime: 0,
-            duration: 500,
-            id: i,
-          });
-        }
+      // Generera connections (nu med mer slumpmässighet)
+      for (let i = 0; i < NODE_COUNT * 3; i++) {
+          const fromNode = nodes[Math.floor(Math.random() * NODE_COUNT)];
+          const toNode = nodes[Math.floor(Math.random() * NODE_COUNT)];
+          
+          // Undvik själv-koppling och dubbletter (förenklat)
+          if (fromNode.id !== toNode.id && Math.random() < 0.6) {
+              connections.push({
+                  from: fromNode,
+                  to: toNode,
+                  color: NEON_COLORS[Math.floor(Math.random() * NEON_COLORS.length)],
+                  strength: 0.1 + Math.random() * 0.5,
+                  activeTime: 0,
+                  duration: 500,
+                  id: i,
+              });
+          }
       }
+      
+      // Partiklar (Orbs)
+      if (connections.length === 0) return false; // Säkerhetskontroll
 
       for (let i = 0; i < ORB_COUNT; i++) {
         const conn = connections[Math.floor(Math.random() * connections.length)];
@@ -210,21 +240,25 @@
       const gravityStrength = 0.005;
 
       nodes.forEach((node) => {
-        if (Math.random() < 0.0005) {
+        // Uppdatera målposition slumpmässigt
+        if (Math.random() < 0.0005 * timeFactor * 1000) {
           node.targetX = Math.random() * 2 - 1;
           node.targetY = Math.random() * 2 - 1;
         }
 
+        // Dragningskraft mot mål
         const dx = node.targetX - node.x;
         const dy = node.targetY - node.y;
         node.vx += dx * 0.01 * timeFactor;
         node.vy += dy * 0.01 * timeFactor;
 
+        // Klustergravitation/repulsion
         nodes.forEach((other) => {
           if (node.id !== other.id && node.clusterId === other.clusterId) {
             const distSq =
-              (node.x - other.x) * (node.x - other.x) +
-              (node.y - other.y) * (node.y - other.y);
+              (node.x - other.x) ** 2 + (node.y - other.y) ** 2;
+            
+            // Mindre repellerar, större attraherar
             if (distSq < 0.1) {
               node.vx -= (other.x - node.x) * 0.005 * timeFactor;
               node.vy -= (other.y - node.y) * 0.005 * timeFactor;
@@ -235,61 +269,77 @@
           }
         });
 
+        // Friktion
         node.vx *= 0.99;
         node.vy *= 0.99;
+        
+        // Uppdatera position
         node.x += node.vx * timeFactor * 0.5;
         node.y += node.vy * timeFactor * 0.5;
 
+        // Håll inom bounds
         node.x = Math.max(-1.0, Math.min(1.0, node.x));
         node.y = Math.max(-1.0, Math.min(1.0, node.y));
-        node.pulse *= 0.9;
+        
+        // Pulsera ut
+        node.pulse = Math.max(0.0, node.pulse - timeFactor * 0.5);
       });
 
+      // Partikelrörelse
       orbs.forEach((orb) => {
         orb.progress += orb.speed * timeFactor;
         if (orb.progress >= 1.0) {
           orb.progress = 0.0;
-          orb.connection.activeTime = 1;
-          orb.connection.to.pulse = 1.0;
+          orb.connection.activeTime = 1.0; // Aktivera linjepuls
+          orb.connection.to.pulse = 1.0; // Aktivera nodpuls
         }
       });
 
+      // Linjestyrka/pulstid
       connections.forEach((conn) => {
-        conn.strength = Math.max(0.1, conn.strength * 0.99);
-        conn.activeTime = Math.max(0, conn.activeTime - timeFactor * 0.005);
+        conn.strength = Math.max(0.1, conn.strength * 0.995);
+        conn.activeTime = Math.max(0, conn.activeTime - timeFactor * 0.8);
       });
 
+      // Slumpmässig nodpuls/linjeaktivering
       if (Math.random() < 0.005) {
         const node = nodes[Math.floor(Math.random() * NODE_COUNT)];
         node.pulse = 1.0;
         connections
           .filter((c) => c.from.id === node.id || c.to.id === node.id)
-          .forEach((c) => (c.activeTime = 1));
+          .forEach((c) => (c.activeTime = 1.0));
       }
     }
 
-    function fillBuffer() {
-      const vertexData = [];
-      const Z_NODE = 0.0;
-      const Z_ORB = 0.5;
-      const Z_LINE = -0.5;
+    // --- Rendering ---
 
+    function fillBuffer() {
+      // Dataformat: x, y, z, w, r, g, b, a, size (9 floats per vertex)
+      const vertexData = [];
+      const Z_NODE = 0.5; // Framför linjer
+      const Z_ORB = 1.0;  // Framför noder
+      const Z_LINE = 0.0; // Längst bak
+
+      // 1. Linjer (gl.LINES)
       connections.forEach((conn) => {
         const color = conn.color;
         const pulseBoost = conn.activeTime * 0.5;
         const alpha = conn.strength + pulseBoost;
 
+        // Startpunkt
         vertexData.push(conn.from.x, conn.from.y, Z_LINE, 1.0);
         vertexData.push(color[0], color[1], color[2], alpha);
-        vertexData.push(conn.strength * 20.0);
+        vertexData.push(conn.strength * 20.0); // Storlek (används ej för linjer)
 
+        // Slutpunkt
         vertexData.push(conn.to.x, conn.to.y, Z_LINE, 1.0);
         vertexData.push(color[0], color[1], color[2], alpha);
-        vertexData.push(conn.strength * 20.0);
+        vertexData.push(conn.strength * 20.0); // Storlek (används ej för linjer)
       });
 
-      const lineCount = vertexData.length / 9;
+      const lineVertices = vertexData.length / 9;
 
+      // 2. Noder (gl.POINTS)
       nodes.forEach((node) => {
         const pulseSize = node.pulse * 20;
         const pulseAlpha = node.pulse * 0.3;
@@ -299,13 +349,14 @@
           node.color[0],
           node.color[1],
           node.color[2],
-          node.color[3] + pulseAlpha
+          node.color[3] + pulseAlpha // Ökad alpha vid puls
         );
         vertexData.push(node.size + pulseSize);
       });
 
-      const nodeCount = vertexData.length / 9 - lineCount;
+      const nodeVertices = (vertexData.length / 9) - lineVertices;
 
+      // 3. Orbs (gl.POINTS)
       orbs.forEach((orb) => {
         const start = orb.connection.from;
         const end = orb.connection.to;
@@ -318,15 +369,20 @@
         vertexData.push(orb.size);
       });
 
+      const totalVertices = vertexData.length / 9;
+      const orbVertices = totalVertices - (lineVertices + nodeVertices);
+
+
       gl.bufferData(
         gl.ARRAY_BUFFER,
         new Float32Array(vertexData),
         gl.DYNAMIC_DRAW
       );
       return {
-        totalVertices: vertexData.length / 9,
-        lineVertices: lineCount,
-        nodeVertices: nodeCount,
+        totalVertices,
+        lineVertices,
+        nodeVertices,
+        orbVertices,
       };
     }
 
@@ -345,6 +401,7 @@
         mouseY * PARALLAX_STRENGTH
       );
 
+      // Enkel identitetsmatris
       const matrix = [
         1, 0, 0, 0, //
         0, 1, 0, 0, //
@@ -353,20 +410,23 @@
       ];
       gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
 
+      // --- RITA LINJER (Connections) ---
       const linesToDraw = vertexCounts.lineVertices;
       if (linesToDraw > 0) {
-        gl.lineWidth(2.0);
+        gl.lineWidth(2.0); // Sätter tjocklek (begränsad av WebGL standarder)
         gl.drawArrays(gl.LINES, 0, linesToDraw);
       }
 
+      // --- RITA PUNKTER (Noder och Orbs) ---
       const pointsStart = linesToDraw;
-      const pointsToDraw =
-        vertexCounts.nodeVertices +
-        (vertexCounts.totalVertices - (linesToDraw + vertexCounts.nodeVertices));
+      const pointsToDraw = vertexCounts.nodeVertices + vertexCounts.orbVertices;
+
       if (pointsToDraw > 0) {
         gl.drawArrays(gl.POINTS, pointsStart, pointsToDraw);
       }
     }
+
+    // --- Händelsehanterare ---
 
     function resize() {
       width = canvasElement.clientWidth;
@@ -391,8 +451,12 @@
           ? event.touches[0].clientY
           : 0;
 
+      // Normalisera till [-1, 1]
       mouseX = (clientX / width) * 2 - 1;
-      mouseY = (clientY / height) * 2 - 1;
+      
+      // Invertera Y för parallax. Om musen går upp (högre clientY), vill vi
+      // att scenen ska glida ner (negativ Y-förskjutning) för att simulera djup.
+      mouseY = -((clientY / height) * 2 - 1); 
     }
 
     function animate(time) {
@@ -407,6 +471,8 @@
 
       requestAnimationFrame(animate);
     }
+
+    // --- Init ---
 
     function init() {
       setupWebGL();
@@ -428,6 +494,8 @@
         gl.deleteProgram(program);
         gl.deleteBuffer(buffer);
       },
+      // Exponera Mesh-data (valfritt)
+      getNodes: () => nodes
     };
   };
 
@@ -436,6 +504,7 @@
     const canvas = document.getElementById("mesh-canvas");
     if (!canvas) return;
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-    window.initMeshExplorer(canvas, { lowGPU: isMobile });
+    // Skapa en global referens till cleanup för enklare hantering om du vill byta bakgrund
+    window.meshExplorerInstance = window.initMeshExplorer(canvas, { lowGPU: isMobile });
   });
 })();
