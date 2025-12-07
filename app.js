@@ -31,7 +31,7 @@ const state = {
   lootEvents: [],
   meshEvents: [],
   quests: [],
-  role: "hunter", // default
+  role: "hunter", // default, ersätts av multi-roll
 };
 
 // ---------- UTIL ----------
@@ -465,12 +465,11 @@ function setupLoot() {
     });
   });
 
-  // Hårdkodad mock-öppning, ersatt av modulen
+  // Hårdkodad mock-öppning, ersätts nu av PackWidget
   const openBtn = $("#btn-open-pack");
   if (openBtn) {
     openBtn.addEventListener("click", () => {
       showToast("Pack opening is now handled by the PackWidget module.");
-      // Denna knapp borde tas bort/ersättas av packwidget i HTML
     });
   }
 
@@ -814,9 +813,8 @@ async function loadOnchainData(updateWalletUIFn) {
   }
 }
 
-// ---------- ROLE SELECT (NY MULTI-VERSION) ----------
+// ---------- ROLE SELECT (MULTI-VERSION) ----------
 
-// Läs roller från localStorage (stöd för gammal single-role också)
 function loadStoredRoles() {
   try {
     const multi = localStorage.getItem("spawnengine_roles");
@@ -834,11 +832,10 @@ function loadStoredRoles() {
 
 // Mock-funktion för att spara rollen on-chain/API
 async function saveRoleOnchain(roles) {
-    showToast(`Saving roles ${roles.join(', ')}... (Mock TX)`);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // Här skulle du anropa din riktiga API/kontrakt
-    console.log(`[API MOCK] Roles saved: ${roles.join(', ')}`);
-    return true;
+  showToast(`Saving roles ${roles.join(", ")}... (Mock TX)`);
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  console.log(`[API MOCK] Roles saved: ${roles.join(", ")}`);
+  return true;
 }
 
 // Öppna sheet bara om ingen roll är vald än
@@ -860,18 +857,16 @@ function setupRoleSelect() {
 
   if (!backdrop || !sheet || !closeBtn || !saveBtn || !cards.length) return;
 
-  // Multi-select: Set med valda roller
   let selectedRoles = new Set(loadStoredRoles());
 
   // Förmarkera redan sparade roller
   cards.forEach((card) => {
     const role = card.getAttribute("data-role");
     if (role && selectedRoles.has(role)) {
-      card.classList.add("selected"); // Använder 'selected' klassen från roles.css
+      card.classList.add("selected");
     }
   });
 
-  // Om inga roller valda alls: öppna sheet första gången
   if (!selectedRoles.size) {
     backdrop.classList.add("open");
     saveBtn.disabled = true;
@@ -879,7 +874,6 @@ function setupRoleSelect() {
     saveBtn.disabled = false;
   }
 
-  // Toggle på korten (multi-select)
   cards.forEach((card) => {
     card.addEventListener("click", () => {
       const role = card.getAttribute("data-role");
@@ -893,36 +887,30 @@ function setupRoleSelect() {
         card.classList.add("selected");
       }
 
-      // Minst 1 roll krävs för att spara
       saveBtn.disabled = selectedRoles.size === 0;
     });
   });
 
-  // Spara roller
   saveBtn.addEventListener("click", async () => {
     if (!selectedRoles.size) return;
 
     const arr = Array.from(selectedRoles);
-    
-    // Anropa mock on-chain sparning
     const saved = await saveRoleOnchain(arr);
 
     if (saved) {
-        localStorage.setItem("spawnengine_roles", JSON.stringify(arr));
-        localStorage.removeItem("spawnengine_role"); // städa gammal nyckel
+      localStorage.setItem("spawnengine_roles", JSON.stringify(arr));
+      localStorage.removeItem("spawnengine_role");
 
-        backdrop.classList.remove("open");
-        showToast("Roles updated and synced on-chain!");
-        updateRoleDisplay();
+      backdrop.classList.remove("open");
+      showToast("Roles updated and synced on-chain!");
+      updateRoleDisplay();
     }
   });
 
-  // Stäng-knapp
   closeBtn.addEventListener("click", () => {
     backdrop.classList.remove("open");
   });
 
-  // Klick utanför sheet → stäng
   backdrop.addEventListener("click", (e) => {
     if (e.target === backdrop) {
       backdrop.classList.remove("open");
@@ -948,7 +936,6 @@ function updateRoleDisplay() {
     Gatherer: "⛏️",
   };
 
-  // Default om inget är valt
   if (!roles.length) {
     roleSpan.textContent = "❓ Unknown Role";
     return;
@@ -1033,7 +1020,6 @@ function setupSupcast() {
 
   if (!ctxSel || !titleInput || !tagsInput || !descInput || !submitBtn) return;
 
-  // ladda gammal data
   supcastThreads = loadSupcastThreads();
   renderSupcastFeed();
 
@@ -1097,7 +1083,6 @@ function setupInlineSettingsPopup() {
     }
   });
 
-  // Builder-actions inside Settings & builders
   const builderCards = settingsBackdrop.querySelectorAll(
     "[data-builder-action]"
   );
@@ -1201,22 +1186,21 @@ function setupMarketDetails() {
 // ---------- MODULE INTEGRATION (NYTT) ----------
 
 function initModules() {
-    // 1. SlotMachine (Mesh view)
-    if (window.SpawnSlotMachine) {
-        window.SpawnSlotMachine.init('slot-module-embed');
-    } else {
-        console.warn("SpawnSlotMachine module not loaded.");
-    }
-    
-    // 2. Pack Reveal Widget (Loot view)
-    if (window.SpawnPackReveal) {
-        window.SpawnPackReveal.init('pack-module-embed');
-    } else {
-        console.warn("SpawnPackReveal module not loaded.");
-    }
-    
-    // 3. Rolls (Initieras via setupRoleSelect i huvudsakliga appen)
-    // De individuella rollkorten på backdropen är redan HTML-renderade och ansluts i setupRoleSelect.
+  // 1. SlotMachine (Mesh view)
+  if (window.SpawnSlotMachine) {
+    window.SpawnSlotMachine.init("slot-module-embed");
+  } else {
+    console.warn("SpawnSlotMachine module not loaded.");
+  }
+
+  // 2. Pack Reveal Widget (Loot view)
+  if (window.SpawnPackReveal) {
+    window.SpawnPackReveal.init("pack-module-embed");
+  } else {
+    console.warn("SpawnPackReveal module not loaded.");
+  }
+
+  // 3. Rolls: styrs via setupRoleSelect + backdrop/role-cards i huvud-HTML
 }
 
 // ---------- INIT ----------
@@ -1246,10 +1230,9 @@ function initSpawnEngine() {
   setupRoleSelect();
   setupSupcast();
   updateRoleDisplay();
-  
-  // Nya funktionsanrop
-  initModules(); 
-  showRoleSheetIfNeeded(); 
+
+  initModules();
+  showRoleSheetIfNeeded();
 }
 
 // ---------- READY STATE ----------
