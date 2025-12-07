@@ -1,1 +1,127 @@
--
+.slot-root {
+  max-width: 420px;
+  margin: 24px auto;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  color: #e7ecff;
+  background: radial-gradient(circle at top, #11152a, #050712 65%);
+  border-radius: 18px;
+  padding: 16px 14px 18px;
+  border: 1px solid rgba(120, 160, 255, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.slot-title {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.slot-sub {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: #a8b3ff;
+}
+
+.slot-machine {
+  margin-top: 8px;
+  padding: 12px 10px;
+  border-radius: 14px;
+  background: radial-gradient(circle at top, #21294a, #090c1c 65%);
+  border: 1px solid rgba(132, 172, 255, 0.6);
+}
+
+.slot-stake-info {
+  font-size: 12px;
+  color: #c7d5ff;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.slot-status-tx {
+  font-weight: 500;
+  color: #79ffb6; 
+}
+
+.slot-window {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.45);
+  margin-bottom: 10px;
+  /* Kritiskt för rullande animation */
+  overflow: hidden; 
+  height: 40px; /* Höjden på en symbol */
+  position: relative;
+}
+
+.slot-reel {
+  flex: 1;
+  text-align: center;
+  padding: 0; 
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2f3a70, #141a3b);
+  box-shadow: 0 0 14px rgba(72, 118, 255, 0.55);
+  font-weight: 700;
+  font-size: 18px; 
+  transition: none; /* Styrs via JS för stopp-animation */
+}
+
+/* Stil för de inre symbol-divarna (själva innehållet) */
+.slot-reel > div {
+    height: 40px; /* MÅSTE matchas i JS */
+    line-height: 40px; 
+}
+
+/* Ny keyframes för att snurra kontinuerligt */
+@keyframes continuous-roll {
+  from { transform: translateY(0); }
+  to { transform: translateY(-40px); } /* Flyttar uppåt med en symbolhöjd */
+}
+
+/* Denna klass appliceras av JS vid Spin */
+.rolling {
+  /* Oändlig snabb rullning */
+  animation: continuous-roll 50ms linear infinite; 
+}
+
+.slot-spin-btn {
+  width: 100%;
+  border-radius: 999px;
+  border: none;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #3cf6ff, #b9ff7a);
+  color: #050510;
+  box-shadow:
+    0 0 12px rgba(60, 246, 255, 0.7),
+    0 14px 26px rgba(0, 0, 0, 0.7);
+  transition: all 0.2s ease;
+}
+
+.slot-spin-btn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98);
+}
+
+.slot-spin-btn:disabled {
+  background: #3a4768;
+  color: #a8b3ff;
+  cursor: not-allowed;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+.slot-result {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #c7d5ff;
+  min-height: 14px; 
+}
+
+.slot-foot {
+  margin-top: 12px;
+  font-size: 11px;
+  color: #939fda;
+}
