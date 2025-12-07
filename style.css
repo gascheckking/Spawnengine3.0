@@ -209,7 +209,7 @@ body.app-body {
   background: rgba(40, 30, 90, 0.5);
 }
 
-/* ROLE CHIP + STATUS (NY) */
+/* ROLE CHIP + STATUS */
 
 .hud-role-and-status {
   display: flex;
@@ -229,21 +229,11 @@ body.app-body {
   color: #d4deff;
 }
 
-.avatar-handle {
-  font-size: 13px;
-  font-weight: 600;
-}
-
 .role-icon {
   margin-left: 6px;
   font-size: 11px;
   color: #b5c3ff;
   opacity: 0.9;
-}
-
-.avatar-sub {
-  font-size: 11px;
-  color: #a5b3ff;
 }
 
 .mesh-status-pill {
@@ -370,7 +360,7 @@ body.app-body {
   color: #aeb7ef;
 }
 
-/* XP source label (under stats) */
+/* XP source label */
 
 #xp-source-label {
   margin-top: 6px;
@@ -832,7 +822,6 @@ button {
   transition: opacity 0.2s ease-out;
 }
 
-/* Det här saknade du – utan detta öppnas aldrig sheeten */
 .sheet-backdrop.open {
   opacity: 1;
   pointer-events: auto;
@@ -884,11 +873,11 @@ button {
 
 .role-sheet {
   max-height: 70vh;
-  margin-bottom: 80px; /* snygg höjd */
+  margin-bottom: 80px;
 }
 
 #role-backdrop {
-  padding-bottom: 220px; /* lyfter hela popupen ytterligare */
+  padding-bottom: 220px;
 }
 
 .chevron {
@@ -896,6 +885,7 @@ button {
 }
 
 /* Grid för rollerna */
+
 .role-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -930,19 +920,6 @@ button {
   margin: 0;
   font-size: 11px;
   color: #b5c3ff;
-}
-
-/* TEXT + ICON I HEADERN */
-.role-icon {
-  margin-left: 6px;
-  font-size: 11px;
-  color: #b5c3ff;
-  opacity: 0.9;
-}
-
-/* CHEVRON FÖR ACCOUNT SHEET */
-.chevron {
-  font-size: 14px;
 }
 
 /* SETTINGS PANEL (used by market details) */
@@ -1055,7 +1032,6 @@ button {
   margin-top: 3px;
 }
 
-/* Ask / Feed-blocks */
 .supcast-block {
   margin-bottom: 10px;
   border-radius: 12px;
@@ -1069,7 +1045,6 @@ button {
   margin: 0 0 3px;
 }
 
-/* Form & fields */
 .supcast-form {
   margin-top: 6px;
 }
@@ -1088,7 +1063,6 @@ button {
   margin-top: 2px;
 }
 
-/* Layout: mobil först, två kolumner på lite större skärm */
 .supcast-layout {
   display: flex;
   flex-direction: column;
@@ -1104,7 +1078,6 @@ button {
   }
 }
 
-/* Search / filter-row överst i Ask-blocket (funkar även utan ändrad HTML) */
 .supcast-search-row {
   display: flex;
   flex-direction: column;
@@ -1122,7 +1095,6 @@ button {
   flex: 1;
 }
 
-/* Lista av “snabba filter”-chips under sökfältet (valfritt) */
 .supcast-chip-row {
   display: flex;
   flex-wrap: wrap;
@@ -1146,7 +1118,6 @@ button {
   border-color: rgba(170, 240, 255, 0.9);
 }
 
-/* Feed-listan med supportfall */
 .supcast-feed {
   list-style: none;
   padding: 0;
@@ -1174,7 +1145,6 @@ button {
   justify-content: space-between;
 }
 
-/* Experts / profile-blocket till höger */
 .supcast-experts {
   background: radial-gradient(circle at top, rgba(121, 199, 255, 0.25), transparent 55%),
     rgba(9, 12, 34, 0.96);
@@ -1322,15 +1292,11 @@ button {
   background: transparent;
 }
 
-/* grid för market slots & builder-API */
-
 .market-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
-
-/* Partner list */
 
 .partners-list {
   margin-top: 6px;
@@ -1467,8 +1433,6 @@ button {
   margin-bottom: 8px;
 }
 
-/* två-i-bredd kort, flex så de wrappar fint */
-
 .settings-card-grid {
   display: flex;
   flex-wrap: wrap;
@@ -1489,8 +1453,6 @@ button {
   padding: 8px;
   min-height: 80px;
 }
-
-/* klickbara builder-kort */
 
 .settings-card[data-builder-action] {
   cursor: pointer;
@@ -1597,40 +1559,4 @@ button {
 .purple {
   background: #5b2d7d;
   color: #c084fc;
-}
-
-.role-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 12px;
-}
-
-.role-card {
-  padding: 12px;
-  border-radius: 14px;
-  background: rgba(14, 18, 40, 0.92);
-  border: 1px solid rgba(136, 176, 255, 0.5);
-  cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.2s ease;
-}
-
-.role-card:hover {
-  transform: scale(1.02);
-}
-
-.role-card.active {
-  border-color: #3cf6ff;
-  box-shadow: 0 0 14px rgba(60, 246, 255, 0.5);
-}
-
-.role-card h4 {
-  margin: 0 0 4px;
-  font-size: 13px;
-}
-
-.role-card p {
-  margin: 0;
-  font-size: 11px;
-  color: #b5c3ff;
 }
