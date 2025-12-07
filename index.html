@@ -145,24 +145,29 @@
         <button id="btn-account" class="avatar-chip">
           <div class="avatar-circle">S</div>
           <div class="avatar-handle">
-  <span id="meshHandle">@spawniz</span>
-  <span id="meshRoleIcon" class="role-icon"></span>
-</div>
+            <span id="meshHandle">@spawniz</span>
+          </div>
         </button>
         <button id="settings-btn" class="icon-button" aria-label="Settings">
           <div class="icon-gear"></div>
         </button>
       </div>
 
-      <!-- badges / tags -->
+      <!-- badges / tags + role + status -->
       <div class="hud-header-row">
         <div class="hud-tags">
           <span class="pill pill-soft">Base · Mesh ecosystems</span>
           <span class="pill pill-outline">Farcaster ready</span>
         </div>
-        <div class="mesh-status-pill">
-          <span class="status-dot"></span>
-          <span>Mesh v0.3</span>
+        <div class="hud-role-and-status">
+          <span id="mesh-role-chip" class="pill pill-soft role-chip">
+            <span id="meshRoleIcon" class="role-icon"></span>
+            <span class="role-label">Alpha hunter / Trader</span>
+          </span>
+          <div class="mesh-status-pill">
+            <span class="status-dot"></span>
+            <span>Mesh v0.3</span>
+          </div>
         </div>
       </div>
 
@@ -189,8 +194,9 @@
 
       <!-- wallet connect row -->
       <div class="wallet-strip">
-        <button id="btn-connect-wallet" class="btn-outline">Connect</button>
-        <span class="wallet-address">Not connected</span>
+        <button id="btn-connect" class="btn-outline">Connect</button>
+        <span id="wallet-status-label" class="wallet-status">Not connected</span>
+        <span class="wallet-address" data-wallet-address>Not connected</span>
         <span id="walletBalanceEth" class="wallet-balance">0.0000 ETH</span>
       </div>
 
@@ -213,6 +219,11 @@
           <div id="activeWalletsStat" class="hud-stat-value">1</div>
         </div>
       </div>
+
+      <!-- XP source label -->
+      <p id="xp-source-label" class="section-sub">
+        XP currently running on demo values.
+      </p>
 
       <!-- streak -->
       <div class="streak-row">
@@ -240,41 +251,44 @@
       <div class="tab-content">
         <!-- HOME -->
         <!-- ONBOARDING ROLE SELECT -->
-<div id="role-backdrop" class="sheet-backdrop hidden">
-  <div id="role-sheet" class="sheet role-sheet">
-    <div class="sheet-header">
-      <span class="settings-title">Choose your role</span>
-      <button id="role-close" class="settings-close-btn">✕</button>
-    </div>
+        <div id="role-backdrop" class="sheet-backdrop hidden">
+          <div id="role-sheet" class="sheet role-sheet">
+            <div class="sheet-header">
+              <span class="settings-title">Choose your role</span>
+              <button id="role-close" class="settings-close-btn">✕</button>
+            </div>
 
-    <p class="section-sub">This sets your XP path, quests and how you appear in mesh.</p>
+            <p class="section-sub">
+              This sets your XP path, quests and how you appear in mesh.
+            </p>
 
-    <div class="role-grid">
-      <div class="role-card" data-role="dev">
-        <h4>🧪 Dev / Builder</h4>
-        <p>Deploy contracts, write miniapps, infra wizard.</p>
-      </div>
+            <div class="role-grid">
+              <div class="role-card" data-role="dev">
+                <h4>🧪 Dev / Builder</h4>
+                <p>Deploy contracts, write miniapps, infra wizard.</p>
+              </div>
 
-      <div class="role-card" data-role="creator">
-        <h4>🎨 Creator / Artist</h4>
-        <p>Packs, cards, tokens, art drops, onchain worlds.</p>
-      </div>
+              <div class="role-card" data-role="creator">
+                <h4>🎨 Creator / Artist</h4>
+                <p>Packs, cards, tokens, art drops, onchain worlds.</p>
+              </div>
 
-      <div class="role-card" data-role="hunter">
-        <h4>⚡ Alpha hunter</h4>
-        <p>PnL, tokens, packs, XP races, sniping heat.</p>
-      </div>
+              <div class="role-card" data-role="hunter">
+                <h4>⚡ Alpha hunter</h4>
+                <p>PnL, tokens, packs, XP races, sniping heat.</p>
+              </div>
 
-      <div class="role-card" data-role="collector">
-        <h4>🎴 Collector / Fan</h4>
-        <p>Open packs, complete sets, foil raids & quests.</p>
-      </div>
-    </div>
+              <div class="role-card" data-role="collector">
+                <h4>🎴 Collector / Fan</h4>
+                <p>Open packs, complete sets, foil raids & quests.</p>
+              </div>
+            </div>
 
-    <button id="save-role" class="btn-full-width" disabled>Save role</button>
-  </div>
-</div>
-<!-- END ROLE SELECT -->
+            <button id="save-role" class="btn-full-width" disabled>Save role</button>
+          </div>
+        </div>
+        <!-- END ROLE SELECT -->
+
         <div id="tab-home" class="tab-panel tab-panel-active">
           <div class="activity-feed">
             <header class="section-header">
@@ -366,10 +380,10 @@
             <div class="mesh-mini-card">
               Inventory view is mocked — values above reflect your simulated pulls.
             </div>
-        </div>
+          </div>
         </div>
 
-                <!-- MARKET -->
+        <!-- MARKET -->
         <div id="tab-market" class="tab-panel">
           <!-- MARKET TAB CONTENT — SpawnEngine Market -->
           <section class="market-view">
@@ -491,18 +505,20 @@
                     <button class="link-btn market-card-btn">View</button>
                   </div>
                 </article>
-        <article class="market-card">
-          <div class="market-card-icon">🛰️</div>
-          <h4>Dev hotline · Mesh mentor slot</h4>
-          <p>
-            Get in contact with a verified Base builder for code review, app check or
-            “why is my tx cursed?” sessions. You set a bid, they accept or counter.
-          </p>
-          <div class="market-card-footer">
-            <span class="price">You bid</span>
-            <button class="link-btn market-card-btn">Open request</button>
-          </div>
-        </article>
+
+                <article class="market-card">
+                  <div class="market-card-icon">🛰️</div>
+                  <h4>Dev hotline · Mesh mentor slot</h4>
+                  <p>
+                    Get in contact with a verified Base builder for code review, app check or
+                    “why is my tx cursed?” sessions. You set a bid, they accept or counter.
+                  </p>
+                  <div class="market-card-footer">
+                    <span class="price">You bid</span>
+                    <button class="link-btn market-card-btn">Open request</button>
+                  </div>
+                </article>
+
                 <article class="market-card">
                   <div class="market-card-icon">🎨</div>
                   <h4>Base ecosystem collab</h4>
@@ -513,7 +529,7 @@
                   </div>
                 </article>
 
-                                                <article class="market-card">
+                <article class="market-card">
                   <div class="market-card-icon">📊</div>
                   <h4>LP safety workshop</h4>
                   <p>Hands-on session for keeping floors alive.</p>
@@ -528,7 +544,7 @@
                   <div class="market-card-icon">🏆</div>
                   <h4>SpawnEngine contest arena</h4>
                   <p>
-                    Host onchain challenges funded in $SPN token , spawnengine alot machine ,
+                    Host onchain challenges funded in $SPN token, SpawnEngine slot machine,
                     leaderboard races and shared reward pools. Quests + skill,
                     no casino mechanics.
                   </p>
@@ -609,6 +625,7 @@
           </section>
         </div>
         <!-- /MARKET -->
+
         <!-- QUESTS -->
         <div id="tab-quests" class="tab-panel">
           <header class="section-header">
@@ -624,7 +641,7 @@
         </div>
 
         <!-- MESH -->
-                <div id="tab-mesh" class="tab-panel">
+        <div id="tab-mesh" class="tab-panel">
           <section class="market-section">
             <div class="section-header">
               <div>
@@ -851,8 +868,7 @@
   </div>
   <!-- /app-shell -->
 
-    <!-- BOTTOM NAV -->
-
+  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <button class="nav-btn nav-btn-active" data-tab-target="home">Home</button>
     <button class="nav-btn" data-tab-target="loot">Loot</button>
