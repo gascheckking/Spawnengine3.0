@@ -768,7 +768,53 @@ async function loadOnchainData(updateWalletUI) {
 }
 
 // ---------- SETTINGS POPUP (Mesh Settings) ----------
+// ---------- ROLE SELECT ----------
+function setupRoleSelect() {
+  const backdrop = document.getElementById("role-backdrop");
+  const sheet = document.getElementById("role-sheet");
+  const closeBtn = document.getElementById("role-close");
+  const saveBtn = document.getElementById("save-role");
+  const cards = document.querySelectorAll(".role-card");
+  let selectedRole = null;
 
+  // Open automatically on first visit
+  const existing = localStorage.getItem("spawnengine_role");
+  if (!existing) {
+    backdrop.classList.remove("hidden");
+  }
+
+  // Selecting a card
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      cards.forEach(c => c.classList.remove("active"));
+      card.classList.add("active");
+      selectedRole = card.getAttribute("data-role");
+      saveBtn.disabled = false;
+    });
+  });
+
+  // Save role
+  saveBtn.addEventListener("click", () => {
+    if (!selectedRole) return;
+    localStorage.setItem("spawnengine_role", selectedRole);
+    backdrop.classList.add("hidden");
+    showToast("Role set: " + selectedRole);
+    updateRoleDisplay();
+  });
+
+  closeBtn.addEventListener("click", () => {
+    backdrop.classList.add("hidden");
+  });
+}
+
+function updateRoleDisplay() {
+  const role = localStorage.getItem("spawnengine_role");
+  const sub = document.querySelector(".avatar-sub");
+  if (role && sub) {
+    sub.textContent = "Role · " + role;
+  }
+}
+// ---------- END ROLE SELECT ----------
 function setupInlineSettingsPopup() {
   const settingsBtn = document.getElementById("settings-btn");
   const settingsBackdrop = document.getElementById("settings-backdrop");
@@ -916,7 +962,11 @@ function initSpawnEngine() {
   setupWallet();
   setupInlineSettingsPopup();
   setupMarketDetails();
+  setupRoleSelect();       // <— NYTT
+  updateRoleDisplay();     // <— NYTT
 }
+
+// ---------- READY STATE ----------
 
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initSpawnEngine);
