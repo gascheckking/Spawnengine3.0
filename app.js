@@ -31,6 +31,7 @@ const state = {
   lootEvents: [],
   meshEvents: [],
   quests: [],
+  role: "hunter", // default
 };
 
 // ---------- UTIL ----------
@@ -632,10 +633,6 @@ function setupLivePulse() {
 
 // ---------- WALLET / ONCHAIN ----------
 
-let spawnProvider = null;
-let spawnSigner = null;
-let spawnAddress = null;
-
 const btnConnect = document.getElementById("btn-connect");
 const addrEls = document.querySelectorAll("[data-wallet-address]");
 const walletStatusLabel = document.getElementById("wallet-status-label");
@@ -745,7 +742,7 @@ async function handleAccountsChanged(accounts) {
   }
 }
 
-async function loadOnchainData(updateWalletUI) {
+async function loadOnchainData(updateWalletUIFn) {
   if (!spawnAddress) return;
   try {
     const rpc = new ethers.providers.JsonRpcProvider(SPAWN_CONFIG.RPC_URL);
@@ -780,36 +777,41 @@ async function loadOnchainData(updateWalletUI) {
 
     renderMeshSnapshot();
     renderActivityList($("#homeActivityList"), state.homeEvents);
-    if (updateWalletUI) updateWalletUI();
+    if (updateWalletUIFn) updateWalletUIFn();
   } catch (e) {
     console.error(e);
     showToast("Could not load onchain data.");
   }
 }
 
-// ---------- SETTINGS POPUP (Mesh Settings) ----------
 // ---------- ROLE SELECT ----------
-function setupRoleSelect() {
-  const backdrop = document.getElementById("role-backdrop");
-  const sheet = document.getElementById("role-sheet");
-  const closeBtn = document.getElementById("role-close");
-  const saveBtn = document.getElementById("save-role");
-  const cards = document.querySelectorAll(".role-card");
-  let selectedRole = null;
 
-  // Open automatically on first visit
+function showRoleSheetIfNeeded() {
+  const backdrop = document.getElementById("role-backdrop");
+  if (!backdrop) return;
+
   const existing = localStorage.getItem("spawnengine_role");
   if (!existing) {
     backdrop.classList.remove("hidden");
   }
+}
+
+function setupRoleSelect() {
+  const backdrop = document.getElementById("role-backdrop");
+  const closeBtn = document.getElementById("role-close");
+  const saveBtn = document.getElementById("save-role");
+  const cards = document.querySelectorAll(".role-card");
+  if (!backdrop || !closeBtn || !saveBtn || !cards.length) return;
+
+  let selectedRole = null;
 
   // Selecting a card
-  cards.forEach(card => {
+  cards.forEach((card) => {
     card.addEventListener("click", () => {
-      cards.forEach(c => c.classList.remove("active"));
+      cards.forEach((c) => c.classList.remove("active"));
       card.classList.add("active");
       selectedRole = card.getAttribute("data-role");
-      saveBtn.disabled = false;
+      saveBtn.disabled = !selectedRole;
     });
   });
 
@@ -817,6 +819,7 @@ function setupRoleSelect() {
   saveBtn.addEventListener("click", () => {
     if (!selectedRole) return;
     localStorage.setItem("spawnengine_role", selectedRole);
+    state.role = selectedRole;
     backdrop.classList.add("hidden");
     showToast("Role set: " + selectedRole);
     updateRoleDisplay();
@@ -830,8 +833,12 @@ function setupRoleSelect() {
 function updateRoleDisplay() {
   const chip = document.getElementById("mesh-role-chip");
   const iconSpan = document.getElementById("meshRoleIcon");
-
   if (!chip) return;
+
+  const savedRole = localStorage.getItem("spawnengine_role");
+  if (savedRole) {
+    state.role = savedRole;
+  }
 
   const role = state.role || "hunter";
 
@@ -850,12 +857,13 @@ function updateRoleDisplay() {
   };
 
   chip.textContent = labelMap[role] || "Alpha hunter / Trader";
-
   if (iconSpan) {
     iconSpan.textContent = iconMap[role] || "";
   }
 }
-// ---------- END ROLE SELECT ----------
+
+// ---------- SETTINGS POPUP (Mesh Settings) ----------
+
 function setupInlineSettingsPopup() {
   const settingsBtn = document.getElementById("settings-btn");
   const settingsBackdrop = document.getElementById("settings-backdrop");
@@ -897,7 +905,6 @@ function setupInlineSettingsPopup() {
     });
   });
 }
-// ---------- MARKET DETAILS (for future market cards) ----------
 
 // ---------- MARKET DETAILS (for future market cards) ----------
 
@@ -1003,8 +1010,8 @@ function initSpawnEngine() {
   setupWallet();
   setupInlineSettingsPopup();
   setupMarketDetails();
-  setupRoleSelect();       // <— NYTT
-  updateRoleDisplay();     // <— NYTT
+  setupRoleSelect();
+  updateRoleDisplay();
 }
 
 // ---------- READY STATE ----------
