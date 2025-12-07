@@ -239,6 +239,42 @@
       <!-- TAB PANELS -->
       <div class="tab-content">
         <!-- HOME -->
+        <!-- ONBOARDING ROLE SELECT -->
+        <div id="role-backdrop" class="settings-backdrop hidden">
+  <div id="role-sheet" class="settings-sheet">
+    <div class="settings-header">
+      <span class="settings-title">Choose your role</span>
+      <button id="role-close" class="settings-close-btn">✕</button>
+    </div>
+
+    <p class="section-sub">This sets your XP path, quests and how you appear in mesh.</p>
+
+    <div class="role-grid">
+      <div class="role-card" data-role="dev">
+        <h4>🧪 Dev / Builder</h4>
+        <p>Deploy contracts, write miniapps, infra wizard.</p>
+      </div>
+
+      <div class="role-card" data-role="creator">
+        <h4>🎨 Creator / Artist</h4>
+        <p>Packs, cards, tokens, art drops, onchain worlds.</p>
+      </div>
+
+      <div class="role-card" data-role="hunter">
+        <h4>⚡ Alpha hunter</h4>
+        <p>PnL, tokens, packs, XP races, sniping heat.</p>
+      </div>
+
+      <div class="role-card" data-role="collector">
+        <h4>🎴 Collector / Fan</h4>
+        <p>Open packs, complete sets, foil raids & quests.</p>
+      </div>
+    </div>
+
+    <button id="save-role" class="btn-full-width" disabled>Save role</button>
+  </div>
+</div>
+<!-- END ROLE SELECT -->
         <div id="tab-home" class="tab-panel tab-panel-active">
           <div class="activity-feed">
             <header class="section-header">
