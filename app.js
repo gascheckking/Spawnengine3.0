@@ -31,7 +31,7 @@ const state = {
   lootEvents: [],
   meshEvents: [],
   quests: [],
-  role: "hunter", // default, ersätts av multi-roll
+  role: "hunter", // legacy; aktuell roll hämtas via localStorage
 };
 
 // ---------- UTIL ----------
@@ -427,18 +427,14 @@ function registerPackOpen(seriesId, wallet, priceEth) {
 
   const s = packStats[seriesId];
 
-  // lägg till potten (1%)
   s.potEth += priceEth * 0.01;
 
-  // track hourly
   s.opensHour[hour] = s.opensHour[hour] || {};
   s.opensHour[hour][wallet] = (s.opensHour[hour][wallet] || 0) + 1;
 
-  // track daily
   s.opensDay[day] = s.opensDay[day] || {};
   s.opensDay[day][wallet] = (s.opensDay[day][wallet] || 0) + 1;
 
-  // track weekly
   s.opensWeek[week] = s.opensWeek[week] || {};
   s.opensWeek[week][wallet] = (s.opensWeek[week][wallet] || 0) + 1;
 
@@ -465,13 +461,7 @@ function setupLoot() {
     });
   });
 
-  // Hårdkodad mock-öppning, ersätts nu av PackWidget
-  const openBtn = $("#btn-open-pack");
-  if (openBtn) {
-    openBtn.addEventListener("click", () => {
-      showToast("Pack opening is now handled by the PackWidget module.");
-    });
-  }
+  // ingen gammal mock-öppningsknapp här — pack-öppningen hanteras av PackWidget-modulen
 
   const synthBtn = $("#btn-simulate-synth");
   const labResult = $("#labResult");
@@ -670,7 +660,6 @@ const xpSourceEl = document.getElementById("xp-source-label");
 function setupWallet() {
   if (!btnConnect) return;
 
-  // init UI direkt när appen laddar
   updateWalletUI();
 
   btnConnect.addEventListener("click", () => {
@@ -741,11 +730,9 @@ async function connect() {
     updateWalletUI();
     await loadOnchainData(updateWalletUI);
 
-    // lyssna på account-byten
     window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
     window.ethereum.on("accountsChanged", handleAccountsChanged);
 
-    // första gången efter riktig connect: roll-väljare
     showRoleSheetIfNeeded();
   } catch (e) {
     console.error(e);
@@ -859,7 +846,6 @@ function setupRoleSelect() {
 
   let selectedRoles = new Set(loadStoredRoles());
 
-  // Förmarkera redan sparade roller
   cards.forEach((card) => {
     const role = card.getAttribute("data-role");
     if (role && selectedRoles.has(role)) {
@@ -919,9 +905,8 @@ function setupRoleSelect() {
 }
 
 function updateRoleDisplay() {
-  const roleSpan = document.getElementById("meshRoleIcon");
-  if (!roleSpan) return;
-
+  const roleIconSpan = document.getElementById("meshRoleIcon");
+  const roleLabelSpan = document.getElementById("meshRoleLabel");
   const roles = loadStoredRoles();
 
   const labelMap = {
@@ -937,7 +922,12 @@ function updateRoleDisplay() {
   };
 
   if (!roles.length) {
-    roleSpan.textContent = "❓ Unknown Role";
+    if (roleIconSpan) roleIconSpan.textContent = "❓";
+    if (roleLabelSpan) {
+      roleLabelSpan.textContent = "Unknown Role";
+    } else if (roleIconSpan) {
+      roleIconSpan.textContent = "❓ Unknown Role";
+    }
     return;
   }
 
@@ -946,10 +936,13 @@ function updateRoleDisplay() {
   const label = labelMap[primary] || primary;
   const icon = iconMap[primary] || "❓";
 
-  if (extraCount > 0) {
-    roleSpan.textContent = `${icon} ${label} +${extraCount}`;
-  } else {
-    roleSpan.textContent = `${icon} ${label}`;
+  const labelText = extraCount > 0 ? `${label} +${extraCount}` : label;
+
+  if (roleIconSpan && roleLabelSpan) {
+    roleIconSpan.textContent = icon;
+    roleLabelSpan.textContent = labelText;
+  } else if (roleIconSpan) {
+    roleIconSpan.textContent = `${icon} ${labelText}`;
   }
 }
 
@@ -1183,24 +1176,24 @@ function setupMarketDetails() {
   });
 }
 
-// ---------- MODULE INTEGRATION (NYTT) ----------
+// ---------- MODULE INTEGRATION ----------
 
 function initModules() {
-  // 1. SlotMachine (Mesh view)
+  // SlotMachine in Mesh-vyn
   if (window.SpawnSlotMachine) {
     window.SpawnSlotMachine.init("slot-module-embed");
   } else {
     console.warn("SpawnSlotMachine module not loaded.");
   }
 
-  // 2. Pack Reveal Widget (Loot view)
+  // Pack Reveal Widget i Loot-vyn
   if (window.SpawnPackReveal) {
     window.SpawnPackReveal.init("pack-module-embed");
   } else {
     console.warn("SpawnPackReveal module not loaded.");
   }
 
-  // 3. Rolls: styrs via setupRoleSelect + backdrop/role-cards i huvud-HTML
+  // Rolls sköts via overlay + setupRoleSelect (ingen extra init här)
 }
 
 // ---------- INIT ----------
