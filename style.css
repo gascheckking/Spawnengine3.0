@@ -817,19 +817,19 @@ button {
   border-color: rgba(168, 240, 255, 0.9);
 }
 
-/* SHEETS (ACCOUNT + MARKET) */
+/* SHEETS (ACCOUNT + MARKET + ROLE) */
 
 .sheet-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 10;
+  z-index: 9999;           /* högre så den alltid ligger över alla HUD-element */
   background: rgba(0, 0, 0, 0.65);
   display: flex;
   justify-content: center;
   align-items: flex-end;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease-out;
+  transition: opacity 0.25s ease-out;
 }
 
 .sheet-backdrop.open {
@@ -843,12 +843,26 @@ button {
   border-radius: 18px 18px 0 0;
   background: rgba(7, 9, 28, 0.98);
   border-top: 1px solid rgba(140, 184, 255, 0.8);
-  padding: 10px 14px 10px;
+  padding: 14px 16px 16px;
   box-shadow: 0 -18px 40px rgba(0, 0, 0, 0.95);
+  transform: translateY(40px);
+  transition: transform 0.25s ease-out;
+}
+
+.sheet-backdrop.open .sheet {
+  transform: translateY(0);
 }
 
 .sheet-header {
-  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.sheet-header .settings-title {
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .sheet-avatar-row {
@@ -862,7 +876,7 @@ button {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #808ad6;
-  margin: 8px 0 4px;
+  margin: 10px 0 6px;
 }
 
 .sheet-row {
@@ -881,12 +895,61 @@ button {
   color: #ff6b99;
 }
 
-/* Role sheet: sit above bottom nav and pop up a bit higher */
+/* --- ROLE SHEET FIXES --- */
+
+/* Role sheet ska bara lyftas upp lite över bottom-nav, inte hela vägen */
 .role-sheet {
   max-height: 70vh;
-  margin-bottom: 70px; /* lyfter upp den så den inte krockar med nav-baren */
+  margin-bottom: 80px;   /* Säkert avstånd över bottom-nav */
+  padding-bottom: 20px;
 }
 
+/* Grid för rollerna */
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.role-card {
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(14, 18, 40, 0.92);
+  border: 1px solid rgba(136, 176, 255, 0.5);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.role-card:hover {
+  transform: scale(1.02);
+}
+
+.role-card.active {
+  border-color: #3cf6ff;
+  box-shadow: 0 0 14px rgba(60, 246, 255, 0.5);
+}
+
+.role-card h4 {
+  margin: 0 0 4px;
+  font-size: 13px;
+}
+
+.role-card p {
+  margin: 0;
+  font-size: 11px;
+  color: #b5c3ff;
+}
+
+/* TEXT + ICON I HEADERN */
+.role-icon {
+  margin-left: 6px;
+  font-size: 11px;
+  color: #b5c3ff;
+  opacity: 0.9;
+}
+
+/* CHEVRON FÖR ACCOUNT SHEET */
 .chevron {
   font-size: 14px;
 }
