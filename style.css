@@ -1482,3 +1482,38 @@ button {
   background: #5b2d7d;
   color: #c084fc;
 }
+.role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.role-card {
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(14, 18, 40, 0.92);
+  border: 1px solid rgba(136, 176, 255, 0.5);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease;
+}
+
+.role-card:hover {
+  transform: scale(1.02);
+}
+
+.role-card.active {
+  border-color: #3cf6ff;
+  box-shadow: 0 0 14px rgba(60, 246, 255, 0.5);
+}
+
+.role-card h4 {
+  margin: 0 0 4px;
+  font-size: 13px;
+}
+
+.role-card p {
+  margin: 0;
+  font-size: 11px;
+  color: #b5c3ff;
+}
