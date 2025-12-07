@@ -1,1 +1,50 @@
--
+<div class="market-view">
+    
+    <div class="hud-card market-hero">
+        <div class="market-hero-text">
+            <h2>SpawnEngine Token (SPN)</h2>
+            <p>Your portal to the tokenized economy of the Mesh.</p>
+        </div>
+        <button id="btn-buy-spn" class="btn-primary-ghost">Buy SPN</button>
+    </div>
+
+    <div class="hud-card hud-grid hud-grid-4" style="margin-bottom: 20px;">
+        <div class="hud-stat">
+            <div class="hud-stat-label">Price (USD)</div>
+            <div id="marketPrice" class="hud-stat-value price">$0.0035</div>
+        </div>
+        <div class="hud-stat">
+            <div class="hud-stat-label">Participants</div>
+            <div id="marketParticipants" class="hud-stat-value meta">4,521</div>
+        </div>
+        <div class="hud-stat">
+            <div class="hud-stat-label">TVL (ETH)</div>
+            <div id="marketTvl" class="hud-stat-value">1.5 ETH</div>
+        </div>
+        <div class="hud-stat">
+            <div class="hud-stat-label">24H Change</div>
+            <div id="marketChange" class="hud-stat-value price">+8%</div>
+        </div>
+    </div>
+    
+    <div class="section-header market-section">
+        <div class="section-main">
+            <h2>🔥 Trending Assets</h2>
+            <p class="section-sub">Assets with high activity this cycle.</p>
+        </div>
+    </div>
+    
+    <div id="marketTrendingRow" class="market-trending-row">
+        </div>
+    
+    <div class="section-header market-section">
+        <div class="section-main">
+            <h2>All Listings</h2>
+            <p class="section-sub">Tokens, Widgets, and exclusive access passes.</p>
+        </div>
+    </div>
+    
+    <div id="marketAllGrid" class="market-grid">
+        </div>
+
+</div>
