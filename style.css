@@ -539,6 +539,27 @@ button {
   cursor: pointer;
 }
 
+/* Ghost button for Market hero */
+
+.btn-primary-ghost {
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #3cf6ff;
+  background: rgba(4, 10, 24, 0.92);
+  border: 1px solid rgba(60, 246, 255, 0.85);
+  cursor: pointer;
+}
+
+.btn-pill {
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  background: rgba(0, 0, 0, 0.4);
+}
+
 /* SEGMENTED CONTROL */
 
 .segmented {
@@ -1043,71 +1064,60 @@ button {
   color: #b9fffb;
 }
 
-/* ------- MARKET STYLES (future use) ------- */
+/* ------- MARKET STYLES ------- */
 
-.market-header {
-  margin-bottom: 12px;
-}
-
-.market-header-title {
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.market-subtitle {
-  font-size: 11px;
-  color: #aab3d8;
-}
-
-.market-filters {
+.market-view {
   margin-top: 10px;
+}
+
+.market-hero {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: radial-gradient(circle at top left, rgba(0, 255, 192, 0.18), transparent 55%),
+    rgba(7, 11, 30, 0.96);
+  border: 1px solid rgba(0, 255, 192, 0.5);
+  margin-bottom: 14px;
 }
 
-.market-filter {
+.market-hero-text h2 {
+  font-size: 16px;
+  margin: 0 0 2px;
+}
+
+.market-hero-text p {
   font-size: 11px;
-  padding: 5px 11px;
-  border-radius: 999px;
-  border: 1px solid rgba(117, 134, 210, 0.5);
-  background: rgba(9, 13, 28, 0.9);
-  color: #c5ceff;
+  margin: 0;
+  color: #c3f7ff;
 }
 
-.market-filter.is-active {
-  border-color: #00ffc0;
-  background: radial-gradient(circle at top, rgba(0, 255, 192, 0.2), rgba(2, 11, 25, 0.95));
-  color: #eaffff;
+.market-section {
+  margin-top: 12px;
+  margin-bottom: 2px;
 }
 
-.market-section-title {
-  margin-top: 20px;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.market-card-list {
+.market-trending-row {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .market-card {
   border-radius: 16px;
   background: linear-gradient(135deg, #0c1020 0%, #050712 55%, #05060c 100%);
   border: 1px solid rgba(70, 90, 160, 0.75);
-  padding: 14px 14px 12px;
+  padding: 10px 12px 10px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
-.market-card-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
+.market-card-trending {
+  background: radial-gradient(circle at top, rgba(120, 184, 255, 0.24), transparent 55%),
+    rgba(7, 10, 28, 0.98);
 }
 
 .market-card-icon {
@@ -1118,34 +1128,36 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 18px;
 }
 
-.market-card-title {
-  font-size: 14px;
-  font-weight: 600;
+.market-card h4 {
+  font-size: 13px;
+  margin: 4px 0 2px;
 }
 
-.market-card-desc {
+.market-card p {
   font-size: 11px;
   color: #a7b0d9;
-  margin-top: 2px;
+  margin: 0;
 }
 
-.market-card-meta {
+.market-card-footer {
+  margin-top: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 11px;
-  margin-top: 4px;
 }
 
-.market-card-price {
+.market-card-price,
+.price {
   color: #00ff90;
   font-weight: 600;
 }
 
-.market-card-participants {
+.market-card-participants,
+.meta {
   color: #8891bf;
 }
 
@@ -1158,14 +1170,22 @@ button {
   background: transparent;
 }
 
+/* grid för market slots & builder-API */
+
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
 /* Partner list */
 
-.partner-table {
-  margin-top: 16px;
-  border-radius: 16px;
+.partners-list {
+  margin-top: 6px;
+  border-radius: 14px;
   border: 1px solid rgba(73, 94, 167, 0.8);
   background: radial-gradient(circle at top, #141a33 0%, #070915 55%, #05050d 100%);
-  padding: 10px 12px;
+  padding: 6px 10px;
   font-size: 11px;
 }
 
@@ -1188,31 +1208,26 @@ button {
   color: #d5deff;
 }
 
-.partner-status-badge {
+.partner-status {
   padding: 3px 8px;
   border-radius: 999px;
   font-size: 10px;
   font-weight: 600;
 }
 
-.partner-status-badge.is-active {
+.status-active {
   background: rgba(0, 255, 138, 0.14);
   color: #6dffb7;
 }
 
-.partner-status-badge.is-pending {
+.status-pending {
   background: rgba(255, 179, 0, 0.16);
   color: #ffd879;
 }
 
-.partner-status-badge.is-draft {
+.status-draft {
   background: rgba(130, 146, 188, 0.22);
   color: #b0bad7;
-}
-
-.partner-manage {
-  font-size: 11px;
-  color: #9fd5ff;
 }
 
 /* WALLET STRIP UNDER PLATFORM STRIP */
@@ -1263,7 +1278,7 @@ button {
   max-height: 80vh;
   background: #0b0f1f;
   border-radius: 24px 24px 0 0;
-  padding: 20px;
+  padding: 20px 18px 18px;
   overflow-y: auto;
   box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.7);
   color: #fff;
@@ -1282,7 +1297,7 @@ button {
 }
 
 .settings-section {
-  margin-top: 20px;
+  margin-top: 18px;
 }
 
 .settings-section h3 {
@@ -1291,21 +1306,41 @@ button {
   margin-bottom: 8px;
 }
 
+/* två-i-bredd kort, flex så de wrappar fint */
+
 .settings-card-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
 .settings-card {
+  width: calc(50% - 10px);
   background: #151c33;
   border: 1px solid #2b3252;
   border-radius: 12px;
   padding: 10px;
+  min-height: 100px;
+  cursor: default;
 }
 
 .settings-card.small {
   padding: 8px;
+  min-height: 80px;
+}
+
+/* klickbara builder-kort */
+
+.settings-card[data-builder-action] {
+  cursor: pointer;
+  transition: transform 0.08s ease-out, box-shadow 0.08s ease-out,
+    border-color 0.08s ease-out;
+}
+
+.settings-card[data-builder-action]:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 0 1px rgba(60, 246, 255, 0.4);
+  border-color: rgba(60, 246, 255, 0.9);
 }
 
 .label {
