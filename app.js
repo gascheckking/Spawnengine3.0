@@ -1197,8 +1197,11 @@ function initSpawnEngine() {
   setupWallet();
   setupInlineSettingsPopup();
   setupMarketDetails();
+
+  // ROLE SELECT
   setupRoleSelect();
   updateRoleDisplay();
+  showRoleSheetIfNeeded(); // 👈 NY RAD – öppnar rollväljaren vid start
 }
 
 // ---------- READY STATE ----------
