@@ -789,7 +789,28 @@ function setupInlineSettingsPopup() {
       settingsBackdrop.classList.add("hidden");
     }
   });
+
+  // Builder-actions inside Settings & builders
+  const builderCards = settingsBackdrop.querySelectorAll(
+    "[data-builder-action]"
+  );
+
+  builderCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const action = card.getAttribute("data-builder-action");
+      if (action === "xp") {
+        showToast("XP SDK · would show dev key + docs (mock).");
+      } else if (action === "filters") {
+        showToast("Premium filters · Alpha hunters & analytics (soon).");
+      } else if (action === "launchpad") {
+        showToast("Launchpad builder · creator panel (design only).");
+      } else if (action === "notifications") {
+        showToast("Notifications center (mock).");
+      }
+    });
+  });
 }
+// ---------- MARKET DETAILS (for future market cards) ----------
 
 // ---------- MARKET DETAILS (for future market cards) ----------
 
