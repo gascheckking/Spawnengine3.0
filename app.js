@@ -1212,12 +1212,15 @@ function initSpawnEngine() {
   setupTabs();
   setupStreak();
   setupLoot();
-  setupMeshModes();
+    setupMeshModes();
   setupAccountSheet();
   setupLivePulse();
   setupWallet();
   setupInlineSettingsPopup();
   setupMarketDetails();
+  if (window.initMarketplace) {
+    window.initMarketplace();
+  }
   setupRoleSelect();
   setupSupcast();
   updateRoleDisplay();
