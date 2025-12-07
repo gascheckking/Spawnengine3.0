@@ -1,184 +1,133 @@
-(function () {
-  const symbols = [
-    "SPN", 
-    "PACK", 
-    "XP", 
-    "FOIL", 
-    "🔥", 
-    "MESH",
-    "DEGEN",
-    "BASS",
-    "VIBE"
-  ];
-  
-  const ROLL_COUNT = 30; // Antal symboler i rullen
-  const SYMBOL_HEIGHT = 40; // Måste matcha CSS-höjden (height: 40px)
-  const TARGET_INDEX = 1; // Slutresultatet visas på index 1 i listan
-  
-  // Funktion för att bygga upp det rullande innehållet
-  function buildReelContent(reelElement, finalSymbol) {
+/*
+ * Slot Machine Module - Advanced Rolling Version
+ * Used for simulated pack openings and game hooks within the Mesh HUD.
+ *
+ * NOTE: This is a visual-only mock. All outcomes are determined upfront.
+ */
+
+// --- Configuration Constants ---
+const SYMBOLS = ['⚡', '💎', '🧪', '🏆', '📡', '🔥', '🌌'];
+const ROLL_COUNT = 30; // Number of symbols to roll through for a dramatic effect
+const SYMBOL_HEIGHT = 80; // Must match CSS .slot-symbol height
+
+/**
+ * Helper function to create the content strip for a single reel.
+ * It contains ROLL_COUNT symbols + the final winning symbol at the end.
+ * @param {string} finalSymbol - The symbol the reel should land on.
+ * @returns {string} HTML string for the reel content.
+ */
+function buildReelContent(finalSymbol) {
     let content = '';
-    
-    // 1. Skapa en lång lista med slumpmässiga symboler
+    // 1. Add ROLL_COUNT random symbols for the roll effect
     for (let i = 0; i < ROLL_COUNT; i++) {
-        const symbol = symbols[Math.floor(Math.random() * symbols.length)];
-        content += `<div>${symbol}</div>`;
+        const randomSymbol = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+        content += `<div class="slot-symbol">${randomSymbol}</div>`;
     }
+    // 2. Add the final winning symbol
+    content += `<div class="slot-symbol slot-final">${finalSymbol}</div>`;
+    return content;
+}
+
+/**
+ * Initiates the visual roll effect for a single reel element.
+ * @param {HTMLElement} reel - The reel element.
+ * @param {string} finalSymbol - The symbol to land on.
+ * @param {number} delay - The delay before this reel stops (in ms).
+ */
+function startReelRoll(reel, finalSymbol, delay) {
+    // 1. Prepare the content strip
+    reel.innerHTML = buildReelContent(finalSymbol);
     
-    // 2. Placera den slutliga symbolen på rätt plats
-    const finalSymbolPosition = ROLL_COUNT - TARGET_INDEX;
-    
-    let tempDiv = document.createElement('div');
-    tempDiv.innerHTML = content;
-    
-    if (tempDiv.children.length > finalSymbolPosition) {
-        tempDiv.children[finalSymbolPosition].textContent = finalSymbol;
+    // 2. Calculate the distance needed to move
+    // Total symbols in the strip: ROLL_COUNT (rolling) + 1 (final)
+    const totalContentHeight = (ROLL_COUNT + 1) * SYMBOL_HEIGHT;
+
+    // The final symbol is at the bottom of the strip.
+    // We want the reel to move 'up' so that the final symbol aligns with the view window.
+    // The distance to travel is the height of all rolling symbols.
+    const distanceToStop = ROLL_COUNT * SYMBOL_HEIGHT; // This is a positive value in pixels
+
+    // 3. Apply the rolling class to start animation
+    reel.classList.add('rolling');
+
+    // 4. Set the final transform position after a delay
+    // This transform will stop the CSS animation by overriding it.
+    setTimeout(() => {
+        // Stop the reel at the position where the final symbol is visible.
+        reel.style.transform = `translateY(-${distanceToStop}px)`;
+        reel.classList.remove('rolling');
+        reel.classList.add('stopped');
+    }, delay);
+}
+
+// --- Main Slot Machine Class ---
+
+/**
+ * A mock slot machine component for the Mesh HUD.
+ * Handles the visual reel roll based on a pre-determined result.
+ */
+class SpawnSlotMachine {
+    /**
+     * @param {HTMLElement} containerElement - The DOM element containing the slot reels.
+     */
+    constructor(containerElement) {
+        this.container = containerElement;
+        this.reels = containerElement.querySelectorAll('.slot-reel');
+        this.isSpinning = false;
     }
-    
-    reelElement.innerHTML = tempDiv.innerHTML;
-  }
-  
-  // Helper-funktion för att efterlikna en asynkron Web3-transaktion
-  function simulateWeb3Call(durationMs) {
-    return new Promise(resolve => setTimeout(resolve, durationMs));
-  }
-  
-  // Funktion för att slumpa fram ett resultat
-  function getResult() {
-    return [
-      symbols[Math.floor(Math.random() * symbols.length)],
-      symbols[Math.floor(Math.random() * symbols.length)],
-      symbols[Math.floor(Math.random() * symbols.length)]
-    ];
-  }
-  
-  // Funktion för att stoppa hjulet med animation
-  function stopReel(reel, finalSymbol, stopTime, delay) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            // Bygger innehållet så att finalSymbol är i position 1
-            buildReelContent(reel, finalSymbol); 
-            
-            // Beräkna stoppositionen i pixlar
-            const stopPosition = (ROLL_COUNT - TARGET_INDEX) * SYMBOL_HEIGHT;
-            
-            // Ställ in transition för mjuk inbromsning
-            reel.style.transition = `transform ${stopTime}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
-            // Flytta elementet
-            reel.style.transform = `translateY(-${stopPosition}px)`;
-            
-            // Ta bort den oändliga CSS-rullningen
-            reel.classList.remove('rolling');
 
-            setTimeout(resolve, stopTime); // Lös Promise efter animationen är klar
-        }, delay);
-    });
-  }
-
-  // Funktion för att utvärdera vinsten
-  async function evaluateResult(a, b, c, display) {
-      await simulateWeb3Call(200); 
-      
-      let msg;
-      let color;
-
-      if (a === b && b === c) {
-          msg = `🔥 JACKPOT! ${a} ${b} ${c}. Du vinner en EXKLUSIV MESH-PACK! (mock payout)`;
-          color = '#3cff8d'; 
-      } else if (a === b || b === c || a === c) {
-          msg = `Bra Snurr: ${a} ${b} ${c}. Du vinner 150 XP och en Standard PACK. (mock payout)`;
-          color = '#9cf6ff'; 
-      } else {
-          msg = `Inget matchande: ${a} ${b} ${c}. Bättre lycka nästa gång.`;
-          color = '#c7d5ff'; 
-      }
-
-      display.textContent = msg;
-      display.style.color = color;
-      
-      setTimeout(() => display.style.color = '#c7d5ff', 5000);
-  }
-
-  // Huvudmodulens initiationsfunktion
-  function initSlotMachine(rootId) {
-    const root = document.getElementById(rootId);
-    if (!root) return;
-
-    const reel1 = document.getElementById("slot-reel-1");
-    const reel2 = document.getElementById("slot-reel-2");
-    const reel3 = document.getElementById("slot-reel-3");
-    const btn = document.getElementById("slot-spin-btn");
-    const resultDisplay = document.getElementById("slot-result");
-    const txStatus = document.getElementById("slot-status-tx");
-    
-    // Initialisera hjulen (visar en start-symbol i mitten)
-    buildReelContent(reel1, "SPN");
-    buildReelContent(reel2, "PACK");
-    buildReelContent(reel3, "XP");
-
-    btn.textContent = "SPIN (Stake 100 SPN)";
-    btn.disabled = false;
-    resultDisplay.textContent = "Klar. Klicka för att satsa och snurra.";
-
-    // Hanterar snurran
-    const handleSpin = async () => {
-      if (btn.disabled) return;
-
-      btn.disabled = true;
-      resultDisplay.textContent = "Initierar on-chain transaktion...";
-      txStatus.textContent = "Väntar på plånbok...";
-      
-      // Återställ hjulen till toppen inför ny rullning
-      reel1.style.transition = 'none';
-      reel2.style.transition = 'none';
-      reel3.style.transition = 'none';
-      reel1.style.transform = 'translateY(0)';
-      reel2.style.transform = 'translateY(0)';
-      reel3.style.transform = 'translateY(0)';
-
-      try {
-        await simulateWeb3Call(1500); // Simulerar Web3 Godkännande
-        txStatus.textContent = "Transaktion bekräftad. Rullar...";
-        
-        // Starta rullande animationen (sätter på CSS-klassen)
-        reel1.classList.add('rolling');
-        reel2.classList.add('rolling');
-        reel3.classList.add('rolling');
-        resultDisplay.textContent = "Rullar... håll tummarna!";
-
-        const [final1, final2, final3] = getResult();
-        
-        // Stanna hjulen i sekvens med olika animationstider
-        await stopReel(reel1, final1, 1500, 100); 
-        await stopReel(reel2, final2, 1800, 100); 
-        await stopReel(reel3, final3, 2200, 100); 
-
-        // Utvärdera resultatet
-        await evaluateResult(final1, final2, final3, resultDisplay);
-
-      } catch (error) {
-        resultDisplay.textContent = `FEL: Transaktionen misslyckades. Försök igen.`;
-        console.error("Spin error:", error);
-      } finally {
-        txStatus.textContent = "";
-        btn.disabled = false; 
-      }
-    };
-    
-    // Event Listener
-    btn.addEventListener("click", handleSpin);
-  }
-
-  // Exponera modulen globalt
-  window.SpawnSlotMachine = {
-    init: initSlotMachine,
-  };
-  
-  // Starta modulen för den fristående demon
-  document.addEventListener("DOMContentLoaded", () => {
-    if (document.getElementById("slot-root")) {
-      initSlotMachine("slot-root");
+    /**
+     * Resets the slot machine state and reels.
+     */
+    reset() {
+        this.isSpinning = false;
+        this.reels.forEach(reel => {
+            reel.classList.remove('rolling', 'stopped');
+            reel.style.transform = 'translateY(0)';
+            reel.innerHTML = `<div class="slot-symbol">${SYMBOLS[0]}</div>`;
+        });
     }
-  });
 
-})();
+    /**
+     * Starts the slot spin animation with a predetermined result.
+     * @param {string[]} resultSymbols - An array of 3 symbols to land on, e.g., ['⚡', '⚡', '🏆'].
+     * @returns {Promise<string[]>} A promise that resolves when all reels have stopped.
+     */
+    spin(resultSymbols) {
+        if (this.isSpinning) {
+            return Promise.reject(new Error("Slot machine is already spinning."));
+        }
+        this.isSpinning = true;
+        this.reset(); // Reset before starting the new spin
+
+        // 1. Start the rolls sequentially
+        const rollPromises = Array.from(this.reels).map((reel, index) => {
+            return new Promise(resolve => {
+                const finalSymbol = resultSymbols[index];
+                // Delay each reel to stop one after the other for effect (e.g., 500ms separation)
+                const delay = 3000 + (index * 700); 
+
+                startReelRoll(reel, finalSymbol, delay);
+
+                // Resolve the promise when this reel is fully stopped (a bit after the transform)
+                setTimeout(() => {
+                    resolve(finalSymbol);
+                }, delay + 500); 
+            });
+        });
+
+        // 2. Wait for all reels to finish
+        return Promise.all(rollPromises).then(() => {
+            this.isSpinning = false;
+            // The result evaluation should happen external to the visual component
+            return resultSymbols;
+        });
+    }
+}
+
+// Expose the class globally (or via module export if using modules)
+window.SpawnSlotMachine = SpawnSlotMachine;
+
+/*
+ * Den enklare versionen har raderats härifrån för att undvika konflikt.
+ */
