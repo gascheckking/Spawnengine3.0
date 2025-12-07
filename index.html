@@ -17,14 +17,14 @@
 </head>
 <body class="app-body">
   <!-- SETTINGS POPUP -->
-   <div id="settings-backdrop" class="settings-backdrop hidden">
+  <div id="settings-backdrop" class="settings-backdrop hidden">
     <div id="settings-sheet" class="settings-sheet">
       <div class="settings-header">
         <span class="settings-title">Settings &amp; builders</span>
         <button id="settings-close" class="settings-close-btn">✕</button>
       </div>
 
-      <!-- Profile & XP -->
+      <!-- PROFILE & XP -->
       <div class="settings-section">
         <h3>Profile &amp; XP</h3>
         <div class="settings-card-grid">
@@ -38,14 +38,14 @@
           </div>
 
           <div class="settings-card">
-            <p class="label">XP</p>
-            <p class="main">1575 XP</p>
-            <p class="sub">+10% bonus</p>
+            <p class="label">XP balance</p>
+            <p class="main"><span id="meshHeaderXp">1575 XP</span></p>
+            <p class="sub">Synced from mesh activity (mock)</p>
           </div>
         </div>
       </div>
 
-      <!-- Connected services -->
+      <!-- CONNECTED SERVICES -->
       <div class="settings-section">
         <h3>Connected services</h3>
         <div class="settings-card-grid">
@@ -67,41 +67,68 @@
         </div>
       </div>
 
-      <!-- Builders & SDKs -->
+      <!-- ACCOUNT & RATING -->
       <div class="settings-section">
-        <h3>Builders &amp; SDKs</h3>
-
-        <div class="settings-card builder-card" data-builder-action="xp">
-          <p class="label">XP SDK &amp; integration</p>
-          <p class="main">Connect SpawnEngine XP to apps, bots &amp; frames.</p>
-          <p class="sub">Show developer key + docs (mock).</p>
+        <h3>Account &amp; mesh profile</h3>
+        <div class="settings-card-grid">
+          <div class="settings-card small">
+            <p class="label">Connected socials</p>
+            <p class="main">SpawnEngine / WarpAI</p>
+            <p class="sub">Base · Farcaster · Zora</p>
+          </div>
+          <div class="settings-card small">
+            <p class="label">Preferred wallet</p>
+            <p class="main wallet-address">Not connected</p>
+            <p class="sub">Base mainnet</p>
+          </div>
+          <div class="settings-card small">
+            <p class="label">Rating</p>
+            <p class="main">4.5★</p>
+            <p class="sub">Support / builder reputation (mock)</p>
+          </div>
         </div>
 
-        <div class="settings-card builder-card" data-builder-action="filters">
-          <p class="label">Premium mesh filters</p>
-          <p class="main">Alpha hunters, whale alerts &amp; pack analytics.</p>
-          <p class="sub">Upgrade to premium (soon).</p>
-        </div>
-
-        <div class="settings-card builder-card" data-builder-action="launchpad">
-          <p class="label">Launchpad builder</p>
-          <p class="main">Design deployers for tokens, packs &amp; quests.</p>
-          <p class="sub">Open creator panel (design only).</p>
-        </div>
-      </div>
-
-      <!-- Account / notifications -->
-      <div class="settings-section">
-        <h3>Account</h3>
         <ul class="settings-list">
-          <li>Connected socials</li>
-          <li>Preferred wallet</li>
+          <li>Notifications &amp; alerts</li>
+          <li>Onchain privacy defaults</li>
+          <li>Session &amp; device security</li>
         </ul>
-        <button class="btn-full-width" data-builder-action="notifications">
-          Manage notifications (mock)
-        </button>
       </div>
-  </div>
+
+      <!-- BUILDERS & TOOLS -->
+      <div class="settings-section">
+        <h3>Builders &amp; tools</h3>
+        <p class="section-sub">
+          Hooks for bots, frames and miniapps built on top of SpawnEngine mesh.
+        </p>
+
+        <div class="settings-card-grid">
+          <div class="settings-card settings-card-builder" data-builder-action="xp">
+            <p class="label">XP SDK &amp; integration</p>
+            <p class="main">SpawnEngine XP stream API</p>
+            <p class="sub">Pipe XP into bots, frames &amp; dashboards.</p>
+          </div>
+
+          <div class="settings-card settings-card-builder" data-builder-action="filters">
+            <p class="label">Premium mesh filters</p>
+            <p class="main">Alpha hunters / whales view</p>
+            <p class="sub">Advanced filters for wallets, packs &amp; LPs.</p>
+          </div>
+
+          <div class="settings-card settings-card-builder" data-builder-action="launchpad">
+            <p class="label">Launchpad builder</p>
+            <p class="main">Spawn new pack / token meshes</p>
+            <p class="sub">Creator panel for full onchain launches.</p>
+          </div>
+
+          <div class="settings-card settings-card-builder" data-builder-action="notifications">
+            <p class="label">Notification center</p>
+            <p class="main">Mesh alerts &amp; SupCast pings</p>
+            <p class="sub">Gas spikes, pack fills, support replies.</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- MESH BACKGROUND (WEBGL) -->
