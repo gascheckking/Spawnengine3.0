@@ -863,7 +863,194 @@ function updateRoleDisplay() {
 }
 
 // ---------- SETTINGS POPUP (Mesh Settings) ----------
+// ---------- ROLE SELECT ----------
 
+// Läs roller från localStorage (stöd för gammal single-role också)
+function loadStoredRoles() {
+  try {
+    const multi = localStorage.getItem("spawnengine_roles");
+    if (multi) {
+      const parsed = JSON.parse(multi);
+      if (Array.isArray(parsed) && parsed.length) return parsed;
+    }
+    const single = localStorage.getItem("spawnengine_role");
+    if (single) return [single];
+  } catch (e) {
+    console.warn("Failed to parse stored roles", e);
+  }
+  return [];
+}
+
+// Öppna sheet bara om ingen roll är vald än
+function showRoleSheetIfNeeded() {
+  const backdrop = document.getElementById("role-backdrop");
+  if (!backdrop) return;
+  const roles = loadStoredRoles();
+  if (!roles.length) {
+    backdrop.classList.add("open");
+  }
+}
+
+function setupRoleSelect() {
+  const backdrop = document.getElementById("role-backdrop");
+  const sheet = document.getElementById("role-sheet");
+  const closeBtn = document.getElementById("role-close");
+  const saveBtn = document.getElementById("save-role");
+  const cards = document.querySelectorAll(".role-card");
+
+  if (!backdrop || !sheet || !closeBtn || !saveBtn || !cards.length) return;
+
+  // Multi-select: Set med valda roller
+  let selectedRoles = new Set(loadStoredRoles());
+
+  // Förmarkera redan sparade roller
+  cards.forEach((card) => {
+    const role = card.getAttribute("data-role");
+    if (role && selectedRoles.has(role)) {
+      card.classList.add("active");
+    }
+  });
+
+  // Om inga roller valda alls: öppna sheet första gången
+  if (!selectedRoles.size) {
+    backdrop.classList.add("open");
+    saveBtn.disabled = true;
+  } else {
+    saveBtn.disabled = false;
+  }
+
+  // Toggle på korten (multi-select)
+  cards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const role = card.getAttribute("data-role");
+      if (!role) return;
+
+      if (selectedRoles.has(role)) {
+        selectedRoles.delete(role);
+        card.classList.remove("active");
+      } else {
+        selectedRoles.add(role);
+        card.classList.add("active");
+      }
+
+      // Minst 1 roll krävs för att spara
+      saveBtn.disabled = selectedRoles.size === 0;
+    });
+  });
+
+  // Spara roller
+  saveBtn.addEventListener("click", () => {
+    if (!selectedRoles.size) return;
+
+    const arr = Array.from(selectedRoles);
+    localStorage.setItem("spawnengine_roles", JSON.stringify(arr));
+    localStorage.removeItem("spawnengine_role"); // städa gammal nyckel
+
+    backdrop.classList.remove("open");
+    showToast("Roles updated");
+    updateRoleDisplay();
+  });
+
+  // Stäng-knapp
+  closeBtn.addEventListener("click", () => {
+    backdrop.classList.remove("open");
+  });
+
+  // Klick utanför sheet → stäng
+  backdrop.addEventListener("click", (e) => {
+    if (e.target === backdrop) {
+      backdrop.classList.remove("open");
+    }
+  });
+}
+
+function updateRoleDisplay() {
+  const roleSpan = document.getElementById("meshRoleIcon");
+  if (!roleSpan) return;
+
+  const roles = loadStoredRoles();
+
+  const labelMap = {
+    dev: "Dev / Builder",
+    creator: "Creator / Artist",
+    hunter: "Alpha hunter / Trader",
+    collector: "Collector / Fan",
+  };
+
+  const iconMap = {
+    dev: "🧪",
+    creator: "🎨",
+    hunter: "⚡",
+    collector: "🎴",
+  };
+
+  // Default om inget är valt
+  if (!roles.length) {
+    roleSpan.textContent = "⚡ Alpha hunter / Trader";
+    return;
+  }
+
+  const primary = roles[0];
+  const extraCount = roles.length - 1;
+  const label = labelMap[primary] || "Alpha hunter / Trader";
+  const icon = iconMap[primary] || "⚡";
+
+  if (extraCount > 0) {
+    roleSpan.textContent = `${icon} ${label} +${extraCount}`;
+  } else {
+    roleSpan.textContent = `${icon} ${label}`;
+  }
+}
+// ---------- END ROLE SELECT ----------
+
+// ---------- SETTINGS POPUP (Mesh Settings) ----------
+
+function setupInlineSettingsPopup() {
+  const settingsBtn = document.getElementById("settings-btn");
+  const settingsBackdrop = document.getElementById("settings-backdrop");
+  const settingsClose = document.getElementById("settings-close");
+
+  if (!settingsBtn || !settingsBackdrop || !settingsClose) return;
+
+  settingsBtn.addEventListener("click", () => {
+    settingsBackdrop.classList.remove("hidden");
+  });
+
+  settingsClose.addEventListener("click", () => {
+    settingsBackdrop.classList.add("hidden");
+  });
+
+  settingsBackdrop.addEventListener("click", (e) => {
+    if (e.target === settingsBackdrop) {
+      settingsBackdrop.classList.add("hidden");
+    }
+  });
+
+  // Builder-actions inside Settings & builders
+  const builderCards = settingsBackdrop.querySelectorAll(
+    "[data-builder-action]"
+  );
+
+  builderCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const action = card.getAttribute("data-builder-action");
+      if (action === "xp") {
+        showToast("XP SDK · would show dev key + docs (mock).");
+      } else if (action === "filters") {
+        showToast("Premium filters · Alpha hunters & analytics (soon).");
+      } else if (action === "launchpad") {
+        showToast("Launchpad builder · creator panel (design only).");
+      } else if (action === "notifications") {
+        showToast("Notifications center (mock).");
+      }
+    });
+  });
+}
+
+// ---------- MARKET DETAILS (for future market cards) ----------
+function setupMarketDetails() {
+  // ... din befintliga setupMarketDetails här ...
+}
 function setupInlineSettingsPopup() {
   const settingsBtn = document.getElementById("settings-btn");
   const settingsBackdrop = document.getElementById("settings-backdrop");
