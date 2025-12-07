@@ -1,1 +1,52 @@
--
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Roll Selection · SpawnEngine</title>
+  <link rel="stylesheet" href="./roles.css" />
+</head>
+<body>
+  <div id="roles-root" class="roles-root">
+    <h2 class="roles-title">Välj din Roll (Onboarding)</h2>
+    <p class="roles-sub">
+      Din Roll bestämmer dina initiala Quests, Badge och tillgång till specifika Mesh. Välj klokt!
+    </p>
+
+    <div id="role-selection-container" class="role-selection-container">
+      
+      <div class="role-card" data-role="Builder">
+        <div class="role-icon">🏗️</div>
+        <h3 class="role-name">Mesh Builder</h3>
+        <p class="role-desc">Fokus på att skapa, deploya och kurera nya MESH-komponenter.</p>
+        <span class="role-badge" style="background: #5D9EE3;">Badge: BLUEPRINT</span>
+      </div>
+
+      <div class="role-card" data-role="Strategist">
+        <div class="role-icon">🧠</div>
+        <h3 class="role-name">Token Strategist</h3>
+        <p class="role-desc">Optimerar SPN-flödet, deltar i governance och hanterar liquidity.</p>
+        <span class="role-badge" style="background: #A05EE3;">Badge: GOVERNOR</span>
+      </div>
+
+      <div class="role-card" data-role="Gatherer">
+        <div class="role-icon">⛏️</div>
+        <h3 class="role-name">Data Gatherer</h3>
+        <p class="role-desc">Samlar in realtidsdata, rapporterar MESH-event och driver socialt engagemang.</p>
+        <span class="role-badge" style="background: #F6C03C;">Badge: DATAMINER</span>
+      </div>
+
+    </div>
+
+    <button id="role-confirm-btn" class="role-confirm-btn" disabled>
+      Bekräfta Val (Simulerad TX)
+    </button>
+    
+    <p id="role-status" class="role-status">
+      Klicka på en Roll och bekräfta ditt val.
+    </p>
+
+  </div>
+
+  <script src="./roles.js"></script>
+</body>
+</html>
