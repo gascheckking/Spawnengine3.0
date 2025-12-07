@@ -950,6 +950,7 @@ button {
   margin-top: 3px;
 }
 
+/* Ask / Feed-blocks */
 .supcast-block {
   margin-bottom: 10px;
   border-radius: 12px;
@@ -963,6 +964,7 @@ button {
   margin: 0 0 3px;
 }
 
+/* Form & fields */
 .supcast-form {
   margin-top: 6px;
 }
@@ -981,6 +983,7 @@ button {
   margin-top: 2px;
 }
 
+/* Layout: mobil först, två kolumner på lite större skärm */
 .supcast-layout {
   display: flex;
   flex-direction: column;
@@ -996,6 +999,49 @@ button {
   }
 }
 
+/* Search / filter-row överst i Ask-blocket (funkar även utan ändrad HTML) */
+.supcast-search-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+@media (min-width: 420px) {
+  .supcast-search-row {
+    flex-direction: row;
+  }
+}
+
+.supcast-search-col {
+  flex: 1;
+}
+
+/* Lista av “snabba filter”-chips under sökfältet (valfritt) */
+.supcast-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0 0;
+}
+
+.supcast-chip {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(16, 24, 54, 0.95);
+  border: 1px solid rgba(130, 170, 255, 0.8);
+  color: #c5d4ff;
+  cursor: pointer;
+}
+
+.supcast-chip.is-active {
+  background: linear-gradient(135deg, #3cf6ff, #b9ff7a);
+  color: #050510;
+  border-color: rgba(170, 240, 255, 0.9);
+}
+
+/* Feed-listan med supportfall */
 .supcast-feed {
   list-style: none;
   padding: 0;
@@ -1023,6 +1069,7 @@ button {
   justify-content: space-between;
 }
 
+/* Experts / profile-blocket till höger */
 .supcast-experts {
   background: radial-gradient(circle at top, rgba(121, 199, 255, 0.25), transparent 55%),
     rgba(9, 12, 34, 0.96);
