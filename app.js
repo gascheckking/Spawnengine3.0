@@ -53,7 +53,6 @@ window.spawnToast = showToast;
 
 function formatTime() {
   const d = new Date();
-  // Använder sv-SE för tid, men en-GB för global/standard är OK. Behåller befintligt format.
   return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 }
 
@@ -72,7 +71,6 @@ function renderHeaderStats() {
   if (gasEl) {
     const base = 0.18;
     const jitter = (Math.random() * 0.06).toFixed(2);
-    // Gasdata uppdateras från onchain i loadOnchainData() om ansluten
     gasEl.textContent = `~${(base + Number(jitter)).toFixed(2)} gwei est.`;
   }
   if (activeWalletsEl) activeWalletsEl.textContent = spawnAddress ? "1" : "0";
@@ -468,7 +466,7 @@ function setupLoot() {
     });
   });
 
-  // Hårdkodad mock-öppning har tagits bort. Hanteras nu av PackWidget-modulen.
+  // Pack-open mock borttagen – hanteras av PackWidget-modul (reveal.js).
 
   const synthBtn = $("#btn-simulate-synth");
   const labResult = $("#labResult");
@@ -768,12 +766,13 @@ async function handleAccountsChanged(accounts) {
 async function loadOnchainData(updateWalletUIFn) {
   if (!spawnAddress) return;
   try {
-    const rpc = new ethers.providers.JsonRpcProvider(SPAWN_CONFIG.RPC_URL);
-    // Förutsätter att 'ethers' är tillgänglig globalt
-    if (typeof window.ethers === 'undefined') {
-        console.error("Ethers.js library not loaded.");
-        return;
+    // säkerställ att ethers finns innan vi använder den
+    if (typeof ethers === "undefined") {
+      console.error("Ethers.js library not loaded.");
+      return;
     }
+
+    const rpc = new ethers.providers.JsonRpcProvider(SPAWN_CONFIG.RPC_URL);
 
     const [txCount, balance, gasPrice] = await Promise.all([
       rpc.getTransactionCount(spawnAddress),
@@ -786,13 +785,13 @@ async function loadOnchainData(updateWalletUIFn) {
 
     const gasEl = $("#gasEstimate");
     if (gasEl) {
-      const gwei = parseFloat(window.ethers.utils.formatUnits(gasPrice, "gwei"));
+      const gwei = parseFloat(ethers.utils.formatUnits(gasPrice, "gwei"));
       gasEl.textContent = `~${gwei.toFixed(2)} gwei`;
     }
 
     const balanceEl = $("#walletBalanceEth");
     if (balanceEl) {
-      const eth = parseFloat(window.ethers.utils.formatEther(balance));
+      const eth = parseFloat(ethers.utils.formatEther(balance));
       balanceEl.textContent = `${eth.toFixed(4)} ETH`;
     }
 
@@ -953,7 +952,6 @@ function updateRoleDisplay() {
   const label = labelMap[primary] || primary;
   const icon = iconMap[primary] || "❓";
   const labelText = extraCount > 0 ? `${label} +${extraCount}` : label;
-
 
   roleIconSpan.textContent = icon;
   roleLabelSpan.textContent = labelText;
@@ -1192,12 +1190,8 @@ function setupMarketDetails() {
 // ---------- MODULE INTEGRATION (FÖRBÄTTRAD) ----------
 
 function initModules() {
-  // SpawnSlotMachine: Modulen bör initiera sig själv via sin egen kod (IIFE/DOMContentLoaded).
-  // SpawnPackReveal: Modulen bör initiera sig själv via sin egen kod.
-  // Vi tar bort direkta anrop här för att följa en renare modulär arkitektur.
-  
-  // Externa moduler (som slot.js och reveal.js) förväntas nu
-  // antingen initiera sig själva vid DOMContentLoaded eller när de instansieras.
+  // Externa moduler (slot.js, reveal.js, roles.js) initierar sig själva via IIFE/DOMContentLoaded.
+  // Här kan du i framtiden koppla in fler moduler om det behövs.
 }
 
 // ---------- INIT ----------
@@ -1228,7 +1222,7 @@ function initSpawnEngine() {
   setupSupcast();
   updateRoleDisplay();
 
-  initModules(); // Nu tom, men behålls för framtida expansionsmöjligheter
+  initModules();
   showRoleSheetIfNeeded();
 }
 
