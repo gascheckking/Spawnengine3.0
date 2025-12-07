@@ -884,11 +884,11 @@ button {
 
 .role-sheet {
   max-height: 70vh;
-  margin-bottom: 80px; /* +20px högre */
+  margin-bottom: 80px; /* snygg höjd */
 }
 
 #role-backdrop {
-  padding-bottom: 200px;
+  padding-bottom: 220px; /* lyfter hela popupen ytterligare */
 }
 
 .chevron {
