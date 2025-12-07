@@ -1,4 +1,5 @@
 // app.js — SpawnEngine3.0 · Mesh HUD v0.4 (Modulkompatibel)
+// Förbättrad version med korrigerad rollmappning och modulhantering.
 
 // ---------- ONCHAIN CONFIG ----------
 
@@ -52,6 +53,7 @@ window.spawnToast = showToast;
 
 function formatTime() {
   const d = new Date();
+  // Använder sv-SE för tid, men en-GB för global/standard är OK. Behåller befintligt format.
   return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 }
 
@@ -70,6 +72,7 @@ function renderHeaderStats() {
   if (gasEl) {
     const base = 0.18;
     const jitter = (Math.random() * 0.06).toFixed(2);
+    // Gasdata uppdateras från onchain i loadOnchainData() om ansluten
     gasEl.textContent = `~${(base + Number(jitter)).toFixed(2)} gwei est.`;
   }
   if (activeWalletsEl) activeWalletsEl.textContent = spawnAddress ? "1" : "0";
@@ -427,14 +430,18 @@ function registerPackOpen(seriesId, wallet, priceEth) {
 
   const s = packStats[seriesId];
 
+  // lägg till potten (1%)
   s.potEth += priceEth * 0.01;
 
+  // track hourly
   s.opensHour[hour] = s.opensHour[hour] || {};
   s.opensHour[hour][wallet] = (s.opensHour[hour][wallet] || 0) + 1;
 
+  // track daily
   s.opensDay[day] = s.opensDay[day] || {};
   s.opensDay[day][wallet] = (s.opensDay[day][wallet] || 0) + 1;
 
+  // track weekly
   s.opensWeek[week] = s.opensWeek[week] || {};
   s.opensWeek[week][wallet] = (s.opensWeek[week][wallet] || 0) + 1;
 
@@ -461,7 +468,7 @@ function setupLoot() {
     });
   });
 
-  // ingen gammal mock-öppningsknapp här — pack-öppningen hanteras av PackWidget-modulen
+  // Hårdkodad mock-öppning har tagits bort. Hanteras nu av PackWidget-modulen.
 
   const synthBtn = $("#btn-simulate-synth");
   const labResult = $("#labResult");
@@ -762,6 +769,12 @@ async function loadOnchainData(updateWalletUIFn) {
   if (!spawnAddress) return;
   try {
     const rpc = new ethers.providers.JsonRpcProvider(SPAWN_CONFIG.RPC_URL);
+    // Förutsätter att 'ethers' är tillgänglig globalt
+    if (typeof window.ethers === 'undefined') {
+        console.error("Ethers.js library not loaded.");
+        return;
+    }
+
     const [txCount, balance, gasPrice] = await Promise.all([
       rpc.getTransactionCount(spawnAddress),
       rpc.getBalance(spawnAddress),
@@ -773,13 +786,13 @@ async function loadOnchainData(updateWalletUIFn) {
 
     const gasEl = $("#gasEstimate");
     if (gasEl) {
-      const gwei = parseFloat(ethers.utils.formatUnits(gasPrice, "gwei"));
+      const gwei = parseFloat(window.ethers.utils.formatUnits(gasPrice, "gwei"));
       gasEl.textContent = `~${gwei.toFixed(2)} gwei`;
     }
 
     const balanceEl = $("#walletBalanceEth");
     if (balanceEl) {
-      const eth = parseFloat(ethers.utils.formatEther(balance));
+      const eth = parseFloat(window.ethers.utils.formatEther(balance));
       balanceEl.textContent = `${eth.toFixed(4)} ETH`;
     }
 
@@ -904,30 +917,34 @@ function setupRoleSelect() {
   });
 }
 
+/**
+ * UPPDATERAD FUNKTION: Mappar de faktiska rollnycklarna (hunter, dev, etc.)
+ * som används i HTML/modulerna.
+ */
 function updateRoleDisplay() {
   const roleIconSpan = document.getElementById("meshRoleIcon");
   const roleLabelSpan = document.getElementById("meshRoleLabel");
+  if (!roleIconSpan || !roleLabelSpan) return;
+
   const roles = loadStoredRoles();
 
   const labelMap = {
-    Builder: "Mesh Builder",
-    Strategist: "Token Strategist",
-    Gatherer: "Data Gatherer",
+    hunter: "Alpha Hunter / Trader",
+    creator: "Creator / Artist",
+    dev: "Dev / Builder",
+    collector: "Collector / Fan",
   };
 
   const iconMap = {
-    Builder: "🏗️",
-    Strategist: "🧠",
-    Gatherer: "⛏️",
+    hunter: "⚡",
+    creator: "🎨",
+    dev: "🧪",
+    collector: "🎴",
   };
 
   if (!roles.length) {
-    if (roleIconSpan) roleIconSpan.textContent = "❓";
-    if (roleLabelSpan) {
-      roleLabelSpan.textContent = "Unknown Role";
-    } else if (roleIconSpan) {
-      roleIconSpan.textContent = "❓ Unknown Role";
-    }
+    roleIconSpan.textContent = "❓";
+    roleLabelSpan.textContent = "Unknown Role";
     return;
   }
 
@@ -935,15 +952,11 @@ function updateRoleDisplay() {
   const extraCount = roles.length - 1;
   const label = labelMap[primary] || primary;
   const icon = iconMap[primary] || "❓";
-
   const labelText = extraCount > 0 ? `${label} +${extraCount}` : label;
 
-  if (roleIconSpan && roleLabelSpan) {
-    roleIconSpan.textContent = icon;
-    roleLabelSpan.textContent = labelText;
-  } else if (roleIconSpan) {
-    roleIconSpan.textContent = `${icon} ${labelText}`;
-  }
+
+  roleIconSpan.textContent = icon;
+  roleLabelSpan.textContent = labelText;
 }
 
 // ---------- SUPCAST (INLINE FORM) ----------
@@ -1176,24 +1189,15 @@ function setupMarketDetails() {
   });
 }
 
-// ---------- MODULE INTEGRATION ----------
+// ---------- MODULE INTEGRATION (FÖRBÄTTRAD) ----------
 
 function initModules() {
-  // SlotMachine in Mesh-vyn
-  if (window.SpawnSlotMachine) {
-    window.SpawnSlotMachine.init("slot-module-embed");
-  } else {
-    console.warn("SpawnSlotMachine module not loaded.");
-  }
-
-  // Pack Reveal Widget i Loot-vyn
-  if (window.SpawnPackReveal) {
-    window.SpawnPackReveal.init("pack-module-embed");
-  } else {
-    console.warn("SpawnPackReveal module not loaded.");
-  }
-
-  // Rolls sköts via overlay + setupRoleSelect (ingen extra init här)
+  // SpawnSlotMachine: Modulen bör initiera sig själv via sin egen kod (IIFE/DOMContentLoaded).
+  // SpawnPackReveal: Modulen bör initiera sig själv via sin egen kod.
+  // Vi tar bort direkta anrop här för att följa en renare modulär arkitektur.
+  
+  // Externa moduler (som slot.js och reveal.js) förväntas nu
+  // antingen initiera sig själva vid DOMContentLoaded eller när de instansieras.
 }
 
 // ---------- INIT ----------
@@ -1224,7 +1228,7 @@ function initSpawnEngine() {
   setupSupcast();
   updateRoleDisplay();
 
-  initModules();
+  initModules(); // Nu tom, men behålls för framtida expansionsmöjligheter
   showRoleSheetIfNeeded();
 }
 
