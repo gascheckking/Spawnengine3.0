@@ -1,1 +1,37 @@
--
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Pack Reveal Widget · Module</title>
+  <link rel="stylesheet" href="./reveal.css" />
+</head>
+<body>
+  <div id="reveal-root" class="reveal-root">
+    <h2 class="reveal-title">SpawnEngine Pack #471</h2>
+    <p class="reveal-sub">
+      Öppna ditt Pack och se vad du har vunnit! (Simulerar on-chain metadata-hämtning.)
+    </p>
+
+    <div class="reveal-pack-container">
+      <div id="pack-cover" class="pack-cover">
+        <div class="pack-logo">📦</div>
+        <p>SpawnEngine Base Pack</p>
+      </div>
+      
+      <div id="reveal-results" class="reveal-results hidden">
+        </div>
+    </div>
+
+    <button id="reveal-open-btn" class="reveal-open-btn">
+      Öppna Pack (Stake 50 XP)
+    </button>
+    
+    <p id="reveal-status" class="reveal-status">
+      Klicka på knappen för att konsumera packen on-chain.
+    </p>
+
+  </div>
+
+  <script src="./reveal.js"></script>
+</body>
+</html>
