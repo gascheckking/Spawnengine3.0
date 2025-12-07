@@ -632,97 +632,117 @@ function setupLivePulse() {
 
 // ---------- WALLET / ONCHAIN ----------
 
-function setupWallet() {
-  const btnConnect = $("#btn-connect-wallet");
-  const addrEls = $$(".wallet-address");
-  const xpSourceEl = $("#walletXpSource");
+let spawnProvider = null;
+let spawnSigner = null;
+let spawnAddress = null;
 
+const btnConnect = document.getElementById("btn-connect");
+const addrEls = document.querySelectorAll("[data-wallet-address]");
+const walletStatusLabel = document.getElementById("wallet-status-label");
+const xpSourceEl = document.getElementById("xp-source-label");
+
+function setupWallet() {
   if (!btnConnect) return;
 
-  function updateWalletUI() {
-    const label = spawnAddress ? "Disconnect" : "Connect";
-    btnConnect.textContent = label;
+  // init UI direkt när appen laddar
+  updateWalletUI();
 
-    const short = spawnAddress ? shortenAddress(spawnAddress) : "Not connected";
-    addrEls.forEach((el) => (el.textContent = short));
-
-    if (xpSourceEl) {
-      xpSourceEl.textContent = spawnAddress
-        ? "XP synced from your Base tx history (mock formula)."
-        : "XP currently running on demo values.";
+  btnConnect.addEventListener("click", () => {
+    if (spawnAddress) {
+      disconnect();
+    } else {
+      connect();
     }
+  });
+}
 
-    renderHeaderStats();
+function updateWalletUI() {
+  if (!btnConnect) return;
+
+  const label = spawnAddress ? "Disconnect" : "Connect";
+  btnConnect.textContent = label;
+
+  const statusText = spawnAddress ? "Connected" : "Not connected";
+  if (walletStatusLabel) {
+    walletStatusLabel.textContent = statusText;
   }
 
-  async function connect() {
-    if (!window.ethers || !window.ethereum) {
-      showToast("No wallet provider found (MetaMask/Rabby).");
+  const short = spawnAddress ? shortenAddress(spawnAddress) : "Not connected";
+  addrEls.forEach((el) => (el.textContent = short));
+
+  if (xpSourceEl) {
+    xpSourceEl.textContent = spawnAddress
+      ? "XP synced from your Base wallet activity (mock formula)."
+      : "XP currently running on demo values.";
+  }
+
+  renderHeaderStats();
+}
+
+async function connect() {
+  if (!window.ethers || !window.ethereum) {
+    showToast("No wallet provider found (MetaMask/Rabby).");
+    return;
+  }
+
+  try {
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    if (!accounts || !accounts.length) {
+      showToast("No accounts available.");
       return;
     }
 
-    try {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      if (!accounts || !accounts.length) {
-        showToast("No accounts available.");
-        return;
+    spawnProvider = new ethers.providers.Web3Provider(window.ethereum);
+    const net = await spawnProvider.getNetwork();
+    if (net.chainId !== SPAWN_CONFIG.CHAIN_ID) {
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: ethers.utils.hexValue(SPAWN_CONFIG.CHAIN_ID) }],
+        });
+      } catch (err) {
+        showToast("Switch to Base in your wallet.");
+        console.error(err);
       }
-
-      spawnProvider = new ethers.providers.Web3Provider(window.ethereum);
-      const net = await spawnProvider.getNetwork();
-      if (net.chainId !== SPAWN_CONFIG.CHAIN_ID) {
-        try {
-          await window.ethereum.request({
-            method: "wallet_switchEthereumChain",
-            params: [{ chainId: ethers.utils.hexValue(SPAWN_CONFIG.CHAIN_ID) }],
-          });
-        } catch (err) {
-          showToast("Switch to Base in your wallet.");
-          console.error(err);
-        }
-      }
-
-      spawnSigner = spawnProvider.getSigner();
-      spawnAddress = await spawnSigner.getAddress();
-      showToast(`Connected ${shortenAddress(spawnAddress)}`);
-
-      updateWalletUI();
-      await loadOnchainData(updateWalletUI);
-
-      window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
-    } catch (e) {
-      console.error(e);
-      showToast("Wallet connection failed.");
     }
-  }
 
-  async function disconnect() {
-    spawnProvider = null;
-    spawnSigner = null;
-    spawnAddress = null;
-    showToast("Disconnected (local only).");
+    spawnSigner = spawnProvider.getSigner();
+    spawnAddress = await spawnSigner.getAddress();
+    showToast(`Connected ${shortenAddress(spawnAddress)}`);
+
     updateWalletUI();
+    await loadOnchainData(updateWalletUI);
+
+    // lyssna på account-byten
+    window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+    window.ethereum.on("accountsChanged", handleAccountsChanged);
+
+    // första gången efter riktig connect: roll-väljare
+    showRoleSheetIfNeeded();
+  } catch (e) {
+    console.error(e);
+    showToast("Wallet connection failed.");
   }
+}
 
-  async function handleAccountsChanged(accounts) {
-    if (!accounts || !accounts.length) {
-      await disconnect();
-    } else {
-      spawnAddress = accounts[0];
-      updateWalletUI();
-      await loadOnchainData(updateWalletUI);
-    }
-  }
-
-  btnConnect.addEventListener("click", () => {
-    if (spawnAddress) disconnect();
-    else connect();
-  });
-
+async function disconnect() {
+  spawnProvider = null;
+  spawnSigner = null;
+  spawnAddress = null;
+  showToast("Disconnected (local only).");
   updateWalletUI();
+}
+
+async function handleAccountsChanged(accounts) {
+  if (!accounts || !accounts.length) {
+    await disconnect();
+  } else {
+    spawnAddress = accounts[0];
+    updateWalletUI();
+    await loadOnchainData(updateWalletUI);
+  }
 }
 
 async function loadOnchainData(updateWalletUI) {
