@@ -588,54 +588,123 @@
         </div>
 
         <!-- MESH -->
-        <div id="tab-mesh" class="tab-panel">
-          <header class="section-header">
-            <div>
-              <h2>Mesh explorer</h2>
-              <p class="section-sub">
-                Demo of Alpha / New / Gravity modes hooked to your mesh.
-              </p>
+                <div id="tab-mesh" class="tab-panel">
+          <section class="market-section">
+            <div class="section-header">
+              <div>
+                <h2>Mesh surfaces &amp; widgets</h2>
+                <p class="section-sub">
+                  Everything SpawnEngine exposes to the onchain universe.
+                </p>
+              </div>
+              <div class="section-tagline">Mesh · surfaces</div>
             </div>
-            <div class="section-tagline">Pillar · Mesh</div>
-          </header>
 
-          <div class="segmented">
-            <button
-              class="segmented-btn segmented-btn-active"
-              data-mesh-mode="alpha"
-            >
-              Alpha hunters
-            </button>
-            <button class="segmented-btn" data-mesh-mode="new">
-              New creators
-            </button>
-            <button class="segmented-btn" data-mesh-mode="gravity">
-              Gravity clusters
-            </button>
-          </div>
+            <div class="market-grid">
+              <!-- XP / activity -->
+              <article class="market-card">
+                <div class="market-card-icon">⚡</div>
+                <h4>XP stream &amp; activity</h4>
+                <p>
+                  Core XP ledger for pulls, quests, burns and support. Feeds all
+                  other widgets and apps.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price">Mesh core</span>
+                  <button class="link-btn market-card-btn">View schema</button>
+                </div>
+              </article>
 
-          <p id="meshModeCopy" class="hud-subtitle">
-            Viewing mesh demo in <strong>Alpha hunters</strong> mode — wallets
-            opening high volumes of packs cluster at the edges.
-          </p>
+              <!-- Pack reveal widget -->
+              <article class="market-card">
+                <div class="market-card-icon">🧪</div>
+                <h4>Pack reveal widget</h4>
+                <p>
+                  Vibe-style pack openings that any app can embed. Uses your
+                  SpawnEngine pack config.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price">Widget</span>
+                  <button class="link-btn market-card-btn">Copy embed</button>
+                </div>
+              </article>
 
-          <div class="legend-row">
-            <span><span class="legend-dot legend-coin"></span>XP streams</span>
-            <span><span class="legend-dot legend-pack"></span>Pack pulls</span>
-            <span><span class="legend-dot legend-burn"></span>Burn events</span>
-            <span><span class="legend-dot legend-xp"></span>Creator flows</span>
-          </div>
+              <!-- Slot / game hooks (framtida SpawnEngine-slot) -->
+              <article class="market-card">
+                <div class="market-card-icon">🎰</div>
+                <h4>SpawnEngine slot hooks</h4>
+                <p>
+                  Hooks for future slot / bonus games using SE tokens, Fragments
+                  and XP – no raw ETH bets.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price">Game hooks</span>
+                  <button class="link-btn market-card-btn">Design doc</button>
+                </div>
+              </article>
 
-          <div class="mesh-mini-card">
-            Mesh WebGL view is mocked here. In v1.0 it renders a 3D mesh synced to
-            real wallets and packs.
-          </div>
+              <!-- Contest / bounty arena -->
+              <article class="market-card">
+                <div class="market-card-icon">🏆</div>
+                <h4>Contest &amp; bounty arena</h4>
+                <p>
+                  Onchain challenges, POIDH-style bounties and XP races. Proofs,
+                  not casino – quests + rewards.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price">Per arena</span>
+                  <button class="link-btn market-card-btn">View pools</button>
+                </div>
+              </article>
 
-          <ul id="meshEvents" class="activity-list"></ul>
+              <!-- Support / SupCast mesh -->
+              <article class="market-card">
+                <div class="market-card-icon">📡</div>
+                <h4>Support mesh / SupCast</h4>
+                <p>
+                  Unified support stream for apps, frames and bots. Tickets pay
+                  XP and reputation back into mesh.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price">API</span>
+                  <button class="link-btn market-card-btn">View endpoints</button>
+                </div>
+              </article>
 
-          <button id="btn-open-full-mesh" class="btn-full-width">
-            Open full Mesh Explorer (platform)
-          </button>
+              <!-- External surfaces -->
+              <article class="market-card">
+                <div class="market-card-icon">🌌</div>
+                <h4>External surfaces</h4>
+                <p>
+                  Frames, Farcaster casts, Vibe-style mints and other onchain
+                  UIs wired into SpawnEngine.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price">Mesh map</span>
+                  <button class="link-btn market-card-btn">Open map</button>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <!-- Live mesh stream -->
+          <section class="market-section">
+            <div class="section-header">
+              <div>
+                <h3>Live mesh stream</h3>
+                <p class="section-sub">
+                  Latest signals from widgets, games, packs and support.
+                </p>
+              </div>
+              <div class="section-tagline">Mock · activity</div>
+            </div>
+
+            <ul id="meshActivityList" class="activity-list">
+              <li>Mesh booted · XP core online · v0.3 mock stream.</li>
+              <li>Pack reveal widget registered for 2 external apps (mock).</li>
+              <li>Contest arena seeded with “First 100 pulls” bounty (mock).</li>
+            </ul>
+          </section>
         </div>
 
         <!-- SUPPORT / SUPCAST -->
