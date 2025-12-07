@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -12,11 +11,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="apple-touch-icon" href="/logo.png" />
-  <title>SpawnEngine · Mesh HUD v0.3</title>
+  <title>SpawnEngine · Mesh HUD v0.4</title>
+  
   <link rel="stylesheet" href="style.css" />
-</head>
+  </head>
 <body class="app-body">
-  <!-- SETTINGS POPUP -->
   <div id="settings-backdrop" class="settings-backdrop hidden">
     <div id="settings-sheet" class="settings-sheet">
       <div class="settings-header">
@@ -24,7 +23,6 @@
         <button id="settings-close" class="settings-close-btn">✕</button>
       </div>
 
-      <!-- PROFILE & XP -->
       <div class="settings-section">
         <h3>Profile &amp; XP</h3>
         <div class="settings-card-grid">
@@ -45,7 +43,6 @@
         </div>
       </div>
 
-      <!-- CONNECTED SERVICES -->
       <div class="settings-section">
         <h3>Connected services</h3>
         <div class="settings-card-grid">
@@ -67,7 +64,6 @@
         </div>
       </div>
 
-      <!-- ACCOUNT & RATING -->
       <div class="settings-section">
         <h3>Account &amp; mesh profile</h3>
         <div class="settings-card-grid">
@@ -78,7 +74,7 @@
           </div>
           <div class="settings-card small">
             <p class="label">Preferred wallet</p>
-            <p class="main wallet-address">Not connected</p>
+            <p class="main wallet-address" data-wallet-address>Not connected</p>
             <p class="sub">Base mainnet</p>
           </div>
           <div class="settings-card small">
@@ -95,7 +91,6 @@
         </ul>
       </div>
 
-      <!-- BUILDERS & TOOLS -->
       <div class="settings-section">
         <h3>Builders &amp; tools</h3>
         <p class="section-sub">
@@ -131,16 +126,13 @@
     </div>
   </div>
 
-  <!-- MESH BACKGROUND (WEBGL) -->
   <div id="mesh-bg">
     <canvas id="mesh-canvas"></canvas>
   </div>
   <div class="mesh-overlay"></div>
 
-  <!-- APP SHELL -->
   <div class="app-shell" id="app-container">
     <div class="hud-card">
-      <!-- Top row: avatar + settings -->
       <div class="hud-top-row">
         <button id="btn-account" class="avatar-chip">
           <div class="avatar-circle">S</div>
@@ -153,7 +145,6 @@
         </button>
       </div>
 
-      <!-- badges / tags + role + status -->
       <div class="hud-header-row">
         <div class="hud-tags">
           <span class="pill pill-soft">Base · Mesh ecosystems</span>
@@ -162,16 +153,15 @@
         <div class="hud-role-and-status">
           <span id="mesh-role-chip" class="pill pill-soft role-chip">
             <span id="meshRoleIcon" class="role-icon"></span>
-            <span class="role-label">Alpha hunter / Trader</span>
+            <span id="meshRoleLabel" class="role-label">Alpha hunter / Trader</span> 
           </span>
           <div class="mesh-status-pill">
             <span class="status-dot"></span>
-            <span>Mesh v0.3</span>
+            <span>Mesh v0.4</span>
           </div>
         </div>
       </div>
 
-      <!-- title block -->
       <div class="hud-title-block">
         <h1 class="hud-title">SpawnEngine · Mesh HUD</h1>
         <p class="hud-subtitle">
@@ -179,7 +169,6 @@
         </p>
       </div>
 
-      <!-- platform strip -->
       <div class="platform-strip">
         <span class="platform-pill">
           GAS <span id="gasEstimate" class="platform-pill-value">~0.20 gwei est.</span>
@@ -192,7 +181,6 @@
         </span>
       </div>
 
-      <!-- wallet connect row -->
       <div class="wallet-strip">
         <button id="btn-connect" class="btn-outline">Connect</button>
         <span id="wallet-status-label" class="wallet-status">Not connected</span>
@@ -200,7 +188,6 @@
         <span id="walletBalanceEth" class="wallet-balance">0.0000 ETH</span>
       </div>
 
-      <!-- stats grid -->
       <div class="hud-grid hud-grid-4">
         <div class="hud-stat">
           <div class="hud-stat-label">XP Balance</div>
@@ -220,12 +207,10 @@
         </div>
       </div>
 
-      <!-- XP source label -->
       <p id="xp-source-label" class="section-sub">
         XP currently running on demo values.
       </p>
 
-      <!-- streak -->
       <div class="streak-row">
         <div class="streak-wheel">
           <div class="streak-circle">
@@ -247,11 +232,8 @@
         </div>
       </div>
 
-            <!-- TAB PANELS -->
-      <div class="tab-content">
-        <!-- HOME -->
-        <!-- ONBOARDING ROLE SELECT -->
-        <div id="role-backdrop" class="sheet-backdrop">
+            <div class="tab-content">
+        <div id="role-backdrop" class="sheet-backdrop hidden">
           <div id="role-sheet" class="sheet role-sheet">
             <div class="sheet-header">
               <span class="settings-title">Choose your role</span>
@@ -289,7 +271,6 @@
             </button>
           </div>
         </div>
-        <!-- END ROLE SELECT -->
         <div id="tab-home" class="tab-panel tab-panel-active">
           <div class="activity-feed">
             <header class="section-header">
@@ -303,7 +284,6 @@
           </div>
         </div>
 
-        <!-- LOOT -->
         <div id="tab-loot" class="tab-panel">
           <header class="section-header">
             <div>
@@ -328,7 +308,6 @@
             </button>
           </div>
 
-          <!-- Packs view -->
           <div id="lootView-packs" class="loot-view loot-view-active">
             <div class="pack-row">
               <div class="pack-card">
@@ -339,12 +318,15 @@
                 <button id="btn-open-pack" class="btn-full-width">
                   Simulate pack open
                 </button>
+                <p class="section-sub" style="margin-top: 10px; color: var(--color-accent-dark);">
+                    [In production skulle Pack Open hanteras av en modul/widget. 
+                    Vi använder den gamla mocken i app.js för att visa loot-flödet.]
+                </p>
               </div>
             </div>
             <ul id="lootEvents" class="activity-list"></ul>
           </div>
 
-          <!-- Pull Lab -->
           <div id="lootView-lab" class="loot-view">
             <div class="pack-card">
               <div class="pack-title">Pull Lab synthesis</div>
@@ -376,7 +358,6 @@
             </div>
           </div>
 
-          <!-- Inventory -->
           <div id="lootView-inventory" class="loot-view">
             <div class="mesh-mini-card">
               Inventory view is mocked — values above reflect your simulated pulls.
@@ -384,11 +365,8 @@
           </div>
         </div>
 
-        <!-- MARKET -->
         <div id="tab-market" class="tab-panel">
-          <!-- MARKET TAB CONTENT — SpawnEngine Market -->
           <section class="market-view">
-            <!-- Hero -->
             <section class="market-hero">
               <div class="market-hero-text">
                 <h2>SPAWNENGINE MARKET</h2>
@@ -399,7 +377,6 @@
               </button>
             </section>
 
-            <!-- Trending right now -->
             <section class="market-section">
               <div class="section-header">
                 <h3>Trending right now</h3>
@@ -410,36 +387,38 @@
                 <article class="market-card market-card-trending">
                   <div class="market-card-icon">🎴</div>
                   <h4>Pack Series · Vibes S1</h4>
-                  <p>Tiered rarity ladder with mythic foils.</p>
+                  <p class="market-card-desc">Tiered rarity ladder with mythic foils.</p>
                   <div class="market-card-footer">
-                    <span class="price">0.025 ETH</span>
-                    <span class="meta">980 joined</span>
+                    <span class="price market-card-price">0.025 ETH</span>
+                    <span class="meta market-card-participants">980 joined</span>
+                    <button class="link-btn market-card-btn">View</button>
                   </div>
                 </article>
 
                 <article class="market-card market-card-trending">
                   <div class="market-card-icon">⚔️</div>
                   <h4>Quest Bundle · XP Boost</h4>
-                  <p>Complete 3 quests for boosted XP multiplier.</p>
+                  <p class="market-card-desc">Complete 3 quests for boosted XP multiplier.</p>
                   <div class="market-card-footer">
-                    <span class="price">0.01 ETH</span>
-                    <span class="meta">320 joined</span>
+                    <span class="price market-card-price">0.01 ETH</span>
+                    <span class="meta market-card-participants">320 joined</span>
+                    <button class="link-btn market-card-btn">View</button>
                   </div>
                 </article>
 
                 <article class="market-card market-card-trending">
                   <div class="market-card-icon">📈</div>
                   <h4>Base NFT Art Drop</h4>
-                  <p>Curated onchain art drop with limited-time pulls.</p>
+                  <p class="market-card-desc">Curated onchain art drop with limited-time pulls.</p>
                   <div class="market-card-footer">
-                    <span class="price">0.12 ETH</span>
-                    <span class="meta">145 joined</span>
+                    <span class="price market-card-price">0.12 ETH</span>
+                    <span class="meta market-card-participants">145 joined</span>
+                    <button class="link-btn market-card-btn">View</button>
                   </div>
                 </article>
               </div>
             </section>
 
-            <!-- All active market slots -->
             <section class="market-section">
               <div class="section-header">
                 <h3>All active market slots</h3>
@@ -450,9 +429,10 @@
                 <article class="market-card">
                   <div class="market-card-icon">🎓</div>
                   <h4>Smart-contract review</h4>
-                  <p>Have your pack or token contract reviewed.</p>
+                  <p class="market-card-desc">Have your pack or token contract reviewed.</p>
                   <div class="market-card-footer">
-                    <span class="price">0.5 ETH</span>
+                    <span class="price market-card-price">0.5 ETH</span>
+                    <span class="meta market-card-participants">Audit slot</span>
                     <button class="link-btn market-card-btn">View</button>
                   </div>
                 </article>
@@ -460,9 +440,10 @@
                 <article class="market-card">
                   <div class="market-card-icon">🚀</div>
                   <h4>Onchain education track</h4>
-                  <p>Structured learning paths for Base creators.</p>
+                  <p class="market-card-desc">Structured learning paths for Base creators.</p>
                   <div class="market-card-footer">
-                    <span class="price">0.08 ETH</span>
+                    <span class="price market-card-price">0.08 ETH</span>
+                    <span class="meta market-card-participants">Course</span>
                     <button class="link-btn market-card-btn">View</button>
                   </div>
                 </article>
@@ -470,9 +451,10 @@
                 <article class="market-card">
                   <div class="market-card-icon">🏡</div>
                   <h4>Token launch bundle</h4>
-                  <p>Deploy token + frame + quest layer together.</p>
+                  <p class="market-card-desc">Deploy token + frame + quest layer together.</p>
                   <div class="market-card-footer">
-                    <span class="price">0.21 ETH</span>
+                    <span class="price market-card-price">0.21 ETH</span>
+                    <span class="meta market-card-participants">Launch slot</span>
                     <button class="link-btn market-card-btn">View</button>
                   </div>
                 </article>
@@ -480,9 +462,10 @@
                 <article class="market-card">
                   <div class="market-card-icon">💻</div>
                   <h4>Pack listing syndicate</h4>
-                  <p>Cross-list packs to multiple marketplaces.</p>
+                  <p class="market-card-desc">Cross-list packs to multiple marketplaces.</p>
                   <div class="market-card-footer">
-                    <span class="price">0.15 ETH</span>
+                    <span class="price market-card-price">0.15 ETH</span>
+                    <span class="meta market-card-participants">Listing service</span>
                     <button class="link-btn market-card-btn">View</button>
                   </div>
                 </article>
@@ -490,9 +473,10 @@
                 <article class="market-card">
                   <div class="market-card-icon">💡</div>
                   <h4>Miniapp integration slot</h4>
-                  <p>Integrate your app into SpawnEngine mesh.</p>
+                  <p class="market-card-desc">Integrate your app into SpawnEngine mesh.</p>
                   <div class="market-card-footer">
-                    <span class="price">0.18 ETH</span>
+                    <span class="price market-card-price">0.18 ETH</span>
+                    <span class="meta market-card-participants">API slot</span>
                     <button class="link-btn market-card-btn">View</button>
                   </div>
                 </article>
@@ -500,9 +484,10 @@
                 <article class="market-card">
                   <div class="market-card-icon">🧾</div>
                   <h4>Farcaster growth clinic</h4>
-                  <p>Improve cast strategy around creator tokens.</p>
+                  <p class="market-card-desc">Improve cast strategy around creator tokens.</p>
                   <div class="market-card-footer">
-                    <span class="price">0.04 ETH</span>
+                    <span class="price market-card-price">0.04 ETH</span>
+                    <span class="meta market-card-participants">Service</span>
                     <button class="link-btn market-card-btn">View</button>
                   </div>
                 </article>
@@ -510,12 +495,13 @@
                 <article class="market-card">
                   <div class="market-card-icon">🛰️</div>
                   <h4>Dev hotline · Mesh mentor slot</h4>
-                  <p>
+                  <p class="market-card-desc">
                     Get in contact with a verified Base builder for code review, app check or
                     “why is my tx cursed?” sessions. You set a bid, they accept or counter.
                   </p>
                   <div class="market-card-footer">
-                    <span class="price">You bid</span>
+                    <span class="price market-card-price">You bid</span>
+                    <span class="meta market-card-participants">Mentor pool</span>
                     <button class="link-btn market-card-btn">Open request</button>
                   </div>
                 </article>
@@ -523,9 +509,10 @@
                 <article class="market-card">
                   <div class="market-card-icon">🎨</div>
                   <h4>Base ecosystem collab</h4>
-                  <p>Connect with infra partners around your pack.</p>
+                  <p class="market-card-desc">Connect with infra partners around your pack.</p>
                   <div class="market-card-footer">
-                    <span class="price">0.3 ETH</span>
+                    <span class="price market-card-price">0.3 ETH</span>
+                    <span class="meta market-card-participants">Partner slot</span>
                     <button class="link-btn market-card-btn">View</button>
                   </div>
                 </article>
@@ -533,31 +520,31 @@
                 <article class="market-card">
                   <div class="market-card-icon">📊</div>
                   <h4>LP safety workshop</h4>
-                  <p>Hands-on session for keeping floors alive.</p>
+                  <p class="market-card-desc">Hands-on session for keeping floors alive.</p>
                   <div class="market-card-footer">
-                    <span class="price">0.09 ETH</span>
+                    <span class="price market-card-price">0.09 ETH</span>
+                    <span class="meta market-card-participants">Workshop</span>
                     <button class="link-btn market-card-btn">View</button>
                   </div>
                 </article>
 
-                <!-- SpawnEngine onchain contest / bounty arena -->
                 <article class="market-card">
                   <div class="market-card-icon">🏆</div>
                   <h4>SpawnEngine contest arena</h4>
-                  <p>
+                  <p class="market-card-desc">
                     Host onchain challenges funded in $SPN token, SpawnEngine slot machine,
                     leaderboard races and shared reward pools. Quests + skill,
                     no casino mechanics.
                   </p>
                   <div class="market-card-footer">
-                    <span class="price">SPN only</span>
+                    <span class="price market-card-price">SPN only</span>
+                    <span class="meta market-card-participants">Arena</span>
                     <button class="link-btn market-card-btn">Open arena</button>
                   </div>
                 </article>
               </div>
             </section>
 
-            <!-- Builder APIs & SDKs -->
             <section class="market-section">
               <div class="section-header">
                 <h3>Builder APIs &amp; SDKs</h3>
@@ -568,9 +555,10 @@
                 <article class="market-card">
                   <div class="market-card-icon">🧬</div>
                   <h4>XP SDK &amp; integration</h4>
-                  <p>Pipe SpawnEngine XP into your own apps, bots or frames.</p>
+                  <p class="market-card-desc">Pipe SpawnEngine XP into your own apps, bots or frames.</p>
                   <div class="market-card-footer">
-                    <span class="price">Dev key</span>
+                    <span class="price market-card-price">Dev key</span>
+                    <span class="meta market-card-participants">SDK</span>
                     <button class="link-btn market-card-btn">Show docs</button>
                   </div>
                 </article>
@@ -578,9 +566,10 @@
                 <article class="market-card">
                   <div class="market-card-icon">🧪</div>
                   <h4>Pack reveal widget</h4>
-                  <p>Embed Vibe-style pack openings in any onchain app.</p>
+                  <p class="market-card-desc">Embed Vibe-style pack openings in any onchain app.</p>
                   <div class="market-card-footer">
-                    <span class="price">Snippet</span>
+                    <span class="price market-card-price">Snippet</span>
+                    <span class="meta market-card-participants">Widget</span>
                     <button class="link-btn market-card-btn">Copy embed</button>
                   </div>
                 </article>
@@ -588,16 +577,16 @@
                 <article class="market-card">
                   <div class="market-card-icon">📡</div>
                   <h4>SupCast support API</h4>
-                  <p>Let users open support cases that feed XP and reputation.</p>
+                  <p class="market-card-desc">Let users open support cases that feed XP and reputation.</p>
                   <div class="market-card-footer">
-                    <span class="price">Soon</span>
+                    <span class="price market-card-price">Soon</span>
+                    <span class="meta market-card-participants">API</span>
                     <button class="link-btn market-card-btn">Preview</button>
                   </div>
                 </article>
               </div>
             </section>
 
-            <!-- Partners -->
             <section class="market-section">
               <h3>Integration partners</h3>
               <div class="partners-list">
@@ -625,9 +614,6 @@
             </section>
           </section>
         </div>
-        <!-- /MARKET -->
-
-        <!-- QUESTS -->
         <div id="tab-quests" class="tab-panel">
           <header class="section-header">
             <div>
@@ -641,7 +627,6 @@
           <ul id="questList" class="quest-list"></ul>
         </div>
 
-        <!-- MESH -->
         <div id="tab-mesh" class="tab-panel">
           <section class="market-section">
             <div class="section-header">
@@ -655,7 +640,6 @@
             </div>
 
             <div class="market-grid">
-              <!-- XP / activity -->
               <article class="market-card">
                 <div class="market-card-icon">⚡</div>
                 <h4>XP stream &amp; activity</h4>
@@ -669,7 +653,6 @@
                 </div>
               </article>
 
-              <!-- Pack reveal widget -->
               <article class="market-card">
                 <div class="market-card-icon">🧪</div>
                 <h4>Pack reveal widget</h4>
@@ -683,7 +666,6 @@
                 </div>
               </article>
 
-              <!-- Slot / game hooks (framtida SpawnEngine-slot) -->
               <article class="market-card">
                 <div class="market-card-icon">🎰</div>
                 <h4>SpawnEngine slot hooks</h4>
@@ -697,7 +679,6 @@
                 </div>
               </article>
 
-              <!-- Contest / bounty arena -->
               <article class="market-card">
                 <div class="market-card-icon">🏆</div>
                 <h4>Contest &amp; bounty arena</h4>
@@ -711,7 +692,6 @@
                 </div>
               </article>
 
-              <!-- Support / SupCast mesh -->
               <article class="market-card">
                 <div class="market-card-icon">📡</div>
                 <h4>Support mesh / SupCast</h4>
@@ -725,7 +705,6 @@
                 </div>
               </article>
 
-              <!-- External surfaces -->
               <article class="market-card">
                 <div class="market-card-icon">🌌</div>
                 <h4>External surfaces</h4>
@@ -741,7 +720,6 @@
             </div>
           </section>
 
-          <!-- Live mesh stream -->
           <section class="market-section">
             <div class="section-header">
               <div>
@@ -753,7 +731,7 @@
               <div class="section-tagline">Mock · activity</div>
             </div>
 
-            <ul id="meshActivityList" class="activity-list">
+            <ul id="meshEvents" class="activity-list">
               <li>Mesh booted · XP core online · v0.3 mock stream.</li>
               <li>Pack reveal widget registered for 2 external apps (mock).</li>
               <li>Contest arena seeded with “First 100 pulls” bounty (mock).</li>
@@ -761,7 +739,6 @@
           </section>
         </div>
 
-        <!-- SUPPORT / SUPCAST -->
         <div id="tab-support" class="tab-panel">
           <header class="section-header">
             <div>
@@ -775,7 +752,6 @@
           </header>
 
           <div class="supcast-layout">
-            <!-- ASK BLOCK -->
             <div class="supcast-block">
               <h3 class="supcast-title">Ask</h3>
               <p class="hud-subtitle supcast-context-sub">
@@ -836,7 +812,6 @@
               </div>
             </div>
 
-            <!-- FEED / EXPERTS BLOCK -->
             <div class="supcast-block supcast-experts">
               <h3 class="supcast-title">Feed · Latest questions</h3>
               <ul id="supcastFeed" class="supcast-feed"></ul>
@@ -861,15 +836,9 @@
             </div>
           </div>
         </div>
-        <!-- /SUPPORT -->
+        </div>
       </div>
-      <!-- /tab-content -->
     </div>
-    <!-- /hud-card -->
-  </div>
-  <!-- /app-shell -->
-
-  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <button class="nav-btn nav-btn-active" data-tab-target="home">Home</button>
     <button class="nav-btn" data-tab-target="loot">Loot</button>
@@ -879,7 +848,6 @@
     <button class="nav-btn" data-tab-target="support">SupCast</button>
   </nav>
 
-  <!-- ACCOUNT SHEET -->
   <div id="account-sheet" class="sheet-backdrop" aria-hidden="true">
     <div class="sheet">
       <div class="sheet-header">
@@ -914,14 +882,14 @@
     </div>
   </div>
 
-  <!-- TOAST -->
   <div id="toast" class="toast"></div>
 
-  <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  
   <script src="mesh-bg.js"></script>
-  <script src="supcast.js"></script>
-  <script src="app.js"></script>
+  
+  <script src="app.js"></script> 
+  
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
@@ -932,7 +900,6 @@
     }
   </script>
 
-  <!-- MARKET LISTING DETAILS PANEL -->
   <div id="marketDetailsBackdrop" class="sheet-backdrop">
     <div class="settings-panel">
       <div class="settings-header">
