@@ -385,6 +385,9 @@ function setupStreak() {
     showToast("Check-in logged · streak +1");
   });
 }
+
+// ---------- PACK STATS (LOCAL STORAGE) ----------
+
 const PACK_STATS_KEY = "spawnengine_pack_stats";
 
 let packStats = loadPackStats();
@@ -403,6 +406,7 @@ function savePackStats() {
   localStorage.setItem(PACK_STATS_KEY, JSON.stringify(packStats));
 }
 
+// Kallas varje gång ett pack öppnas
 function registerPackOpen(seriesId, wallet, priceEth) {
   const now = Date.now();
   const hour = Math.floor(now / (1000 * 60 * 60));
@@ -423,19 +427,24 @@ function registerPackOpen(seriesId, wallet, priceEth) {
 
   const s = packStats[seriesId];
 
+  // lägg till potten (1%)
   s.potEth += priceEth * 0.01;
 
+  // track hourly
   s.opensHour[hour] = s.opensHour[hour] || {};
   s.opensHour[hour][wallet] = (s.opensHour[hour][wallet] || 0) + 1;
 
+  // track daily
   s.opensDay[day] = s.opensDay[day] || {};
   s.opensDay[day][wallet] = (s.opensDay[day][wallet] || 0) + 1;
 
+  // track weekly
   s.opensWeek[week] = s.opensWeek[week] || {};
   s.opensWeek[week][wallet] = (s.opensWeek[week][wallet] || 0) + 1;
 
   savePackStats();
 }
+
 function setupLoot() {
   const segButtons = $$("[data-loot-view]");
   const views = $$(".loot-view");
@@ -466,8 +475,9 @@ function setupLoot() {
       state.fragments += fragmentsGained;
       if (shardDrop) state.shards += 1;
       state.xp += xpGain;
+
       // TRACK PACK OPEN EVENT
-registerPackOpen("VIBES-1", spawnAddress || "guest", 0.01);
+      registerPackOpen("VIBES-1", spawnAddress || "guest", 0.01);
 
       const textParts = [`${fragmentsGained} Fragments`];
       if (shardDrop) textParts.push("1 Shard");
@@ -836,86 +846,7 @@ async function loadOnchainData(updateWalletUIFn) {
   }
 }
 
-// ---------- ROLE SELECT ----------
-
-function showRoleSheetIfNeeded() {
-  const backdrop = document.getElementById("role-backdrop");
-  if (!backdrop) return;
-
-  const existing = localStorage.getItem("spawnengine_role");
-  if (!existing) {
-    backdrop.classList.remove("hidden");
-  }
-}
-
-function setupRoleSelect() {
-  const backdrop = document.getElementById("role-backdrop");
-  const closeBtn = document.getElementById("role-close");
-  const saveBtn = document.getElementById("save-role");
-  const cards = document.querySelectorAll(".role-card");
-  if (!backdrop || !closeBtn || !saveBtn || !cards.length) return;
-
-  let selectedRole = null;
-
-  // Selecting a card
-  cards.forEach((card) => {
-    card.addEventListener("click", () => {
-      cards.forEach((c) => c.classList.remove("active"));
-      card.classList.add("active");
-      selectedRole = card.getAttribute("data-role");
-      saveBtn.disabled = !selectedRole;
-    });
-  });
-
-  // Save role
-  saveBtn.addEventListener("click", () => {
-    if (!selectedRole) return;
-    localStorage.setItem("spawnengine_role", selectedRole);
-    state.role = selectedRole;
-    backdrop.classList.add("hidden");
-    showToast("Role set: " + selectedRole);
-    updateRoleDisplay();
-  });
-
-  closeBtn.addEventListener("click", () => {
-    backdrop.classList.add("hidden");
-  });
-}
-
-function updateRoleDisplay() {
-  const chip = document.getElementById("mesh-role-chip");
-  const iconSpan = document.getElementById("meshRoleIcon");
-  if (!chip) return;
-
-  const savedRole = localStorage.getItem("spawnengine_role");
-  if (savedRole) {
-    state.role = savedRole;
-  }
-
-  const role = state.role || "hunter";
-
-  const labelMap = {
-    dev: "Dev / Builder",
-    creator: "Creator / Artist",
-    hunter: "Alpha hunter / Trader",
-    collector: "Collector / Fan",
-  };
-
-  const iconMap = {
-    dev: "🧪",
-    creator: "🎨",
-    hunter: "🗡️",
-    collector: "📦",
-  };
-
-  chip.textContent = labelMap[role] || "Alpha hunter / Trader";
-  if (iconSpan) {
-    iconSpan.textContent = iconMap[role] || "";
-  }
-}
-
-// ---------- SETTINGS POPUP (Mesh Settings) ----------
-// ---------- ROLE SELECT ----------
+// ---------- ROLE SELECT (NY MULTI-VERSION) ----------
 
 // Läs roller från localStorage (stöd för gammal single-role också)
 function loadStoredRoles() {
@@ -1053,8 +984,6 @@ function updateRoleDisplay() {
     roleSpan.textContent = `${icon} ${label}`;
   }
 }
-// ---------- END ROLE SELECT -----------
-// ---------- END ROLE SELECT ----------
 
 // ---------- SUPCAST (INLINE FORM) ----------
 
@@ -1165,54 +1094,7 @@ function setupSupcast() {
 }
 
 // ---------- SETTINGS POPUP (Mesh Settings) ----------
-// ---------- SETTINGS POPUP (Mesh Settings) ----------
 
-function setupInlineSettingsPopup() {
-  const settingsBtn = document.getElementById("settings-btn");
-  const settingsBackdrop = document.getElementById("settings-backdrop");
-  const settingsClose = document.getElementById("settings-close");
-
-  if (!settingsBtn || !settingsBackdrop || !settingsClose) return;
-
-  settingsBtn.addEventListener("click", () => {
-    settingsBackdrop.classList.remove("hidden");
-  });
-
-  settingsClose.addEventListener("click", () => {
-    settingsBackdrop.classList.add("hidden");
-  });
-
-  settingsBackdrop.addEventListener("click", (e) => {
-    if (e.target === settingsBackdrop) {
-      settingsBackdrop.classList.add("hidden");
-    }
-  });
-
-  // Builder-actions inside Settings & builders
-  const builderCards = settingsBackdrop.querySelectorAll(
-    "[data-builder-action]"
-  );
-
-  builderCards.forEach((card) => {
-    card.addEventListener("click", () => {
-      const action = card.getAttribute("data-builder-action");
-      if (action === "xp") {
-        showToast("XP SDK · would show dev key + docs (mock).");
-      } else if (action === "filters") {
-        showToast("Premium filters · Alpha hunters & analytics (soon).");
-      } else if (action === "launchpad") {
-        showToast("Launchpad builder · creator panel (design only).");
-      } else if (action === "notifications") {
-        showToast("Notifications center (mock).");
-      }
-    });
-  });
-}
-
-// ---------- MARKET DETAILS (for future market cards) ----------
-function setupMarketDetails() {
-  // ... din befintliga setupMarketDetails här ...
-}
 function setupInlineSettingsPopup() {
   const settingsBtn = document.getElementById("settings-btn");
   const settingsBackdrop = document.getElementById("settings-backdrop");
@@ -1350,7 +1232,7 @@ function initSpawnEngine() {
   renderInventory();
   renderQuests();
 
-    setupTabs();
+  setupTabs();
   setupStreak();
   setupLoot();
   setupMeshModes();
@@ -1362,12 +1244,7 @@ function initSpawnEngine() {
   setupRoleSelect();
   setupSupcast();
   updateRoleDisplay();
-}
-
-  // ROLE SELECT
-  setupRoleSelect();
-  updateRoleDisplay();
-  showRoleSheetIfNeeded(); // 👈 NY RAD – öppnar rollväljaren vid start
+  showRoleSheetIfNeeded(); // öppna roll-sheet om ingen roll är vald
 }
 
 // ---------- READY STATE ----------
