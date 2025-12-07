@@ -835,6 +835,11 @@ button {
 .sheet-row-danger {
   color: #ff6b99;
 }
+/* Role sheet: sit above bottom nav and pop up a bit higher */
+.role-sheet {
+  max-height: 70vh;
+  margin-bottom: 70px; /* lyfter upp den så den inte krockar med nav-baren */
+}
 
 .chevron {
   font-size: 14px;
