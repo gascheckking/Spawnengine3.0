@@ -1,151 +1,37 @@
-.reveal-root {
-  max-width: 350px;
-  margin: 30px auto;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  color: #e7ecff;
-  background: radial-gradient(circle at top, #1c2447, #060918 65%);
-  border-radius: 18px;
-  padding: 16px;
-  border: 1px solid rgba(100, 140, 255, 0.4);
-  text-align: center;
-}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Pack Reveal Widget · Module</title>
+  <link rel="stylesheet" href="./reveal.css" />
+</head>
+<body>
+  <div id="reveal-root" class="reveal-root">
+    <h2 class="reveal-title">SpawnEngine Pack #471</h2>
+    <p class="reveal-sub">
+      Öppna ditt Pack och se vad du har vunnit! (Simulerar on-chain metadata-hämtning.)
+    </p>
 
-.reveal-title {
-  margin: 0 0 4px;
-  font-size: 18px;
-}
+    <div class="reveal-pack-container">
+      <div id="pack-cover" class="pack-cover">
+        <div class="pack-logo">📦</div>
+        <p>SpawnEngine Base Pack</p>
+      </div>
+      
+      <div id="reveal-results" class="reveal-results hidden">
+        </div>
+    </div>
 
-.reveal-sub {
-  margin: 0 0 16px;
-  font-size: 12px;
-  color: #a8b3ff;
-}
+    <button id="reveal-open-btn" class="reveal-open-btn">
+      Öppna Pack (Stake 50 XP)
+    </button>
+    
+    <p id="reveal-status" class="reveal-status">
+      Klicka på knappen för att konsumera packen on-chain.
+    </p>
 
-.reveal-pack-container {
-  min-height: 220px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-  position: relative;
-}
+  </div>
 
-/* Pack-omslaget (före öppning) */
-.pack-cover {
-  width: 150px;
-  height: 200px;
-  background: linear-gradient(145deg, #3d5a80, #2c4465);
-  border-radius: 10px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.1);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.5s ease;
-}
-
-.pack-cover:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6), 0 0 30px rgba(60, 246, 255, 0.3);
-}
-
-.pack-logo {
-  font-size: 60px;
-  margin-bottom: 10px;
-}
-
-.pack-cover p {
-  font-size: 14px;
-  font-weight: 600;
-  color: #c7d5ff;
-}
-
-/* Animation för Pack som försvinner */
-.pack-cover.revealing {
-  opacity: 0;
-  transform: scale(1.5);
-}
-
-/* Reveal Resultat Area */
-.reveal-results {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.reveal-results.visible {
-  opacity: 1;
-}
-
-.item-card {
-  width: 100px;
-  height: 140px;
-  background: linear-gradient(135deg, #0f1624, #2c3a50);
-  border-radius: 8px;
-  padding: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  font-size: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  text-align: left;
-  border: 2px solid;
-  transform: translateY(20px);
-  opacity: 0;
-  animation: card-drop 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-}
-
-/* Färgkoder för olika rariteter (rarity) */
-.rarity-common { border-color: #556c80; }
-.rarity-rare { border-color: #5d9ee3; }
-.rarity-epic { border-color: #a05ee3; }
-.rarity-legendary { border-color: #f6c03c; }
-
-@keyframes card-drop {
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Knapp och status */
-.reveal-open-btn {
-  /* Använder en annan färggradient för att skilja från Slot-knappen */
-  width: 100%;
-  border-radius: 999px;
-  border: none;
-  padding: 10px 14px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  background: linear-gradient(135deg, #ff7a8a, #ffbb3c);
-  color: #1a0808;
-  box-shadow:
-    0 0 12px rgba(255, 122, 138, 0.7),
-    0 14px 26px rgba(0, 0, 0, 0.7);
-  transition: all 0.2s ease;
-}
-
-.reveal-open-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-}
-
-.reveal-open-btn:disabled {
-  background: #6b4d52;
-  color: #d1b4b9;
-  cursor: not-allowed;
-}
-
-.reveal-status {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #c7d5ff;
-}
-
-.hidden {
-  display: none !important;
-}
+  <script src="./reveal.js"></script>
+</body>
+</html>
