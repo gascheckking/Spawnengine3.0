@@ -1241,7 +1241,25 @@ function initSpawnEngine() {
 // ---------- READY STATE ----------
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initSpawnEngine);
+  document.addEventListener("DOMContentLoaded", () => {
+    // Ta bort eventuella dubletter av bottom-nav
+    const navs = document.querySelectorAll(".bottom-nav");
+    if (navs.length > 1) {
+      navs.forEach((nav, index) => {
+        if (index > 0) nav.remove();
+      });
+    }
+
+    initSpawnEngine();
+  });
 } else {
+  // Ta bort eventuella dubletter av bottom-nav
+  const navs = document.querySelectorAll(".bottom-nav");
+  if (navs.length > 1) {
+    navs.forEach((nav, index) => {
+      if (index > 0) nav.remove();
+    });
+  }
+
   initSpawnEngine();
 }
