@@ -1756,7 +1756,23 @@ button {
 .supcast-profile { margin-top: 20px; padding: 15px; background: #0f1624; border-radius: 12px; }
 .supcast-profile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
 
+/* Top-nav inne i HUD-kortet */
+.top-nav {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  background: #0f1624;
+  border-radius: 999px;
+  padding: 4px;
+  border: 1px solid rgba(120, 160, 255, 0.35);
+}
 
+.top-nav .nav-btn {
+  padding: 6px 0;
+  font-size: 11px;
+}
 /* --- Bottom Nav (Översyrer äldre stil) --- */
 .bottom-nav {
   position: fixed;
