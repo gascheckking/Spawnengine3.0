@@ -12,10 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="apple-touch-icon" href="/logo.png" />
   <title>SpawnEngine · Mesh HUD v0.4</title>
-  
+
   <link rel="stylesheet" href="style.css" />
-  </head>
+</head>
 <body class="app-body">
+  <!-- SETTINGS SHEET -->
   <div id="settings-backdrop" class="settings-backdrop hidden">
     <div id="settings-sheet" class="settings-sheet">
       <div class="settings-header">
@@ -126,11 +127,13 @@
     </div>
   </div>
 
+  <!-- BACKGROUND -->
   <div id="mesh-bg">
     <canvas id="mesh-canvas"></canvas>
   </div>
   <div class="mesh-overlay"></div>
 
+  <!-- APP SHELL -->
   <div class="app-shell" id="app-container">
     <div class="hud-card">
       <div class="hud-top-row">
@@ -153,7 +156,7 @@
         <div class="hud-role-and-status">
           <span id="mesh-role-chip" class="pill pill-soft role-chip">
             <span id="meshRoleIcon" class="role-icon"></span>
-            <span id="meshRoleLabel" class="role-label">Alpha hunter / Trader</span> 
+            <span id="meshRoleLabel" class="role-label">Alpha hunter / Trader</span>
           </span>
           <div class="mesh-status-pill">
             <span class="status-dot"></span>
@@ -211,29 +214,31 @@
         XP currently running on demo values.
       </p>
 
-           <div class="streak-row">
-  <div class="streak-wheel">
-    <div class="streak-circle">
-      <div class="streak-day-label">DAY</div>
-      <div class="streak-day-value" id="streakDays">1</div>
-      <div class="streak-day-label">STREAK</div>
-    </div>
-  </div>
-  <div class="streak-copy">
-    <div class="streak-title">Daily ritual</div>
-    <p id="streakCopyText" class="streak-sub">
-      Keep the streak for <span id="streakRemaining">6</span> more days
-      for a full weekly run.
-    </p>
-    <div class="streak-bar">
-      <div id="streakBarFill" class="streak-bar-fill"></div>
-    </div>
-    <button id="btn-checkin" class="btn-outline">Check-in</button>
-  </div>
-</div>
+      <!-- STREAK -->
+      <div class="streak-row">
+        <div class="streak-wheel">
+          <div class="streak-circle">
+            <div class="streak-day-label">DAY</div>
+            <div class="streak-day-value" id="streakDays">1</div>
+            <div class="streak-day-label">STREAK</div>
+          </div>
+        </div>
+        <div class="streak-copy">
+          <div class="streak-title">Daily ritual</div>
+          <p id="streakCopyText" class="streak-sub">
+            Keep the streak for <span id="streakRemaining">6</span> more days
+            for a full weekly run.
+          </p>
+          <div class="streak-bar">
+            <div id="streakBarFill" class="streak-bar-fill"></div>
+          </div>
+          <button id="btn-checkin" class="btn-outline">Check-in</button>
+        </div>
+      </div>
 
-<!-- DIRECTLY continue with tab-content -->
-<div class="tab-content">
+      <!-- TAB CONTENT -->
+      <div class="tab-content">
+        <!-- ROLE SHEET (BACKDROP) -->
         <div id="role-backdrop" class="sheet-backdrop hidden">
           <div id="role-sheet" class="sheet role-sheet">
             <div class="sheet-header">
@@ -272,6 +277,8 @@
             </button>
           </div>
         </div>
+
+        <!-- HOME TAB -->
         <div id="tab-home" class="tab-panel tab-panel-active">
           <div class="activity-feed">
             <header class="section-header">
@@ -285,6 +292,7 @@
           </div>
         </div>
 
+        <!-- LOOT TAB -->
         <div id="tab-loot" class="tab-panel">
           <header class="section-header">
             <div>
@@ -319,9 +327,12 @@
                 <button id="btn-open-pack" class="btn-full-width">
                   Simulate pack open
                 </button>
-                <p class="section-sub" style="margin-top: 10px; color: var(--color-accent-dark);">
-                    [In production skulle Pack Open hanteras av en modul/widget. 
-                    Vi använder den gamla mocken i app.js för att visa loot-flödet.]
+                <p
+                  class="section-sub"
+                  style="margin-top: 10px; color: var(--color-accent-dark);"
+                >
+                  [In production skulle Pack Open hanteras av en modul/widget.
+                  Vi använder den gamla mocken i app.js för att visa loot-flödet.]
                 </p>
               </div>
             </div>
@@ -366,6 +377,7 @@
           </div>
         </div>
 
+        <!-- MARKET TAB -->
         <div id="tab-market" class="tab-panel">
           <section class="market-view">
             <section class="market-hero">
@@ -615,6 +627,8 @@
             </section>
           </section>
         </div>
+
+        <!-- QUESTS TAB -->
         <div id="tab-quests" class="tab-panel">
           <header class="section-header">
             <div>
@@ -628,6 +642,7 @@
           <ul id="questList" class="quest-list"></ul>
         </div>
 
+        <!-- MESH TAB -->
         <div id="tab-mesh" class="tab-panel">
           <section class="market-section">
             <div class="section-header">
@@ -740,6 +755,7 @@
           </section>
         </div>
 
+        <!-- SUPPORT / SUPCAST TAB -->
         <div id="tab-support" class="tab-panel">
           <header class="section-header">
             <div>
@@ -836,10 +852,12 @@
               </div>
             </div>
           </div>
-        </div>
-        </div>
-      </div>
-    </div>
+        </div><!-- /tab-support -->
+      </div><!-- /tab-content -->
+    </div><!-- /hud-card -->
+  </div><!-- /app-shell -->
+
+  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <button class="nav-btn nav-btn-active" data-tab-target="home">Home</button>
     <button class="nav-btn" data-tab-target="loot">Loot</button>
@@ -849,7 +867,8 @@
     <button class="nav-btn" data-tab-target="support">SupCast</button>
   </nav>
 
-    <div id="account-sheet" class="sheet-backdrop hidden" aria-hidden="true">
+  <!-- ACCOUNT SHEET -->
+  <div id="account-sheet" class="sheet-backdrop hidden" aria-hidden="true">
     <div class="sheet">
       <div class="sheet-header">
         <div class="sheet-avatar-row">
@@ -883,24 +902,7 @@
     </div>
   </div>
 
-  <div id="toast" class="toast"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  
-  <script src="mesh-bg.js"></script>
-  
-  <script src="app.js"></script> 
-  
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("/service-worker.js")
-          .catch((err) => console.error("SW error:", err));
-      });
-    }
-  </script>
-
+  <!-- MARKET DETAILS SHEET -->
   <div id="marketDetailsBackdrop" class="sheet-backdrop hidden">
     <div class="settings-panel">
       <div class="settings-header">
@@ -910,5 +912,23 @@
       <div class="settings-scroll" id="marketDetailsBody"></div>
     </div>
   </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="mesh-bg.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/service-worker.js")
+          .catch((err) => console.error("SW error:", err));
+      });
+    }
+  </script>
 </body>
 </html>
