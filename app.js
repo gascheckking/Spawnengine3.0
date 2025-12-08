@@ -1117,40 +1117,67 @@ function setupMarketDetails() {
   const bodyEl = document.getElementById("marketDetailsBody");
 
   if (!backdrop || !backBtn || !titleEl || !bodyEl) return;
-  
-  // FIX 1: Event delegation för att fånga klick på de dynamiskt genererade korten
-  // Vi måste lyssna på fliken, inte de enskilda knapparna (som inte existerar vid sidladdning)
-  document.getElementById("tab-market")?.addEventListener('click', (e) => {
-      const btn = e.target.closest('.market-card-btn');
-      if (btn) {
-          e.stopPropagation();
-          // Hämta data från listings.js/marketActions (som anropar openMarketDetails)
-          // Om listings.js hanterar showToast för detaljerna, är denna del av koden mest för en "View" knapp som listas i HTML:en (se nedan).
-          
-          // Eftersom listings.js använder data-action="view-details" på knappen, 
-          // och har sin egen hantering (handleMarketActions) som kör showToast,
-          // tar vi bort den gamla, trasiga koden här och litar på listings.js för mock:en.
-          
-          // OM du vill att denna detalj-vy ska öppnas, måste du kalla `openMarketDetails` från `listings.js`
-          
-          // EFTERSOM DITT PROBLEM ÄR ATT APPEN ÄR TOM, tar vi bort den gamla Market Details kopplingen härifrån
-          // och ser till att den inte kraschar.
-      }
-  });
-  
-  // FIX 2: Vi behåller back- och backdrop-hanteringen för framtida bruk
-  
-  backBtn.addEventListener("click", () => {
-    backdrop.classList.remove("open");
-  });
+
+  // se till att den är dold vid start
+  backdrop.classList.add("hidden");
+
+  const close = () => {
+    backdrop.classList.add("hidden");
+    bodyEl.innerHTML = "";
+  };
+
+  backBtn.addEventListener("click", close);
 
   backdrop.addEventListener("click", (e) => {
     if (e.target === backdrop) {
-      backdrop.classList.remove("open");
+      close();
     }
   });
-}
 
+  // Global helper som marketplace/listings.js kan kalla
+  window.openMarketDetails = function (listing) {
+    // listing kan vara sträng eller objekt – vi hanterar båda
+    if (!listing) {
+      titleEl.textContent = "Listing";
+      bodyEl.innerHTML = `<p class="section-sub">No data for this listing (mock).</p>`;
+    } else if (typeof listing === "string") {
+      titleEl.textContent = listing;
+      bodyEl.innerHTML = `<p class="section-sub">Listing details coming soon (mock).</p>`;
+    } else {
+      const name = listing.title || listing.name || "Listing";
+      const desc =
+        listing.description ||
+        listing.desc ||
+        "SpawnEngine market listing (mock details).";
+      const price =
+        listing.priceEth || listing.price || listing.priceUsd || null;
+      const meta = listing.meta || listing.participants || "";
+
+      titleEl.textContent = name;
+      bodyEl.innerHTML = `
+        <div class="market-card">
+          <h4>${name}</h4>
+          <p class="market-card-desc">${desc}</p>
+          <div class="market-card-footer">
+            ${
+              price
+                ? `<span class="market-card-price">${price}</span>`
+                : ""
+            }
+            ${
+              meta
+                ? `<span class="market-card-participants">${meta}</span>`
+                : ""
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    // visa sheet
+    backdrop.classList.remove("hidden");
+  };
+}
 // ---------- MODULE INTEGRATION (FÖRBÄTTRAD) ----------
 
 function initModules() {
