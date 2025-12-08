@@ -1759,19 +1759,36 @@ button {
 
 /* --- Bottom Nav (Översyrer äldre stil) --- */
 .bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    max-width: none; /* Översyras för att täcka hela bredden */
-    transform: none;
-    display: flex; justify-content: space-around;
-    background: #0f1624; border-top: 1px solid var(--color-border);
-    padding: 8px 0; z-index: 100;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 100%;
+  max-width: 480px;                /* centrerad “telefonbredd” likt onsdag */
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0));
+  background: #0f1624;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  gap: 6px;
+  z-index: 100;
 }
-.nav-btn {
-    flex: 1; padding: 10px 0; border: none; background: transparent; 
-    color: var(--color-text-subtle); cursor: pointer; font-size: 12px;
-}
-.nav-btn-active { color: var(--color-accent-cyan); font-weight: 600; }
 
+.nav-btn {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  background: rgba(14, 18, 40, 0.9);
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: 999px;
+}
+
+.nav-btn-active {
+  background: linear-gradient(135deg, #3cf6ff, #b9ff7a);
+  color: #050510;
+  font-weight: 600;
+}
 /* --- Sheets (Settings, Account) (Översyrer äldre stil) --- */
 .settings-backdrop,
 .sheet-backdrop {
