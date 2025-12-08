@@ -840,16 +840,17 @@ async function saveRoleOnchain(roles) {
   return true;
 }
 
-// Öppna sheet bara om ingen roll är vald än
 function showRoleSheetIfNeeded() {
   const backdrop = document.getElementById("role-backdrop");
   if (!backdrop) return;
   const roles = loadStoredRoles();
 
   if (!roles.length) {
+    // VISA SHEET
     backdrop.classList.remove("hidden");
     backdrop.classList.add("open");
   } else {
+    // DÖLJ SHEET
     backdrop.classList.add("hidden");
     backdrop.classList.remove("open");
   }
