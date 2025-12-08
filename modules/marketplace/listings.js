@@ -99,8 +99,9 @@ function renderListings() {
  * Simulerar hantering av detaljknappar.
  */
 function handleMarketActions() {
-    // Lägger till en lyssnare för alla detaljknappar (använder event bubbling)
-    document.querySelector('.tab-panel#tab-panel-market')?.addEventListener('click', (e) => {
+    // KORRIGERING: Ändrad från #tab-panel-market till #tab-market
+    // för att matcha ID:t i huvudsaklig HTML.
+    document.querySelector('.tab-panel#tab-market')?.addEventListener('click', (e) => {
         if (e.target.dataset.action === 'view-details') {
             const cardElement = e.target.closest('.market-card');
             const listingId = cardElement?.dataset.id;
@@ -108,7 +109,12 @@ function handleMarketActions() {
             if (listingId) {
                 const listing = MOCK_LISTINGS.find(l => l.id == listingId);
                 if (listing) {
-                    showToast(`Simulating details view for: ${listing.title}`, 'info');
+                    // showToast måste vara definierad i app.js och tillgänglig globalt
+                    if (typeof showToast === 'function') {
+                        showToast(`Simulating details view for: ${listing.title}`, 'info');
+                    } else {
+                        console.log(`Simulating details view for: ${listing.title}`);
+                    }
                     // Här skulle du normalt öppna en detaljsida/sheet
                 }
             }
@@ -117,7 +123,9 @@ function handleMarketActions() {
 
     // Buy SPN-knappen
     document.getElementById('btn-buy-spn')?.addEventListener('click', () => {
-        showToast("Simulating redirect to DEX / Swap interface.", 'info');
+        if (typeof showToast === 'function') {
+            showToast("Simulating redirect to DEX / Swap interface.", 'info');
+        }
     });
 }
 
@@ -126,5 +134,5 @@ window.initMarketplace = function() {
     renderListings();
     handleMarketActions();
 }
-
-// Kör initMarketplace() i app.js efter DOMContentLoaded.
+// Kör initMarketplace() i app.js efter DOMContentLoaded. 
+// Denna filen behöver inte ha en egen DOMContentLoaded-lyssnare eftersom den anropas från app.js.
