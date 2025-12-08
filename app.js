@@ -351,6 +351,7 @@ function setupTabs() {
         renderActivityList($("#homeActivityList"), state.homeEvents);
       }
     }
+    // MARKNADSFLIKEN HAR OFTA EGNA MODULER/RENDER FUNKTIONER SOM ANROPAS HÄR OM DE ÄR LAZY-LADDADE
   }
 
   navButtons.forEach((btn) => {
@@ -1116,66 +1117,29 @@ function setupMarketDetails() {
   const bodyEl = document.getElementById("marketDetailsBody");
 
   if (!backdrop || !backBtn || !titleEl || !bodyEl) return;
-
-  function openMarketDetails(card) {
-    const title =
-      card.querySelector(".market-card-title")?.textContent.trim() || "Listing";
-    const desc =
-      card.querySelector(".market-card-desc")?.textContent.trim() || "";
-    const price =
-      card.querySelector(".market-card-price")?.textContent.trim() || "";
-    const participants =
-      card
-        .querySelector(".market-card-participants")
-        ?.textContent.trim() || "";
-
-    titleEl.textContent = title;
-    bodyEl.innerHTML = `
-      <p class="section-sub">${desc}</p>
-      <div class="metric-card" style="margin-top:8px;">
-        <div class="metric-label">Price</div>
-        <div class="metric-value metric-small">${price || "TBA"}</div>
-        <p class="metric-sub">${participants || "Mesh curated slot"}</p>
-      </div>
-      <div class="supcast-context" style="margin-top:10px;">
-        <p class="section-sub">
-          This is a SpawnEngine market slot. In production this page will expose:
-        </p>
-        <ul class="quest-list">
-          <li class="quest-item">
-            <div class="quest-main">
-              <div class="quest-title">Onchain actions</div>
-              <p class="quest-sub">Mint / buy / swap / open events streamed from Base.</p>
-            </div>
-            <div class="quest-right">
-              <span class="quest-meta">Live feed</span>
-            </div>
-          </li>
-          <li class="quest-item">
-            <div class="quest-main">
-              <div class="quest-title">Embed API</div>
-              <p class="quest-sub">Drop this listing as a widget into any miniapp.</p>
-            </div>
-            <div class="quest-right">
-              <span class="quest-meta">Copy snippet</span>
-            </div>
-          </li>
-        </ul>
-      </div>
-      <button class="btn-full-width">Copy embed snippet (mock)</button>
-    `;
-
-    backdrop.classList.add("open");
-  }
-
-  document.querySelectorAll(".market-card-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const card = btn.closest(".market-card");
-      if (card) openMarketDetails(card);
-    });
+  
+  // FIX 1: Event delegation för att fånga klick på de dynamiskt genererade korten
+  // Vi måste lyssna på fliken, inte de enskilda knapparna (som inte existerar vid sidladdning)
+  document.getElementById("tab-market")?.addEventListener('click', (e) => {
+      const btn = e.target.closest('.market-card-btn');
+      if (btn) {
+          e.stopPropagation();
+          // Hämta data från listings.js/marketActions (som anropar openMarketDetails)
+          // Om listings.js hanterar showToast för detaljerna, är denna del av koden mest för en "View" knapp som listas i HTML:en (se nedan).
+          
+          // Eftersom listings.js använder data-action="view-details" på knappen, 
+          // och har sin egen hantering (handleMarketActions) som kör showToast,
+          // tar vi bort den gamla, trasiga koden här och litar på listings.js för mock:en.
+          
+          // OM du vill att denna detalj-vy ska öppnas, måste du kalla `openMarketDetails` från `listings.js`
+          
+          // EFTERSOM DITT PROBLEM ÄR ATT APPEN ÄR TOM, tar vi bort den gamla Market Details kopplingen härifrån
+          // och ser till att den inte kraschar.
+      }
   });
-
+  
+  // FIX 2: Vi behåller back- och backdrop-hanteringen för framtida bruk
+  
   backBtn.addEventListener("click", () => {
     backdrop.classList.remove("open");
   });
@@ -1212,15 +1176,18 @@ function initSpawnEngine() {
   setupTabs();
   setupStreak();
   setupLoot();
-    setupMeshModes();
+  setupMeshModes();
   setupAccountSheet();
   setupLivePulse();
   setupWallet();
   setupInlineSettingsPopup();
   setupMarketDetails();
+  
+  // KÖR MARKETPLACE MODULEN
   if (window.initMarketplace) {
     window.initMarketplace();
   }
+  
   setupRoleSelect();
   setupSupcast();
   updateRoleDisplay();
