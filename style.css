@@ -788,41 +788,6 @@ button {
   display: block;
 }
 
-/* BOTTOM NAV */
-
-.bottom-nav {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 0;
-  max-width: 480px;
-  width: 100%;
-  z-index: 3;
-  padding: 6px 10px calc(6px + env(safe-area-inset-bottom, 0));
-  background: linear-gradient(to top, rgba(5, 6, 18, 0.98), rgba(5, 6, 18, 0.9));
-  border-top: 1px solid rgba(136, 176, 255, 0.6);
-  display: flex;
-  justify-content: space-between;
-  gap: 6px;
-}
-
-.nav-btn {
-  flex: 1;
-  border-radius: 999px;
-  padding: 6px 6px;
-  font-size: 11px;
-  color: #a8b4ff;
-  background: rgba(14, 18, 40, 0.9);
-  border: 1px solid transparent;
-  cursor: pointer;
-}
-
-.nav-btn-active {
-  background: linear-gradient(135deg, #3cf6ff, #b9ff7a);
-  color: #050510;
-  border-color: rgba(168, 240, 255, 0.9);
-}
-
 /* SHEETS (ACCOUNT + MARKET + ROLE) */
 
 .sheet-backdrop {
