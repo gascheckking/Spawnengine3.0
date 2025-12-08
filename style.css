@@ -1889,3 +1889,6 @@ button {
     opacity: 1;
     transform: translateX(-50%) translateY(-10px);
 }
+.sheet-backdrop.hidden {
+  display: none !important;
+}
