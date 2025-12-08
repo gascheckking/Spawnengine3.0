@@ -845,8 +845,13 @@ function showRoleSheetIfNeeded() {
   const backdrop = document.getElementById("role-backdrop");
   if (!backdrop) return;
   const roles = loadStoredRoles();
+
   if (!roles.length) {
+    backdrop.classList.remove("hidden");
     backdrop.classList.add("open");
+  } else {
+    backdrop.classList.add("hidden");
+    backdrop.classList.remove("open");
   }
 }
 
@@ -869,9 +874,12 @@ function setupRoleSelect() {
   });
 
   if (!selectedRoles.size) {
+    backdrop.classList.remove("hidden");
     backdrop.classList.add("open");
     saveBtn.disabled = true;
   } else {
+    backdrop.classList.add("hidden");
+    backdrop.classList.remove("open");
     saveBtn.disabled = false;
   }
 
@@ -903,6 +911,8 @@ function setupRoleSelect() {
       localStorage.removeItem("spawnengine_role");
 
       backdrop.classList.remove("open");
+      backdrop.classList.add("hidden");
+
       showToast("Roles updated and synced on-chain!");
       updateRoleDisplay();
     }
@@ -910,11 +920,13 @@ function setupRoleSelect() {
 
   closeBtn.addEventListener("click", () => {
     backdrop.classList.remove("open");
+    backdrop.classList.add("hidden");
   });
 
   backdrop.addEventListener("click", (e) => {
     if (e.target === backdrop) {
       backdrop.classList.remove("open");
+      backdrop.classList.add("hidden");
     }
   });
 }
