@@ -568,10 +568,12 @@ function setupAccountSheet() {
   function open() {
     sheet.setAttribute("aria-hidden", "false");
     sheet.classList.add("open");
+    sheet.classList.remove("hidden"); // VISA SHEET
   }
   function close() {
     sheet.setAttribute("aria-hidden", "true");
     sheet.classList.remove("open");
+    sheet.classList.add("hidden"); // GÖM SHEET
   }
 
   btnAccount.addEventListener("click", open);
