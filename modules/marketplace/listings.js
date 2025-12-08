@@ -1,7 +1,7 @@
 // modules/marketplace/listings.js
 
 /**
- * Mock-data för olika marknadslistningar.
+ * Mock-data för marknadslistningar.
  */
 const MOCK_LISTINGS = [
   {
@@ -27,7 +27,7 @@ const MOCK_LISTINGS = [
   {
     id: 3,
     title: "Builder Role Token",
-    description: "Unlocks the 'Builder' role and development access.",
+    description: "Unlocks the 'Builder' role with development tools.",
     icon: "🛠️",
     price: "0.08 ETH",
     participants: 45,
@@ -57,8 +57,7 @@ const MOCK_LISTINGS = [
 ];
 
 /**
- * Genererar HTML för ett enskilt marknadskort.
- * Matchar dina .market-card-styles i style.css
+ * HTML-template för ett kort.
  */
 function createListingCard(listing, isTrending = false) {
   const cardClass = isTrending
@@ -70,11 +69,13 @@ function createListingCard(listing, isTrending = false) {
       <div class="market-card-icon">${listing.icon}</div>
       <h4>${listing.title}</h4>
       <p class="market-card-desc">${listing.description}</p>
+
       <div class="market-card-footer">
         <span class="market-card-price">${listing.price}</span>
-        <span class="market-card-participants">${listing.participants} joined</span>
+        <span class="market-card-participants">${listing.participants} users</span>
+
         <button class="link-btn market-card-btn" data-action="view-details">
-          View
+          Details
         </button>
       </div>
     </article>
@@ -82,14 +83,15 @@ function createListingCard(listing, isTrending = false) {
 }
 
 /**
- * Renderar trending och alla slots in i dina containers.
- * HTML måste ha:
- *  - <div id="marketTrendingRow" class="market-trending-row"></div>
- *  - <div id="marketGrid" class="market-grid"></div>
+ * Renderar trending + alla listningar.
+ * Matchar din HTML exakt:
+ *
+ *  <div id="marketTrendingRow"></div>
+ *  <div id="marketAllGrid"></div>
  */
 function renderListings() {
   const trendingRow = document.getElementById("marketTrendingRow");
-  const allGrid = document.getElementById("marketGrid");
+  const allGrid = document.getElementById("marketAllGrid");
 
   if (trendingRow) {
     trendingRow.innerHTML = MOCK_LISTINGS
@@ -106,52 +108,47 @@ function renderListings() {
 }
 
 /**
- * Click-logik för “Details”-knapparna.
- * Här kan du anropa din Market Details Sheet (marketDetailsBackdrop).
+ * Hanterar “Details”.
  */
 function handleMarketActions() {
   const marketPanel = document.querySelector(".tab-panel#tab-market");
   if (!marketPanel) return;
 
   marketPanel.addEventListener("click", (e) => {
-    const target = e.target;
-    if (!target || target.dataset.action !== "view-details") return;
+    if (e.target.dataset.action !== "view-details") return;
 
-    const cardElement = target.closest(".market-card");
-    const listingId = cardElement?.dataset.id;
-    if (!listingId) return;
+    const card = e.target.closest(".market-card");
+    const id = card?.dataset.id;
+    if (!id) return;
 
-    const listing = MOCK_LISTINGS.find((l) => String(l.id) === String(listingId));
+    const listing = MOCK_LISTINGS.find((l) => String(l.id) === id);
     if (!listing) return;
 
-    // Om du har en riktig details-sheet-funktion, kalla den här:
     if (typeof openMarketDetails === "function") {
       openMarketDetails(listing);
       return;
     }
 
-    // Fallback: bara en toast/logg
     if (typeof showToast === "function") {
-      showToast(`Simulating details view for: ${listing.title}`);
+      showToast(`Viewing: ${listing.title}`);
     } else {
-      console.log(`Simulating details view for: ${listing.title}`);
+      console.log(`Viewing: ${listing.title}`);
     }
   });
 
-  // Exempel för en "buy spn"-knapp om du har en sådan i HTML
   const buyBtn = document.getElementById("btn-buy-spn");
   if (buyBtn) {
     buyBtn.addEventListener("click", () => {
       if (typeof showToast === "function") {
-        showToast("Simulating redirect to DEX / Swap interface.");
-      } else {
-        console.log("Simulating redirect to DEX / Swap interface.");
+        showToast("Simulating DEX swap for SPN.");
       }
     });
   }
 }
 
-// Exponera init-funktion för app.js
+/**
+ * Init exporteras globalt så app.js kan anropa den.
+ */
 window.initMarketplace = function () {
   renderListings();
   handleMarketActions();
