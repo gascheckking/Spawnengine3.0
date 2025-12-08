@@ -1,4 +1,27 @@
 /* style.css */
+:root {
+  /* Huvudfärger */
+  --color-bg-dark: #050715;          /* Nästan svart bakgrund */
+  --color-bg-mid: #0d1226;           /* Bakgrund för sheets/modaler */
+  --color-bg-card: #0f1624;          /* Kortbakgrund */
+  --color-border: rgba(120, 160, 255, 0.15); /* Ljusblå kant */
+  
+  /* Textfärger */
+  --color-text-light: #f1f3ff;        /* Huvudtext */
+  --color-text-subtle: #a8b3ff;       /* Subtil text/metadata */
+  
+  /* Accentfärger */
+  --color-accent-cyan: #3cf6ff;      /* Primär accent (Cyan/Blå) */
+  --color-accent-green: #79ffb6;     /* Sekundär accent (Grön) */
+  --color-accent-red: #ff617d;       /* Varning/Lab-resultat */
+}
+
+/* Lägg sedan till resten av din befintliga style.css nedanför */
+/* RESET / BASE */
+
+*,
+*::before,
+/* ... resten av style.css ... */
 
 /* RESET / BASE */
 
