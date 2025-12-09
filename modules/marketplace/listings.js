@@ -84,10 +84,6 @@ function createListingCard(listing, isTrending = false) {
 
 /**
  * Renderar trending + alla listningar.
- * Matchar din HTML exakt:
- *
- *  <div id="marketTrendingRow"></div>
- *  <div id="marketAllGrid"></div>
  */
 function renderListings() {
   const trendingRow = document.getElementById("marketTrendingRow");
