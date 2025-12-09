@@ -1,5 +1,6 @@
 // app.js — SpawnEngine3.0 · Mesh HUD v0.4 (Modulkompatibel)
-// Förbättrad version med korrigerad rollmappning och modulhantering.
+// Förbättrad version med korrigerad rollmappning, modulhantering,
+// fungerande Loot-pack-open och Market-details-koppling.
 
 // ---------- ONCHAIN CONFIG ----------
 
@@ -319,10 +320,7 @@ function setupTabs() {
     });
 
     panels.forEach((panel) => {
-      panel.classList.toggle(
-        "tab-panel-active",
-        panel.id === `tab-${target}`
-      );
+      panel.classList.toggle("tab-panel-active", panel.id === `tab-${target}`);
     });
 
     if (target === "home") {
@@ -467,7 +465,65 @@ function setupLoot() {
     });
   });
 
-  // Pack-open mock borttagen – hanteras av PackWidget-modul (reveal.js).
+  // PACK-OPEN MOCK (Simulate pack open-knappen i Loot)
+  const packBtn = $("#btn-open-pack");
+  if (packBtn) {
+    packBtn.addEventListener("click", () => {
+      // mock data för drags
+      const wallet = spawnAddress || "demo-wallet";
+      const priceEth = 0.02; // mock kostnad
+      const gainedFragments = 2 + Math.floor(Math.random() * 4); // 2–5
+      const gainedShards = Math.random() < 0.3 ? 1 : 0;
+      const xpGain = 30 + Math.floor(Math.random() * 30); // 30–59 XP
+
+      state.fragments += gainedFragments;
+      state.shards += gainedShards;
+      state.xp += xpGain;
+
+      registerPackOpen("starter_mesh_pack", wallet, priceEth);
+
+      const summary = `Starter mesh pack → +${gainedFragments} Fragments${
+        gainedShards ? `, +${gainedShards} Shard` : ""
+      }`;
+
+      pushEvent(state.lootEvents, {
+        kind: "pack",
+        label: "PACK",
+        text: summary,
+        time: formatTime(),
+        meta: `+${xpGain} XP · ${priceEth} ETH`,
+      });
+
+      pushEvent(state.homeEvents, {
+        kind: "pack",
+        label: "PACK",
+        text: "Pack open synced into your mesh orbit.",
+        time: formatTime(),
+        meta: `+${xpGain} XP`,
+      });
+
+      // koppla till quest "q-pack" om den inte är klar
+      const q = state.quests.find((q) => q.id === "q-pack");
+      if (q && !q.completed) {
+        q.completed = true;
+        state.xp += q.reward;
+        pushEvent(state.homeEvents, {
+          kind: "quest",
+          label: "QUEST",
+          text: "Quest completed: Open a starter mesh pack",
+          time: formatTime(),
+          meta: `+${q.reward} XP`,
+        });
+      }
+
+      renderMeshSnapshot();
+      renderInventory();
+      renderActivityList($("#lootEvents"), state.lootEvents);
+      renderActivityList($("#homeActivityList"), state.homeEvents);
+      renderQuests();
+      showToast("Simulated pack open · loot & XP updated");
+    });
+  }
 
   const synthBtn = $("#btn-simulate-synth");
   const labResult = $("#labResult");
@@ -516,6 +572,8 @@ function setupLoot() {
 function setupMeshModes() {
   const buttons = $$("[data-mesh-mode]");
   const copyEl = $("#meshModeCopy");
+
+  if (!buttons.length) return; // HTML har inte alltid dessa ännu
 
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -738,8 +796,10 @@ async function connect() {
     updateWalletUI();
     await loadOnchainData(updateWalletUI);
 
-    window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
-    window.ethereum.on("accountsChanged", handleAccountsChanged);
+    if (window.ethereum.removeListener) {
+      window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+      window.ethereum.on("accountsChanged", handleAccountsChanged);
+    }
 
     showRoleSheetIfNeeded();
   } catch (e) {
@@ -769,7 +829,6 @@ async function handleAccountsChanged(accounts) {
 async function loadOnchainData(updateWalletUIFn) {
   if (!spawnAddress) return;
   try {
-    // säkerställ att ethers finns innan vi använder den
     if (typeof ethers === "undefined") {
       console.error("Ethers.js library not loaded.");
       return;
@@ -846,11 +905,9 @@ function showRoleSheetIfNeeded() {
   const roles = loadStoredRoles();
 
   if (!roles.length) {
-    // VISA SHEET
     backdrop.classList.remove("hidden");
     backdrop.classList.add("open");
   } else {
-    // DÖLJ SHEET
     backdrop.classList.add("hidden");
     backdrop.classList.remove("open");
   }
@@ -870,7 +927,7 @@ function setupRoleSelect() {
   cards.forEach((card) => {
     const role = card.getAttribute("data-role");
     if (role && selectedRoles.has(role)) {
-      card.classList.add("selected");
+      card.classList.add("active"); // synka med CSS .role-card.active
     }
   });
 
@@ -891,10 +948,10 @@ function setupRoleSelect() {
 
       if (selectedRoles.has(role)) {
         selectedRoles.delete(role);
-        card.classList.remove("selected");
+        card.classList.remove("active");
       } else {
         selectedRoles.add(role);
-        card.classList.add("selected");
+        card.classList.add("active");
       }
 
       saveBtn.disabled = selectedRoles.size === 0;
@@ -933,8 +990,8 @@ function setupRoleSelect() {
 }
 
 /**
- * UPPDATERAD FUNKTION: Mappar de faktiska rollnycklarna (hunter, dev, etc.)
- * som används i HTML/modulerna.
+ * Mappar de faktiska rollnycklarna (hunter, dev, etc.)
+ * och uppdaterar HUD-chipet.
  */
 function updateRoleDisplay() {
   const roleIconSpan = document.getElementById("meshRoleIcon");
@@ -1151,7 +1208,6 @@ function setupMarketDetails() {
 
   // Global helper som marketplace/listings.js kan kalla
   window.openMarketDetails = function (listing) {
-    // listing kan vara sträng eller objekt – vi hanterar båda
     if (!listing) {
       titleEl.textContent = "Listing";
       bodyEl.innerHTML = `<p class="section-sub">No data for this listing (mock).</p>`;
@@ -1189,10 +1245,36 @@ function setupMarketDetails() {
       `;
     }
 
-    // visa sheet
     backdrop.classList.remove("hidden");
   };
+
+  // KOPPLA ALLA .market-card-btn I INDEX TILL DETAILS-SHEETEN
+  const marketButtons = $$(".market-card-btn");
+  marketButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".market-card");
+      if (!card) {
+        window.openMarketDetails("Listing");
+        return;
+      }
+
+      const titleElCard = card.querySelector("h4");
+      const descElCard = card.querySelector(".market-card-desc");
+      const priceElCard = card.querySelector(".market-card-price");
+      const metaElCard = card.querySelector(".market-card-participants");
+
+      const listing = {
+        title: titleElCard ? titleElCard.textContent : "Listing",
+        description: descElCard ? descElCard.textContent : "",
+        price: priceElCard ? priceElCard.textContent : "",
+        meta: metaElCard ? metaElCard.textContent : "",
+      };
+
+      window.openMarketDetails(listing);
+    });
+  });
 }
+
 // ---------- MODULE INTEGRATION (FÖRBÄTTRAD) ----------
 
 function initModules() {
@@ -1224,12 +1306,12 @@ function initSpawnEngine() {
   setupWallet();
   setupInlineSettingsPopup();
   setupMarketDetails();
-  
-  // KÖR MARKETPLACE MODULEN
+
+  // KÖR MARKETPLACE MODULEN OM DEN FINNS
   if (window.initMarketplace) {
     window.initMarketplace();
   }
-  
+
   setupRoleSelect();
   setupSupcast();
   updateRoleDisplay();
@@ -1253,7 +1335,6 @@ if (document.readyState === "loading") {
     initSpawnEngine();
   });
 } else {
-  // Ta bort eventuella dubletter av bottom-nav
   const navs = document.querySelectorAll(".bottom-nav");
   if (navs.length > 1) {
     navs.forEach((nav, index) => {
