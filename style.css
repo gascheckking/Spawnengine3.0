@@ -14,6 +14,7 @@
   --color-accent-cyan: #3cf6ff;      /* Primär accent (Cyan/Blå) */
   --color-accent-green: #79ffb6;     /* Sekundär accent (Grön) */
   --color-accent-red: #ff617d;       /* Varning/Lab-resultat */
+  --color-accent-dark: #5b6cff;      /* Dämpad accent (för inline-styles) */
 }
 
 /* RESET / BASE */
@@ -28,6 +29,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  overflow-x: hidden; /* Dödar sidscroll åt höger */
 }
 
 body.app-body {
@@ -79,6 +81,7 @@ body.app-body {
   position: relative;
   z-index: 2;
   max-width: 480px;
+  width: 100%;
   margin: 0 auto;
   padding: 16px 16px calc(84px + env(safe-area-inset-bottom, 0));
   min-height: 100vh;
@@ -87,6 +90,8 @@ body.app-body {
 /* CARDS – GEMINI HUD LOOK */
 
 .hud-card {
+  width: 100%;
+  margin: 0 auto;
   background: radial-gradient(circle at top left, #14182c 0%, #090b16 55%, #050712 100%);
   border-radius: 18px;
   padding: 14px 14px 16px;
@@ -109,7 +114,7 @@ body.app-body {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .avatar-chip {
@@ -198,7 +203,7 @@ body.app-body {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .hud-tags {
@@ -365,7 +370,8 @@ body.app-body {
   margin-bottom: 10px;
 }
 
-.section-header h2 {
+.section-header h2,
+.section-header h3 {
   font-size: 14px;
   margin: 0 0 3px;
 }
@@ -1337,6 +1343,7 @@ button {
   gap: 8px;
   margin: 6px 0 10px;
   font-size: 11px;
+  flex-wrap: wrap;
 }
 
 .wallet-strip .btn-outline {
@@ -1380,168 +1387,6 @@ button {
   z-index: 99999;
 }
 
-.settings-sheet {
-  width: 100%;
-  max-width: 520px;
-  max-height: 80vh;
-  background: #0b0f1f;
-  border-radius: 24px 24px 0 0;
-  padding: 20px 18px 18px;
-  overflow-y: auto;
-  box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-
-.settings-title {
-  font-size: 14px;
-}
-
-.settings-close-btn {
-  font-size: 20px;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-
-.settings-section {
-  margin-top: 18px;
-}
-
-.settings-section h3 {
-  font-size: 14px;
-  opacity: 0.75;
-  margin-bottom: 8px;
-}
-
-.settings-card-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.settings-card {
-  width: calc(50% - 10px);
-  background: #151c33;
-  border: 1px solid #2b3252;
-  border-radius: 12px;
-  padding: 10px;
-  min-height: 100px;
-  cursor: default;
-}
-
-.settings-card.small {
-  padding: 8px;
-  min-height: 80px;
-}
-
-.settings-card[data-builder-action] {
-  cursor: pointer;
-  transition: transform 0.08s ease-out, box-shadow 0.08s ease-out,
-    border-color 0.08s ease-out;
-}
-
-.settings-card[data-builder-action]:active {
-  transform: scale(0.97);
-  box-shadow: 0 0 0 1px rgba(60, 246, 255, 0.4);
-  border-color: rgba(60, 246, 255, 0.9);
-}
-
-.label {
-  font-size: 10px;
-  opacity: 0.6;
-}
-
-.main {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.sub {
-  font-size: 12px;
-  opacity: 0.7;
-}
-
-.bar {
-  width: 100%;
-  height: 5px;
-  background: #20263d;
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 6px 0;
-}
-
-.bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #51f6ff, #9a7bff, #ff61f2);
-}
-
-.settings-list {
-  list-style: none;
-  padding: 0;
-}
-
-.settings-list li {
-  padding: 10px 0;
-  border-bottom: 1px solid #2a314b;
-}
-
-.settings-small-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.settings-small-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #22273a;
-}
-
-.settings-small-item:last-child {
-  border-bottom: none;
-}
-
-.s-left {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.s-left strong {
-  font-size: 12px;
-}
-
-.s-sub {
-  font-size: 10px;
-  opacity: 0.65;
-}
-
-.chip {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 10px;
-  margin-top: 4px;
-}
-
-.green {
-  background: #0f5132;
-  color: #6ee7b7;
-}
-
-.amber {
-  background: #7c5800;
-  color: #fcd34d;
-}
-
-.purple {
-  background: #5b2d7d;
-  color: #c084fc;
-}
-
 /* --- START NEW MESH HUD v0.4 STYLES (KORRIGERADE/ÖVERSTYRDA STILAR) --- */
 
 /* --- APP Shell och Layouter --- */
@@ -1553,12 +1398,11 @@ button {
   padding-bottom: 70px;
 }
 .hud-card {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 100%;
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
   border-radius: 16px;
-  padding: 24px;
+  padding: 16px 14px 18px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
 }
 
@@ -1568,7 +1412,14 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+}
+
+.hud-top-row {
+  margin-bottom: 6px;
+}
+
+.hud-header-row {
+  margin-bottom: 10px;
 }
 
 .avatar-chip {
@@ -1578,7 +1429,7 @@ button {
   border: none;
   cursor: pointer;
   color: var(--color-text-light);
-  padding: 5px;
+  padding: 4px 6px;
   border-radius: 999px;
   transition: background 0.2s;
 }
@@ -1611,7 +1462,7 @@ button {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 5px;
+  padding: 4px;
   border-radius: 8px;
 }
 
@@ -1677,31 +1528,31 @@ button {
 .wallet-strip {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-top: 15px;
-  margin-bottom: 20px;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 12px;
 }
 
 .wallet-status {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--color-text-subtle);
 }
 
 .wallet-address {
-  font-size: 13px;
+  font-size: 12px;
   font-family: monospace;
 }
 
 .wallet-balance {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--color-accent-cyan);
   font-weight: 600;
 }
 
 /* Buttons & Custom Colors overrides */
 .btn-outline {
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
   border: 1px solid var(--color-accent-cyan);
   background: transparent;
   color: var(--color-accent-cyan);
@@ -1718,7 +1569,7 @@ button {
 .btn-full-width {
   width: 100%;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: 999px;
   border: none;
   cursor: pointer;
 }
@@ -1734,25 +1585,25 @@ button {
   cursor: not-allowed;
 }
 
-/* Streak Row (överskriv ny, inne i Home-tabben) */
-.streak-row {
+/* Streak Row (ny kompakt HUD-stil inne i Home-tabben) */
+#tab-home .streak-row {
   display: flex;
-  gap: 20px;
+  gap: 16px;
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   background: #0f1624;
   border-radius: 12px;
-  padding: 15px;
+  padding: 12px;
   border: 1px solid rgba(120, 160, 255, 0.1);
 }
 
-.streak-wheel {
-  width: 80px;
-  height: 80px;
+#tab-home .streak-wheel {
+  width: 72px;
+  height: 72px;
   flex-shrink: 0;
 }
 
-.streak-circle {
+#tab-home .streak-circle {
   width: 100%;
   height: 100%;
   border-radius: 50%;
@@ -1764,36 +1615,36 @@ button {
   align-items: center;
 }
 
-.streak-day-label {
+#tab-home .streak-day-label {
   font-size: 9px;
   color: var(--color-text-subtle);
   line-height: 1;
 }
 
-.streak-day-value {
-  font-size: 24px;
+#tab-home .streak-day-value {
+  font-size: 22px;
   font-weight: 800;
   color: var(--color-accent-cyan);
   line-height: 1.1;
 }
 
-.streak-copy {
+#tab-home .streak-copy {
   flex-grow: 1;
 }
 
-.streak-title {
-  font-size: 16px;
+#tab-home .streak-title {
+  font-size: 14px;
   font-weight: 600;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
-.streak-sub {
-  font-size: 13px;
+#tab-home .streak-sub {
+  font-size: 12px;
   color: var(--color-text-subtle);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
-.streak-bar {
+#tab-home .streak-bar {
   height: 6px;
   background: #0f1624;
   border-radius: 3px;
@@ -1801,7 +1652,7 @@ button {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.streak-bar-fill {
+#tab-home .streak-bar-fill {
   height: 100%;
   background: linear-gradient(90deg, #79ffb6, #3cf6ff);
   transition: width 0.5s ease-out;
@@ -1873,12 +1724,12 @@ button {
   background: #0f1624;
   border: 1px solid rgba(120, 160, 255, 0.15);
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .pack-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 5px;
 }
@@ -1959,13 +1810,13 @@ button {
 /* SupCast/Support overrides */
 .supcast-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
-@media (max-width: 600px) {
+@media (min-width: 600px) {
   .supcast-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -1984,11 +1835,11 @@ button {
 .supcast-form {
   background: #0f1624;
   border-radius: 12px;
-  padding: 20px;
+  padding: 12px;
 }
 
 .supcast-field {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .field-label {
@@ -2052,8 +1903,8 @@ button {
 }
 
 .supcast-profile {
-  margin-top: 20px;
-  padding: 15px;
+  margin-top: 12px;
+  padding: 12px;
   background: #0f1624;
   border-radius: 12px;
 }
@@ -2062,22 +1913,26 @@ button {
 .top-nav {
   display: flex;
   flex-wrap: nowrap;
-  gap: 6px;
+  gap: 4px;
   margin-top: 10px;
   margin-bottom: 6px;
   background: #0f1624;
   border-radius: 999px;
   padding: 4px;
   border: 1px solid rgba(120, 160, 255, 0.35);
+  width: 100%;
+  overflow: hidden;
 }
 
 .top-nav .nav-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   padding: 6px 0;
   font-size: 11px;
+  min-width: 0;
+  flex: 1 1 0;
 }
 
 .nav-icon {
@@ -2134,7 +1989,7 @@ button {
   z-index: 1000;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -2158,30 +2013,26 @@ button {
 .settings-sheet,
 .sheet {
   background: var(--color-bg-mid);
-  border-radius: 16px;
-  width: 90%;
-  max-width: 600px;
+  border-radius: 18px 18px 0 0;
+  width: 100%;
+  max-width: 480px;
   max-height: 90vh;
   overflow-y: auto;
-  padding: 24px;
+  padding: 18px 16px 16px;
   transform: translateY(0);
   transition: transform 0.3s ease-out;
-}
-
-.settings-backdrop.hidden .settings-sheet,
-.sheet-backdrop.hidden .sheet {
-  transform: translateY(100vh);
+  margin: 0 auto;
 }
 
 .settings-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .settings-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
 }
 
@@ -2194,8 +2045,8 @@ button {
 }
 
 .settings-section {
-  margin-bottom: 25px;
-  padding-bottom: 15px;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
   border-bottom: 1px solid rgba(120, 160, 255, 0.1);
 }
 
@@ -2203,14 +2054,31 @@ button {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .settings-card {
   background: #0f1624;
   border-radius: 10px;
-  padding: 12px;
+  padding: 10px;
   border: 1px solid rgba(120, 160, 255, 0.05);
+}
+
+.settings-card.small {
+  padding: 8px;
+  min-height: 80px;
+}
+
+.settings-card[data-builder-action] {
+  cursor: pointer;
+  transition: transform 0.08s ease-out, box-shadow 0.08s ease-out,
+    border-color 0.08s ease-out;
+}
+
+.settings-card[data-builder-action]:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 0 1px rgba(60, 246, 255, 0.4);
+  border-color: rgba(60, 246, 255, 0.9);
 }
 
 .settings-card .label {
@@ -2220,7 +2088,7 @@ button {
 }
 
 .settings-card .main {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   margin-bottom: 2px;
 }
@@ -2230,16 +2098,30 @@ button {
   color: var(--color-text-subtle);
 }
 
+.bar {
+  width: 100%;
+  height: 5px;
+  background: #20263d;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 6px 0;
+}
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #51f6ff, #9a7bff, #ff61f2);
+}
+
 .settings-list {
   list-style: none;
-  margin-top: 15px;
+  margin-top: 10px;
   padding: 0;
 }
 
 .settings-list li {
   padding: 8px 0;
   border-bottom: 1px solid rgba(120, 160, 255, 0.05);
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
 }
 
@@ -2247,7 +2129,7 @@ button {
 .sheet-avatar-row {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .avatar-meta {
@@ -2256,7 +2138,7 @@ button {
 }
 
 .avatar-meta .avatar-handle {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
 }
 
@@ -2268,25 +2150,8 @@ button {
 .sheet-section-label {
   font-size: 11px;
   color: var(--color-accent-cyan);
-  margin: 15px 0 5px;
+  margin: 12px 0 5px;
   text-transform: uppercase;
-}
-
-.sheet-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  background: none;
-  border: none;
-  color: var(--color-text-light);
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(120, 160, 255, 0.05);
-  cursor: pointer;
-}
-
-.sheet-row:hover {
-  background-color: rgba(120, 160, 255, 0.05);
 }
 
 /* Marketplace cards overrides */
@@ -2294,61 +2159,70 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .market-hero h2 {
-  margin-bottom: 5px;
-  font-size: 20px;
+  margin-bottom: 4px;
+  font-size: 18px;
 }
 
 .market-section {
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .market-trending-row {
   display: flex;
-  gap: 15px;
-  overflow-x: scroll;
-  padding-bottom: 10px;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.market-trending-row::-webkit-scrollbar {
+  height: 4px;
+}
+
+.market-trending-row::-webkit-scrollbar-thumb {
+  background: rgba(120, 160, 255, 0.5);
+  border-radius: 999px;
 }
 
 .market-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
 }
 
 .market-card {
   background: #0f1624;
   border-radius: 12px;
-  padding: 15px;
+  padding: 12px;
   border: 1px solid rgba(120, 160, 255, 0.1);
   display: flex;
   flex-direction: column;
 }
 
 .market-card h4 {
-  font-size: 16px;
-  margin-bottom: 5px;
+  font-size: 15px;
+  margin-bottom: 4px;
 }
 
 .market-card-desc {
   font-size: 12px;
   color: var(--color-text-subtle);
   flex-grow: 1;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .market-card-icon {
-  font-size: 24px;
-  margin-bottom: 10px;
+  font-size: 22px;
+  margin-bottom: 6px;
 }
 
 .market-card-footer {
   display: flex;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 6px;
 }
 
 .market-card-price {
@@ -2360,7 +2234,7 @@ button {
 .market-card-participants {
   font-size: 11px;
   color: var(--color-text-subtle);
-  margin-right: 10px;
+  margin-right: 8px;
 }
 
 .link-btn {
@@ -2373,14 +2247,14 @@ button {
 
 /* Partner List overrides */
 .partners-list {
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 .partner-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
+  padding: 8px 0;
   border-bottom: 1px solid rgba(120, 160, 255, 0.05);
 }
 
@@ -2429,6 +2303,7 @@ button {
   transform: translateX(-50%) translateY(-10px);
 }
 
+/* Killar hårt “visuell scroll” på sheets när hidden används */
 .sheet-backdrop.hidden {
   display: none !important;
 }
