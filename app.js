@@ -1279,6 +1279,19 @@ function setupMarketDetails() {
 
 function initModules() {
   // Externa moduler (slot.js, reveal.js, roles.js) initierar sig själva via IIFE/DOMContentLoaded.
+    const meshNav = document.getElementById('meshNav');
+  if (meshNav) {
+    meshNav.addEventListener('click', (e) => {
+      const btn = e.target.closest('.mesh-nav-btn');
+      if (!btn) return;
+      meshNav.querySelectorAll('.mesh-nav-btn').forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+
+      const tab = btn.dataset.tab;
+      // koppla gärna in din befintliga tab-logik här
+      // showTab(tab);
+    });
+  }
   // Här kan du i framtiden koppla in fler moduler om det behövs.
 }
 
@@ -1324,7 +1337,195 @@ function initSpawnEngine() {
 
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
+      // Mesh feed filters
+  const meshFeedFilters = document.getElementById("meshFeedFilters");
+  if (meshFeedFilters) {
+    meshFeedFilters.addEventListener("click", (e) => {
+      const btn = e.target.closest(".mesh-filter-chip");
+      if (!btn) return;
+      const filter = btn.dataset.filter || "all";
+
+      meshFeedFilters.querySelectorAll(".mesh-filter-chip")
+        .forEach(el => el.classList.remove("is-active"));
+      btn.classList.add("is-active");
+
+      setMeshFilter(filter);
+    });
+  }
+    // ---------- UNIFIED ACTIVITY MESH ----------
+// Hooka in unified mesh + canvas i befintliga pushEvent
+if (typeof window.pushEvent === "function") {
+  const originalPushEvent = window.pushEvent;
+  window.pushEvent = function(list, payload, max = 16) {
+    originalPushEvent(list, payload, max);
+
+    // Skapa unified event från payload
+    addMeshEvent({
+      type: payload.kind || payload.type || "xp_event",
+      label: payload.title || payload.label || payload.message || "Mesh event",
+      details: {
+        wallet: payload.wallet || payload.address || "mesh",
+        value: payload.value,
+        rarity: payload.rarity,
+      },
+      source: payload.source || "mock",
+      timestamp: payload.timestamp || Date.now(),
+    });
+  };
+}// Lightweight mock-stream så det inte är tomt i v0.4
+const MOCK_WALLETS = [
+  "0xspawniz",
+  "0xmesh1234abcd",
+  "0xfeedcafe1337",
+  "0xbase00babe",
+];
+
+const MOCK_EVENTS = [
+  { type: "pack_open", label: "Opened mesh-aligned pack", group: "packs" },
+  { type: "xp_event", label: "Daily ritual XP claimed", group: "xp" },
+  { type: "zora_buy", label: "Zora coin minted", group: "trades" },
+  { type: "farcaster_cast", label: "New cast about SpawnEngine", group: "social" },
+  { type: "burn", label: "Fragments burned for ladder", group: "packs" },
+];
+
+function spawnMockMeshEvent() {
+  const ev = MOCK_EVENTS[Math.floor(Math.random() * MOCK_EVENTS.length)];
+  const wallet = MOCK_WALLETS[Math.floor(Math.random() * MOCK_WALLETS.length)];
+  const value = ev.type === "zora_buy" ? (Math.random() * 0.02 + 0.005) : null;
+  const rarity = ev.type === "pack_open"
+    ? ["Fragment", "Shard", "Core", "Artifact"][Math.floor(Math.random() * 4)]
+    : null;
+
+  addMeshEvent({
+    type: ev.type,
+    label: ev.label,
+    details: { wallet, value, rarity },
+    source: "mock",
+    timestamp: Date.now(),
+  });
+}
+
+// kicka igång lite puls
+setInterval(spawnMockMeshEvent, 9000);
+const MESH_EVENT_TYPES = {
+  pack_open: { icon: "🎰", group: "packs", label: "Pack opened" },
+  burn:      { icon: "🔥", group: "packs", label: "Cards burned" },
+  swap:      { icon: "🔁", group: "trades", label: "Swap executed" },
+  zora_buy:  { icon: "🟦", group: "trades", label: "Zora buy" },
+  zora_sell: { icon: "🟥", group: "trades", label: "Zora sell" },
+  xp_event:  { icon: "⚡", group: "xp",    label: "XP event" },
+  streak:    { icon: "🔥", group: "xp",    label: "Streak updated" },
+  farcaster_cast: { icon: "📡", group: "social", label: "Farcaster cast" },
+  social:    { icon: "💬", group: "social", label: "Social signal" },
+};
+
+let meshEvents = [];
+let meshFilter = "all";
+
+function addMeshEvent(evt) {
+  const baseType = evt.type || "xp_event";
+  const def = MESH_EVENT_TYPES[baseType] || MESH_EVENT_TYPES["xp_event"];
+
+  const normalized = {
+    type: baseType,
+    group: def.group,
+    icon: def.icon,
+    label: evt.label || def.label,
+    wallet: evt.details?.wallet || evt.wallet || "mesh",
+    value: evt.details?.value ?? evt.value ?? null,
+    rarity: evt.details?.rarity || evt.rarity || null,
+    source: evt.source || "mock",
+    timestamp: evt.timestamp ? new Date(evt.timestamp) : new Date(),
+  };
+
+  meshEvents.unshift(normalized);
+  if (meshEvents.length > 60) meshEvents.pop();
+
+  renderMeshFeed();
+  // mata även in i canvas-meshen om funktionen finns
+  if (typeof addMeshNode === "function") {
+    addMeshNode({
+      kind: normalized.group === "packs" ? "pack"
+           : normalized.group === "trades" ? "mesh"
+           : normalized.group === "xp" ? "xp"
+           : "social",
+      label: normalized.label,
+    });
+  }
+}
+
+function renderMeshFeed() {
+  const listEl   = document.getElementById("meshFeedList");
+  const emptyEl  = document.getElementById("meshFeedEmpty");
+  const countEl  = document.getElementById("meshFeedCount");
+  if (!listEl) return;
+
+  const now = Date.now();
+
+  const visible = meshEvents.filter(e =>
+    meshFilter === "all" ? true : e.group === meshFilter
+  );
+
+  if (countEl) {
+    countEl.textContent = `${meshEvents.length} events`;
+  }
+
+  if (visible.length === 0) {
+    listEl.innerHTML = "";
+    if (emptyEl) emptyEl.style.display = "block";
+    return;
+  }
+
+  if (emptyEl) emptyEl.style.display = "none";
+
+  const html = visible.map(e => {
+    const ageMs = now - e.timestamp.getTime();
+    const ageMin = Math.max(0, Math.round(ageMs / 60000));
+    const ageLabel = ageMin === 0 ? "just now" : `${ageMin} min ago`;
+
+    const valueLabel =
+      e.value != null
+        ? `· ${typeof e.value === "number" ? e.value.toFixed(2) : e.value}`
+        : "";
+
+    const rarityLabel = e.rarity ? `<span class="mesh-feed-tag">${e.rarity}</span>` : "";
+    const sourceLabel = e.source ? `<span class="mesh-feed-tag">${e.source}</span>` : "";
+
+    return `
+      <li class="mesh-feed-item">
+        <div class="mesh-feed-icon">${e.icon}</div>
+        <div class="mesh-feed-body">
+          <div class="mesh-feed-title">
+            ${e.label}
+            ${rarityLabel}
+            ${sourceLabel}
+          </div>
+          <div class="mesh-feed-meta-line">
+            ${shortWallet(e.wallet)} ${valueLabel}
+          </div>
+          <div class="mesh-feed-timestamp">${ageLabel}</div>
+        </div>
+      </li>
+    `;
+  }).join("");
+
+  listEl.innerHTML = html;
+}
+
+function shortWallet(addr) {
+  if (!addr || typeof addr !== "string") return "";
+  if (addr.length <= 10) return addr;
+  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
+}
+
+function setMeshFilter(nextFilter) {
+  meshFilter = nextFilter;
+  renderMeshFeed();
+}
     // Ta bort eventuella dubletter av bottom-nav
+// Initialize
+const slotMachine = new SpawnSlotMachine(document.querySelector('.slot-machine'));
+slotMachine.updateUI();
     const navs = document.querySelectorAll(".bottom-nav");
     if (navs.length > 1) {
       navs.forEach((nav, index) => {
@@ -1344,3 +1545,111 @@ if (document.readyState === "loading") {
 
   initSpawnEngine();
 }
+/* ---------- PRIMARY MESH NAV ---------- */
+
+.mesh-nav-scroll {
+  margin-top: 10px;
+  margin-bottom: 12px;
+  padding: 2px 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mesh-nav {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 999px;
+  background: radial-gradient(circle at top left, rgba(0,255,210,0.12), transparent),
+              radial-gradient(circle at bottom right, rgba(88,101,242,0.18), transparent);
+  box-shadow: 0 0 0 1px rgba(115, 130, 255, 0.35);
+}
+
+.mesh-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: #c7d2ff;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, transform 0.08s;
+}
+
+.mesh-nav-btn:hover {
+  background: rgba(24, 35, 80, 0.9);
+  box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.6);
+}
+
+.mesh-nav-btn.is-active {
+  background: radial-gradient(circle at top, #22c1c3, #0ea5e9);
+  color: #020617;
+  box-shadow: 0 0 18px rgba(45, 212, 191, 0.7);
+  transform: translateY(-1px);
+}
+
+.mesh-nav-icon {
+  font-size: 13px;
+}
+
+.mesh-nav-label {
+  text-transform: none;
+}
+
+/* small screens tweaked spacing */
+@media (max-width: 430px) {
+  .mesh-nav-btn {
+    padding-inline: 8px;
+  }
+  .mesh-nav-label {
+    font-size: 10px;
+  }
+}
+    this.balance += win;
+
+    // --- Mesh + HUD hook ---
+    try {
+      if (typeof addMeshEvent === "function") {
+        addMeshEvent({
+          type: win > 0 ? "xp_event" : "social",
+          label: win > 0
+            ? `Slot win · ${win} SPN`
+            : "Slot spin · no win",
+          details: {
+            wallet: "slot-mock",
+            value: win,
+            rarity: scatters >= FREESPINS_TRIGGER ? "Freespins" : null,
+          },
+          source: "slot",
+          timestamp: Date.now(),
+        });
+      }
+    } catch (e) {
+      // tyst fail – modulen ska funka fristående också
+    }    // Haptics / sound om global engine finns
+    if (typeof playSound === "function") {
+      playSound(win > 0 ? "reward" : "click");
+    }
+    if (typeof vibrate === "function") {
+      vibrate(win > 0 ? [40, 40, 40] : 10);
+    }const meshNavButtons = document.querySelectorAll('.mesh-nav-btn');
+const meshSections = document.querySelectorAll('[data-tab-section]');
+
+meshNavButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+
+    meshNavButtons.forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+
+    meshSections.forEach(sec => {
+      sec.classList.toggle('hidden', sec.dataset.tabSection !== target);
+    });
+  });
+});
