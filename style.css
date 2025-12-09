@@ -2307,3 +2307,86 @@ button {
 .sheet-backdrop.hidden {
   display: none !important;
 }
+transform: translateX(-50%) translateY(-10px);
+}
+
+/* Killar hårt “visuell scroll” på sheets när hidden används */
+.sheet-backdrop.hidden {
+  display: none !important;
+}
+.profile-card {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  padding: 14px 16px;
+  border-radius: 18px;
+  margin-top: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.profile-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pfp {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.profile-meta h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.profile-sub {
+  margin: 0;
+  opacity: 0.7;
+  font-size: 13px;
+}
+
+.settings-btn {
+  margin-left: auto;
+  background: rgba(255,255,255,0.08);
+  border: none;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.profile-stats {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.stat .label {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.stat .value {
+  display: block;
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.profile-links {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-btn {
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+  font-size: 14px;
+}
