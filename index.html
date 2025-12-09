@@ -135,21 +135,21 @@
 
   <!-- APP SHELL -->
   <div class="app-shell" id="app-container">
-          <!-- HUD: Mesh hero card -->
+                <!-- HUD: Mesh hero card -->
       <div class="hud-card">
         <div class="hud-card-header">
 
           <!-- Rad 1: avatar + settings -->
           <div class="hud-top-row">
-            <button class="avatar-chip" id="openAccountSheet">
+            <button id="btn-account" class="avatar-chip">
               <div class="avatar-circle">S</div>
               <div class="avatar-meta">
-                <div class="avatar-handle">@spawniz</div>
+                <div class="avatar-handle" id="meshHandle">@spawniz</div>
                 <div class="avatar-sub">Mesh ID · Creator</div>
               </div>
             </button>
 
-            <button class="icon-button" id="openSettingsSheet">
+            <button id="settings-btn" class="icon-button" aria-label="Settings">
               <div class="icon-gear"></div>
             </button>
           </div>
@@ -158,12 +158,14 @@
           <div class="hud-header-row">
             <div class="hud-tags">
               <span class="pill pill-soft">Base · Mesh ecosystems</span>
-              <span class="pill pill-outline">
-                🎨 Creator / Artist
-              </span>
+              <span class="pill pill-outline">🎨 Creator / Artist</span>
             </div>
 
             <div class="hud-role-and-status">
+              <span id="mesh-role-chip" class="pill pill-soft role-chip">
+                <span id="meshRoleIcon" class="role-icon"></span>
+                <span id="meshRoleLabel" class="role-label">Alpha hunter / Trader</span>
+              </span>
               <span class="mesh-status-pill">
                 <span class="status-dot"></span>
                 Mesh v0.4 · Phase 1
@@ -194,51 +196,49 @@
           </div>
 
           <!-- Rad 5: GAS / MODE / MESH STATUS -->
-          <div class="hud-grid hud-grid-3">
-            <div class="hud-stat">
-              <div class="hud-stat-label">Gas · Base</div>
-              <div class="hud-stat-value" id="gasBadge">~0.19 gwei est.</div>
-            </div>
-            <div class="hud-stat">
-              <div class="hud-stat-label">Mesh mode</div>
-              <div class="hud-stat-value">Single mesh · Demo</div>
-            </div>
-            <div class="hud-stat">
-              <div class="hud-stat-label">Live wallets</div>
-              <div class="hud-stat-value" id="walletCount">0</div>
-            </div>
+          <div class="platform-strip">
+            <span class="platform-pill">
+              GAS <span id="gasEstimate" class="platform-pill-value">~0.20 gwei est.</span>
+            </span>
+            <span class="platform-pill">
+              MODE <span class="platform-pill-value">Single mesh · Demo</span>
+            </span>
+            <span class="platform-pill">
+              WALLETS <span id="activeWallets" class="platform-pill-value">0</span>
+            </span>
           </div>
 
           <!-- Rad 6: Connect + wallet status -->
           <div class="wallet-strip">
-            <button class="btn-outline btn-solid-green" id="connectWallet">
-              Connect wallet
+            <button id="btn-connect" class="btn-outline btn-solid-green">
+              Connect
             </button>
-            <div class="wallet-status" id="walletStatusText">Not connected</div>
-            <div class="wallet-balance" id="walletBalanceText">0.0000 ETH</div>
+            <span id="wallet-status-label" class="wallet-status">Not connected</span>
+            <span class="wallet-address" data-wallet-address>Not connected</span>
+            <span id="walletBalanceEth" class="wallet-balance">0.0000 ETH</span>
           </div>
 
           <!-- Rad 7: XP / SPN / Sync / Active wallets -->
           <div class="hud-grid hud-grid-4">
             <div class="hud-stat">
-              <div class="hud-stat-label">XP balance</div>
-              <div class="hud-stat-value" id="xpBalanceLabel">1575 XP</div>
+              <div class="hud-stat-label">XP Balance</div>
+              <div id="xpBalance" class="hud-stat-value">1575 XP</div>
             </div>
             <div class="hud-stat">
-              <div class="hud-stat-label">SPN balance</div>
-              <div class="hud-stat-value">497 SPN</div>
+              <div class="hud-stat-label">SPN Balance</div>
+              <div id="spawnBalance" class="hud-stat-value">497 SPN</div>
             </div>
             <div class="hud-stat">
-              <div class="hud-stat-label">Sync source</div>
+              <div class="hud-stat-label">Sync</div>
               <div class="hud-stat-value">Local mock · Phase 1</div>
             </div>
             <div class="hud-stat">
               <div class="hud-stat-label">Active wallets</div>
-              <div class="hud-stat-value" id="activeWalletsLabel">0</div>
+              <div id="activeWalletsStat" class="hud-stat-value">0</div>
             </div>
           </div>
 
-          <p id="xp-source-label">
+          <p id="xp-source-label" class="section-sub">
             XP currently running on demo values · Phase 2 will switch to live mesh data.
           </p>
         </div>
