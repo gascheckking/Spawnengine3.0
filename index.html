@@ -214,35 +214,69 @@
         XP currently running on demo values.
       </p>
 
-      <!-- TOP TABS (direkt efter stats) -->
-      <nav class="top-nav">
-        <button class="nav-btn nav-btn-active" data-tab-target="home">
-          <span class="nav-icon">🏠</span>
-          <span class="nav-label">Home</span>
-        </button>
-        <button class="nav-btn" data-tab-target="loot">
-          <span class="nav-icon">🎴</span>
-          <span class="nav-label">Loot</span>
-        </button>
-        <button class="nav-btn" data-tab-target="market">
-          <span class="nav-icon">🧩</span>
-          <span class="nav-label">Market</span>
-        </button>
-        <button class="nav-btn" data-tab-target="quests">
-          <span class="nav-icon">⚡</span>
-          <span class="nav-label">Quests</span>
-        </button>
-        <button class="nav-btn" data-tab-target="mesh">
-          <span class="nav-icon">🕸️</span>
-          <span class="nav-label">Mesh</span>
-        </button>
-        <button class="nav-btn" data-tab-target="support">
-          <span class="nav-icon">🎧</span>
-          <span class="nav-label">SupCast</span>
-        </button>
-      </nav>
+      <!-- PROFILE PANEL -->
+<div class="profile-card">
+  <div class="profile-top">
+    <img src="/logo.png" alt="pfp" class="pfp" />
+    <div class="profile-meta">
+      <h2>@spawniz</h2>
+      <p class="profile-sub">Mesh ID · Creator</p>
+    </div>
+    <button class="settings-btn" id="openSettings">⚙️</button>
+  </div>
 
-      <!-- TAB CONTENT -->
+  <div class="profile-stats">
+    <div class="stat">
+      <span class="label">XP</span>
+      <span class="value" id="xpBalance">1600 XP</span>
+    </div>
+    <div class="stat">
+      <span class="label">SPN</span>
+      <span class="value" id="spnBalance">497 SPN</span>
+    </div>
+    <div class="stat">
+      <span class="label">Wallets</span>
+      <span class="value" id="walletCount">0</span>
+    </div>
+  </div>
+
+  <div class="profile-links">
+    <button class="profile-btn" id="viewEarnings">View earnings</button>
+    <button class="profile-btn" id="openCollectibles">Collectibles</button>
+    <button class="profile-btn" id="switchWallet">Switch wallet</button>
+  </div>
+</div>
+<!-- END PROFILE PANEL -->
+
+<!-- TOP TABS -->
+<nav class="top-nav">
+  <button class="nav-btn nav-btn-active" data-tab-target="home">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Home</span>
+  </button>
+  <button class="nav-btn" data-tab-target="loot">
+    <span class="nav-icon">🎴</span>
+    <span class="nav-label">Loot</span>
+  </button>
+  <button class="nav-btn" data-tab-target="market">
+    <span class="nav-icon">🧩</span>
+    <span class="nav-label">Market</span>
+  </button>
+  <button class="nav-btn" data-tab-target="quests">
+    <span class="nav-icon">⚡</span>
+    <span class="nav-label">Quests</span>
+  </button>
+  <button class="nav-btn" data-tab-target="mesh">
+    <span class="nav-icon">🕸️</span>
+    <span class="nav-label">Mesh</span>
+  </button>
+  <button class="nav-btn" data-tab-target="support">
+    <span class="nav-icon">🎧</span>
+    <span class="nav-label">SupCast</span>
+  </button>
+</nav>
+
+<!-- TAB CONTENT -->
       <div class="tab-content">
         <!-- ROLE SHEET (BACKDROP) -->
         <div id="role-backdrop" class="sheet-backdrop hidden">
