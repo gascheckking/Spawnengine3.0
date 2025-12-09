@@ -956,7 +956,7 @@ button {
   padding-right: 4px;
 }
 
-/* TOAST */
+/* TOAST (första versionen) */
 
 .toast {
   position: fixed;
@@ -2283,7 +2283,7 @@ button {
   color: #a8b3ff;
 }
 
-/* Toast overrides */
+/* Toast overrides (slutgiltig) */
 .toast {
   position: fixed;
   bottom: 80px;
@@ -2307,13 +2307,9 @@ button {
 .sheet-backdrop.hidden {
   display: none !important;
 }
-transform: translateX(-50%) translateY(-10px);
-}
 
-/* Killar hårt “visuell scroll” på sheets när hidden används */
-.sheet-backdrop.hidden {
-  display: none !important;
-}
+/* PROFILE CARD */
+
 .profile-card {
   width: 100%;
   background: rgba(255,255,255,0.04);
