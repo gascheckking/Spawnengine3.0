@@ -1735,7 +1735,19 @@ button {
 }
 
 .top-nav .nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   padding: 6px 0;
+  font-size: 11px;
+}
+
+.nav-icon {
+  font-size: 14px;
+}
+
+.nav-label {
   font-size: 11px;
 }
 /* --- Bottom Nav (Översyrer äldre stil) --- */
