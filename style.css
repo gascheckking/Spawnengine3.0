@@ -1625,6 +1625,72 @@ button {
   font-size: 15px;
   font-weight: 650;
 }
+/* ---------- PRIMARY MESH NAV ---------- */
+
+.mesh-nav-scroll {
+  margin-top: 10px;
+  margin-bottom: 12px;
+  padding: 2px 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mesh-nav {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 999px;
+  background: radial-gradient(circle at top left, rgba(0,255,210,0.12), transparent),
+              radial-gradient(circle at bottom right, rgba(88,101,242,0.18), transparent);
+  box-shadow: 0 0 0 1px rgba(115, 130, 255, 0.35);
+}
+
+.mesh-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: #c7d2ff;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, transform 0.08s;
+}
+
+.mesh-nav-btn:hover {
+  background: rgba(24, 35, 80, 0.9);
+  box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.6);
+}
+
+.mesh-nav-btn.is-active {
+  background: radial-gradient(circle at top, #22c1c3, #0ea5e9);
+  color: #020617;
+  box-shadow: 0 0 18px rgba(45, 212, 191, 0.7);
+  transform: translateY(-1px);
+}
+
+.mesh-nav-icon {
+  font-size: 13px;
+}
+
+.mesh-nav-label {
+  text-transform: none;
+}
+
+/* small screens tweaked spacing */
+@media (max-width: 430px) {
+  .mesh-nav-btn {
+    padding-inline: 8px;
+  }
+  .mesh-nav-label {
+    font-size: 10px;
+  }
+}
 
 /* Wallet Strip overrides */
 .wallet-strip {
