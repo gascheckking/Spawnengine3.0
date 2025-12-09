@@ -1,133 +1,206 @@
 /*
- * Slot Machine Module - Advanced Rolling Version
- * Used for simulated pack openings and game hooks within the Mesh HUD.
- *
- * NOTE: This is a visual-only mock. All outcomes are determined upfront.
+ * Slot Machine Module - Advanced Casino-Style Version
+ * Inspired by Dead or Alive / Bonanza: 5x3 reels, paylines, wilds, scatters for freespins.
+ * Uses SpawnEng (SPN) as currency. Mock balance and outcomes – real onchain in production.
  */
 
 // --- Configuration Constants ---
-const SYMBOLS = ['⚡', '💎', '🧪', '🏆', '📡', '🔥', '🌌'];
-const ROLL_COUNT = 30; // Number of symbols to roll through for a dramatic effect
-const SYMBOL_HEIGHT = 80; // Must match CSS .slot-symbol height
+const SYMBOLS = ['🍒', '🍋', '🍉', '🔔', '⭐', '7️⃣', 'W', 'S']; // W = Wild, S = Scatter
+const REELS = 5; // Number of reels (columns)
+const ROWS = 3; // Visible rows
+const ROLL_COUNT = 30; // Symbols to roll through per reel
+const SYMBOL_HEIGHT = 40; // Must match CSS .slot-symbol height
+const PAYLINES = [
+  // Example 10 paylines (indices: row0-col0, row0-col1, etc.)
+  [0,1,2,3,4], // Top row
+  [5,6,7,8,9], // Middle row
+  [10,11,12,13,14], // Bottom row
+  [0,6,12,8,4], // V-shape
+  [10,6,2,8,14], // Inverted V
+  // Add more for Bonanza-style all-ways or fixed lines
+];
+const WIN_MULTIPLIERS = {3: 2, 4: 5, 5: 20}; // Multiplier for matching symbols
+const FREESPINS_TRIGGER = 3; // Scatters needed
+const FREESPINS_COUNT = 10; // Base freespins
+const FREESPINS_MULTIPLIER = 2; // Win multiplier during freespins
+
+// --- Helper Functions ---
 
 /**
- * Helper function to create the content strip for a single reel.
- * It contains ROLL_COUNT symbols + the final winning symbol at the end.
- * @param {string} finalSymbol - The symbol the reel should land on.
- * @returns {string} HTML string for the reel content.
+ * Generates a random symbol.
+ * @returns {string} Random symbol from config.
  */
-function buildReelContent(finalSymbol) {
-    let content = '';
-    // 1. Add ROLL_COUNT random symbols for the roll effect
-    for (let i = 0; i < ROLL_COUNT; i++) {
-        const randomSymbol = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-        content += `<div class="slot-symbol">${randomSymbol}</div>`;
-    }
-    // 2. Add the final winning symbol
-    content += `<div class="slot-symbol slot-final">${finalSymbol}</div>`;
-    return content;
+function getRandomSymbol() {
+  return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
 }
 
 /**
- * Initiates the visual roll effect for a single reel element.
- * @param {HTMLElement} reel - The reel element.
- * @param {string} finalSymbol - The symbol to land on.
- * @param {number} delay - The delay before this reel stops (in ms).
+ * Builds the content strip for a reel column (3 visible + rolling symbols).
+ * @param {string[]} finalSymbols - Array of 3 symbols for the visible rows.
+ * @returns {string} HTML string for the column content.
  */
-function startReelRoll(reel, finalSymbol, delay) {
-    // 1. Prepare the content strip
-    reel.innerHTML = buildReelContent(finalSymbol);
-    
-    // 2. Calculate the distance needed to move
-    // Total symbols in the strip: ROLL_COUNT (rolling) + 1 (final)
-    const totalContentHeight = (ROLL_COUNT + 1) * SYMBOL_HEIGHT;
+function buildColumnContent(finalSymbols) {
+  let content = '';
+  // Add ROLL_COUNT random symbols for roll effect (per row, but since vertical, multiply)
+  for (let i = 0; i < ROLL_COUNT * ROWS; i++) {
+    content += `<div class="slot-symbol">${getRandomSymbol()}</div>`;
+  }
+  // Add the final 3 symbols
+  finalSymbols.forEach(sym => {
+    content += `<div class="slot-symbol slot-final ${sym === 'W' ? 'wild' : sym === 'S' ? 'scatter' : ''}">${sym}</div>`;
+  });
+  return content;
+}
 
-    // The final symbol is at the bottom of the strip.
-    // We want the reel to move 'up' so that the final symbol aligns with the view window.
-    // The distance to travel is the height of all rolling symbols.
-    const distanceToStop = ROLL_COUNT * SYMBOL_HEIGHT; // This is a positive value in pixels
+/**
+ * Checks for wins across paylines.
+ * @param {string[][]} grid - 3x5 grid of symbols (rows x columns).
+ * @param {number} multiplier - Current win multiplier (1 or FREESPINS_MULTIPLIER).
+ * @returns {number} Total win amount.
+ */
+function checkWins(grid, multiplier = 1) {
+  let totalWin = 0;
+  PAYLINES.forEach(line => {
+    const symbols = line.map(idx => {
+      const row = Math.floor(idx / REELS);
+      const col = idx % REELS;
+      return grid[row][col];
+    });
+    // Check for matching (ignoring wilds as substitutes for now)
+    let matchCount = 1;
+    let first = symbols[0];
+    for (let i = 1; i < symbols.length; i++) {
+      if (symbols[i] === first || symbols[i] === 'W') {
+        matchCount++;
+      } else {
+        break;
+      }
+    }
+    if (matchCount >= 3 && WIN_MULTIPLIERS[matchCount]) {
+      totalWin += WIN_MULTIPLIERS[matchCount] * multiplier;
+    }
+  });
+  return totalWin;
+}
 
-    // 3. Apply the rolling class to start animation
-    reel.classList.add('rolling');
-
-    // 4. Set the final transform position after a delay
-    // This transform will stop the CSS animation by overriding it.
-    setTimeout(() => {
-        // Stop the reel at the position where the final symbol is visible.
-        reel.style.transform = `translateY(-${distanceToStop}px)`;
-        reel.classList.remove('rolling');
-        reel.classList.add('stopped');
-    }, delay);
+/**
+ * Counts scatters in the grid.
+ * @param {string[][]} grid - 3x5 grid.
+ * @returns {number} Number of scatters.
+ */
+function countScatters(grid) {
+  return grid.flat().filter(sym => sym === 'S').length;
 }
 
 // --- Main Slot Machine Class ---
 
-/**
- * A mock slot machine component for the Mesh HUD.
- * Handles the visual reel roll based on a pre-determined result.
- */
 class SpawnSlotMachine {
-    /**
-     * @param {HTMLElement} containerElement - The DOM element containing the slot reels.
-     */
-    constructor(containerElement) {
-        this.container = containerElement;
-        this.reels = containerElement.querySelectorAll('.slot-reel');
-        this.isSpinning = false;
+  constructor(containerElement) {
+    this.container = containerElement;
+    this.columns = containerElement.querySelectorAll('.slot-reel-column');
+    this.spinBtn = document.getElementById('slot-spin-btn');
+    this.betSelector = document.getElementById('slot-bet-selector');
+    this.balanceElem = document.getElementById('slot-balance');
+    this.resultElem = document.getElementById('slot-result');
+    this.freespinsElem = document.getElementById('slot-freespins');
+    this.balance = 1000; // Mock SPN balance
+    this.freespins = 0;
+    this.isSpinning = false;
+
+    this.spinBtn.disabled = false;
+    this.spinBtn.textContent = 'Spin';
+    this.spinBtn.addEventListener('click', () => this.spin());
+  }
+
+  updateUI() {
+    this.balanceElem.textContent = `${this.balance} SPN`;
+    this.freespinsElem.textContent = `Freespins: ${this.freespins}`;
+    this.spinBtn.textContent = this.freespins > 0 ? 'Freespin!' : 'Spin';
+    this.spinBtn.classList.toggle('freespin', this.freespins > 0);
+  }
+
+  reset() {
+    this.isSpinning = false;
+    this.columns.forEach(col => {
+      col.classList.remove('rolling', 'stopped');
+      col.style.transform = 'translateY(0)';
+      col.innerHTML = '';
+      for (let i = 0; i < ROWS; i++) {
+        col.innerHTML += `<div class="slot-symbol">${SYMBOLS[0]}</div>`;
+      }
+    });
+    // Remove win highlights
+    document.querySelectorAll('.win-highlight').forEach(el => el.classList.remove('win-highlight'));
+  }
+
+  async spin() {
+    if (this.isSpinning) return;
+    this.isSpinning = true;
+    this.reset();
+    this.resultElem.textContent = 'Spinning...';
+    this.spinBtn.disabled = true;
+
+    const bet = this.freespins > 0 ? 0 : parseInt(this.betSelector.value);
+    if (bet > this.balance && this.freespins === 0) {
+      this.resultElem.textContent = 'Insufficient SPN!';
+      this.isSpinning = false;
+      this.spinBtn.disabled = false;
+      return;
     }
 
-    /**
-     * Resets the slot machine state and reels.
-     */
-    reset() {
-        this.isSpinning = false;
-        this.reels.forEach(reel => {
-            reel.classList.remove('rolling', 'stopped');
-            reel.style.transform = 'translateY(0)';
-            reel.innerHTML = `<div class="slot-symbol">${SYMBOLS[0]}</div>`;
+    if (this.freespins === 0) this.balance -= bet;
+    else this.freespins--;
+
+    // Generate random grid (3x5)
+    const grid = Array.from({length: ROWS}, () => Array.from({length: REELS}, getRandomSymbol));
+
+    // Start rolling each column
+    const rollPromises = Array.from(this.columns).map((col, index) => {
+      return new Promise(resolve => {
+        const finalSymbols = grid.map(row => row[index]); // Column symbols
+        col.innerHTML = buildColumnContent(finalSymbols);
+        col.classList.add('rolling');
+        const delay = 3000 + (index * 700);
+        setTimeout(() => {
+          const distanceToStop = (ROLL_COUNT * ROWS) * SYMBOL_HEIGHT;
+          col.style.transform = `translateY(-${distanceToStop}px)`;
+          col.classList.remove('rolling');
+          col.classList.add('stopped');
+          resolve();
+        }, delay);
+      });
+    });
+
+    await Promise.all(rollPromises);
+
+    // Check wins and scatters
+    const multiplier = this.freespins > 0 ? FREESPINS_MULTIPLIER : 1;
+    const win = checkWins(grid, multiplier) * bet;
+    const scatters = countScatters(grid);
+    if (scatters >= FREESPINS_TRIGGER) {
+      this.freespins += FREESPINS_COUNT;
+      this.resultElem.textContent = `Freespins Triggered! +${FREESPINS_COUNT} spins. Win: ${win} SPN`;
+    } else {
+      this.resultElem.textContent = win > 0 ? `Win: ${win} SPN!` : 'No win. Try again!';
+    }
+    this.balance += win;
+
+    // Highlight winning symbols (simple: all in paylines)
+    if (win > 0) {
+      // For demo, highlight all matching (expand for real paylines)
+      this.columns.forEach((col, colIdx) => {
+        col.querySelectorAll('.slot-symbol.slot-final').forEach((sym, rowIdx) => {
+          if (grid[rowIdx][colIdx] !== 'S') sym.classList.add('win-highlight');
         });
+      });
     }
 
-    /**
-     * Starts the slot spin animation with a predetermined result.
-     * @param {string[]} resultSymbols - An array of 3 symbols to land on, e.g., ['⚡', '⚡', '🏆'].
-     * @returns {Promise<string[]>} A promise that resolves when all reels have stopped.
-     */
-    spin(resultSymbols) {
-        if (this.isSpinning) {
-            return Promise.reject(new Error("Slot machine is already spinning."));
-        }
-        this.isSpinning = true;
-        this.reset(); // Reset before starting the new spin
-
-        // 1. Start the rolls sequentially
-        const rollPromises = Array.from(this.reels).map((reel, index) => {
-            return new Promise(resolve => {
-                const finalSymbol = resultSymbols[index];
-                // Delay each reel to stop one after the other for effect (e.g., 500ms separation)
-                const delay = 3000 + (index * 700); 
-
-                startReelRoll(reel, finalSymbol, delay);
-
-                // Resolve the promise when this reel is fully stopped (a bit after the transform)
-                setTimeout(() => {
-                    resolve(finalSymbol);
-                }, delay + 500); 
-            });
-        });
-
-        // 2. Wait for all reels to finish
-        return Promise.all(rollPromises).then(() => {
-            this.isSpinning = false;
-            // The result evaluation should happen external to the visual component
-            return resultSymbols;
-        });
-    }
+    this.updateUI();
+    this.isSpinning = false;
+    this.spinBtn.disabled = false;
+  }
 }
 
-// Expose the class globally (or via module export if using modules)
-window.SpawnSlotMachine = SpawnSlotMachine;
-
-/*
- * Den enklare versionen har raderats härifrån för att undvika konflikt.
- */
+// Initialize
+const slotMachine = new SpawnSlotMachine(document.querySelector('.slot-machine'));
+slotMachine.updateUI();
