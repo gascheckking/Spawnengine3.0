@@ -956,7 +956,7 @@ button {
   padding-right: 4px;
 }
 
-/* TOAST (första versionen) */
+/* TOAST (grund) */
 
 .toast {
   position: fixed;
@@ -1377,19 +1377,9 @@ button {
   display: none !important;
 }
 
-.settings-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  z-index: 99999;
-}
+/* --- START NEW MESH HUD v0.4 STYLES (OVERRIDES) --- */
 
-/* --- START NEW MESH HUD v0.4 STYLES (KORRIGERADE/ÖVERSTYRDA STILAR) --- */
-
-/* --- APP Shell och Layouter --- */
+/* APP Shell */
 .app-body {
   background-color: var(--color-bg-dark);
 }
@@ -1406,7 +1396,7 @@ button {
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
 }
 
-/* --- HUD Header & Navigation --- */
+/* HUD Header & Navigation */
 .hud-top-row,
 .hud-header-row {
   display: flex;
@@ -1422,6 +1412,7 @@ button {
   margin-bottom: 10px;
 }
 
+/* Avatar chip uppdaterad */
 .avatar-chip {
   display: flex;
   align-items: center;
@@ -1452,6 +1443,7 @@ button {
   font-size: 16px;
 }
 
+/* Settings-ikon */
 .icon-gear {
   width: 20px;
   height: 20px;
@@ -1522,6 +1514,116 @@ button {
   background: #79ffb6;
   border-radius: 50%;
   margin-right: 4px;
+}
+
+/* HERO-TITLE – PLATFORM OF PLATFORMS */
+
+.hud-title-block {
+  margin-top: 4px;
+  margin-bottom: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(120, 160, 255, 0.18);
+}
+
+.hud-title {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 650;
+  background: linear-gradient(120deg, #ffffff, #c6e7ff, #8df7ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hud-subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-text-subtle);
+}
+
+/* PLATFORM-RAIL – Base / Creator / Mesh v0.4 / Farcaster ready */
+
+.hud-card-header .platform-strip {
+  margin: 6px 0 10px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: radial-gradient(circle at left, rgba(60, 246, 255, 0.16), transparent 55%),
+    radial-gradient(circle at right, rgba(185, 255, 122, 0.12), transparent 55%),
+    rgba(10, 13, 36, 0.95);
+  border: 1px solid rgba(120, 170, 255, 0.6);
+}
+
+.hud-card-header .platform-pill {
+  background: transparent;
+  border: none;
+  padding: 3px 10px;
+  font-size: 11px;
+  color: #d7e2ff;
+  opacity: 0.95;
+}
+
+.hud-card-header .platform-pill:first-child {
+  border-radius: 999px;
+  background: rgba(28, 52, 120, 0.9);
+}
+
+.hud-card-header .platform-pill:last-child {
+  border-radius: 999px;
+  background: rgba(0, 255, 182, 0.08);
+  border: 1px solid rgba(0, 255, 182, 0.55);
+  color: #a7ffdd;
+}
+
+/* TOP METRIC BAR – GAS / MODE / WALLETS */
+
+.hud-card-header .hud-grid-3 {
+  margin-top: 4px;
+  padding: 6px;
+  border-radius: 12px;
+  background: radial-gradient(circle at right, rgba(60, 246, 255, 0.18), transparent 55%),
+    rgba(7, 10, 32, 0.96);
+  border: 1px solid rgba(96, 144, 255, 0.7);
+}
+
+.hud-card-header .hud-grid-3 .hud-stat {
+  background: transparent;
+  border: none;
+  padding: 4px 6px;
+}
+
+.hud-card-header .hud-grid-3 .hud-stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(171, 188, 255, 0.9);
+}
+
+.hud-card-header .hud-grid-3 .hud-stat-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f4f7ff;
+}
+
+/* CORE METRICS – XP / SPN / Sync / Active wallets */
+
+.hud-card-header .hud-grid-2 {
+  margin-top: 10px;
+}
+
+.hud-card-header .hud-grid-2 .hud-stat {
+  background: radial-gradient(circle at top, rgba(137, 189, 255, 0.18), transparent 55%),
+    rgba(9, 13, 40, 0.95);
+  border: 1px solid rgba(116, 162, 255, 0.85);
+}
+
+.hud-card-header .hud-grid-2 .hud-stat-label {
+  font-size: 10px;
+  color: #b2c3ff;
+}
+
+.hud-card-header .hud-grid-2 .hud-stat-value {
+  font-size: 15px;
+  font-weight: 650;
 }
 
 /* Wallet Strip overrides */
@@ -1658,7 +1760,7 @@ button {
   transition: width 0.5s ease-out;
 }
 
-/* --- Tab Content overrides --- */
+/* Tab Content overrides */
 .tab-content {
   margin-top: 12px;
 }
@@ -1943,7 +2045,7 @@ button {
   font-size: 11px;
 }
 
-/* Bottom Nav (om du lägger tillbaka den senare) */
+/* Bottom Nav */
 .bottom-nav {
   position: fixed;
   left: 50%;
@@ -2283,41 +2385,21 @@ button {
   color: #a8b3ff;
 }
 
-/* Toast overrides (slutgiltig) */
-.toast {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #28a745;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 8px;
-  opacity: 0;
-  transition: opacity 0.5s, transform 0.5s;
-  z-index: 1001;
-}
-
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-10px);
-}
-
 /* Killar hårt “visuell scroll” på sheets när hidden används */
 .sheet-backdrop.hidden {
   display: none !important;
 }
 
-/* PROFILE CARD */
+/* Profilkort (kan användas senare för “platform of platforms”-profil) */
 
 .profile-card {
   width: 100%;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   padding: 14px 16px;
   border-radius: 18px;
   margin-top: 20px;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .profile-top {
@@ -2346,7 +2428,7 @@ button {
 
 .settings-btn {
   margin-left: auto;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   border: none;
   padding: 8px 10px;
   border-radius: 12px;
@@ -2381,8 +2463,8 @@ button {
 .profile-btn {
   padding: 12px;
   border-radius: 14px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   text-align: center;
   font-size: 14px;
 }
