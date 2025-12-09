@@ -1,9 +1,8 @@
-// app.js — SpawnEngine3.0 · Mesh HUD v0.4 (Modulkompatibel)
+// app.js — SpawnEngine 3.0 · Mesh HUD v0.4 (FULLY UPDATED FOR NEW HTML)
 
 // ---------- ONCHAIN CONFIG ----------
-
 const SPAWN_CONFIG = {
-  RPC_URL: "https://mainnet.base.org", // public Base RPC
+  RPC_URL: "https://mainnet.base.org",
   CHAIN_ID: 8453,
   CHAIN_NAME: "Base",
 };
@@ -18,7 +17,6 @@ function shortenAddress(addr, chars = 4) {
 }
 
 // ---------- STATE ----------
-
 const state = {
   xp: 1575,
   spawn: 497,
@@ -35,7 +33,6 @@ const state = {
 };
 
 // ---------- UTIL ----------
-
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
@@ -46,7 +43,6 @@ function showToast(message) {
   toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 2200);
 }
-
 window.spawnToast = showToast;
 
 function formatTime() {
@@ -54,18 +50,13 @@ function formatTime() {
   return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 }
 
-// pushEvent kopplad till unified mesh-feed
+// Global pushEvent redirecting to mesh + home feed
 function pushEvent(list, payload, max = 16) {
   list.unshift(payload);
   if (list.length > max) list.length = max;
-
-  // Skicka in i unified mesh-stream om aktiv
-  if (payload) {
-    addMeshEventFromPayload(payload);
-  }
+  addMeshEventFromPayload(payload);
 }
-
-window.pushEvent = pushEvent; // gör den global för ev. moduler
+window.pushEvent = pushEvent;
 
 // ---------- RENDER HELPERS ----------
 
@@ -94,17 +85,18 @@ function renderMeshSnapshot() {
   if (xpEl) xpEl.textContent = `${state.xp} XP`;
   if (spawnEl) spawnEl.textContent = `${state.spawn} SPN`;
   if (streakDaysEl) streakDaysEl.textContent = state.streakDays;
+
   if (streakRemEl) {
-    const remaining = Math.max(state.weeklyTarget - state.streakDays, 0);
-    streakRemEl.textContent = remaining;
+    const rem = Math.max(state.weeklyTarget - state.streakDays, 0);
+    streakRemEl.textContent = rem;
   }
   if (streakCopyEl) {
-    const remaining = Math.max(state.weeklyTarget - state.streakDays, 0);
-    streakCopyEl.textContent = `Keep the streak for ${remaining} more days for a full weekly run.`;
+    const rem = Math.max(state.weeklyTarget - state.streakDays, 0);
+    streakCopyEl.textContent = `Keep the streak for ${rem} more days for a full weekly run.`;
   }
   if (streakBarFill) {
-    const progress = (state.streakDays / state.weeklyTarget) * 100;
-    streakBarFill.style.width = `${Math.min(progress, 100)}%`;
+    const pct = (state.streakDays / state.weeklyTarget) * 100;
+    streakBarFill.style.width = `${Math.min(pct, 100)}%`;
   }
 
   const headerXp = $("#meshHeaderXp");
@@ -184,11 +176,13 @@ function renderQuests() {
     btn.className = `btn-outline quest-btn ${
       quest.completed ? "quest-btn-completed" : ""
     }`;
+
     btn.textContent = quest.completed ? "Completed" : "Complete (mock)";
     btn.disabled = quest.completed;
 
     btn.addEventListener("click", () => {
       if (quest.completed) return;
+
       quest.completed = true;
       state.xp += quest.reward;
 
@@ -215,7 +209,7 @@ function renderQuests() {
   });
 }
 
-// ---------- MOCK DATA ----------
+// ---------- MOCK DATA SEEDERS ----------
 
 function initQuests() {
   state.quests = [
@@ -305,6 +299,7 @@ function seedMeshEvents() {
       meta: "Gravity shift",
     },
   ];
+
   state.meshEvents = items.map((e) => ({ ...e, time: formatTime() }));
 }
 
@@ -312,214 +307,244 @@ function seedLootEvents() {
   state.lootEvents = [];
 }
 
-// ---------- TABS: SYNC MED .mesh-nav-btn + data-tab ----------
+// -------------------------------------------------------
+// TABS + NAVIGATION — SpawnEngine Mesh HUD v0.4 Compact
+// -------------------------------------------------------
 
 function setupTabs() {
-  // både mesh-nav och ev. andra tab-knappar kan haka in
   const navButtons = [
     ...$$(".mesh-nav-btn"),
-    ...$$("[data-tab-target]"),
+    ...$$("[data-tab-target]")
   ];
+
   const panels = $$(".tab-panel");
 
   function activate(target) {
     if (!target) return;
 
+    // 1) NAV STATE
     navButtons.forEach((btn) => {
-      const t = btn.dataset.tab || btn.getAttribute("data-tab-target");
-      const isActive = t === target;
-      btn.classList.toggle("nav-btn-active", isActive);
+      const t =
+        btn.dataset.tab ||
+        btn.getAttribute("data-tab-target");
+
+      const active = t === target;
+
+      btn.classList.toggle("nav-btn-active", active);
+
       if (btn.classList.contains("mesh-nav-btn")) {
-        btn.classList.toggle("is-active", isActive);
+        btn.classList.toggle("is-active", active);
       }
     });
 
+    // 2) PANEL VISIBILITY
     panels.forEach((panel) => {
-      panel.classList.toggle("tab-panel-active", panel.id === `tab-${target}`);
+      const id = `tab-${target}`;
+      const hit = panel.id === id;
+      panel.classList.toggle("tab-panel-active", hit);
+      panel.style.display = hit ? "block" : "none";
     });
 
-    if (target === "home") {
-      renderActivityList($("#homeActivityList"), state.homeEvents);
-    } else if (target === "loot") {
-      renderInventory();
-      renderActivityList($("#lootEvents"), state.lootEvents);
-    } else if (target === "quests") {
-      renderQuests();
-    } else if (target === "mesh") {
-      renderActivityList($("#meshEvents"), state.meshEvents);
-    } else if (target === "supcast") {
-      const q = state.quests.find((q) => q.id === "q-support");
-      if (q && !q.completed) {
-        q.completed = true;
-        state.xp += q.reward;
-        pushEvent(state.homeEvents, {
-          kind: "quest",
-          label: "QUEST",
-          text: "Visited Support / SupCast",
-          time: formatTime(),
-          meta: `+${q.reward} XP`,
-        });
-        renderMeshSnapshot();
-        renderQuests();
+    // 3) RENDER ON TAB ENTER
+    switch (target) {
+      case "home":
         renderActivityList($("#homeActivityList"), state.homeEvents);
-      }
+        break;
+
+      case "loot":
+        renderInventory();
+        renderActivityList($("#lootEvents"), state.lootEvents);
+        break;
+
+      case "quests":
+        renderQuests();
+        break;
+
+      case "mesh":
+        renderActivityList($("#meshEvents"), state.meshEvents);
+        break;
+
+      case "supcast":
+        const q = state.quests.find((q) => q.id === "q-support");
+        if (q && !q.completed) {
+          q.completed = true;
+          state.xp += q.reward;
+          pushEvent(state.homeEvents, {
+            kind: "quest",
+            label: "QUEST",
+            text: "Visited Support / SupCast",
+            time: formatTime(),
+            meta: `+${q.reward} XP`,
+          });
+          renderMeshSnapshot();
+          renderQuests();
+          renderActivityList($("#homeActivityList"), state.homeEvents);
+        }
+        break;
     }
+
+    // 4) RE-CALC HEIGHT (critical for compact layout)
+    requestAnimationFrame(applyCompactViewport);
   }
 
   navButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      const target = btn.dataset.tab || btn.getAttribute("data-tab-target");
+      const target =
+        btn.dataset.tab ||
+        btn.getAttribute("data-tab-target");
       activate(target);
     });
   });
 
-  // default
+  // Default tab
   activate("home");
 }
 
-// ---------- STREAK ----------
+// -------------------------------------------------------
+// VIEWPORT / COMPACT LAYOUT ENGINE
+// -------------------------------------------------------
 
-function setupStreak() {
-  const btn = $("#btn-checkin");
-  if (!btn) return;
+function applyCompactViewport() {
+  const root = document.documentElement;
+  const header = document.querySelector(".mesh-header");
+  const nav = document.querySelector(".mesh-nav-scroll");
+  const activePanel = document.querySelector(".tab-panel-active");
 
-  btn.addEventListener("click", () => {
-    state.streakDays = Math.min(state.streakDays + 1, state.weeklyTarget);
-    const gained = 15;
-    state.xp += gained;
+  if (!header || !nav || !activePanel) return;
 
-    pushEvent(state.homeEvents, {
-      kind: "xp",
-      label: "XP",
-      text: "Daily mesh ritual check-in completed.",
-      time: formatTime(),
-      meta: `+${gained} XP`,
+  const headerH = header.offsetHeight || 0;
+  const navH = nav.offsetHeight || 0;
+  const viewport = window.innerHeight;
+
+  // Magic number: margins/padding of app root
+  const chrome = 26;
+
+  const panelMax = viewport - headerH - navH - chrome;
+  activePanel.style.maxHeight = `${panelMax}px`;
+  activePanel.style.overflowY = "auto";
+}
+
+// Auto reapply on resize / keyboard open / rotation
+window.addEventListener("resize", applyCompactViewport);
+window.addEventListener("orientationchange", applyCompactViewport);
+document.addEventListener("DOMContentLoaded", applyCompactViewport);
+
+// -------------------------------------------------------
+// QUICK NAV / BOTTOM BAR AUTOFIX
+// -------------------------------------------------------
+
+function dedupeBottomNav() {
+  const navs = document.querySelectorAll(".bottom-nav");
+  if (navs.length > 1) {
+    navs.forEach((n, i) => {
+      if (i > 0) n.remove();
     });
-
-    renderMeshSnapshot();
-    renderActivityList($("#homeActivityList"), state.homeEvents);
-    showToast("Check-in logged · streak +1");
-  });
-}
-
-// ---------- PACK STATS (LOCAL STORAGE) ----------
-
-const PACK_STATS_KEY = "spawnengine_pack_stats";
-let packStats = loadPackStats();
-
-function loadPackStats() {
-  try {
-    const raw = localStorage.getItem(PACK_STATS_KEY);
-    if (!raw) return {};
-    return JSON.parse(raw);
-  } catch {
-    return {};
   }
 }
 
-function savePackStats() {
-  localStorage.setItem(PACK_STATS_KEY, JSON.stringify(packStats));
+// -------------------------------------------------------
+// HUD: SUPER COMPACT PROFILE PANEL FIX
+// -------------------------------------------------------
+
+function enhanceProfilePanel() {
+  const pane = document.querySelector(".profile-card");
+  if (!pane) return;
+
+  pane.style.height = "auto";
+  pane.style.minHeight = "72px";
+
+  const avatar = pane.querySelector(".profile-avatar");
+  if (avatar) avatar.style.transform = "translateY(2px)";
 }
 
-function registerPackOpen(seriesId, wallet, priceEth) {
-  const now = Date.now();
-  const hour = Math.floor(now / (1000 * 60 * 60));
-  const day = Math.floor(now / (1000 * 60 * 60 * 24));
-  const week = Math.floor(now / (1000 * 60 * 60 * 24 * 7));
+// Run after initial UI mount
+document.addEventListener("DOMContentLoaded", enhanceProfilePanel);
 
-  if (!packStats[seriesId]) {
-    packStats[seriesId] = {
-      potEth: 0,
-      opensHour: {},
-      opensDay: {},
-      opensWeek: {},
-      topCurrentHour: null,
-      topCurrentDay: null,
-      topCurrentWeek: null,
-    };
-  }
-
-  const s = packStats[seriesId];
-
-  s.potEth += priceEth * 0.01;
-
-  s.opensHour[hour] = s.opensHour[hour] || {};
-  s.opensHour[hour][wallet] = (s.opensHour[hour][wallet] || 0) + 1;
-
-  s.opensDay[day] = s.opensDay[day] || {};
-  s.opensDay[day][wallet] = (s.opensDay[day][wallet] || 0) + 1;
-
-  s.opensWeek[week] = s.opensWeek[week] || {};
-  s.opensWeek[week][wallet] = (s.opensWeek[week][wallet] || 0) + 1;
-
-  savePackStats();
-}
-
-// ---------- LOOT ----------
+// -------------------------------------------------------
+// LOOT ENGINE 2.0 — Fragments / Shards / Relics / Packs
+// -------------------------------------------------------
 
 function setupLoot() {
   const segButtons = $$("[data-loot-view]");
   const views = $$(".loot-view");
 
+  // Switch loot subtabs
   segButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const view = btn.getAttribute("data-loot-view");
-      if (!view) return;
 
       segButtons.forEach((b) =>
         b.classList.toggle("segmented-btn-active", b === btn)
       );
-      views.forEach((v) => {
-        v.classList.toggle("loot-view-active", v.id === `lootView-${view}`);
-      });
+
+      views.forEach((v) =>
+        v.classList.toggle(
+          "loot-view-active",
+          v.id === `lootView-${view}`
+        )
+      );
 
       if (view === "inventory") renderInventory();
+      applyCompactViewport();
     });
   });
+
+  // ----------------------------------------------
+  // PACK OPEN  (mock but upgraded for next-gen UX)
+  // ----------------------------------------------
 
   const packBtn = $("#btn-open-pack");
   if (packBtn) {
     packBtn.addEventListener("click", () => {
       const wallet = spawnAddress || "demo-wallet";
       const priceEth = 0.02;
+
+      // Random loot formula — now tuned for visual variation
       const gainedFragments = 2 + Math.floor(Math.random() * 4);
-      const gainedShards = Math.random() < 0.3 ? 1 : 0;
-      const xpGain = 30 + Math.floor(Math.random() * 30);
+      const gainedShards = Math.random() < 0.35 ? 1 : 0;
+      const relicDrop = Math.random() < 0.06 ? 1 : 0; 
+      const xpGain = 30 + Math.floor(Math.random() * 50);
 
       state.fragments += gainedFragments;
       state.shards += gainedShards;
+      state.relics += relicDrop;
       state.xp += xpGain;
 
+      // Save pack stats to local storage
       registerPackOpen("starter_mesh_pack", wallet, priceEth);
 
-      const summary = `Starter mesh pack → +${gainedFragments} Fragments${
-        gainedShards ? `, +${gainedShards} Shard` : ""
-      }`;
+      const summary = `+${gainedFragments}F  ${
+        gainedShards ? `+${gainedShards}S ` : ""
+      }${relicDrop ? `+${relicDrop}R ` : ""}`;
 
+      // LOOT EVENT
       pushEvent(state.lootEvents, {
         kind: "pack",
         label: "PACK",
-        text: summary,
+        text: `Starter pack opened → ${summary}`,
         time: formatTime(),
         meta: `+${xpGain} XP · ${priceEth} ETH`,
       });
 
+      // HOME FEED MIRROR
       pushEvent(state.homeEvents, {
         kind: "pack",
         label: "PACK",
-        text: "Pack open synced into your mesh orbit.",
+        text: "Pack synced into your mesh orbit.",
         time: formatTime(),
         meta: `+${xpGain} XP`,
       });
 
+      // QUEST COMPLETE?
       const q = state.quests.find((q) => q.id === "q-pack");
       if (q && !q.completed) {
         q.completed = true;
         state.xp += q.reward;
+
         pushEvent(state.homeEvents, {
           kind: "quest",
           label: "QUEST",
-          text: "Quest completed: Open a starter mesh pack",
+          text: "Quest: Open a starter pack",
           time: formatTime(),
           meta: `+${q.reward} XP`,
         });
@@ -530,33 +555,44 @@ function setupLoot() {
       renderActivityList($("#lootEvents"), state.lootEvents);
       renderActivityList($("#homeActivityList"), state.homeEvents);
       renderQuests();
-      showToast("Simulated pack open · loot & XP updated");
+      showToast("Pack opened · loot added");
+
+      applyCompactViewport();
     });
-  }
+  });
+
+  // ----------------------------------------------
+  // SYNTH / LAB — Create Relic (Fragments → Shards → Relics)
+  // ----------------------------------------------
 
   const synthBtn = $("#btn-simulate-synth");
   const labResult = $("#labResult");
+
   if (synthBtn && labResult) {
     synthBtn.addEventListener("click", () => {
-      if (state.fragments < 5 || state.shards < 1) {
+      // Requirements for crafting (mock)
+      const needF = 5;
+      const needS = 1;
+
+      if (state.fragments < needF || state.shards < needS) {
         labResult.textContent =
-          "Not enough Fragments/Shards to synth a Relic (mock requirement: 5F + 1S).";
+          `Need ${needF} Fragments + ${needS} Shard to create a Relic.`;
         return;
       }
 
-      state.fragments -= 5;
-      state.shards -= 1;
+      state.fragments -= needF;
+      state.shards -= needS;
       state.relics += 1;
-      const xpGain = 80;
+
+      const xpGain = 75 + Math.floor(Math.random() * 40);
       state.xp += xpGain;
 
-      labResult.textContent =
-        "Synthesis successful · 5 Fragments + 1 Shard → 1 Relic (mock).";
+      labResult.textContent = "Relic successfully created.";
 
       pushEvent(state.lootEvents, {
         kind: "relic",
         label: "RELIC",
-        text: "Synthesized a Relic in Pull Lab.",
+        text: "Pulled together fragments + shard → Relic",
         time: formatTime(),
         meta: `+${xpGain} XP`,
       });
@@ -564,7 +600,7 @@ function setupLoot() {
       pushEvent(state.homeEvents, {
         kind: "relic",
         label: "RELIC",
-        text: "Relic synced into your mesh orbit.",
+        text: "Relic synced into mesh orbit.",
         time: formatTime(),
         meta: `+${xpGain} XP`,
       });
@@ -573,983 +609,544 @@ function setupLoot() {
       renderInventory();
       renderActivityList($("#lootEvents"), state.lootEvents);
       renderActivityList($("#homeActivityList"), state.homeEvents);
-      showToast("Relic created (mock) · XP boosted");
+
+      showToast("Relic forged · XP boosted");
+      applyCompactViewport();
     });
   }
 }
 
-// ---------- MESH MODES (om UI finns) ----------
+// -------------------------------------------------------
+// INVENTORY — Compact UI Rendering
+// -------------------------------------------------------
 
-function setupMeshModes() {
-  const buttons = $$("[data-mesh-mode]");
-  const copyEl = $("#meshModeCopy");
+function renderInventory() {
+  const f = $("#invFragments");
+  const s = $("#invShards");
+  const r = $("#invRelics");
 
-  if (!buttons.length) return;
+  if (f) f.textContent = state.fragments;
+  if (s) s.textContent = state.shards;
+  if (r) r.textContent = state.relics;
 
-  buttons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const mode = btn.getAttribute("data-mesh-mode");
-      if (!mode || !copyEl) return;
-
-      buttons.forEach((b) =>
-        b.classList.toggle("segmented-btn-active", b === btn)
-      );
-
-      if (mode === "alpha") {
-        copyEl.innerHTML =
-          'Viewing mesh demo in <strong>Alpha hunters</strong> mode — wallets opening high volumes of packs cluster at the edges.';
-      } else if (mode === "new") {
-        copyEl.innerHTML =
-          'Viewing mesh demo in <strong>New creators</strong> mode — fresh tokens and wallets appear as pulsing nodes.';
-      } else {
-        copyEl.innerHTML =
-          'Viewing mesh demo in <strong>Gravity clusters</strong> mode — wallets with the largest XP streams bend the mesh around them.';
-      }
-
-      pushEvent(state.meshEvents, {
-        kind: "mesh",
-        label: "MESH",
-        text: `Switched mesh mode to ${mode}.`,
-        time: formatTime(),
-        meta: "View changed (mock)",
-      });
-
-      renderActivityList($("#meshEvents"), state.meshEvents);
-    });
-  });
-
-  const fullMeshBtn = $("#btn-open-full-mesh");
-  if (fullMeshBtn) {
-    fullMeshBtn.addEventListener("click", () => {
-      showToast("Full Mesh Explorer is not wired yet (demo).");
-    });
-  }
+  // Optional: Auto-update compact bars later
 }
 
-// ---------- ACCOUNT SHEET ----------
+// -------------------------------------------------------
+// MARKET ENGINE 2.0 — Listings · Filters · Popup Details
+// -------------------------------------------------------
 
-function setupAccountSheet() {
-  const sheet = $("#account-sheet");
-  const btnAccount = $("#btn-account");
-  const btnClose = $("#btn-close-account");
-  if (!sheet || !btnAccount || !btnClose) return;
+const MARKET_DATA = [
+  {
+    id: "l1",
+    title: "Starter Mesh Pack",
+    desc: "Base-friendly starter pack for new mesh explorers.",
+    priceEth: "0.02 ETH",
+    meta: "452 opened today",
+    category: "packs",
+  },
+  {
+    id: "l2",
+    title: "Creator Token · SPN",
+    desc: "SpawnEngine token powering XP boosts & mesh rituals.",
+    priceEth: "0.004 ETH",
+    meta: "Trending · +31%",
+    category: "tokens",
+  },
+  {
+    id: "l3",
+    title: "Vaulted Relic",
+    desc: "High-tier pull forged from fragments + shards.",
+    priceEth: "0.15 ETH",
+    meta: "Legendary",
+    category: "collectibles",
+  },
+  {
+    id: "l4",
+    title: "Alpha Hunter Insights",
+    desc: "Top trader feed · real-time mesh spikes.",
+    priceEth: "0.01 ETH",
+    meta: "Creator Service",
+    category: "services",
+  },
+  {
+    id: "l5",
+    title: "Mesh Upgrade · XP Boost",
+    desc: "Boost your ritual streak with temporary 1.4x XP.",
+    priceEth: "0.005 ETH",
+    meta: "Boosts",
+    category: "boosts",
+  },
+];
 
-  function open() {
-    sheet.setAttribute("aria-hidden", "false");
-    sheet.classList.add("open");
-    sheet.classList.remove("hidden");
-  }
-  function close() {
-    sheet.setAttribute("aria-hidden", "true");
-    sheet.classList.remove("open");
-    sheet.classList.add("hidden");
-  }
+let marketFilter = "all";
 
-  btnAccount.addEventListener("click", open);
-  btnClose.addEventListener("click", close);
-  sheet.addEventListener("click", (e) => {
-    if (e.target === sheet) close();
-  });
+// -------------------------------------------------------
+// RENDER MARKET LIST
+// -------------------------------------------------------
 
-  const rows = sheet.querySelectorAll(".sheet-row");
-  rows.forEach((row) => {
-    row.addEventListener("click", () => {
-      const action = row.getAttribute("data-action");
-      if (action === "referrals") {
-        showToast("Referrals panel (mock).");
-      } else if (action === "earnings") {
-        showToast("Mesh earnings (mock).");
-      } else if (action === "collectibles") {
-        showToast("Collectibles view (mock).");
-      } else if (action === "swap-wallet") {
-        showToast("Swap wallet (mock).");
-      } else if (action === "logout") {
-        showToast("Disconnected (mock).");
-        close();
-      }
-    });
-  });
-}
+function renderMarket() {
+  const list = $("#marketGrid");
+  const empty = $("#marketEmpty");
+  if (!list) return;
 
-// ---------- LIVE PULSE ----------
+  const items =
+    marketFilter === "all"
+      ? MARKET_DATA
+      : MARKET_DATA.filter((i) => i.category === marketFilter);
 
-function setupLivePulse() {
-  setInterval(() => {
-    const kinds = ["xp", "pack", "mesh", "quest", "social"];
-    const pick = kinds[Math.floor(Math.random() * kinds.length)];
-
-    let payload;
-    if (pick === "xp") {
-      payload = {
-        kind: "xp",
-        label: "XP",
-        text: "Background XP trickle from docked app (mock).",
-        meta: "+5 XP",
-      };
-      state.xp += 5;
-    } else if (pick === "pack") {
-      payload = {
-        kind: "pack",
-        label: "PACK",
-        text: "Random wallet opened a mesh-aligned pack.",
-        meta: "External source",
-      };
-    } else if (pick === "mesh") {
-      payload = {
-        kind: "mesh",
-        label: "MESH",
-        text: "New node linked into your extended graph.",
-        meta: "Sentient Mesh mock",
-      };
-    } else if (pick === "quest") {
-      payload = {
-        kind: "quest",
-        label: "QUEST",
-        text: "A side-quest was completed by a docked app user.",
-        meta: "Global feed",
-      };
-    } else {
-      payload = {
-        kind: "social",
-        label: "CAST",
-        text: "Farcaster friend joined a SpawnEngine quest.",
-        meta: "Social mesh",
-      };
-    }
-
-    pushEvent(state.homeEvents, {
-      ...payload,
-      time: formatTime(),
-    });
-
-    renderMeshSnapshot();
-    renderActivityList($("#homeActivityList"), state.homeEvents);
-  }, 14000 + Math.random() * 6000);
-}
-
-// ---------- WALLET / ONCHAIN ----------
-
-const btnConnect = document.getElementById("btn-connect");
-const addrEls = document.querySelectorAll("[data-wallet-address]");
-const walletStatusLabel = document.getElementById("wallet-status-label");
-const xpSourceEl = document.getElementById("xp-source-label");
-
-function setupWallet() {
-  if (!btnConnect) return;
-
-  updateWalletUI();
-
-  btnConnect.addEventListener("click", () => {
-    if (spawnAddress) {
-      disconnect();
-    } else {
-      connect();
-    }
-  });
-}
-
-function updateWalletUI() {
-  if (!btnConnect) return;
-
-  const label = spawnAddress ? "Disconnect" : "Connect";
-  btnConnect.textContent = label;
-
-  const statusText = spawnAddress ? "Connected" : "Not connected";
-  if (walletStatusLabel) {
-    walletStatusLabel.textContent = statusText;
-  }
-
-  const short = spawnAddress ? shortenAddress(spawnAddress) : "Not connected";
-  addrEls.forEach((el) => (el.textContent = short));
-
-  if (xpSourceEl) {
-    xpSourceEl.textContent = spawnAddress
-      ? "XP synced from your Base wallet activity (mock formula)."
-      : "XP currently running on demo values · Phase 2 will switch to live mesh data.";
-  }
-
-  renderHeaderStats();
-}
-
-async function connect() {
-  if (!window.ethers || !window.ethereum) {
-    showToast("No wallet provider found (MetaMask/Rabby).");
+  if (!items.length) {
+    if (empty) empty.style.display = "block";
+    list.innerHTML = "";
     return;
   }
 
-  try {
-    const accounts = await window.ethereum.request({
-      method: "eth_requestAccounts",
-    });
-    if (!accounts || !accounts.length) {
-      showToast("No accounts available.");
-      return;
-    }
+  if (empty) empty.style.display = "none";
 
-    spawnProvider = new ethers.providers.Web3Provider(window.ethereum);
-    const net = await spawnProvider.getNetwork();
-    if (net.chainId !== SPAWN_CONFIG.CHAIN_ID) {
-      try {
-        await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: ethers.utils.hexValue(SPAWN_CONFIG.CHAIN_ID) }],
-        });
-      } catch (err) {
-        showToast("Switch to Base in your wallet.");
-        console.error(err);
-      }
-    }
-
-    spawnSigner = spawnProvider.getSigner();
-    spawnAddress = await spawnSigner.getAddress();
-    showToast(`Connected ${shortenAddress(spawnAddress)}`);
-
-    updateWalletUI();
-    await loadOnchainData(updateWalletUI);
-
-    if (window.ethereum.removeListener) {
-      window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
-    }
-
-    showRoleSheetIfNeeded();
-  } catch (e) {
-    console.error(e);
-    showToast("Wallet connection failed.");
-  }
-}
-
-async function disconnect() {
-  spawnProvider = null;
-  spawnSigner = null;
-  spawnAddress = null;
-  showToast("Disconnected (local only).");
-  updateWalletUI();
-}
-
-async function handleAccountsChanged(accounts) {
-  if (!accounts || !accounts.length) {
-    await disconnect();
-  } else {
-    spawnAddress = accounts[0];
-    updateWalletUI();
-    await loadOnchainData(updateWalletUI);
-  }
-}
-
-async function loadOnchainData(updateWalletUIFn) {
-  if (!spawnAddress) return;
-  try {
-    if (typeof ethers === "undefined") {
-      console.error("Ethers.js library not loaded.");
-      return;
-    }
-
-    const rpc = new ethers.providers.JsonRpcProvider(SPAWN_CONFIG.RPC_URL);
-
-    const [txCount, balance, gasPrice] = await Promise.all([
-      rpc.getTransactionCount(spawnAddress),
-      rpc.getBalance(spawnAddress),
-      rpc.getGasPrice(),
-    ]);
-
-    const baseXp = 200;
-    state.xp = baseXp + txCount * 10;
-
-    const gasEl = $("#gasEstimate");
-    if (gasEl) {
-      const gwei = parseFloat(ethers.utils.formatUnits(gasPrice, "gwei"));
-      gasEl.textContent = `~${gwei.toFixed(2)} gwei`;
-    }
-
-    const balanceEl = $("#walletBalanceEth");
-    if (balanceEl) {
-      const eth = parseFloat(ethers.utils.formatEther(balance));
-      balanceEl.textContent = `${eth.toFixed(4)} ETH`;
-    }
-
-    pushEvent(state.homeEvents, {
-      kind: "xp",
-      label: "XP",
-      text: "Mesh synced to your Base wallet activity.",
-      time: formatTime(),
-      meta: `txCount=${txCount}`,
-    });
-
-    renderMeshSnapshot();
-    renderActivityList($("#homeActivityList"), state.homeEvents);
-    if (updateWalletUIFn) updateWalletUIFn();
-  } catch (e) {
-    console.error(e);
-    showToast("Could not load onchain data.");
-  }
-}
-
-// ---------- ROLE SELECT ----------
-
-function loadStoredRoles() {
-  try {
-    const multi = localStorage.getItem("spawnengine_roles");
-    if (multi) {
-      const parsed = JSON.parse(multi);
-      if (Array.isArray(parsed) && parsed.length) return parsed;
-    }
-    const single = localStorage.getItem("spawnengine_role");
-    if (single) return [single];
-  } catch (e) {
-    console.warn("Failed to parse stored roles", e);
-  }
-  return [];
-}
-
-async function saveRoleOnchain(roles) {
-  showToast(`Saving roles ${roles.join(", ")}... (Mock TX)`);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log(`[API MOCK] Roles saved: ${roles.join(", ")}`);
-  return true;
-}
-
-function showRoleSheetIfNeeded() {
-  const backdrop = document.getElementById("role-backdrop");
-  if (!backdrop) return;
-  const roles = loadStoredRoles();
-
-  if (!roles.length) {
-    backdrop.classList.remove("hidden");
-    backdrop.classList.add("open");
-  } else {
-    backdrop.classList.add("hidden");
-    backdrop.classList.remove("open");
-  }
-}
-
-function setupRoleSelect() {
-  const backdrop = document.getElementById("role-backdrop");
-  const sheet = document.getElementById("role-sheet");
-  const closeBtn = document.getElementById("role-close");
-  const saveBtn = document.getElementById("save-role");
-  const cards = document.querySelectorAll(".role-card");
-
-  if (!backdrop || !sheet || !closeBtn || !saveBtn || !cards.length) return;
-
-  let selectedRoles = new Set(loadStoredRoles());
-
-  cards.forEach((card) => {
-    const role = card.getAttribute("data-role");
-    if (role && selectedRoles.has(role)) {
-      card.classList.add("active");
-    }
-  });
-
-  if (!selectedRoles.size) {
-    backdrop.classList.remove("hidden");
-    backdrop.classList.add("open");
-    saveBtn.disabled = true;
-  } else {
-    backdrop.classList.add("hidden");
-    backdrop.classList.remove("open");
-    saveBtn.disabled = false;
-  }
-
-  cards.forEach((card) => {
-    card.addEventListener("click", () => {
-      const role = card.getAttribute("data-role");
-      if (!role) return;
-
-      if (selectedRoles.has(role)) {
-        selectedRoles.delete(role);
-        card.classList.remove("active");
-      } else {
-        selectedRoles.add(role);
-        card.classList.add("active");
-      }
-
-      saveBtn.disabled = selectedRoles.size === 0;
-    });
-  });
-
-  saveBtn.addEventListener("click", async () => {
-    if (!selectedRoles.size) return;
-
-    const arr = Array.from(selectedRoles);
-    const saved = await saveRoleOnchain(arr);
-
-    if (saved) {
-      localStorage.setItem("spawnengine_roles", JSON.stringify(arr));
-      localStorage.removeItem("spawnengine_role");
-
-      backdrop.classList.remove("open");
-      backdrop.classList.add("hidden");
-
-      showToast("Roles updated and synced on-chain!");
-      updateRoleDisplay();
-    }
-  });
-
-  closeBtn.addEventListener("click", () => {
-    backdrop.classList.remove("open");
-    backdrop.classList.add("hidden");
-  });
-
-  backdrop.addEventListener("click", (e) => {
-    if (e.target === backdrop) {
-      backdrop.classList.remove("open");
-      backdrop.classList.add("hidden");
-    }
-  });
-}
-
-function updateRoleDisplay() {
-  const roleIconSpan = document.getElementById("meshRoleIcon");
-  const roleLabelSpan = document.getElementById("meshRoleLabel");
-  if (!roleIconSpan || !roleLabelSpan) return;
-
-  const roles = loadStoredRoles();
-
-  const labelMap = {
-    hunter: "Alpha Hunter / Trader",
-    creator: "Creator / Artist",
-    dev: "Dev / Builder",
-    collector: "Collector / Fan",
-  };
-
-  const iconMap = {
-    hunter: "⚡",
-    creator: "🎨",
-    dev: "🧪",
-    collector: "🎴",
-  };
-
-  if (!roles.length) {
-    roleIconSpan.textContent = "❓";
-    roleLabelSpan.textContent = "Unknown Role";
-    return;
-  }
-
-  const primary = roles[0];
-  const extraCount = roles.length - 1;
-  const label = labelMap[primary] || primary;
-  const icon = iconMap[primary] || "❓";
-  const labelText = extraCount > 0 ? `${label} +${extraCount}` : label;
-
-  roleIconSpan.textContent = icon;
-  roleLabelSpan.textContent = labelText;
-}
-
-// ---------- SUPCAST ----------
-
-const SUPCAST_STORAGE_KEY = "spawnengine_supcast_threads_v1";
-let supcastThreads = [];
-
-function loadSupcastThreads() {
-  try {
-    const raw = localStorage.getItem(SUPCAST_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveSupcastThreads() {
-  localStorage.setItem(SUPCAST_STORAGE_KEY, JSON.stringify(supcastThreads));
-}
-
-function renderSupcastFeed() {
-  const feed = document.getElementById("supcastFeed");
-  if (!feed) return;
-
-  feed.innerHTML = "";
-
-  if (!supcastThreads.length) {
-    const li = document.createElement("li");
-    li.className = "supcast-feed-item";
-    li.innerHTML = `
-      <div class="supcast-feed-title">No questions yet.</div>
-      <div class="supcast-feed-meta">
-        <span>Be the first to ask something about your mesh.</span>
-        <span></span>
-      </div>
-    `;
-    feed.appendChild(li);
-    return;
-  }
-
-  supcastThreads
-    .slice()
-    .reverse()
-    .forEach((q) => {
-      const li = document.createElement("li");
-      li.className = "supcast-feed-item";
-      li.innerHTML = `
-        <div class="supcast-feed-title">${q.title}</div>
-        <div class="supcast-feed-meta">
-          <span>${q.context} · ${q.tags || "no tags"}</span>
-          <span>${q.time}</span>
+  list.innerHTML = items
+    .map(
+      (i) => `
+      <div class="market-card" data-listing="${i.id}">
+        <h4>${i.title}</h4>
+        <p class="market-card-desc">${i.desc}</p>
+        <div class="market-card-footer">
+          <span class="market-card-price">${i.priceEth}</span>
+          <span class="market-card-participants">${i.meta}</span>
         </div>
-        <p class="section-sub" style="margin-top:4px;">${q.description}</p>
-      `;
-      feed.appendChild(li);
+        <button class="btn-outline market-card-btn">View</button>
+      </div>
+    `
+    )
+    .join("");
+
+  // Wire popup openers
+  list.querySelectorAll(".market-card-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".market-card");
+      const id = card?.getAttribute("data-listing");
+      const listing = MARKET_DATA.find((x) => x.id === id);
+      if (listing) openMarketPopup(listing);
     });
+  });
+
+  applyCompactViewport();
 }
 
-function setupSupcast() {
-  const ctxSel = document.getElementById("supcastContext");
-  const titleInput = document.getElementById("supcastTitle");
-  const tagsInput = document.getElementById("supcastTags");
-  const descInput = document.getElementById("supcastDescription");
-  const submitBtn = document.getElementById("supcastSubmit");
+// -------------------------------------------------------
+// MARKET FILTERS
+// -------------------------------------------------------
 
-  if (!ctxSel || !titleInput || !tagsInput || !descInput || !submitBtn) return;
+function setupMarketFilters() {
+  const filterRow = $("#marketFilters");
+  if (!filterRow) return;
 
-  supcastThreads = loadSupcastThreads();
-  renderSupcastFeed();
+  filterRow.addEventListener("click", (e) => {
+    const btn = e.target.closest(".market-filter-chip");
+    if (!btn) return;
 
-  submitBtn.addEventListener("click", () => {
-    const title = titleInput.value.trim();
-    const description = descInput.value.trim();
+    const cat = btn.dataset.filter || "all";
+    marketFilter = cat;
 
-    if (!title || !description) {
-      showToast("Fill in title + description first.");
-      return;
-    }
+    filterRow
+      .querySelectorAll(".market-filter-chip")
+      .forEach((c) => c.classList.remove("is-active"));
 
-    const context = ctxSel.value;
-    const tags = tagsInput.value.trim();
-    const now = new Date();
-    const time = now.toLocaleTimeString("sv-SE", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    btn.classList.add("is-active");
 
-    supcastThreads.push({
-      id: "sup_" + Date.now(),
-      context,
-      title,
-      tags,
-      description,
-      time,
-    });
-
-    saveSupcastThreads();
-    renderSupcastFeed();
-
-    titleInput.value = "";
-    tagsInput.value = "";
-    descInput.value = "";
-
-    showToast("SupCast question posted (mock).");
+    renderMarket();
   });
 }
 
-// ---------- SETTINGS POPUP ----------
+// -------------------------------------------------------
+// POPUP DETAILS
+// -------------------------------------------------------
 
-function setupInlineSettingsPopup() {
-  const settingsBtn = document.getElementById("settings-btn");
-  const settingsBackdrop = document.getElementById("settings-backdrop");
-  const settingsClose = document.getElementById("settings-close");
+function openMarketPopup(listing) {
+  const backdrop = $("#marketDetailsBackdrop");
+  const title = $("#marketDetailsTitle");
+  const body = $("#marketDetailsBody");
+  if (!backdrop || !title || !body) return;
 
-  if (!settingsBtn || !settingsBackdrop || !settingsClose) return;
+  title.textContent = listing.title;
 
-  settingsBtn.addEventListener("click", () => {
-    settingsBackdrop.classList.remove("hidden");
-  });
+  body.innerHTML = `
+    <div class="market-card">
+      <h4>${listing.title}</h4>
+      <p class="market-card-desc">${listing.desc}</p>
+      <div class="market-card-footer">
+        <span class="market-card-price">${listing.priceEth}</span>
+        <span class="market-card-participants">${listing.meta}</span>
+      </div>
+      <button id="marketPopupBuy" class="btn-primary full-btn">Buy (mock)</button>
+    </div>
+  `;
 
-  settingsClose.addEventListener("click", () => {
-    settingsBackdrop.classList.add("hidden");
-  });
-
-  settingsBackdrop.addEventListener("click", (e) => {
-    if (e.target === settingsBackdrop) {
-      settingsBackdrop.classList.add("hidden");
-    }
-  });
-
-  const builderCards = settingsBackdrop.querySelectorAll(
-    "[data-builder-action]"
-  );
-
-  builderCards.forEach((card) => {
-    card.addEventListener("click", () => {
-      const action = card.getAttribute("data-builder-action");
-      if (action === "xp") {
-        showToast("XP SDK · would show dev key + docs (mock).");
-      } else if (action === "filters") {
-        showToast("Premium filters · Alpha hunters & analytics (soon).");
-      } else if (action === "launchpad") {
-        showToast("Launchpad builder · creator panel (design only).");
-      } else if (action === "notifications") {
-        showToast("Notifications center (mock).");
-      }
+  const buyBtn = $("#marketPopupBuy");
+  if (buyBtn) {
+    buyBtn.addEventListener("click", () => {
+      showToast(`Purchased ${listing.title} (mock)`);
     });
-  });
+  }
+
+  backdrop.classList.remove("hidden");
 }
 
-// ---------- MARKET DETAILS ----------
+function setupMarketPopup() {
+  const backdrop = $("#marketDetailsBackdrop");
+  const backBtn = $("#marketDetailsBack");
 
-function setupMarketDetails() {
-  const backdrop = document.getElementById("marketDetailsBackdrop");
-  const backBtn = document.getElementById("marketDetailsBack");
-  const titleEl = document.getElementById("marketDetailsTitle");
-  const bodyEl = document.getElementById("marketDetailsBody");
-
-  if (!backdrop || !backBtn || !titleEl || !bodyEl) return;
-
-  backdrop.classList.add("hidden");
+  if (!backdrop || !backBtn) return;
 
   const close = () => {
     backdrop.classList.add("hidden");
-    bodyEl.innerHTML = "";
   };
 
   backBtn.addEventListener("click", close);
-
   backdrop.addEventListener("click", (e) => {
-    if (e.target === backdrop) {
-      close();
-    }
-  });
-
-  window.openMarketDetails = function (listing) {
-    if (!listing) {
-      titleEl.textContent = "Listing";
-      bodyEl.innerHTML = `<p class="section-sub">No data for this listing (mock).</p>`;
-    } else if (typeof listing === "string") {
-      titleEl.textContent = listing;
-      bodyEl.innerHTML = `<p class="section-sub">Listing details coming soon (mock).</p>`;
-    } else {
-      const name = listing.title || listing.name || "Listing";
-      const desc =
-        listing.description ||
-        listing.desc ||
-        "SpawnEngine market listing (mock details).";
-      const price =
-        listing.priceEth || listing.price || listing.priceUsd || null;
-      const meta = listing.meta || listing.participants || "";
-
-      titleEl.textContent = name;
-      bodyEl.innerHTML = `
-        <div class="market-card">
-          <h4>${name}</h4>
-          <p class="market-card-desc">${desc}</p>
-          <div class="market-card-footer">
-            ${
-              price
-                ? `<span class="market-card-price">${price}</span>`
-                : ""
-            }
-            ${
-              meta
-                ? `<span class="market-card-participants">${meta}</span>`
-                : ""
-            }
-          </div>
-        </div>
-      `;
-    }
-
-    backdrop.classList.remove("hidden");
-  };
-
-  const marketButtons = $$(".market-card-btn");
-  marketButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const card = btn.closest(".market-card");
-      if (!card) {
-        window.openMarketDetails("Listing");
-        return;
-      }
-
-      const titleElCard = card.querySelector("h4");
-      const descElCard = card.querySelector(".market-card-desc");
-      const priceElCard = card.querySelector(".market-card-price");
-      const metaElCard = card.querySelector(".market-card-participants");
-
-      const listing = {
-        title: titleElCard ? titleElCard.textContent : "Listing",
-        description: descElCard ? descElCard.textContent : "",
-        price: priceElCard ? priceElCard.textContent : "",
-        meta: metaElCard ? metaElCard.textContent : "",
-      };
-
-      window.openMarketDetails(listing);
-    });
+    if (e.target === backdrop) close();
   });
 }
 
-// ---------- UNIFIED ACTIVITY MESH ----------
+// -------------------------------------------------------
+// INITIALIZE MARKET
+// -------------------------------------------------------
 
-const MESH_EVENT_TYPES = {
-  pack_open: { icon: "🎰", group: "packs", label: "Pack opened" },
-  burn: { icon: "🔥", group: "packs", label: "Cards burned" },
-  swap: { icon: "🔁", group: "trades", label: "Swap executed" },
-  zora_buy: { icon: "🟦", group: "trades", label: "Zora buy" },
-  zora_sell: { icon: "🟥", group: "trades", label: "Zora sell" },
-  xp_event: { icon: "⚡", group: "xp", label: "XP event" },
-  streak: { icon: "🔥", group: "xp", label: "Streak updated" },
-  farcaster_cast: { icon: "📡", group: "social", label: "Farcaster cast" },
-  social: { icon: "💬", group: "social", label: "Social signal" },
+function initMarketModule() {
+  renderMarket();
+  setupMarketFilters();
+  setupMarketPopup();
+}
+
+// -------------------------------------------------------
+// MESH EXPLORER PRO — Dynamic Graph, Clusters, Pulsing Nodes
+// -------------------------------------------------------
+
+let meshCanvas, meshCtx;
+let meshNodes = [];
+let meshLinks = [];
+let meshZoom = 1;
+let meshMode = "gravity"; // default
+let meshAnimFrame = null;
+
+// Node presets per mode
+const MESH_PRESETS = {
+  alpha: {
+    nodeColor: "rgba(255,110,80,0.85)",
+    glow: "rgba(255,60,40,0.7)",
+    size: 7,
+    pulseSpeed: 0.05,
+  },
+  new: {
+    nodeColor: "rgba(80,170,255,0.85)",
+    glow: "rgba(40,120,255,0.7)",
+    size: 6,
+    pulseSpeed: 0.045,
+  },
+  gravity: {
+    nodeColor: "rgba(240,240,255,0.9)",
+    glow: "rgba(150,180,255,0.55)",
+    size: 8,
+    pulseSpeed: 0.03,
+  },
 };
 
-let unifiedMeshEvents = [];
-let meshFilter = "all";
+// -------------------------------------------------------
+// NODE + LINK GENERATION
+// -------------------------------------------------------
 
-function addMeshEvent(evt) {
-  const baseType = evt.type || "xp_event";
-  const def = MESH_EVENT_TYPES[baseType] || MESH_EVENT_TYPES["xp_event"];
+function initMeshGraph() {
+  meshCanvas = document.getElementById("meshCanvas");
+  if (!meshCanvas) return;
+  meshCtx = meshCanvas.getContext("2d");
 
-  const normalized = {
-    type: baseType,
-    group: def.group,
-    icon: def.icon,
-    label: evt.label || def.label,
-    wallet: evt.details?.wallet || evt.wallet || "mesh",
-    value: evt.details?.value ?? evt.value ?? null,
-    rarity: evt.details?.rarity || evt.rarity || null,
-    source: evt.source || "mock",
-    timestamp: evt.timestamp ? new Date(evt.timestamp) : new Date(),
-  };
+  resizeMeshCanvas();
 
-  unifiedMeshEvents.unshift(normalized);
-  if (unifiedMeshEvents.length > 60) unifiedMeshEvents.pop();
+  // Generate 60 nodes
+  meshNodes = Array.from({ length: 60 }).map(() => ({
+    x: Math.random() * meshCanvas.width,
+    y: Math.random() * meshCanvas.height,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.4,
+    pulse: Math.random() * Math.PI * 2,
+  }));
 
-  renderMeshFeed();
-
-  if (typeof addMeshNode === "function") {
-    addMeshNode({
-      kind:
-        normalized.group === "packs"
-          ? "pack"
-          : normalized.group === "trades"
-          ? "mesh"
-          : normalized.group === "xp"
-          ? "xp"
-          : "social",
-      label: normalized.label,
-    });
-  }
-}
-
-function addMeshEventFromPayload(payload) {
-  if (!payload || typeof addMeshEvent !== "function") return;
-
-  const kind = payload.kind || payload.type || "xp_event";
-  addMeshEvent({
-    type: kind,
-    label: payload.text || payload.label || payload.title || "Mesh event",
-    details: {
-      wallet: payload.wallet || payload.address || "mesh",
-      value: payload.value,
-      rarity: payload.rarity,
-    },
-    source: payload.source || "hud",
-    timestamp: payload.timestamp || Date.now(),
-  });
-}
-
-function renderMeshFeed() {
-  const listEl = document.getElementById("meshFeedList");
-  const emptyEl = document.getElementById("meshFeedEmpty");
-  const countEl = document.getElementById("meshFeedCount");
-  if (!listEl) return;
-
-  const now = Date.now();
-
-  const visible = unifiedMeshEvents.filter((e) =>
-    meshFilter === "all" ? true : e.group === meshFilter
-  );
-
-  if (countEl) {
-    countEl.textContent = `${unifiedMeshEvents.length} events`;
-  }
-
-  if (!visible.length) {
-    listEl.innerHTML = "";
-    if (emptyEl) emptyEl.style.display = "block";
-    return;
-  }
-
-  if (emptyEl) emptyEl.style.display = "none";
-
-  const html = visible
-    .map((e) => {
-      const ageMs = now - e.timestamp.getTime();
-      const ageMin = Math.max(0, Math.round(ageMs / 60000));
-      const ageLabel = ageMin === 0 ? "just now" : `${ageMin} min ago`;
-
-      const valueLabel =
-        e.value != null
-          ? `· ${
-              typeof e.value === "number" ? e.value.toFixed(2) : e.value
-            }`
-          : "";
-
-      const rarityLabel = e.rarity
-        ? `<span class="mesh-feed-tag">${e.rarity}</span>`
-        : "";
-      const sourceLabel = e.source
-        ? `<span class="mesh-feed-tag">${e.source}</span>`
-        : "";
-
-      return `
-      <li class="mesh-feed-item">
-        <div class="mesh-feed-icon">${e.icon}</div>
-        <div class="mesh-feed-body">
-          <div class="mesh-feed-title">
-            ${e.label}
-            ${rarityLabel}
-            ${sourceLabel}
-          </div>
-          <div class="mesh-feed-meta-line">
-            ${shortWallet(e.wallet)} ${valueLabel}
-          </div>
-          <div class="mesh-feed-timestamp">${ageLabel}</div>
-        </div>
-      </li>
-    `;
-    })
-    .join("");
-
-  listEl.innerHTML = html;
-}
-
-function shortWallet(addr) {
-  if (!addr || typeof addr !== "string") return "";
-  if (addr.length <= 10) return addr;
-  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
-}
-
-function setMeshFilter(nextFilter) {
-  meshFilter = nextFilter;
-  renderMeshFeed();
-}
-
-function setupMeshFeedFilters() {
-  const meshFeedFilters = document.getElementById("meshFeedFilters");
-  if (!meshFeedFilters) return;
-
-  meshFeedFilters.addEventListener("click", (e) => {
-    const btn = e.target.closest(".mesh-filter-chip");
-    if (!btn) return;
-    const filter = btn.dataset.filter || "all";
-
-    meshFeedFilters
-      .querySelectorAll(".mesh-filter-chip")
-      .forEach((el) => el.classList.remove("is-active"));
-    btn.classList.add("is-active");
-
-    setMeshFilter(filter);
-  });
-}
-
-const MOCK_WALLETS = [
-  "0xspawniz",
-  "0xmesh1234abcd",
-  "0xfeedcafe1337",
-  "0xbase00babe",
-];
-
-const MOCK_EVENTS = [
-  { type: "pack_open", label: "Opened mesh-aligned pack", group: "packs" },
-  { type: "xp_event", label: "Daily ritual XP claimed", group: "xp" },
-  { type: "zora_buy", label: "Zora coin minted", group: "trades" },
-  { type: "farcaster_cast", label: "New cast about SpawnEngine", group: "social" },
-  { type: "burn", label: "Fragments burned for ladder", group: "packs" },
-];
-
-function spawnMockMeshEvent() {
-  const ev = MOCK_EVENTS[Math.floor(Math.random() * MOCK_EVENTS.length)];
-  const wallet = MOCK_WALLETS[Math.floor(Math.random() * MOCK_WALLETS.length)];
-  const value =
-    ev.type === "zora_buy" ? Math.random() * 0.02 + 0.005 : null;
-  const rarity =
-    ev.type === "pack_open"
-      ? ["Fragment", "Shard", "Core", "Artifact"][
-          Math.floor(Math.random() * 4)
-        ]
-      : null;
-
-  addMeshEvent({
-    type: ev.type,
-    label: ev.label,
-    details: { wallet, value, rarity },
-    source: "mock",
-    timestamp: Date.now(),
-  });
-}
-
-// ---------- SLOT-MASKIN HOOK (säker) ----------
-
-function setupSlotMachine() {
-  const el = document.querySelector(".slot-machine");
-  if (!el) return;
-  if (typeof window.SpawnSlotMachine !== "function") return;
-
-  try {
-    const slotMachine = new window.SpawnSlotMachine(el);
-    if (typeof slotMachine.updateUI === "function") {
-      slotMachine.updateUI();
+  // Generate links
+  meshLinks = [];
+  for (let i = 0; i < meshNodes.length; i++) {
+    for (let j = i + 1; j < meshNodes.length; j++) {
+      const dx = meshNodes[i].x - meshNodes[j].x;
+      const dy = meshNodes[i].y - meshNodes[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 160) {
+        meshLinks.push({ a: i, b: j, dist });
+      }
     }
-  } catch (e) {
-    console.error("Slot init error:", e);
+  }
+
+  animateMeshGraph();
+}
+
+function resizeMeshCanvas() {
+  if (!meshCanvas) return;
+  meshCanvas.width = meshCanvas.clientWidth * window.devicePixelRatio;
+  meshCanvas.height = meshCanvas.clientHeight * window.devicePixelRatio;
+  if (meshCtx) {
+    meshCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
   }
 }
 
-// ---------- BOTTOM NAV DEDUPE ----------
+// -------------------------------------------------------
+// ADD NODES FROM UNIFIED MESH STREAM
+// -------------------------------------------------------
 
-function dedupeBottomNav() {
-  const navs = document.querySelectorAll(".bottom-nav");
-  if (navs.length > 1) {
-    navs.forEach((nav, index) => {
-      if (index > 0) nav.remove();
-    });
-  }
-}
+function addMeshNode(evt) {
+  if (!meshNodes.length) return;
 
-// ---------- INIT ----------
+  const w = meshCanvas.width / window.devicePixelRatio;
+  const h = meshCanvas.height / window.devicePixelRatio;
 
-function initSpawnEngine() {
-  renderHeaderStats();
-  initQuests();
-  seedHomeEvents();
-  seedMeshEvents();
-  seedLootEvents();
-
-  renderMeshSnapshot();
-  renderActivityList($("#homeActivityList"), state.homeEvents);
-  renderActivityList($("#meshEvents"), state.meshEvents);
-  renderInventory();
-  renderQuests();
-
-  setupTabs();
-  setupStreak();
-  setupLoot();
-  setupMeshModes();
-  setupAccountSheet();
-  setupLivePulse();
-  setupWallet();
-  setupInlineSettingsPopup();
-  setupMarketDetails();
-  setupRoleSelect();
-  setupSupcast();
-  updateRoleDisplay();
-  setupMeshFeedFilters();
-  setupSlotMachine();
-
-  // Unified mesh mock-stream
-  setInterval(spawnMockMeshEvent, 9000);
-  showRoleSheetIfNeeded();
-}
-
-// ---------- READY STATE ----------
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    dedupeBottomNav();
-    initSpawnEngine();
+  meshNodes.push({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    pulse: Math.random() * Math.PI * 2,
+    highlight: evt.kind === "pack" ? "gold" : evt.kind === "xp" ? "purple" : null,
   });
-} else {
-  dedupeBottomNav();
-  initSpawnEngine();
+
+  // Keep graph size reasonable
+  if (meshNodes.length > 80) meshNodes.shift();
+}
+
+// -------------------------------------------------------
+// DRAWING
+// -------------------------------------------------------
+
+function drawMesh() {
+  const preset = MESH_PRESETS[meshMode] || MESH_PRESETS.gravity;
+
+  meshCtx.clearRect(0, 0, meshCanvas.width, meshCanvas.height);
+
+  // Draw links first
+  meshCtx.lineWidth = 1 * meshZoom;
+  meshCtx.strokeStyle = "rgba(120,140,200,0.25)";
+  meshCtx.beginPath();
+  meshLinks.forEach((link) => {
+    const A = meshNodes[link.a];
+    const B = meshNodes[link.b];
+    meshCtx.moveTo(A.x * meshZoom, A.y * meshZoom);
+    meshCtx.lineTo(B.x * meshZoom, B.y * meshZoom);
+  });
+  meshCtx.stroke();
+
+  // Draw nodes
+  meshNodes.forEach((n) => {
+    n.pulse += preset.pulseSpeed;
+    const pulsedSize = preset.size + Math.sin(n.pulse) * 1.5;
+
+    if (n.highlight) {
+      meshCtx.fillStyle =
+        n.highlight === "gold" ? "rgba(255,200,60,0.9)" : "rgba(200,60,255,0.9)";
+    } else {
+      meshCtx.fillStyle = preset.nodeColor;
+    }
+
+    meshCtx.shadowBlur = 12;
+    meshCtx.shadowColor = preset.glow;
+
+    meshCtx.beginPath();
+    meshCtx.arc(n.x * meshZoom, n.y * meshZoom, pulsedSize, 0, Math.PI * 2);
+    meshCtx.fill();
+
+    meshCtx.shadowBlur = 0;
+  });
+}
+
+// -------------------------------------------------------
+// ANIMATION LOOP
+// -------------------------------------------------------
+
+function animateMeshGraph() {
+  const preset = MESH_PRESETS[meshMode] || MESH_PRESETS.gravity;
+
+  meshNodes.forEach((n) => {
+    n.x += n.vx;
+    n.y += n.vy;
+
+    // bounce
+    if (n.x < 0 || n.x > meshCanvas.width / window.devicePixelRatio) n.vx *= -1;
+    if (n.y < 0 || n.y > meshCanvas.height / window.devicePixelRatio) n.vy *= -1;
+  });
+
+  drawMesh();
+  meshAnimFrame = requestAnimationFrame(animateMeshGraph);
+}
+
+// -------------------------------------------------------
+// MODE SWITCHING
+// -------------------------------------------------------
+
+function setMeshMode(mode) {
+  meshMode = mode;
+  showToast(`Mesh mode → ${mode}`);
+}
+
+// -------------------------------------------------------
+// INIT + HOOKS
+// -------------------------------------------------------
+
+function initMeshExplorer() {
+  initMeshGraph();
+
+  window.addEventListener("resize", () => {
+    resizeMeshCanvas();
+  });
+
+  // Buttons in UI
+  const btnAlpha = document.querySelector("[data-mesh-mode='alpha']");
+  const btnNew = document.querySelector("[data-mesh-mode='new']");
+  const btnGravity = document.querySelector("[data-mesh-mode='gravity']");
+
+  if (btnAlpha)
+    btnAlpha.addEventListener("click", () => setMeshMode("alpha"));
+  if (btnNew)
+    btnNew.addEventListener("click", () => setMeshMode("new"));
+  if (btnGravity)
+    btnGravity.addEventListener("click", () => setMeshMode("gravity"));
+}
+
+// -------------------------------------------------------
+// DEL 7 — HOLO HUD & MICRO-PANELS
+// Neon gas ring • XP pulse • Inventory slide-out
+// -------------------------------------------------------
+
+// ---------- HOLO HUD STATE ----------
+let holoHudTick = 0;
+let gasPulseValue = 0.2; 
+let xpPulse = 0;
+
+// ---------- CREATE HOLO HUD DOM ----------
+function initHoloHud() {
+  const container = document.getElementById("holo-hud");
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="holo-gas">
+      <canvas id="gasRing" width="90" height="90"></canvas>
+      <div class="holo-gas-label">
+        <span id="gasRingValue">0.00 gwei</span>
+      </div>
+    </div>
+
+    <div class="holo-divider"></div>
+
+    <div class="holo-xp">
+      <div class="holo-xp-bar">
+        <div id="holoXpFill" class="holo-xp-fill"></div>
+      </div>
+      <span id="holoXpLabel">0 XP</span>
+    </div>
+
+    <button id="holoInvBtn" class="holo-inv-btn">Inventory</button>
+  `;
+}
+
+// ---------- GAS RING DRAWING ----------
+function drawGasRing(value) {
+  const canvas = document.getElementById("gasRing");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  const center = 45;
+  const radius = 34;
+  const start = -Math.PI / 2;
+  const end = start + value * Math.PI * 2;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // background ring
+  ctx.beginPath();
+  ctx.arc(center, center, radius, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(40,50,90,0.5)";
+  ctx.lineWidth = 8;
+  ctx.stroke();
+
+  // neon ring
+  ctx.beginPath();
+  ctx.arc(center, center, radius, start, end);
+  ctx.strokeStyle = "rgba(52,255,240,0.9)";
+  ctx.lineWidth = 8;
+  ctx.shadowBlur = 14;
+  ctx.shadowColor = "rgba(52,255,240,0.9)";
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+}
+
+// ---------- UPDATE HOLO HUD ----------
+function updateHoloHud() {
+  const gasValEl = document.getElementById("gasRingValue");
+  const xpEl = document.getElementById("holoXpLabel");
+  const xpFill = document.getElementById("holoXpFill");
+
+  // Fake gas jitter (syncs with header)
+  const base = 0.19;
+  const jitter = Math.random() * 0.04;
+  gasPulseValue = base + jitter;
+
+  if (gasValEl) gasValEl.textContent = `${gasPulseValue.toFixed(2)} gwei`;
+
+  drawGasRing(Math.min(gasPulseValue / 1.0, 1));
+
+  // XP Pulse Fill
+  xpPulse += 0.02;
+  const xpRatio = (state.xp % 100) / 100;
+  const wave = Math.sin(xpPulse) * 0.05;
+  const final = Math.min(Math.max(xpRatio + wave, 0), 1);
+
+  if (xpFill) xpFill.style.width = `${final * 100}%`;
+  if (xpEl) xpEl.textContent = `${state.xp} XP`;
+}
+
+// animate
+setInterval(updateHoloHud, 800);
+
+// -------------------------------------------------------
+// MICRO-PANEL: INVENTORY SLIDEOUT
+// -------------------------------------------------------
+
+function initInventorySlideout() {
+  const root = document.getElementById("inventory-slideout");
+  if (!root) return;
+
+  const invBtn = document.getElementById("holoInvBtn");
+  if (!invBtn) return;
+
+  root.innerHTML = `
+    <div class="inv-content">
+      <h3>Inventory</h3>
+      <div class="inv-row">Fragments <span id="invMiniF">${state.fragments}</span></div>
+      <div class="inv-row">Shards <span id="invMiniS">${state.shards}</span></div>
+      <div class="inv-row">Relics <span id="invMiniR">${state.relics}</span></div>
+      <button id="invClose" class="inv-close">Close</button>
+    </div>
+  `;
+
+  invBtn.addEventListener("click", () => {
+    root.classList.add("open");
+    updateInventorySlideout();
+  });
+
+  const closeBtn = root.querySelector("#invClose");
+  closeBtn.addEventListener("click", () => {
+    root.classList.remove("open");
+  });
+}
+
+function updateInventorySlideout() {
+  const f = document.getElementById("invMiniF");
+  const s = document.getElementById("invMiniS");
+  const r = document.getElementById("invMiniR");
+  if (f) f.textContent = state.fragments;
+  if (s) s.textContent = state.shards;
+  if (r) r.textContent = state.relics;
 }
