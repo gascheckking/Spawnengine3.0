@@ -196,116 +196,113 @@
           </div>
 
           <!-- Rad 5: GAS / MODE / MESH STATUS -->
-          <div class="platform-strip">
-            <span class="platform-pill">
-              GAS <span id="gasEstimate" class="platform-pill-value">~0.20 gwei est.</span>
-            </span>
-            <span class="platform-pill">
-              MODE <span class="platform-pill-value">Single mesh · Demo</span>
-            </span>
-            <span class="platform-pill">
-              WALLETS <span id="activeWallets" class="platform-pill-value">0</span>
-            </span>
-          </div>
+<div class="platform-strip">
+  <span class="platform-pill">
+    GAS <span id="gasEstimate" class="platform-pill-value">~0.20 gwei est.</span>
+  </span>
+  <span class="platform-pill">
+    MODE <span class="platform-pill-value">Single mesh · Demo</span>
+  </span>
+  <span class="platform-pill">
+    WALLETS <span id="activeWallets" class="platform-pill-value">0</span>
+  </span>
+</div>
 
-          <!-- Rad 6: Connect + wallet status -->
-          <div class="wallet-strip">
-            <button id="btn-connect" class="btn-outline btn-solid-green">
-              Connect
-            </button>
-            <span id="wallet-status-label" class="wallet-status">Not connected</span>
-            <span class="wallet-address" data-wallet-address>Not connected</span>
-            <span id="walletBalanceEth" class="wallet-balance">0.0000 ETH</span>
-          </div>
+<!-- Rad 6: Connect + wallet status -->
+<div class="wallet-strip">
+  <button id="btn-connect" class="btn-outline btn-solid-green">
+    Connect
+  </button>
+  <span id="wallet-status-label" class="wallet-status">Not connected</span>
+  <span class="wallet-address" data-wallet-address>Not connected</span>
+  <span id="walletBalanceEth" class="wallet-balance">0.0000 ETH</span>
+</div>
 
-          <!-- Rad 7: XP / SPN / Sync / Active wallets -->
-          <div class="hud-grid hud-grid-4">
-            <div class="hud-stat">
-              <div class="hud-stat-label">XP Balance</div>
-              <div id="xpBalance" class="hud-stat-value">1575 XP</div>
-            </div>
-            <div class="hud-stat">
-              <div class="hud-stat-label">SPN Balance</div>
-              <div id="spawnBalance" class="hud-stat-value">497 SPN</div>
-            </div>
-            <div class="hud-stat">
-              <div class="hud-stat-label">Sync</div>
-              <div class="hud-stat-value">Local mock · Phase 1</div>
-            </div>
-            <div class="hud-stat">
-              <div class="hud-stat-label">Active wallets</div>
-              <div id="activeWalletsStat" class="hud-stat-value">0</div>
-            </div>
-          </div>
-
-          <p id="xp-source-label" class="section-sub">
-            XP currently running on demo values · Phase 2 will switch to live mesh data.
-          </p>
-        </div>
-      </div>
-      <!-- /HUD: Mesh hero card -->
-      <!-- PROFILE PANEL -->
-<div class="profile-card">
-  <div class="profile-top">
-    <img src="/logo.png" alt="pfp" class="pfp" />
-    <div class="profile-meta">
-      <h2>@spawniz</h2>
-      <p class="profile-sub">Mesh ID · Creator</p>
-    </div>
-    <button class="settings-btn" id="openSettings">⚙️</button>
+<!-- Rad 7: XP / SPN / Sync / Active wallets -->
+<div class="hud-grid hud-grid-4">
+  <div class="hud-stat">
+    <div class="hud-stat-label">XP Balance</div>
+    <div id="xpBalance" class="hud-stat-value">1575 XP</div>
   </div>
-
-  <div class="profile-stats">
-    <div class="stat">
-      <span class="label">XP</span>
-      <span class="value" id="xpBalanceProfile">1600 XP</span>
-    </div>
-    <div class="stat">
-      <span class="label">SPN</span>
-      <span class="value" id="spnBalanceProfile">497 SPN</span>
-    </div>
-    <div class="stat">
-      <span class="label">Wallets</span>
-      <span class="value" id="walletCountProfile">0</span>
-    </div>
+  <div class="hud-stat">
+    <div class="hud-stat-label">SPN Balance</div>
+    <div id="spawnBalance" class="hud-stat-value">497 SPN</div>
   </div>
-
-  <div class="profile-links">
-    <button class="profile-btn" id="viewEarnings">View earnings</button>
-    <button class="profile-btn" id="openCollectibles">Collectibles</button>
-    <button class="profile-btn" id="switchWallet">Switch wallet</button>
+  <div class="hud-stat">
+    <div class="hud-stat-label">Sync</div>
+    <div class="hud-stat-value">Local mock · Phase 1</div>
+  </div>
+  <div class="hud-stat">
+    <div class="hud-stat-label">Active wallets</div>
+    <div id="activeWalletsStat" class="hud-stat-value">0</div>
   </div>
 </div>
-<!-- END PROFILE PANEL -->
-      <!-- Top-nav: main modules -->
-      <div class="top-nav">
-        <button class="nav-btn nav-btn-active" data-tab="home">
-          <span class="nav-icon">🏠</span>
-          <span class="nav-label">Overview</span>
-        </button>
-        <button class="nav-btn" data-tab="gas">
-          <span class="nav-icon">⛽️</span>
-          <span class="nav-label">Gas</span>
-        </button>
-        <button class="nav-btn" data-tab="stats">
-          <span class="nav-icon">📊</span>
-          <span class="nav-label">Stats</span>
-        </button>
-        <button class="nav-btn" data-tab="leaderboard">
-          <span class="nav-icon">🏅</span>
-          <span class="nav-label">Leaderboard</span>
-        </button>
-        <button class="nav-btn" data-tab="favorites">
-          <span class="nav-icon">⭐️</span>
-          <span class="nav-label">Favorites</span>
-        </button>
-        <button class="nav-btn" data-tab="supcast">
-          <span class="nav-icon">🎧</span>
-          <span class="nav-label">SupCast</span>
-        </button>
-      </div>
-      <!-- /Top-nav: main modules -->
 
+<p id="xp-source-label" class="section-sub">
+  XP currently running on demo values · Phase 2 will switch to live mesh data.
+</p>
+</div>
+</div>
+<!-- /HUD: Mesh hero card -->
+
+
+<!-- PROFILE PANEL (ENDA SOM SKA FINNAS) -->
+<div class="profile-card">
+  <div class="profile-main">
+    <div class="profile-avatar">S</div>
+    <div class="profile-meta">
+      <div class="profile-handle">@spawniz</div>
+      <div class="profile-sub">Mesh ID · Creator</div>
+    </div>
+  </div>
+  <div class="profile-stats">
+    <div class="profile-stat">
+      <div class="profile-stat-label">XP</div>
+      <div class="profile-stat-value">1600 XP</div>
+    </div>
+    <div class="profile-stat">
+      <div class="profile-stat-label">SPN</div>
+      <div class="profile-stat-value">497 SPN</div>
+    </div>
+    <div class="profile-stat">
+      <div class="profile-stat-label">Wallets</div>
+      <div class="profile-stat-value">0</div>
+    </div>
+  </div>
+</div>
+<!-- /PROFILE PANEL -->
+
+
+<!-- PRIMARY APP NAV -->
+<nav class="mesh-nav-scroll">
+  <div class="mesh-nav" id="meshNav">
+    <button class="mesh-nav-btn is-active" data-tab="home">
+      <span class="mesh-nav-icon">🏠</span>
+      <span class="mesh-nav-label">Home</span>
+    </button>
+    <button class="mesh-nav-btn" data-tab="loot">
+      <span class="mesh-nav-icon">🎰</span>
+      <span class="mesh-nav-label">Loot</span>
+    </button>
+    <button class="mesh-nav-btn" data-tab="market">
+      <span class="mesh-nav-icon">⚡</span>
+      <span class="mesh-nav-label">Market</span>
+    </button>
+    <button class="mesh-nav-btn" data-tab="quests">
+      <span class="mesh-nav-icon">🕸️</span>
+      <span class="mesh-nav-label">Quests</span>
+    </button>
+    <button class="mesh-nav-btn" data-tab="mesh">
+      <span class="mesh-nav-icon">🛰️</span>
+      <span class="mesh-nav-label">Mesh</span>
+    </button>
+    <button class="mesh-nav-btn" data-tab="supcast">
+      <span class="mesh-nav-icon">🎧</span>
+      <span class="mesh-nav-label">SupCast</span>
+    </button>
+  </div>
+</nav>
+<!-- /PRIMARY APP NAV -->
 <!-- TAB CONTENT -->
       <div class="tab-content">
         <!-- ROLE SHEET (BACKDROP) -->
