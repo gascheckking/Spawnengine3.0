@@ -9,19 +9,31 @@
   <div id="slot-root" class="slot-root">
     <h1 class="slot-title">🔥 SPN SlotMachine</h1>
     <p class="slot-sub">
-      Stake 100 SPN to spin the reels and win Packs, XP, or rare MESH items.
+      Gamble with SpawnEng (SPN) tokens like a casino slot! Inspired by Dead or Alive and Bonanza. Bet SPN, spin reels, trigger freespins with scatters, and win multipliers. All outcomes mock for now – real onchain in production.
     </p>
 
     <div class="slot-machine">
+      <div class="slot-balance-info">
+        Balance: <span id="slot-balance">1000 SPN</span> (Mock)
+      </div>
+
       <div class="slot-stake-info">
-        Insats: **100 SPN**
+        Bet: <select id="slot-bet-selector">
+          <option value="10">10 SPN</option>
+          <option value="50">50 SPN</option>
+          <option value="100" selected>100 SPN</option>
+          <option value="200">200 SPN</option>
+        </select>
         <span id="slot-status-tx" class="slot-status-tx"></span>
       </div>
 
       <div class="slot-window">
-        <div class="slot-reel" id="slot-reel-1"></div>
-        <div class="slot-reel" id="slot-reel-2"></div>
-        <div class="slot-reel" id="slot-reel-3"></div>
+        <!-- 5 reels, each with 3 visible rows -->
+        <div class="slot-reel-column" id="slot-column-1"></div>
+        <div class="slot-reel-column" id="slot-column-2"></div>
+        <div class="slot-reel-column" id="slot-column-3"></div>
+        <div class="slot-reel-column" id="slot-column-4"></div>
+        <div class="slot-reel-column" id="slot-column-5"></div>
       </div>
       
       <button id="slot-spin-btn" class="slot-spin-btn" disabled>
@@ -29,10 +41,11 @@
       </button>
 
       <p id="slot-result" class="slot-result">Välkommen till SpawnEngine. Anslut för att börja.</p>
+      <p id="slot-freespins" class="slot-freespins">Freespins: 0</p>
     </div>
 
     <p class="slot-foot">
-      I produktion hanteras staking/utbetalning helt on-chain via Base.
+      I produktion hanteras staking/utbetalning helt on-chain via Base. Freespins triggas med 3+ scatters (🌟). Wins baserat på paylines (10 lines).
     </p>
   </div>
 
