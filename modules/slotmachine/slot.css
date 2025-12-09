@@ -29,12 +29,33 @@
   border: 1px solid rgba(132, 172, 255, 0.6);
 }
 
+.slot-balance-info {
+  font-size: 12px;
+  color: #c7d5ff;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+#slot-balance {
+  font-weight: 600;
+  color: #79ffb6;
+}
+
 .slot-stake-info {
   font-size: 12px;
   color: #c7d5ff;
   margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.slot-stake-info select {
+  background: #0f1624;
+  border: 1px solid rgba(120, 160, 255, 0.5);
+  color: #e7ecff;
+  border-radius: 8px;
+  padding: 4px 8px;
 }
 
 .slot-status-tx {
@@ -45,45 +66,59 @@
 .slot-window {
   display: flex;
   justify-content: space-between;
-  gap: 6px;
-  padding: 10px;
+  gap: 4px;
+  padding: 8px;
   border-radius: 12px;
   background: rgba(0, 0, 0, 0.45);
   margin-bottom: 10px;
-  /* Kritiskt för rullande animation */
-  overflow: hidden; 
-  height: 40px; /* Höjden på en symbol */
+  overflow: hidden;
+  height: 120px; /* 3 rows * 40px */
   position: relative;
 }
 
-.slot-reel {
+.slot-reel-column {
   flex: 1;
-  text-align: center;
-  padding: 0; 
-  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 8px;
   background: linear-gradient(135deg, #2f3a70, #141a3b);
   box-shadow: 0 0 14px rgba(72, 118, 255, 0.55);
+}
+
+.slot-symbol {
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  font-size: 24px;
   font-weight: 700;
-  font-size: 18px; 
-  transition: none; /* Styrs via JS för stopp-animation */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Stil för de inre symbol-divarna (själva innehållet) */
-.slot-reel > div {
-    height: 40px; /* MÅSTE matchas i JS */
-    line-height: 40px; 
+.slot-symbol:last-child {
+  border-bottom: none;
 }
 
-/* Ny keyframes för att snurra kontinuerligt */
+.slot-symbol.wild {
+  color: #ffcc00; /* Gold for wild */
+}
+
+.slot-symbol.scatter {
+  color: #ff00ff; /* Purple for scatter */
+}
+
+.slot-symbol.win-highlight {
+  background: rgba(121, 255, 182, 0.3);
+  box-shadow: 0 0 10px #79ffb6;
+}
+
 @keyframes continuous-roll {
   from { transform: translateY(0); }
-  to { transform: translateY(-40px); } /* Flyttar uppåt med en symbolhöjd */
+  to { transform: translateY(-40px); }
 }
 
-/* Denna klass appliceras av JS vid Spin */
 .rolling {
-  /* Oändlig snabb rullning */
-  animation: continuous-roll 50ms linear infinite; 
+  animation: continuous-roll 50ms linear infinite;
 }
 
 .slot-spin-btn {
@@ -113,11 +148,24 @@
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
+.slot-spin-btn.freespin {
+  background: linear-gradient(135deg, #ff00ff, #ffcc00);
+  color: #fff;
+}
+
 .slot-result {
   margin: 8px 0 0;
   font-size: 12px;
   color: #c7d5ff;
   min-height: 14px; 
+  text-align: center;
+}
+
+.slot-freespins {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #ff00ff;
+  text-align: center;
 }
 
 .slot-foot {
@@ -125,5 +173,3 @@
   font-size: 11px;
   color: #939fda;
 }
-
-
