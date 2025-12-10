@@ -1710,3 +1710,43 @@ body {
   padding: 5px 8px;
   cursor: pointer;
 }
+/* ============================================ */
+/* HARD ENFORCED NO-SIDE-SCROLL MODE v1.0       */
+/* ============================================ */
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+  position: relative;
+}
+
+.app-body,
+.app-shell,
+.panel-wrapper,
+.panel,
+.hud-card,
+.profile-card,
+.mesh-nav-scroll,
+.platform-strip,
+.platform-pill,
+.hud-grid,
+.market-row,
+.market-grid {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Förhindrar att flexbox pressar utåt */
+* {
+  box-sizing: border-box !important;
+}
+
+/* Om något sticker ut – kapa allt */
+body::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 0;
+  overflow-x: hidden;
+}
