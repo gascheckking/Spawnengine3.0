@@ -37,26 +37,34 @@ body {
   min-height: 100vh;
 }
 
+/* ========== [BLOCK 2] MESH BACKGROUND ========== */
+
 #mesh-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
-  overflow: hidden;
+  background: radial-gradient(circle at 0 0, #1b2145, transparent 55%),
+    radial-gradient(circle at 100% 0, #12284d, transparent 55%),
+    radial-gradient(circle at 50% 100%, #1b2340, transparent 60%);
 }
 
 #mesh-canvas {
   width: 100%;
   height: 100%;
   display: block;
+  opacity: 0.6;
 }
 
 .mesh-overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  background: radial-gradient(circle at top left, rgba(0, 245, 255, 0.08), transparent 55%),
-    radial-gradient(circle at bottom right, rgba(170, 80, 255, 0.1), transparent 55%);
-  mix-blend-mode: screen;
-  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(4, 5, 20, 0.45),
+    rgba(4, 5, 20, 0.88)
+  );
+  backdrop-filter: blur(26px);
+  z-index: 1;
 }
 
 .app-shell {
