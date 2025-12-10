@@ -136,7 +136,7 @@
   <!-- APP SHELL -->
   <div class="app-shell" id="app-container">
     <!-- HUD: Mesh hero card -->
-    <div class="hud-card">
+    <div class="hud-card mesh-header">
       <div class="hud-card-header">
 
         <!-- Rad 1: avatar + settings -->
@@ -163,7 +163,7 @@
 
           <div class="hud-role-and-status">
             <span id="mesh-role-chip" class="pill pill-soft role-chip">
-              <span id="meshRoleIcon" class="role-icon"></span>
+              <span id="meshRoleIcon" class="role-icon">⚡</span>
               <span id="meshRoleLabel" class="role-label">Alpha hunter / Trader</span>
             </span>
             <span class="mesh-status-pill">
@@ -244,6 +244,10 @@
       </div>
     </div>
     <!-- /HUD: Mesh hero card -->
+
+    <!-- HOLO HUD + INVENTORY MICRO-PANEL -->
+    <div id="holo-hud" class="holo-hud"></div>
+    <div id="inventory-slideout" class="inventory-slideout"></div>
 
     <!-- PROFILE PANEL (ENDA SOM SKA FINNAS) -->
     <div class="profile-card">
@@ -489,13 +493,20 @@
               <span class="section-sub">Scroll · curated by mesh</span>
             </div>
 
-            <div class="market-trending-row">
-              <!-- ... (alla market cards som i din version) ... -->
+            <div id="marketFilters" class="market-filters">
+              <button class="market-filter-chip is-active" data-filter="all">All</button>
+              <button class="market-filter-chip" data-filter="packs">Packs</button>
+              <button class="market-filter-chip" data-filter="tokens">Tokens</button>
+              <button class="market-filter-chip" data-filter="collectibles">Collectibles</button>
+              <button class="market-filter-chip" data-filter="services">Services</button>
+              <button class="market-filter-chip" data-filter="boosts">Boosts</button>
+            </div>
+
+            <div id="marketGrid" class="market-trending-row"></div>
+            <div id="marketEmpty" class="mesh-mini-card" style="display:none;">
+              No items in this category yet (mock).
             </div>
           </section>
-
-          <!-- resten av market-sektionerna ligger kvar här
-               exakt som i förra HTML-blocket du hade -->
         </section>
       </div>
 
@@ -515,7 +526,6 @@
 
       <!-- MESH TAB -->
       <div id="tab-mesh" class="tab-panel">
-        <!-- mesh cards + live stream, samma som tidigare HTML -->
         <section class="market-section">
           <div class="section-header">
             <div>
