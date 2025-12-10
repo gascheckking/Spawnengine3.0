@@ -1,9 +1,9 @@
 /* -------------------------------------------------------
    SpawnEngine · Mesh HUD v0.4
-   style.css — full file
+   style.css — full file (kompakt, ingen sidscroll)
 --------------------------------------------------------*/
 
-/* ---------- RESET & BASE ---------- */
+/* ========== [BLOCK 1] RESET & BASE ========== */
 
 *,
 *::before,
@@ -40,6 +40,8 @@
 html,
 body {
   height: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body.app-body {
@@ -49,14 +51,10 @@ body.app-body {
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-}
-
-/* Prevent full-page horizontal scroll */
-body.app-body {
   overflow-x: hidden;
 }
 
-/* ---------- MESH BACKGROUND ---------- */
+/* ========== [BLOCK 2] MESH BACKGROUND ========== */
 
 #mesh-bg {
   position: fixed;
@@ -86,27 +84,28 @@ body.app-body {
   z-index: 1;
 }
 
-/* ---------- APP SHELL LAYOUT ---------- */
+/* ========== [BLOCK 3] APP-SHELL / LAYOUT ========== */
 
 .app-shell {
   position: relative;
   z-index: 2;
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 14px 12px 18px;
+  max-width: 420px;              /* kompakt mobilbredd */
+  margin: 8px auto 80px;         /* plats för bottom-nav */
+  padding: 10px 10px 18px;
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-/* On larger screens, center and tighten */
 @media (min-width: 768px) {
   .app-shell {
-    padding: 24px 18px 28px;
+    max-width: 520px;
+    padding: 18px 12px 24px;
   }
 }
 
-/* ---------- HUD CARD (TOP) ---------- */
+/* ========== [BLOCK 4] HUD CARD (TOP) ========== */
+/* sök: HUD TOP */
 
 .hud-card {
   background: radial-gradient(circle at top left, #18234b 0, #07081a 55%);
@@ -119,7 +118,6 @@ body.app-body {
   gap: 10px;
 }
 
-/* Slightly denser on bigger screens */
 @media (min-width: 768px) {
   .hud-card {
     padding: 18px 18px 14px;
@@ -132,13 +130,14 @@ body.app-body {
   gap: 10px;
 }
 
-/* Top row: avatar + settings */
 .hud-top-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
+
+/* avatar / account */
 
 .avatar-chip {
   display: flex;
@@ -170,19 +169,18 @@ body.app-body {
   gap: 1px;
 }
 
-.avatar-handle,
-.avatar-meta .avatar-handle {
+.avatar-handle {
   font-size: 13px;
   font-weight: 600;
 }
 
-.avatar-sub,
-.avatar-meta .avatar-sub {
+.avatar-sub {
   font-size: 11px;
   color: var(--color-text-muted);
 }
 
-/* Icon button + gear */
+/* settings icon */
+
 .icon-button {
   width: 32px;
   height: 32px;
@@ -220,7 +218,8 @@ body.app-body {
   border: 1px solid #b2f0ff;
 }
 
-/* ---------- HUD SECONDARY ROWS ---------- */
+/* ========== [BLOCK 5] TAGS / TITLE / STRIP ========== */
+/* sök: TAG-ROW */
 
 .hud-header-row {
   display: flex;
@@ -265,20 +264,6 @@ body.app-body {
   justify-content: flex-end;
 }
 
-.role-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.role-icon {
-  font-size: 13px;
-}
-
-.role-label {
-  font-size: 11px;
-}
-
 .mesh-status-pill {
   display: inline-flex;
   align-items: center;
@@ -299,8 +284,6 @@ body.app-body {
   box-shadow: 0 0 8px rgba(73, 247, 179, 0.8);
 }
 
-/* Title block */
-
 .hud-title-block {
   display: flex;
   flex-direction: column;
@@ -317,7 +300,7 @@ body.app-body {
   color: var(--color-text-soft);
 }
 
-/* Platform strip */
+/* strip */
 
 .platform-strip {
   display: flex;
@@ -346,7 +329,7 @@ body.app-body {
   color: var(--color-accent);
 }
 
-/* Wallet strip */
+/* wallet strip */
 
 .wallet-strip {
   display: flex;
@@ -356,7 +339,7 @@ body.app-body {
   flex-wrap: wrap;
 }
 
-/* BUTTONS */
+/* ========== [BLOCK 6] BUTTONS, GRID & STATS ========== */
 
 .btn-outline {
   border-radius: var(--radius-pill);
@@ -382,7 +365,6 @@ body.app-body {
   transform: translateY(1px) scale(0.98);
 }
 
-/* Connect button full width on small screens */
 #btn-connect {
   min-width: 92px;
 }
@@ -401,8 +383,6 @@ body.app-body {
   font-size: 11px;
   color: var(--color-accent);
 }
-
-/* HUD GRID */
 
 .hud-grid {
   display: grid;
@@ -441,14 +421,13 @@ body.app-body {
   margin-top: 2px;
 }
 
-/* Common section-sub */
-
 .section-sub {
   font-size: 11px;
   color: var(--color-text-muted);
 }
 
-/* ---------- PROFILE CARD ---------- */
+/* ========== [BLOCK 7] PROFILE CARD (MINI HUD) ========== */
+/* sök: PROFILE CARD */
 
 .profile-card {
   background: rgba(6, 8, 30, 0.95);
@@ -459,6 +438,7 @@ body.app-body {
   flex-direction: column;
   gap: 6px;
   backdrop-filter: blur(18px);
+  margin: 4px auto 4px;
 }
 
 .profile-main {
@@ -521,7 +501,8 @@ body.app-body {
   margin-top: 2px;
 }
 
-/* ---------- PRIMARY NAV ---------- */
+/* ========== [BLOCK 8] TOP TAB-NAV (MESH NAV) ========== */
+/* sök: NAV TOP */
 
 .mesh-nav-scroll {
   position: sticky;
@@ -577,7 +558,8 @@ body.app-body {
   color: var(--color-accent);
 }
 
-/* ---------- TAB CONTENT WRAPPER ---------- */
+/* ========== [BLOCK 9] TAB CONTENT WRAPPER ========== */
+/* sök: TAB CONTENT */
 
 .tab-content {
   position: relative;
@@ -586,13 +568,11 @@ body.app-body {
   background: rgba(5, 7, 25, 0.96);
   border: 1px solid rgba(100, 140, 255, 0.4);
   box-shadow: var(--shadow-soft-up);
-  padding: 10px 10px 12px;
+  padding: 10px 10px 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-
-/* Tab panels */
 
 .tab-panel {
   display: none;
@@ -602,7 +582,8 @@ body.app-body {
   display: block;
 }
 
-/* ---------- HOME TAB: STREAK + FEED ---------- */
+/* ========== [BLOCK 10] HOME TAB: STREAK + FEED ========== */
+/* sök: HOME STREAK */
 
 .streak-row {
   display: grid;
@@ -681,7 +662,7 @@ body.app-body {
   margin-top: 2px;
 }
 
-/* Activity feed */
+/* activity feed */
 
 .activity-feed {
   margin-top: 4px;
@@ -742,7 +723,8 @@ body.app-body {
   color: var(--color-text-muted);
 }
 
-/* ---------- LOOT TAB ---------- */
+/* ========== [BLOCK 11] LOOT TAB ========== */
+/* sök: LOOT LAB */
 
 .segmented {
   display: inline-flex;
@@ -821,8 +803,6 @@ body.app-body {
   margin-top: 6px;
 }
 
-/* loot views */
-
 .loot-view {
   display: none;
 }
@@ -831,7 +811,8 @@ body.app-body {
   display: block;
 }
 
-/* ---------- MARKET TAB ---------- */
+/* ========== [BLOCK 12] MARKET TAB ========== */
+/* sök: MARKET VIEW */
 
 .market-view {
   display: flex;
@@ -964,7 +945,7 @@ body.app-body {
   }
 }
 
-/* Integration partners */
+/* partners */
 
 .partners-list {
   margin-top: 6px;
@@ -1010,7 +991,7 @@ body.app-body {
   color: var(--color-text-muted);
 }
 
-/* ---------- QUESTS TAB ---------- */
+/* ========== [BLOCK 13] QUESTS, MESH, SUPCAST ========== */
 
 .quest-list {
   list-style: none;
@@ -1066,13 +1047,13 @@ body.app-body {
   color: var(--color-success);
 }
 
-/* ---------- MESH TAB ---------- */
+/* mesh events */
 
 #meshEvents.activity-list li {
   background: rgba(7, 8, 26, 0.96);
 }
 
-/* ---------- SUPCAST TAB ---------- */
+/* supcast */
 
 .supcast-layout {
   display: grid;
@@ -1183,7 +1164,7 @@ body.app-body {
   gap: 5px;
 }
 
-/* ---------- SETTINGS SHEET (FULL SCREEN) ---------- */
+/* ========== [BLOCK 14] SETTINGS & SHEETS ========== */
 
 .settings-backdrop {
   position: fixed;
@@ -1191,13 +1172,13 @@ body.app-body {
   z-index: 20;
   background: rgba(2, 3, 10, 0.75);
   backdrop-filter: blur(22px);
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: flex-end;
 }
 
-.settings-backdrop.hidden {
-  display: none;
+.settings-backdrop.visible {
+  display: flex;
 }
 
 .settings-sheet {
@@ -1265,10 +1246,6 @@ body.app-body {
   font-size: 11px;
 }
 
-.settings-card.small {
-  font-size: 10px;
-}
-
 .settings-card .label {
   font-size: 10px;
   color: var(--color-text-muted);
@@ -1324,26 +1301,7 @@ body.app-body {
   color: #e1c8ff;
 }
 
-.settings-list {
-  margin-top: 6px;
-  list-style: none;
-  padding-left: 12px;
-  font-size: 11px;
-  color: var(--color-text-muted);
-}
-
-.settings-list li::before {
-  content: "• ";
-  margin-right: 4px;
-}
-
-/* clickable builder cards */
-
-.settings-card-builder {
-  cursor: pointer;
-}
-
-/* ---------- ACCOUNT SHEET ---------- */
+/* account sheet */
 
 .sheet-backdrop {
   position: fixed;
@@ -1351,13 +1309,13 @@ body.app-body {
   z-index: 18;
   background: rgba(2, 3, 10, 0.75);
   backdrop-filter: blur(18px);
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: flex-end;
 }
 
-.sheet-backdrop.hidden {
-  display: none;
+.sheet-backdrop.visible {
+  display: flex;
 }
 
 .sheet {
@@ -1410,7 +1368,7 @@ body.app-body {
   color: var(--color-text-soft);
 }
 
-/* ---------- ROLE SHEET ---------- */
+/* role sheet */
 
 .role-sheet {
   padding-bottom: 18px;
@@ -1442,7 +1400,7 @@ body.app-body {
   border-color: rgba(153, 220, 255, 0.95);
 }
 
-/* ---------- MARKET DETAILS SHEET ---------- */
+/* market details sheet */
 
 #marketDetailsBackdrop {
   position: fixed;
@@ -1450,13 +1408,13 @@ body.app-body {
   z-index: 19;
   background: rgba(2, 3, 10, 0.8);
   backdrop-filter: blur(22px);
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: flex-end;
 }
 
-#marketDetailsBackdrop.hidden {
-  display: none;
+#marketDetailsBackdrop.visible {
+  display: flex;
 }
 
 .settings-panel {
@@ -1470,10 +1428,6 @@ body.app-body {
   overflow-y: auto;
 }
 
-.settings-scroll {
-  margin-top: 6px;
-}
-
 .icon-back {
   border-radius: var(--radius-pill);
   border: 1px solid rgba(142, 189, 255, 0.8);
@@ -1484,7 +1438,7 @@ body.app-body {
   cursor: pointer;
 }
 
-/* ---------- TOAST ---------- */
+/* ========== [BLOCK 15] TOAST ========== */
 
 .toast {
   position: fixed;
@@ -1507,246 +1461,49 @@ body.app-body {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-/* === Layout compact v0.4.1 – no side scroll, mer utzoomat === */
 
-html,
-body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-/* se till att bakgrundscanvas inte sticker ut */
-#mesh-bg,
-#mesh-canvas {
-  width: 100%;
-}
-
-/* hela appen dras in och blir lite smalare */
-.app-body {
-  overflow-x: hidden;
-}
-
-.app-shell {
-  max-width: 420px;          /* var större → gav sidscroll */
-  margin: 10px auto 32px;
-  padding: 10px 10px 32px;
-  box-sizing: border-box;
-}
-
-/* hero-kortet lite tightare */
-.hud-card {
-  margin: 8px auto 12px;
-  padding: 14px 14px 18px;
-}
-
-/* mini-profilen tightare */
-.profile-card {
-  margin: 4px auto 12px;
-  padding: 10px 12px;
-}
-
-/* tabs + content lite smalare */
-.mesh-nav-scroll {
-  margin: 0 auto 8px;
-}
-
-.tab-content {
-  padding: 0 10px 32px;
-}
-
-/* pills i railen lite mindre så de inte pressar bredden */
-.platform-strip {
-  gap: 6px;
-}
-
-.platform-pill {
-  padding-inline: 8px;
-  font-size: 11px;
-}
-/* ---------- BOTTOM NAV (SAFE DEDUPE) ---------- */
+/* ========== [BLOCK 16] BOTTOM NAV (FÖTTER) ========== */
+/* sök: BOTTOM NAV */
 
 .bottom-nav {
   position: fixed;
-  bottom: 0;
   left: 0;
   right: 0;
-}
-
-/* ---------- HOLO HUD BLOCK ---------- */
-/* expected container: <div id="holo-hud" class="holo-hud-shell"></div> */
-
-.holo-hud-shell {
-  margin-top: 4px;
-  margin-bottom: 2px;
-  border-radius: var(--radius-md);
-  padding: 6px 8px;
-  background: linear-gradient(
-    135deg,
-    rgba(10, 242, 255, 0.1),
-    rgba(30, 40, 90, 0.95)
-  );
-  border: 1px solid rgba(151, 209, 255, 0.9);
+  bottom: env(safe-area-inset-bottom, 0);
+  padding: 6px 10px calc(6px + env(safe-area-inset-bottom, 0));
+  background: rgba(4, 5, 18, 0.98);
+  border-top: 1px solid rgba(110, 145, 255, 0.6);
   display: flex;
-  align-items: center;
-  gap: 10px;
+  justify-content: space-around;
+  gap: 4px;
+  z-index: 30;
 }
 
-.holo-gas {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.holo-gas-label {
-  font-size: 11px;
-  color: var(--color-text-soft);
-}
-
-#gasRing {
-  display: block;
-}
-
-.holo-divider {
-  width: 1px;
-  align-self: stretch;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    rgba(180, 216, 255, 0.7),
-    transparent
-  );
-}
-
-.holo-xp {
+.nav-btn {
   flex: 1;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  padding: 4px 2px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-}
-
-.holo-xp-bar {
-  width: 100%;
-  height: 6px;
-  border-radius: var(--radius-pill);
-  background: rgba(6, 8, 30, 0.95);
-  overflow: hidden;
-}
-
-.holo-xp-fill {
-  width: 30%;
-  height: 100%;
-  background: linear-gradient(90deg, #0af2ff, #56ffb5, #fbe67b);
-  box-shadow: 0 0 14px rgba(10, 242, 255, 0.9);
-  transition: width 0.3s ease-out;
-}
-
-#holoXpLabel {
-  font-size: 11px;
-  color: var(--color-text-soft);
-}
-
-.holo-inv-btn {
-  border-radius: var(--radius-pill);
-  border: 1px solid rgba(143, 196, 255, 0.85);
-  background: rgba(4, 7, 24, 0.98);
-  padding: 5px 9px;
-  font-size: 11px;
-  color: var(--color-accent);
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-/* ---------- INVENTORY SLIDEOUT ---------- */
-/* expected container: <div id="inventory-slideout"></div> */
-
-#inventory-slideout {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  width: 210px;
-  max-width: 70%;
-  transform: translateX(120%);
-  transition: transform 0.22s ease-out;
-  z-index: 16;
-}
-
-#inventory-slideout.open {
-  transform: translateX(0);
-}
-
-#inventory-slideout .inv-content {
-  border-radius: 16px;
-  padding: 9px 10px;
-  background: radial-gradient(circle at top right, #182546, #040515);
-  border: 1px solid rgba(146, 195, 255, 0.9);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8);
-  font-size: 11px;
-}
-
-#inventory-slideout h3 {
-  font-size: 12px;
-  margin-bottom: 4px;
-}
-
-.inv-row {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 3px;
-}
-
-.inv-row span {
-  color: var(--color-accent);
-}
-
-.inv-close {
-  margin-top: 6px;
-  width: 100%;
-  border-radius: var(--radius-pill);
-  border: 1px solid rgba(144, 190, 255, 0.85);
-  background: rgba(5, 6, 23, 0.96);
-  color: var(--color-text-soft);
-  font-size: 11px;
-  padding: 5px 8px;
+  gap: 1px;
   cursor: pointer;
 }
-/* ============================================ */
-/* HARD ENFORCED NO-SIDE-SCROLL MODE v1.0       */
-/* ============================================ */
 
-html, body {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden !important;
-  position: relative;
+.nav-btn span {
+  font-size: 15px;
 }
 
-.app-body,
-.app-shell,
-.panel-wrapper,
-.panel,
-.hud-card,
-.profile-card,
-.mesh-nav-scroll,
-.platform-strip,
-.platform-pill,
-.hud-grid,
-.market-row,
-.market-grid {
-  max-width: 100% !important;
-  overflow-x: hidden !important;
+.nav-btn small {
+  font-size: 10px;
 }
 
-/* Förhindrar att flexbox pressar utåt */
-* {
-  box-sizing: border-box !important;
-}
-
-/* Om något sticker ut – kapa allt */
-body::after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 0;
-  overflow-x: hidden;
+.nav-btn.is-active {
+  border-color: rgba(153, 217, 255, 0.9);
+  background: radial-gradient(circle at top, rgba(10, 242, 255, 0.18), #05081c);
+  color: var(--color-accent);
 }
