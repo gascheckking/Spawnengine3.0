@@ -1507,7 +1507,62 @@ body.app-body {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+/* === Layout compact v0.4.1 – no side scroll, mer utzoomat === */
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* se till att bakgrundscanvas inte sticker ut */
+#mesh-bg,
+#mesh-canvas {
+  width: 100%;
+}
+
+/* hela appen dras in och blir lite smalare */
+.app-body {
+  overflow-x: hidden;
+}
+
+.app-shell {
+  max-width: 420px;          /* var större → gav sidscroll */
+  margin: 10px auto 32px;
+  padding: 10px 10px 32px;
+  box-sizing: border-box;
+}
+
+/* hero-kortet lite tightare */
+.hud-card {
+  margin: 8px auto 12px;
+  padding: 14px 14px 18px;
+}
+
+/* mini-profilen tightare */
+.profile-card {
+  margin: 4px auto 12px;
+  padding: 10px 12px;
+}
+
+/* tabs + content lite smalare */
+.mesh-nav-scroll {
+  margin: 0 auto 8px;
+}
+
+.tab-content {
+  padding: 0 10px 32px;
+}
+
+/* pills i railen lite mindre så de inte pressar bredden */
+.platform-strip {
+  gap: 6px;
+}
+
+.platform-pill {
+  padding-inline: 8px;
+  font-size: 11px;
+}
 /* ---------- BOTTOM NAV (SAFE DEDUPE) ---------- */
 
 .bottom-nav {
