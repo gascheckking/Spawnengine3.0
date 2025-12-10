@@ -1,28 +1,26 @@
-// service-worker.js — SpawnEngine · Mesh HUD v0.4
-// Enkel cache för PWA (offline + snabbare load)
+// service-worker.js — enkel PWA-cache för SpawnEngine · Mesh HUD
 
 const CACHE_NAME = "spawnengine-mesh-v1";
-
-// Lägg till de viktigaste filerna här
-const PRECACHE_ASSETS = [
+const ASSETS = [
   "/",
   "/index.html",
   "/style.css",
   "/app.js",
+  "/mesh-bg.js",
+  "/supcast.js",
   "/logo.png",
-  "/manifest.json",
-  "/supcast.js"
+  "/manifest.webmanifest",
 ];
 
-// Install — cacha assets
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS))
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS);
+    })
   );
   self.skipWaiting();
 });
 
-// Activate — städa gamla cacher
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -31,6 +29,7 @@ self.addEventListener("activate", (event) => {
           if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
+          return null;
         })
       )
     )
@@ -38,23 +37,25 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Fetch — cache-first med nätverks-fallback
 self.addEventListener("fetch", (event) => {
-  const req = event.request;
+  const { request } = event;
 
-  // Bara GET-requests
-  if (req.method !== "GET") return;
+  // bara GET
+  if (request.method !== "GET") return;
 
   event.respondWith(
-    caches.match(req).then((cachedRes) => {
-      if (cachedRes) return cachedRes;
+    caches.match(request).then((cached) => {
+      if (cached) return cached;
 
-      return fetch(req).then((networkRes) => {
-        // spara i cache för nästa gång (bästa effort)
-        const clone = networkRes.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
-        return networkRes;
-      });
+      return fetch(request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, copy);
+          });
+          return response;
+        })
+        .catch(() => cached);
     })
   );
 });
