@@ -6,206 +6,247 @@
     name="viewport"
     content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   />
-  <title>SpawnEngine · Mesh HUD</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0af2ff" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/logo.png" />
+  <title>SpawnEngine · Mesh HUD v0.4</title>
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="app-body">
-  <!-- TOAST -->
-  <div id="toast" class="toast"></div>
-
-  <!-- SETTINGS FULLSCREEN SHEET -->
-  <div id="settings-backdrop" class="sheet-backdrop hidden">
-    <div class="sheet settings-sheet">
-      <div class="sheet-header">
-        <div class="sheet-title">Settings · Mesh profile</div>
-        <button id="settings-close" class="icon-button">
-          <span class="icon-close">✕</span>
-        </button>
+  <!-- SETTINGS SHEET -->
+  <div id="settings-backdrop" class="settings-backdrop hidden">
+    <div id="settings-sheet" class="settings-sheet">
+      <div class="settings-header">
+        <span class="settings-title">Settings &amp; builders</span>
+        <button id="settings-close" class="settings-close-btn">✕</button>
       </div>
 
-      <div class="sheet-section">
-        <h3>Account & mesh</h3>
-        <div class="settings-row">
-          <div class="settings-item">
-            <div class="settings-label">Handle</div>
-            <div class="settings-main">@spawniz</div>
-            <div class="settings-sub">Mesh ID · Creator</div>
-          </div>
-          <div class="settings-item">
-            <div class="settings-label">Connected wallet</div>
-            <div class="settings-main wallet-address" data-wallet-address>
-              Not connected
+      <div class="settings-section">
+        <h3>Profile &amp; XP</h3>
+        <div class="settings-card-grid">
+          <div class="settings-card">
+            <p class="label">Mesh ID</p>
+            <p class="main">@spawniz</p>
+            <p class="sub">Creator · Base mesh</p>
+            <div class="bar">
+              <div class="bar-fill" style="width: 45%"></div>
             </div>
-            <div class="settings-sub">Base mainnet</div>
+          </div>
+
+          <div class="settings-card">
+            <p class="label">XP balance</p>
+            <p class="main"><span id="meshHeaderXp">1575 XP</span></p>
+            <p class="sub">Synced from mesh activity (mock)</p>
           </div>
         </div>
       </div>
 
-      <div class="sheet-section">
-        <h3>Role & lanes</h3>
-        <p class="sheet-sub">
-          Välj hur du vill att SpawnEngine ska behandla din XP och quests.
-        </p>
-        <div class="role-grid">
-          <button class="role-card" data-role="dev">
-            <h4>🧪 Dev / Builder</h4>
-            <p>Contracts, bots, infra, miniapps.</p>
-          </button>
-          <button class="role-card" data-role="creator">
-            <h4>🎨 Creator / Artist</h4>
-            <p>Cards, packs, tokens, art drops.</p>
-          </button>
-          <button class="role-card" data-role="hunter">
-            <h4>⚡ Alpha hunter</h4>
-            <p>Trading, snipes, PnL, packs.</p>
-          </button>
-          <button class="role-card" data-role="collector">
-            <h4>🎴 Collector / Fan</h4>
-            <p>Open, collect, complete sets.</p>
-          </button>
-        </div>
-        <button id="save-role" class="btn-primary full-width" disabled>
-          Save role
-        </button>
-      </div>
-
-      <div class="sheet-section">
-        <h3>Connected platforms</h3>
-        <div class="settings-row">
-          <div class="settings-pill">
-            <div class="settings-label">Farcaster</div>
-            <div class="settings-main">WarpAI Miniapp</div>
-            <span class="chip chip-green">Active</span>
+      <div class="settings-section">
+        <h3>Connected services</h3>
+        <div class="settings-card-grid">
+          <div class="settings-card small">
+            <p class="label">Farcaster</p>
+            <p class="main">WarpAI Miniapp</p>
+            <span class="chip green">Active</span>
           </div>
-          <div class="settings-pill">
-            <div class="settings-label">Zora</div>
-            <div class="settings-main">Creator mints</div>
-            <span class="chip chip-purple">Docked</span>
+          <div class="settings-card small">
+            <p class="label">VibeMarket</p>
+            <p class="main">Pack sync</p>
+            <span class="chip amber">Planned</span>
           </div>
-          <div class="settings-pill">
-            <div class="settings-label">VibeMarket</div>
-            <div class="settings-main">Pack sync</div>
-            <span class="chip chip-amber">Planned</span>
+          <div class="settings-card small">
+            <p class="label">Zora</p>
+            <p class="main">Creator mints</p>
+            <span class="chip purple">Docked</span>
           </div>
         </div>
       </div>
 
-      <div class="sheet-section">
-        <h3>Advanced mesh</h3>
+      <div class="settings-section">
+        <h3>Account &amp; mesh profile</h3>
+        <div class="settings-card-grid">
+          <div class="settings-card small">
+            <p class="label">Connected socials</p>
+            <p class="main">SpawnEngine / WarpAI</p>
+            <p class="sub">Base · Farcaster · Zora</p>
+          </div>
+          <div class="settings-card small">
+            <p class="label">Preferred wallet</p>
+            <p class="main wallet-address" data-wallet-address>Not connected</p>
+            <p class="sub">Base mainnet</p>
+          </div>
+          <div class="settings-card small">
+            <p class="label">Rating</p>
+            <p class="main">4.5★</p>
+            <p class="sub">Support / builder reputation (mock)</p>
+          </div>
+        </div>
+
         <ul class="settings-list">
-          <li>Notification rules & SupCast alerts (mock)</li>
-          <li>Onchain privacy defaults (mock)</li>
-          <li>Gas limits & safety rails (mock)</li>
-          <li>Dev hooks & API keys (mock)</li>
+          <li>Notifications &amp; alerts</li>
+          <li>Onchain privacy defaults</li>
+          <li>Session &amp; device security</li>
         </ul>
+      </div>
+
+      <div class="settings-section">
+        <h3>Builders &amp; tools</h3>
+        <p class="section-sub">
+          Hooks for bots, frames and miniapps built on top of SpawnEngine mesh.
+        </p>
+
+        <div class="settings-card-grid">
+          <div class="settings-card settings-card-builder" data-builder-action="xp">
+            <p class="label">XP SDK &amp; integration</p>
+            <p class="main">SpawnEngine XP stream API</p>
+            <p class="sub">Pipe XP into bots, frames &amp; dashboards.</p>
+          </div>
+
+          <div class="settings-card settings-card-builder" data-builder-action="filters">
+            <p class="label">Premium mesh filters</p>
+            <p class="main">Alpha hunters / whales view</p>
+            <p class="sub">Advanced filters for wallets, packs &amp; LPs.</p>
+          </div>
+
+          <div class="settings-card settings-card-builder" data-builder-action="launchpad">
+            <p class="label">Launchpad builder</p>
+            <p class="main">Spawn new pack / token meshes</p>
+            <p class="sub">Creator panel for full onchain launches.</p>
+          </div>
+
+          <div class="settings-card settings-card-builder" data-builder-action="notifications">
+            <p class="label">Notification center</p>
+            <p class="main">Mesh alerts &amp; SupCast pings</p>
+            <p class="sub">Gas spikes, pack fills, support replies.</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <!-- /SETTINGS -->
 
-  <!-- FULLSCREEN BACKGROUND MESH -->
+  <!-- BACKGROUND -->
   <div id="mesh-bg">
     <canvas id="mesh-canvas"></canvas>
-    <div class="mesh-overlay"></div>
   </div>
+  <div class="mesh-overlay"></div>
 
   <!-- APP SHELL -->
   <div class="app-shell" id="app-container">
-    <!-- HERO CARD -->
-    <header class="mesh-header">
-      <div class="mesh-header-top">
-        <button id="btn-account" class="avatar-chip">
-          <div class="avatar-circle">S</div>
-          <div class="avatar-meta">
-            <div class="avatar-handle">@spawniz</div>
-            <div class="avatar-sub">Mesh ID · Creator</div>
+    <!-- HUD: Mesh hero card -->
+    <div class="hud-card">
+      <div class="hud-card-header">
+
+        <!-- Rad 1: avatar + settings -->
+        <div class="hud-top-row">
+          <button id="btn-account" class="avatar-chip">
+            <div class="avatar-circle">S</div>
+            <div class="avatar-meta">
+              <div class="avatar-handle" id="meshHandle">@spawniz</div>
+              <div class="avatar-sub">Mesh ID · Creator</div>
+            </div>
+          </button>
+
+          <button id="settings-btn" class="icon-button" aria-label="Settings">
+            <div class="icon-gear"></div>
+          </button>
+        </div>
+
+        <!-- Rad 2: roll + mesh-status -->
+        <div class="hud-header-row">
+          <div class="hud-tags">
+            <span class="pill pill-soft">Base · Mesh ecosystems</span>
+            <span class="pill pill-outline">🎨 Creator / Artist</span>
           </div>
-        </button>
 
-        <button id="settings-btn" class="icon-button" aria-label="Settings">
-          <span class="icon-gear"></span>
-        </button>
-      </div>
+          <div class="hud-role-and-status">
+            <span id="mesh-role-chip" class="pill pill-soft role-chip">
+              <span id="meshRoleIcon" class="role-icon"></span>
+              <span id="meshRoleLabel" class="role-label">Alpha hunter / Trader</span>
+            </span>
+            <span class="mesh-status-pill">
+              <span class="status-dot"></span>
+              Mesh v0.4 · Phase 1
+            </span>
+            <span class="pill pill-soft">Farcaster ready</span>
+          </div>
+        </div>
 
-      <div class="mesh-header-tags">
-        <span class="pill">Base · Mesh ecosystems</span>
-        <span class="pill pill-soft" id="meshRolePill">Creator / Artist</span>
-        <span class="pill pill-outline">Farcaster ready</span>
-      </div>
-
-      <div class="mesh-header-main">
+        <!-- Rad 3: huvudtitel -->
         <div class="hud-title-block">
-          <h1 class="hud-title">Daily ritual · Mesh HUD</h1>
+          <h1 class="hud-title">SpawnEngine · Mesh HUD</h1>
           <p class="hud-subtitle">
-            Check your streak, XP and mesh stats – then dive into Loot, Market, Quests and Slots.
+            Platform of platforms for creator coins, packs, XP streams, quests &amp; support.
           </p>
         </div>
+
+        <!-- Rad 4: platform-of-platforms rail -->
+        <div class="platform-strip">
+          <span class="platform-pill">
+            Core phase<span class="platform-pill-value"> · v0.4 Mesh HUD</span>
+          </span>
+          <span class="platform-pill">
+            Next<span class="platform-pill-value"> · v0.5 Creator Token Mesh</span>
+          </span>
+          <span class="platform-pill">
+            Roadmap<span class="platform-pill-value"> · v1.0 Pack Protocol</span>
+          </span>
+        </div>
+
+        <!-- Rad 5: GAS / MODE / MESH STATUS -->
+        <div class="platform-strip">
+          <span class="platform-pill">
+            GAS <span id="gasEstimate" class="platform-pill-value">~0.20 gwei est.</span>
+          </span>
+          <span class="platform-pill">
+            MODE <span class="platform-pill-value">Single mesh · Demo</span>
+          </span>
+          <span class="platform-pill">
+            WALLETS <span id="activeWallets" class="platform-pill-value">0</span>
+          </span>
+        </div>
+
+        <!-- Rad 6: Connect + wallet status -->
+        <div class="wallet-strip">
+          <button id="btn-connect" class="btn-outline btn-solid-green">
+            Connect
+          </button>
+          <span id="wallet-status-label" class="wallet-status">Not connected</span>
+          <span class="wallet-address" data-wallet-address>Not connected</span>
+          <span id="walletBalanceEth" class="wallet-balance">0.0000 ETH</span>
+        </div>
+
+        <!-- Rad 7: XP / SPN / Sync / Active wallets -->
+        <div class="hud-grid hud-grid-4">
+          <div class="hud-stat">
+            <div class="hud-stat-label">XP Balance</div>
+            <div id="xpBalance" class="hud-stat-value">1575 XP</div>
+          </div>
+          <div class="hud-stat">
+            <div class="hud-stat-label">SPN Balance</div>
+            <div id="spawnBalance" class="hud-stat-value">497 SPN</div>
+          </div>
+          <div class="hud-stat">
+            <div class="hud-stat-label">Sync</div>
+            <div class="hud-stat-value">Local mock · Phase 1</div>
+          </div>
+          <div class="hud-stat">
+            <div class="hud-stat-label">Active wallets</div>
+            <div id="activeWalletsStat" class="hud-stat-value">0</div>
+          </div>
+        </div>
+
+        <p id="xp-source-label" class="section-sub">
+          XP currently running on demo values · Phase 2 will switch to live mesh data.
+        </p>
       </div>
+    </div>
+    <!-- /HUD: Mesh hero card -->
 
-      <div class="mesh-header-row">
-        <div class="mesh-chip-row">
-          <span class="platform-pill">v0.5 Creator Token Mesh</span>
-          <span class="platform-pill">v1.0 Pack Protocol</span>
-        </div>
-      </div>
-
-      <div class="mesh-header-row stats-row">
-        <div class="stat-pill">
-          <span class="stat-label">GAS</span>
-          <span id="gasEstimate" class="stat-value">~0.20 gwei est.</span>
-        </div>
-        <div class="stat-pill">
-          <span class="stat-label">MODE</span>
-          <span class="stat-value">Single mesh · Demo</span>
-        </div>
-        <div class="stat-pill">
-          <span class="stat-label">WALLETS</span>
-          <span id="activeWallets" class="stat-value">0</span>
-        </div>
-      </div>
-
-      <div class="wallet-row">
-        <button id="btn-connect" class="btn-primary">Connect</button>
-        <span id="wallet-status-label" class="wallet-status">
-          Not connected
-        </span>
-        <span class="wallet-address" data-wallet-address>
-          Not connected
-        </span>
-        <span id="walletBalanceEth" class="wallet-balance">0.0000 ETH</span>
-      </div>
-
-      <div class="header-kpis">
-        <div class="kpi">
-          <div class="kpi-label">XP Balance</div>
-          <div id="xpBalance" class="kpi-value">1575 XP</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">SPN Balance</div>
-          <div id="spawnBalance" class="kpi-value">497 SPN</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">Sync</div>
-          <div class="kpi-value">Mesh demo · v0.4</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">Active wallets</div>
-          <div id="activeWalletsStat" class="kpi-value">0</div>
-        </div>
-      </div>
-
-      <p class="header-note">
-        XP kör mock just nu · senare kopplas den mot riktiga mesh-signaler.
-      </p>
-    </header>
-    <!-- /HERO CARD -->
-
-    <!-- HOLO HUD + INVENTORY MICRO-PANEL -->
-    <div id="holo-hud" class="holo-hud"></div>
-    <div id="inventory-slideout" class="inventory-slideout"></div>
-
-    <!-- COMPACT PROFILE CARD (MITTEN) -->
-    <section class="profile-card">
+    <!-- PROFILE PANEL (ENDA SOM SKA FINNAS) -->
+    <div class="profile-card">
       <div class="profile-main">
         <div class="profile-avatar">S</div>
         <div class="profile-meta">
@@ -216,20 +257,21 @@
       <div class="profile-stats">
         <div class="profile-stat">
           <div class="profile-stat-label">XP</div>
-          <div class="profile-stat-value">1600</div>
+          <div class="profile-stat-value">1600 XP</div>
         </div>
         <div class="profile-stat">
           <div class="profile-stat-label">SPN</div>
-          <div class="profile-stat-value">497</div>
+          <div class="profile-stat-value">497 SPN</div>
         </div>
         <div class="profile-stat">
           <div class="profile-stat-label">Wallets</div>
           <div class="profile-stat-value">0</div>
         </div>
       </div>
-    </section>
+    </div>
+    <!-- /PROFILE PANEL -->
 
-    <!-- TOP TABS -->
+    <!-- PRIMARY APP NAV -->
     <nav class="mesh-nav-scroll">
       <div class="mesh-nav" id="meshNav">
         <button class="mesh-nav-btn is-active" data-tab="home">
@@ -252,33 +294,73 @@
           <span class="mesh-nav-icon">🛰️</span>
           <span class="mesh-nav-label">Mesh</span>
         </button>
-        <button class="mesh-nav-btn" data-tab="slots">
-          <span class="mesh-nav-icon">🎲</span>
-          <span class="mesh-nav-label">Slots</span>
-        </button>
         <button class="mesh-nav-btn" data-tab="supcast">
           <span class="mesh-nav-icon">🎧</span>
           <span class="mesh-nav-label">SupCast</span>
         </button>
       </div>
     </nav>
+    <!-- /PRIMARY APP NAV -->
 
-    <!-- TAB PANELS -->
-    <main class="tab-content">
-      <!-- HOME -->
-      <section id="tab-home" class="tab-panel tab-panel-active">
+    <!-- TAB CONTENT -->
+    <div class="tab-content">
+      <!-- ROLE SHEET (BACKDROP) -->
+      <div id="role-backdrop" class="sheet-backdrop hidden">
+        <div id="role-sheet" class="sheet role-sheet">
+          <div class="sheet-header">
+            <span class="settings-title">Choose your role</span>
+            <button id="role-close" class="settings-close-btn">✕</button>
+          </div>
+
+          <p class="section-sub">
+            This sets your XP path, quests and how you appear in mesh.
+          </p>
+
+          <div class="role-grid">
+            <div class="role-card" data-role="dev">
+              <h4>🧪 Dev / Builder</h4>
+              <p>Deploy contracts, write miniapps, infra wizard.</p>
+            </div>
+
+            <div class="role-card" data-role="creator">
+              <h4>🎨 Creator / Artist</h4>
+              <p>Packs, cards, tokens, art drops, onchain worlds.</p>
+            </div>
+
+            <div class="role-card" data-role="hunter">
+              <h4>⚡ Alpha hunter</h4>
+              <p>PnL, tokens, packs, XP races, sniping heat.</p>
+            </div>
+
+            <div class="role-card" data-role="collector">
+              <h4>🎴 Collector / Fan</h4>
+              <p>Open packs, complete sets, foil raids & quests.</p>
+            </div>
+          </div>
+
+          <button id="save-role" class="btn-full-width" disabled>
+            Save role(s)
+          </button>
+        </div>
+      </div>
+
+      <!-- HOME TAB -->
+      <div id="tab-home" class="tab-panel tab-panel-active">
+
+        <!-- STREAK INSIDE HOME TAB -->
         <div class="streak-row">
           <div class="streak-wheel">
             <div class="streak-circle">
               <div class="streak-day-label">DAY</div>
-              <div id="streakDays" class="streak-day-value">1</div>
+              <div class="streak-day-value" id="streakDays">1</div>
               <div class="streak-day-label">STREAK</div>
             </div>
           </div>
           <div class="streak-copy">
             <div class="streak-title">Daily ritual</div>
             <p id="streakCopyText" class="streak-sub">
-              Keep the streak for <span id="streakRemaining">6</span> more days for a full weekly run.
+              Keep the streak for <span id="streakRemaining">6</span> more days
+              for a full weekly run.
             </p>
             <div class="streak-bar">
               <div id="streakBarFill" class="streak-bar-fill"></div>
@@ -287,260 +369,677 @@
           </div>
         </div>
 
-        <section class="card-section">
+        <div class="activity-feed">
           <header class="section-header">
             <div>
               <h2>Mesh feed</h2>
               <p class="section-sub">
-                XP, packs & social mesh kring din wallet (mock).
+                XP, packs &amp; social mesh around your wallet.
               </p>
             </div>
-            <span class="section-tag">Platform · Live mock</span>
+            <div class="section-tagline">Platform · Live mock</div>
           </header>
           <ul id="homeActivityList" class="activity-list"></ul>
-        </section>
-      </section>
+        </div>
+      </div>
 
-      <!-- LOOT -->
-      <section id="tab-loot" class="tab-panel">
+      <!-- LOOT TAB -->
+      <div id="tab-loot" class="tab-panel">
         <header class="section-header">
           <div>
-            <h2>Loot & Pull Lab</h2>
+            <h2>Loot &amp; Pull Lab</h2>
             <p class="section-sub">
-              Packs, synthesis och inventory för SpawnEngine.
+              Packs, synthesis and mock inventory for SpawnEngine mesh.
             </p>
           </div>
-          <span class="section-tag">Pillar · Packs</span>
+          <div class="section-tagline">Pillar · Packs</div>
         </header>
 
         <div class="segmented">
-          <button class="segmented-btn segmented-btn-active" data-loot-view="packs">
+          <button
+            class="segmented-btn segmented-btn-active"
+            data-loot-view="packs"
+          >
             Packs
           </button>
-          <button class="segmented-btn" data-loot-view="lab">
-            Pull Lab
-          </button>
+          <button class="segmented-btn" data-loot-view="lab">Pull Lab</button>
           <button class="segmented-btn" data-loot-view="inventory">
             Inventory
           </button>
         </div>
 
         <div id="lootView-packs" class="loot-view loot-view-active">
-          <div class="card">
-            <div class="card-title">Starter mesh pack</div>
-            <p class="card-sub">
-              Simulated pack open med Fragments, Shards &amp; Relic-chans.
-            </p>
-            <button id="btn-open-pack" class="btn-primary full-width">
-              Simulate pack open
-            </button>
-            <p class="card-foot">
-              I riktig version ersätts detta av en riktig pack-widget / kontrakt.
-            </p>
-          </div>
-
-          <section class="card-section">
-            <header class="section-header">
-              <div>
-                <h3>Recent loot</h3>
-                <p class="section-sub">Senaste pack-öppningar & synthesis.</p>
+          <div class="pack-row">
+            <div class="pack-card">
+              <div class="pack-title">Starter mesh pack</div>
+              <div class="pack-sub">
+                Simulated pack open with Fragments, Shards &amp; Relic chances.
               </div>
-            </header>
-            <ul id="lootEvents" class="activity-list"></ul>
-          </section>
+              <button id="btn-open-pack" class="btn-full-width">
+                Simulate pack open
+              </button>
+              <p
+                class="section-sub"
+                style="margin-top: 10px; color: var(--color-accent-dark);"
+              >
+                [In production skulle Pack Open hanteras av en modul/widget.
+                Vi använder den gamla mocken i app.js för att visa loot-flödet.]
+              </p>
+            </div>
+          </div>
+          <ul id="lootEvents" class="activity-list"></ul>
         </div>
 
         <div id="lootView-lab" class="loot-view">
-          <div class="card">
-            <div class="card-title">Relic Lab</div>
-            <p class="card-sub">
-              Konvertera Fragments + Shards till Relics (mock crafting).
-            </p>
-            <button id="btn-simulate-synth" class="btn-outline full-width">
-              Craft Relic
+          <div class="pack-card">
+            <div class="pack-title">Pull Lab synthesis</div>
+            <div class="pack-sub">
+              Burn Fragments and Shards into a Relic (all mock, for UX only).
+            </div>
+
+            <div class="hud-grid hud-grid-3">
+              <div class="hud-stat">
+                <div class="hud-stat-label">Fragments</div>
+                <div id="invFragments" class="hud-stat-value">0</div>
+              </div>
+              <div class="hud-stat">
+                <div class="hud-stat-label">Shards</div>
+                <div id="invShards" class="hud-stat-value">0</div>
+              </div>
+              <div class="hud-stat">
+                <div class="hud-stat-label">Relics</div>
+                <div id="invRelics" class="hud-stat-value">0</div>
+              </div>
+            </div>
+
+            <button id="btn-simulate-synth" class="btn-full-width">
+              Run synthesis (mock)
             </button>
-            <p id="labResult" class="card-foot"></p>
+            <p id="labResult" class="lab-result">
+              Requires 5 Fragments + 1 Shard (mock requirement).
+            </p>
           </div>
         </div>
 
         <div id="lootView-inventory" class="loot-view">
-          <div class="card">
-            <div class="card-title">Inventory</div>
-            <p class="card-sub">
-              Dina nuvarande loot-resurser i denna mesh.
-            </p>
-            <div class="inventory-rows">
-              <div class="inv-row">
-                <span>Fragments</span>
-                <span id="invFragments">12</span>
+          <div class="mesh-mini-card">
+            Inventory view is mocked — values above reflect your simulated pulls.
+          </div>
+        </div>
+      </div>
+
+      <!-- MARKET TAB -->
+      <div id="tab-market" class="tab-panel">
+        <section class="market-view">
+          <section class="market-hero">
+            <div class="market-hero-text">
+              <h2>SPAWNENGINE MARKET</h2>
+              <p>
+                One surface for Base activities, creator tools and pack utilities.
+              </p>
+            </div>
+            <button class="btn-primary-ghost">
+              Create listing <span class="btn-pill">(mock)</span>
+            </button>
+          </section>
+
+          <section class="market-section">
+            <div class="section-header">
+              <h3>Trending right now</h3>
+              <span class="section-sub">Scroll · curated by mesh</span>
+            </div>
+
+            <div class="market-trending-row">
+              <article class="market-card market-card-trending">
+                <div class="market-card-icon">🎴</div>
+                <h4>Pack Series · Vibes S1</h4>
+                <p class="market-card-desc">
+                  Tiered rarity ladder with mythic foils.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">0.025 ETH</span>
+                  <span class="meta market-card-participants">980 joined</span>
+                  <button class="link-btn market-card-btn">View</button>
+                </div>
+              </article>
+
+              <article class="market-card market-card-trending">
+                <div class="market-card-icon">⚔️</div>
+                <h4>Quest Bundle · XP Boost</h4>
+                <p class="market-card-desc">
+                  Complete 3 quests for boosted XP multiplier.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">0.01 ETH</span>
+                  <span class="meta market-card-participants">320 joined</span>
+                  <button class="link-btn market-card-btn">View</button>
+                </div>
+              </article>
+
+              <article class="market-card market-card-trending">
+                <div class="market-card-icon">📈</div>
+                <h4>Base NFT Art Drop</h4>
+                <p class="market-card-desc">
+                  Curated onchain art drop with limited-time pulls.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">0.12 ETH</span>
+                  <span class="meta market-card-participants">145 joined</span>
+                  <button class="link-btn market-card-btn">View</button>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="market-section">
+            <div class="section-header">
+              <h3>All active market slots</h3>
+              <span class="section-sub">Filters (soon)</span>
+            </div>
+
+            <div class="market-grid">
+              <article class="market-card">
+                <div class="market-card-icon">🎓</div>
+                <h4>Smart-contract review</h4>
+                <p class="market-card-desc">
+                  Have your pack or token contract reviewed.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">0.5 ETH</span>
+                  <span class="meta market-card-participants">Audit slot</span>
+                  <button class="link-btn market-card-btn">View</button>
+                </div>
+              </article>
+
+              <article class="market-card">
+                <div class="market-card-icon">🚀</div>
+                <h4>Onchain education track</h4>
+                <p class="market-card-desc">
+                  Structured learning paths for Base creators.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">0.08 ETH</span>
+                  <span class="meta market-card-participants">Course</span>
+                  <button class="link-btn market-card-btn">View</button>
+                </div>
+              </article>
+
+              <article class="market-card">
+                <div class="market-card-icon">🏡</div>
+                <h4>Token launch bundle</h4>
+                <p class="market-card-desc">
+                  Deploy token + frame + quest layer together.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">0.21 ETH</span>
+                  <span class="meta market-card-participants">Launch slot</span>
+                  <button class="link-btn market-card-btn">View</button>
+                </div>
+              </article>
+
+              <article class="market-card">
+                <div class="market-card-icon">💻</div>
+                <h4>Pack listing syndicate</h4>
+                <p class="market-card-desc">
+                  Cross-list packs to multiple marketplaces.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">0.15 ETH</span>
+                  <span class="meta market-card-participants">Listing service</span>
+                  <button class="link-btn market-card-btn">View</button>
+                </div>
+              </article>
+
+              <article class="market-card">
+                <div class="market-card-icon">💡</div>
+                <h4>Miniapp integration slot</h4>
+                <p class="market-card-desc">
+                  Integrate your app into SpawnEngine mesh.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">0.18 ETH</span>
+                  <span class="meta market-card-participants">API slot</span>
+                  <button class="link-btn market-card-btn">View</button>
+                </div>
+              </article>
+
+              <article class="market-card">
+                <div class="market-card-icon">🧾</div>
+                <h4>Farcaster growth clinic</h4>
+                <p class="market-card-desc">
+                  Improve cast strategy around creator tokens.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">0.04 ETH</span>
+                  <span class="meta market-card-participants">Service</span>
+                  <button class="link-btn market-card-btn">View</button>
+                </div>
+              </article>
+
+              <article class="market-card">
+                <div class="market-card-icon">🛰️</div>
+                <h4>Dev hotline · Mesh mentor slot</h4>
+                <p class="market-card-desc">
+                  Get in contact with a verified Base builder for code review,
+                  app check or “why is my tx cursed?” sessions. You set a bid,
+                  they accept or counter.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">You bid</span>
+                  <span class="meta market-card-participants">Mentor pool</span>
+                  <button class="link-btn market-card-btn">Open request</button>
+                </div>
+              </article>
+
+              <article class="market-card">
+                <div class="market-card-icon">🎨</div>
+                <h4>Base ecosystem collab</h4>
+                <p class="market-card-desc">
+                  Connect with infra partners around your pack.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">0.3 ETH</span>
+                  <span class="meta market-card-participants">Partner slot</span>
+                  <button class="link-btn market-card-btn">View</button>
+                </div>
+              </article>
+
+              <article class="market-card">
+                <div class="market-card-icon">📊</div>
+                <h4>LP safety workshop</h4>
+                <p class="market-card-desc">
+                  Hands-on session for keeping floors alive.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">0.09 ETH</span>
+                  <span class="meta market-card-participants">Workshop</span>
+                  <button class="link-btn market-card-btn">View</button>
+                </div>
+              </article>
+
+              <article class="market-card">
+                <div class="market-card-icon">🏆</div>
+                <h4>SpawnEngine contest arena</h4>
+                <p class="market-card-desc">
+                  Host onchain challenges funded in $SPN token, SpawnEngine slot
+                  machine, leaderboard races and shared reward pools. Quests +
+                  skill, no casino mechanics.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">SPN only</span>
+                  <span class="meta market-card-participants">Arena</span>
+                  <button class="link-btn market-card-btn">Open arena</button>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="market-section">
+            <div class="section-header">
+              <h3>Builder APIs &amp; SDKs</h3>
+              <span class="section-sub">For bots, frames and miniapps</span>
+            </div>
+
+            <div class="market-grid">
+              <article class="market-card">
+                <div class="market-card-icon">🧬</div>
+                <h4>XP SDK &amp; integration</h4>
+                <p class="market-card-desc">
+                  Pipe SpawnEngine XP into your own apps, bots or frames.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">Dev key</span>
+                  <span class="meta market-card-participants">SDK</span>
+                  <button class="link-btn market-card-btn">Show docs</button>
+                </div>
+              </article>
+
+              <article class="market-card">
+                <div class="market-card-icon">🧪</div>
+                <h4>Pack reveal widget</h4>
+                <p class="market-card-desc">
+                  Embed Vibe-style pack openings in any onchain app.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">Snippet</span>
+                  <span class="meta market-card-participants">Widget</span>
+                  <button class="link-btn market-card-btn">Copy embed</button>
+                </div>
+              </article>
+
+              <article class="market-card">
+                <div class="market-card-icon">📡</div>
+                <h4>SupCast support API</h4>
+                <p class="market-card-desc">
+                  Let users open support cases that feed XP and reputation.
+                </p>
+                <div class="market-card-footer">
+                  <span class="price market-card-price">Soon</span>
+                  <span class="meta market-card-participants">API</span>
+                  <button class="link-btn market-card-btn">Preview</button>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="market-section">
+            <h3>Integration partners</h3>
+            <div class="partners-list">
+              <div class="partner-row">
+                <span class="partner-name">DAO Builder Pro</span>
+                <span class="partner-status status-active">Active</span>
+                <button class="link-btn">Manage</button>
               </div>
-              <div class="inv-row">
-                <span>Shards</span>
-                <span id="invShards">3</span>
+              <div class="partner-row">
+                <span class="partner-name">GameFi Studio X</span>
+                <span class="partner-status status-active">Active</span>
+                <button class="link-btn">Manage</button>
               </div>
-              <div class="inv-row">
-                <span>Relics</span>
-                <span id="invRelics">1</span>
+              <div class="partner-row">
+                <span class="partner-name">Secure Audit Corp</span>
+                <span class="partner-status status-pending">Pending</span>
+                <button class="link-btn">Manage</button>
+              </div>
+              <div class="partner-row">
+                <span class="partner-name">Mesh Integrations Hub</span>
+                <span class="partner-status status-draft">Draft</span>
+                <button class="link-btn">Manage</button>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        </section>
+      </div>
 
-      <!-- MARKET -->
-      <section id="tab-market" class="tab-panel">
-        <header class="section-header">
-          <div>
-            <h2>Mesh market</h2>
-            <p class="section-sub">
-              Packs, boosts, services & collectibles i SpawnEngine.
-            </p>
-          </div>
-          <span class="section-tag">Pillar · Market</span>
-        </header>
-
-        <div id="marketFilters" class="market-filters">
-          <button class="market-filter-chip is-active" data-filter="all">All</button>
-          <button class="market-filter-chip" data-filter="packs">Packs</button>
-          <button class="market-filter-chip" data-filter="tokens">Tokens</button>
-          <button class="market-filter-chip" data-filter="collectibles">Collectibles</button>
-          <button class="market-filter-chip" data-filter="services">Services</button>
-          <button class="market-filter-chip" data-filter="boosts">Boosts</button>
-        </div>
-
-        <div id="marketEmpty" class="market-empty" style="display:none;">
-          No listings for this filter yet.
-        </div>
-
-        <div id="marketGrid" class="market-grid"></div>
-
-        <!-- Market popup -->
-        <div id="marketDetailsBackdrop" class="sheet-backdrop hidden">
-          <div class="sheet market-sheet">
-            <div class="sheet-header">
-              <div id="marketDetailsTitle" class="sheet-title"></div>
-              <button id="marketDetailsBack" class="icon-button">
-                <span class="icon-close">✕</span>
-              </button>
-            </div>
-            <div id="marketDetailsBody"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- QUESTS -->
-      <section id="tab-quests" class="tab-panel">
+      <!-- QUESTS TAB -->
+      <div id="tab-quests" class="tab-panel">
         <header class="section-header">
           <div>
             <h2>Quest mesh</h2>
             <p class="section-sub">
-              Daily, weekly & support quests som matar dina XP streams.
+              Daily, weekly and support quests feeding your XP streams.
             </p>
           </div>
-          <span class="section-tag">Pillar · Quests</span>
+          <div class="section-tagline">Pillar · Quests</div>
         </header>
-
         <ul id="questList" class="quest-list"></ul>
-      </section>
+      </div>
 
-      <!-- MESH EXPLORER -->
-      <section id="tab-mesh" class="tab-panel">
-        <header class="section-header">
-          <div>
-            <h2>Mesh explorer</h2>
-            <p class="section-sub">
-              Visualisering av wallets, packs & XP-strömmar (bakgrundsmatrix).
-            </p>
-          </div>
-          <span class="section-tag">Pillar · Mesh</span>
-        </header>
-
-        <div class="mesh-mode-row">
-          <button class="segmented-btn segmented-btn-active" data-mesh-mode="gravity">
-            Gravity
-          </button>
-          <button class="segmented-btn" data-mesh-mode="alpha">
-            Alpha
-          </button>
-          <button class="segmented-btn" data-mesh-mode="new">
-            New
-          </button>
-        </div>
-
-        <section class="card-section">
-          <header class="section-header">
+      <!-- MESH TAB -->
+      <div id="tab-mesh" class="tab-panel">
+        <section class="market-section">
+          <div class="section-header">
             <div>
-              <h3>Mesh events</h3>
+              <h2>Mesh surfaces &amp; widgets</h2>
               <p class="section-sub">
-                Demo-feed som samtidigt pingar bakgrundsmeshen.
+                Everything SpawnEngine exposes to the onchain universe.
               </p>
             </div>
-          </header>
-          <ul id="meshEvents" class="activity-list"></ul>
-        </section>
-      </section>
-
-      <!-- SLOTS -->
-      <section id="tab-slots" class="tab-panel">
-        <header class="section-header">
-          <div>
-            <h2>Slots · Pack reels</h2>
-            <p class="section-sub">
-              Här hamnar slot/pack-views sen – nu är det bara mock copy.
-            </p>
+            <div class="section-tagline">Mesh · surfaces</div>
           </div>
-          <span class="section-tag">Pillar · Slots</span>
-        </header>
 
-        <div class="card">
-          <div class="card-title">Slot mesh (coming)</div>
-          <p class="card-sub">
-            Tänk Vibe/CS:GO opening fast i SpawnEngine-style. Här kan du senare
-            plugga in riktiga pack-kontrakt eller VibeMarket API.
-          </p>
-          <p class="card-foot">
-            Just nu är det bara en placeholder men tabben finns & funkar.
-          </p>
-        </div>
-      </section>
+          <div class="market-grid">
+            <article class="market-card">
+              <div class="market-card-icon">⚡</div>
+              <h4>XP stream &amp; activity</h4>
+              <p>
+                Core XP ledger for pulls, quests, burns and support. Feeds all
+                other widgets and apps.
+              </p>
+              <div class="market-card-footer">
+                <span class="price">Mesh core</span>
+                <button class="link-btn market-card-btn">View schema</button>
+              </div>
+            </article>
 
-      <!-- SUPCAST -->
-      <section id="tab-supcast" class="tab-panel">
+            <article class="market-card">
+              <div class="market-card-icon">🧪</div>
+              <h4>Pack reveal widget</h4>
+              <p>
+                Vibe-style pack openings that any app can embed. Uses your
+                SpawnEngine pack config.
+              </p>
+              <div class="market-card-footer">
+                <span class="price">Widget</span>
+                <button class="link-btn market-card-btn">Copy embed</button>
+              </div>
+            </article>
+
+            <article class="market-card">
+              <div class="market-card-icon">🎰</div>
+              <h4>SpawnEngine slot hooks</h4>
+              <p>
+                Hooks for future slot / bonus games using SE tokens, Fragments
+                and XP – no raw ETH bets.
+              </p>
+              <div class="market-card-footer">
+                <span class="price">Game hooks</span>
+                <button class="link-btn market-card-btn">Design doc</button>
+              </div>
+            </article>
+
+            <article class="market-card">
+              <div class="market-card-icon">🏆</div>
+              <h4>Contest &amp; bounty arena</h4>
+              <p>
+                Onchain challenges, POIDH-style bounties and XP races. Proofs,
+                not casino – quests + rewards.
+              </p>
+              <div class="market-card-footer">
+                <span class="price">Per arena</span>
+                <button class="link-btn market-card-btn">View pools</button>
+              </div>
+            </article>
+
+            <article class="market-card">
+              <div class="market-card-icon">📡</div>
+              <h4>Support mesh / SupCast</h4>
+              <p>
+                Unified support stream for apps, frames and bots. Tickets pay
+                XP and reputation back into mesh.
+              </p>
+              <div class="market-card-footer">
+                <span class="price">API</span>
+                <button class="link-btn market-card-btn">View endpoints</button>
+              </div>
+            </article>
+
+            <article class="market-card">
+              <div class="market-card-icon">🌌</div>
+              <h4>External surfaces</h4>
+              <p>
+                Frames, Farcaster casts, Vibe-style mints and other onchain
+                UIs wired into SpawnEngine.
+              </p>
+              <div class="market-card-footer">
+                <span class="price">Mesh map</span>
+                <button class="link-btn market-card-btn">Open map</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="market-section">
+          <div class="section-header">
+            <div>
+              <h3>Live mesh stream</h3>
+              <p class="section-sub">
+                Latest signals from widgets, games, packs and support.
+              </p>
+            </div>
+            <div class="section-tagline">Mock · activity</div>
+          </div>
+
+          <ul id="meshEvents" class="activity-list">
+            <li>Mesh booted · XP core online · v0.3 mock stream.</li>
+            <li>Pack reveal widget registered for 2 external apps (mock).</li>
+            <li>Contest arena seeded with “First 100 pulls” bounty (mock).</li>
+          </ul>
+        </section>
+      </div>
+
+      <!-- SUPPORT / SUPCAST TAB -->
+      <div id="tab-supcast" class="tab-panel">
         <header class="section-header">
           <div>
             <h2>SupCast · Support mesh</h2>
             <p class="section-sub">
-              Support, feedback och dev-linje för SpawnEngine (mock).
+              Ask, claim and solve questions tied to real packs, games &amp;
+              creators.
             </p>
           </div>
-          <span class="section-tag">Pillar · Support</span>
+          <div class="section-tagline">Support · XP · Reputation</div>
         </header>
 
-        <div class="card">
-          <div class="card-title">Support lane</div>
-          <p class="card-sub">
-            Tanken: Farcaster + onchain ticket system. Nu: XP-mock + quest.
-          </p>
-          <p class="card-foot">
-            Att bara öppna den här tabben kan trigga en support-quest i app.js.
-          </p>
-        </div>
+        <div class="supcast-layout">
+          <div class="supcast-block">
+            <h3 class="supcast-title">Ask</h3>
+            <p class="hud-subtitle supcast-context-sub">
+              Ask about this pack / game / creator. Experts can claim and solve
+              for XP.
+            </p>
 
-        <!-- Här kan SupCast-formen och feeden kopplas in senare
-             så supcast.js kan binda mot:
-             supcastContext, supcastTitle, supcastTags, supcastDescription, supcastSubmit, supcastFeed -->
-      </section>
-    </main>
+            <div class="supcast-form">
+              <div class="supcast-field">
+                <label class="field-label" for="supcastContext">Context</label>
+                <select id="supcastContext" class="field-input">
+                  <option>Spawn Core · Boosterbox</option>
+                  <option>WarpAI · Onchain Activitys</option>
+                  <option>Vibe · Packs</option>
+                </select>
+              </div>
+
+              <div class="supcast-field">
+                <label class="field-label" for="supcastTitle">
+                  Short title
+                </label>
+                <input
+                  id="supcastTitle"
+                  class="field-input"
+                  type="text"
+                  placeholder="Gas failed when opening pack…"
+                />
+              </div>
+
+              <div class="supcast-field">
+                <label class="field-label" for="supcastTags">
+                  Tags (comma separated)
+                </label>
+                <input
+                  id="supcastTags"
+                  class="field-input"
+                  type="text"
+                  placeholder="wallet, gas, claim, pack_open"
+                />
+              </div>
+
+              <div class="supcast-field">
+                <label class="field-label" for="supcastDescription">
+                  Describe the problem
+                </label>
+                <textarea
+                  id="supcastDescription"
+                  class="field-input field-textarea"
+                  placeholder="Describe what went wrong, what you tried and any tx hashes…"
+                ></textarea>
+              </div>
+
+              <div class="supcast-submit">
+                <button id="supcastSubmit" class="btn-full-width">
+                  Post question (mock)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="supcast-block supcast-experts">
+            <h3 class="supcast-title">Feed · Latest questions</h3>
+            <ul id="supcastFeed" class="supcast-feed"></ul>
+
+            <div class="supcast-profile">
+              <h4 class="supcast-title">SupCast profile (mock)</h4>
+              <div class="supcast-profile-grid">
+                <div class="mesh-mini-card">
+                  Cases solved
+                  <br /><strong>7</strong>
+                </div>
+                <div class="mesh-mini-card">
+                  Support XP
+                  <br /><strong>350</strong>
+                </div>
+                <div class="mesh-mini-card">
+                  Rating
+                  <br /><strong>4.5★</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /tab-supcast -->
+    </div><!-- /tab-content -->
+  </div><!-- /app-shell -->
+
+  <!-- ACCOUNT SHEET -->
+  <div id="account-sheet" class="sheet-backdrop hidden" aria-hidden="true">
+    <div class="sheet">
+      <div class="sheet-header">
+        <div class="sheet-avatar-row">
+          <div class="avatar-circle">S</div>
+          <div class="avatar-meta">
+            <span class="avatar-handle">@spawniz</span>
+            <span class="avatar-sub">Mesh ID · Creator</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sheet-section-label">Account &amp; rewards</div>
+      <button class="sheet-row" data-action="earnings">
+        <span>Total mesh earnings</span>
+        <span class="chevron">›</span>
+      </button>
+      <button class="sheet-row" data-action="collectibles">
+        <span>Collectibles overview</span>
+        <span class="chevron">›</span>
+      </button>
+
+      <div class="sheet-section-label">Wallet</div>
+      <button class="sheet-row" data-action="swap-wallet">
+        <span>Switch wallet</span>
+        <span class="chevron">›</span>
+      </button>
+
+      <button id="btn-close-account" class="btn-full-width">
+        Close
+      </button>
+    </div>
   </div>
 
-  <script src="mesh-bg.js" defer></script>
-  <script src="app.js" defer></script>
+  <!-- MARKET DETAILS SHEET -->
+  <div id="marketDetailsBackdrop" class="sheet-backdrop hidden">
+    <div class="settings-panel">
+      <div class="settings-header">
+        <button class="icon-back" id="marketDetailsBack">&larr;</button>
+        <h2 id="marketDetailsTitle">Listing</h2>
+      </div>
+      <div class="settings-scroll" id="marketDetailsBody"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="mesh-bg.js"></script>
+  <script src="app.js"></script>
+
   <script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-      navigator.serviceWorker.register("/service-worker.js");
-    });
-  }
-</script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/service-worker.js")
+          .catch((err) => console.error("SW error:", err));
+      });
+    }
+  </script>
 </body>
 </html>
