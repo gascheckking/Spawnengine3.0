@@ -1,4 +1,4 @@
-// app.js — SpawnEngine 3.0 · Mesh HUD v0.4 (FULLY UPDATED FOR NEW HTML)
+// app.js — SpawnEngine 3.0 · Mesh HUD v0.4 (FULL)
 
 // ---------- ONCHAIN CONFIG ----------
 const SPAWN_CONFIG = {
@@ -45,12 +45,69 @@ function showToast(message) {
 }
 window.spawnToast = showToast;
 
+// ---------- HAPTIC & AUDIO ENGINE ----------
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const sounds = {};
+
+function loadSound(name, url) {
+  fetch(url)
+    .then((response) => response.arrayBuffer())
+    .then((buffer) => audioContext.decodeAudioData(buffer))
+    .then((decodedBuffer) => {
+      sounds[name] = decodedBuffer;
+    })
+    .catch(() => {});
+}
+
+// Ljudfiler i /sounds/
+loadSound("click", "sounds/click.mp3");
+loadSound("reward", "sounds/reward.mp3");
+loadSound("open", "sounds/open.mp3");
+
+function playSound(name) {
+  const buffer = sounds[name];
+  if (!buffer) return;
+
+  const source = audioContext.createBufferSource();
+  source.buffer = buffer;
+  source.connect(audioContext.destination);
+  source.start(0);
+}
+
+function vibrate(pattern = [10]) {
+  if ("vibrate" in navigator) {
+    navigator.vibrate(pattern);
+  }
+}
+
+// Hooka in i toast
+const originalShowToast = showToast;
+showToast = function (message) {
+  originalShowToast(message);
+  playSound("click");
+  vibrate(10);
+};
+window.spawnToast = showToast;
+
 function formatTime() {
   const d = new Date();
   return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 }
 
-// Global pushEvent redirecting to mesh + home feed
+function addMeshEventFromPayload(payload) {
+  const evt = {
+    kind: payload.kind || "mesh",
+    label: payload.label || "MESH",
+    text: payload.text || "Mesh activity",
+    meta: payload.meta || "",
+    time: payload.time || formatTime(),
+  };
+  state.meshEvents.unshift(evt);
+  if (state.meshEvents.length > 24) state.meshEvents.length = 24;
+  renderActivityList($("#meshEvents"), state.meshEvents);
+}
+
+// Global pushEvent → feeds list + mesh stream
 function pushEvent(list, payload, max = 16) {
   list.unshift(payload);
   if (list.length > max) list.length = max;
@@ -58,7 +115,7 @@ function pushEvent(list, payload, max = 16) {
 }
 window.pushEvent = pushEvent;
 
-// ---------- RENDER HELPERS ----------
+// ---------- HEADER / HUD RENDER ----------
 
 function renderHeaderStats() {
   const gasEl = $("#gasEstimate");
@@ -70,8 +127,9 @@ function renderHeaderStats() {
     const jitter = (Math.random() * 0.06).toFixed(2);
     gasEl.textContent = `~${(base + Number(jitter)).toFixed(2)} gwei est.`;
   }
-  if (activeWalletsEl) activeWalletsEl.textContent = spawnAddress ? "1" : "0";
-  if (activeWalletsStat) activeWalletsStat.textContent = spawnAddress ? "1" : "0";
+  const wallets = spawnAddress ? "1" : "0";
+  if (activeWalletsEl) activeWalletsEl.textContent = wallets;
+  if (activeWalletsStat) activeWalletsStat.textContent = wallets;
 }
 
 function renderMeshSnapshot() {
@@ -107,10 +165,13 @@ function renderInventory() {
   const f = $("#invFragments");
   const s = $("#invShards");
   const r = $("#invRelics");
+
   if (f) f.textContent = state.fragments;
   if (s) s.textContent = state.shards;
   if (r) r.textContent = state.relics;
 }
+
+// ---------- LIST HELPERS ----------
 
 function renderActivityList(ulEl, list) {
   if (!ulEl) return;
@@ -198,6 +259,8 @@ function renderQuests() {
       renderQuests();
       renderActivityList($("#homeActivityList"), state.homeEvents);
       showToast(`Quest completed · +${quest.reward} XP`);
+      playSound("reward");
+      vibrate([40, 30, 40]);
     });
 
     right.appendChild(reward);
@@ -314,7 +377,7 @@ function seedLootEvents() {
 function setupTabs() {
   const navButtons = [
     ...$$(".mesh-nav-btn"),
-    ...$$("[data-tab-target]")
+    ...$$("[data-tab-target]"),
   ];
 
   const panels = $$(".tab-panel");
@@ -322,7 +385,7 @@ function setupTabs() {
   function activate(target) {
     if (!target) return;
 
-    // 1) NAV STATE
+    // NAV STATE
     navButtons.forEach((btn) => {
       const t =
         btn.dataset.tab ||
@@ -337,7 +400,7 @@ function setupTabs() {
       }
     });
 
-    // 2) PANEL VISIBILITY
+    // PANEL VISIBILITY
     panels.forEach((panel) => {
       const id = `tab-${target}`;
       const hit = panel.id === id;
@@ -345,7 +408,7 @@ function setupTabs() {
       panel.style.display = hit ? "block" : "none";
     });
 
-    // 3) RENDER ON TAB ENTER
+    // RENDER ON TAB ENTER
     switch (target) {
       case "home":
         renderActivityList($("#homeActivityList"), state.homeEvents);
@@ -364,7 +427,7 @@ function setupTabs() {
         renderActivityList($("#meshEvents"), state.meshEvents);
         break;
 
-      case "supcast":
+      case "supcast": {
         const q = state.quests.find((q) => q.id === "q-support");
         if (q && !q.completed) {
           q.completed = true;
@@ -381,9 +444,9 @@ function setupTabs() {
           renderActivityList($("#homeActivityList"), state.homeEvents);
         }
         break;
+      }
     }
 
-    // 4) RE-CALC HEIGHT (critical for compact layout)
     requestAnimationFrame(applyCompactViewport);
   }
 
@@ -393,6 +456,7 @@ function setupTabs() {
         btn.dataset.tab ||
         btn.getAttribute("data-tab-target");
       activate(target);
+      playSound("click");
     });
   });
 
@@ -405,7 +469,6 @@ function setupTabs() {
 // -------------------------------------------------------
 
 function applyCompactViewport() {
-  const root = document.documentElement;
   const header = document.querySelector(".mesh-header");
   const nav = document.querySelector(".mesh-nav-scroll");
   const activePanel = document.querySelector(".tab-panel-active");
@@ -416,31 +479,15 @@ function applyCompactViewport() {
   const navH = nav.offsetHeight || 0;
   const viewport = window.innerHeight;
 
-  // Magic number: margins/padding of app root
   const chrome = 26;
-
   const panelMax = viewport - headerH - navH - chrome;
+
   activePanel.style.maxHeight = `${panelMax}px`;
   activePanel.style.overflowY = "auto";
 }
 
-// Auto reapply on resize / keyboard open / rotation
 window.addEventListener("resize", applyCompactViewport);
 window.addEventListener("orientationchange", applyCompactViewport);
-document.addEventListener("DOMContentLoaded", applyCompactViewport);
-
-// -------------------------------------------------------
-// QUICK NAV / BOTTOM BAR AUTOFIX
-// -------------------------------------------------------
-
-function dedupeBottomNav() {
-  const navs = document.querySelectorAll(".bottom-nav");
-  if (navs.length > 1) {
-    navs.forEach((n, i) => {
-      if (i > 0) n.remove();
-    });
-  }
-}
 
 // -------------------------------------------------------
 // HUD: SUPER COMPACT PROFILE PANEL FIX
@@ -457,12 +504,24 @@ function enhanceProfilePanel() {
   if (avatar) avatar.style.transform = "translateY(2px)";
 }
 
-// Run after initial UI mount
-document.addEventListener("DOMContentLoaded", enhanceProfilePanel);
+// -------------------------------------------------------
+// LOOT ENGINE — Fragments / Shards / Relics / Packs
+// -------------------------------------------------------
 
-// -------------------------------------------------------
-// LOOT ENGINE 2.0 — Fragments / Shards / Relics / Packs
-// -------------------------------------------------------
+function registerPackOpen(name, wallet, priceEth) {
+  try {
+    const raw = localStorage.getItem("spawn_pack_stats") || "[]";
+    const arr = JSON.parse(raw);
+    arr.unshift({
+      name,
+      wallet,
+      priceEth,
+      time: Date.now(),
+    });
+    if (arr.length > 50) arr.length = 50;
+    localStorage.setItem("spawn_pack_stats", JSON.stringify(arr));
+  } catch (e) {}
+}
 
 function setupLoot() {
   const segButtons = $$("[data-loot-view]");
@@ -489,20 +548,16 @@ function setupLoot() {
     });
   });
 
-  // ----------------------------------------------
-  // PACK OPEN  (mock but upgraded for next-gen UX)
-  // ----------------------------------------------
-
+  // PACK OPEN (mock)
   const packBtn = $("#btn-open-pack");
   if (packBtn) {
     packBtn.addEventListener("click", () => {
       const wallet = spawnAddress || "demo-wallet";
       const priceEth = 0.02;
 
-      // Random loot formula — now tuned for visual variation
       const gainedFragments = 2 + Math.floor(Math.random() * 4);
       const gainedShards = Math.random() < 0.35 ? 1 : 0;
-      const relicDrop = Math.random() < 0.06 ? 1 : 0; 
+      const relicDrop = Math.random() < 0.06 ? 1 : 0;
       const xpGain = 30 + Math.floor(Math.random() * 50);
 
       state.fragments += gainedFragments;
@@ -510,14 +565,12 @@ function setupLoot() {
       state.relics += relicDrop;
       state.xp += xpGain;
 
-      // Save pack stats to local storage
       registerPackOpen("starter_mesh_pack", wallet, priceEth);
 
       const summary = `+${gainedFragments}F  ${
         gainedShards ? `+${gainedShards}S ` : ""
       }${relicDrop ? `+${relicDrop}R ` : ""}`;
 
-      // LOOT EVENT
       pushEvent(state.lootEvents, {
         kind: "pack",
         label: "PACK",
@@ -526,7 +579,6 @@ function setupLoot() {
         meta: `+${xpGain} XP · ${priceEth} ETH`,
       });
 
-      // HOME FEED MIRROR
       pushEvent(state.homeEvents, {
         kind: "pack",
         label: "PACK",
@@ -535,7 +587,6 @@ function setupLoot() {
         meta: `+${xpGain} XP`,
       });
 
-      // QUEST COMPLETE?
       const q = state.quests.find((q) => q.id === "q-pack");
       if (q && !q.completed) {
         q.completed = true;
@@ -556,21 +607,19 @@ function setupLoot() {
       renderActivityList($("#homeActivityList"), state.homeEvents);
       renderQuests();
       showToast("Pack opened · loot added");
+      playSound("open");
+      vibrate([50, 30, 50]);
 
       applyCompactViewport();
     });
-  });
+  }
 
-  // ----------------------------------------------
-  // SYNTH / LAB — Create Relic (Fragments → Shards → Relics)
-  // ----------------------------------------------
-
+  // SYNTH / LAB
   const synthBtn = $("#btn-simulate-synth");
   const labResult = $("#labResult");
 
   if (synthBtn && labResult) {
     synthBtn.addEventListener("click", () => {
-      // Requirements for crafting (mock)
       const needF = 5;
       const needS = 1;
 
@@ -611,29 +660,15 @@ function setupLoot() {
       renderActivityList($("#homeActivityList"), state.homeEvents);
 
       showToast("Relic forged · XP boosted");
+      playSound("reward");
+      vibrate([60, 40, 60]);
       applyCompactViewport();
     });
   }
 }
 
 // -------------------------------------------------------
-// INVENTORY — Compact UI Rendering
-// -------------------------------------------------------
-
-function renderInventory() {
-  const f = $("#invFragments");
-  const s = $("#invShards");
-  const r = $("#invRelics");
-
-  if (f) f.textContent = state.fragments;
-  if (s) s.textContent = state.shards;
-  if (r) r.textContent = state.relics;
-
-  // Optional: Auto-update compact bars later
-}
-
-// -------------------------------------------------------
-// MARKET ENGINE 2.0 — Listings · Filters · Popup Details
+// MARKET ENGINE — Listings · Filters · Popup Details
 // -------------------------------------------------------
 
 const MARKET_DATA = [
@@ -681,10 +716,6 @@ const MARKET_DATA = [
 
 let marketFilter = "all";
 
-// -------------------------------------------------------
-// RENDER MARKET LIST
-// -------------------------------------------------------
-
 function renderMarket() {
   const list = $("#marketGrid");
   const empty = $("#marketEmpty");
@@ -719,22 +750,18 @@ function renderMarket() {
     )
     .join("");
 
-  // Wire popup openers
   list.querySelectorAll(".market-card-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const card = btn.closest(".market-card");
       const id = card?.getAttribute("data-listing");
       const listing = MARKET_DATA.find((x) => x.id === id);
       if (listing) openMarketPopup(listing);
+      playSound("click");
     });
   });
 
   applyCompactViewport();
 }
-
-// -------------------------------------------------------
-// MARKET FILTERS
-// -------------------------------------------------------
 
 function setupMarketFilters() {
   const filterRow = $("#marketFilters");
@@ -754,12 +781,9 @@ function setupMarketFilters() {
     btn.classList.add("is-active");
 
     renderMarket();
+    vibrate(10);
   });
 }
-
-// -------------------------------------------------------
-// POPUP DETAILS
-// -------------------------------------------------------
 
 function openMarketPopup(listing) {
   const backdrop = $("#marketDetailsBackdrop");
@@ -785,6 +809,8 @@ function openMarketPopup(listing) {
   if (buyBtn) {
     buyBtn.addEventListener("click", () => {
       showToast(`Purchased ${listing.title} (mock)`);
+      playSound("reward");
+      vibrate([40, 20, 40]);
     });
   }
 
@@ -807,10 +833,6 @@ function setupMarketPopup() {
   });
 }
 
-// -------------------------------------------------------
-// INITIALIZE MARKET
-// -------------------------------------------------------
-
 function initMarketModule() {
   renderMarket();
   setupMarketFilters();
@@ -825,10 +847,9 @@ let meshCanvas, meshCtx;
 let meshNodes = [];
 let meshLinks = [];
 let meshZoom = 1;
-let meshMode = "gravity"; // default
+let meshMode = "gravity";
 let meshAnimFrame = null;
 
-// Node presets per mode
 const MESH_PRESETS = {
   alpha: {
     nodeColor: "rgba(255,110,80,0.85)",
@@ -850,27 +871,23 @@ const MESH_PRESETS = {
   },
 };
 
-// -------------------------------------------------------
-// NODE + LINK GENERATION
-// -------------------------------------------------------
-
 function initMeshGraph() {
-  meshCanvas = document.getElementById("meshCanvas");
+  meshCanvas =
+    document.getElementById("meshCanvas") ||
+    document.getElementById("mesh-canvas");
   if (!meshCanvas) return;
   meshCtx = meshCanvas.getContext("2d");
 
   resizeMeshCanvas();
 
-  // Generate 60 nodes
   meshNodes = Array.from({ length: 60 }).map(() => ({
-    x: Math.random() * meshCanvas.width,
-    y: Math.random() * meshCanvas.height,
+    x: Math.random() * (meshCanvas.width / window.devicePixelRatio),
+    y: Math.random() * (meshCanvas.height / window.devicePixelRatio),
     vx: (Math.random() - 0.5) * 0.4,
     vy: (Math.random() - 0.5) * 0.4,
     pulse: Math.random() * Math.PI * 2,
   }));
 
-  // Generate links
   meshLinks = [];
   for (let i = 0; i < meshNodes.length; i++) {
     for (let j = i + 1; j < meshNodes.length; j++) {
@@ -888,22 +905,19 @@ function initMeshGraph() {
 
 function resizeMeshCanvas() {
   if (!meshCanvas) return;
-  meshCanvas.width = meshCanvas.clientWidth * window.devicePixelRatio;
-  meshCanvas.height = meshCanvas.clientHeight * window.devicePixelRatio;
+  const ratio = window.devicePixelRatio || 1;
+  meshCanvas.width = meshCanvas.clientWidth * ratio;
+  meshCanvas.height = meshCanvas.clientHeight * ratio;
   if (meshCtx) {
-    meshCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    meshCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
 }
 
-// -------------------------------------------------------
-// ADD NODES FROM UNIFIED MESH STREAM
-// -------------------------------------------------------
-
 function addMeshNode(evt) {
-  if (!meshNodes.length) return;
+  if (!meshNodes.length || !meshCanvas) return;
 
-  const w = meshCanvas.width / window.devicePixelRatio;
-  const h = meshCanvas.height / window.devicePixelRatio;
+  const w = meshCanvas.width / (window.devicePixelRatio || 1);
+  const h = meshCanvas.height / (window.devicePixelRatio || 1);
 
   meshNodes.push({
     x: Math.random() * w,
@@ -911,23 +925,33 @@ function addMeshNode(evt) {
     vx: (Math.random() - 0.5) * 0.3,
     vy: (Math.random() - 0.5) * 0.3,
     pulse: Math.random() * Math.PI * 2,
-    highlight: evt.kind === "pack" ? "gold" : evt.kind === "xp" ? "purple" : null,
+    highlight:
+      evt.kind === "pack"
+        ? "gold"
+        : evt.kind === "xp"
+        ? "purple"
+        : null,
   });
 
-  // Keep graph size reasonable
   if (meshNodes.length > 80) meshNodes.shift();
 }
 
-// -------------------------------------------------------
-// DRAWING
-// -------------------------------------------------------
+// Override pushEvent to även mata in i mesh-nätet
+const originalPushEventMesh = pushEvent;
+pushEvent = function (list, payload, max = 16) {
+  originalPushEventMesh(list, payload, max);
+  try {
+    addMeshNode(payload);
+  } catch (e) {}
+};
+window.pushEvent = pushEvent;
 
 function drawMesh() {
+  if (!meshCtx || !meshCanvas) return;
   const preset = MESH_PRESETS[meshMode] || MESH_PRESETS.gravity;
 
   meshCtx.clearRect(0, 0, meshCanvas.width, meshCanvas.height);
 
-  // Draw links first
   meshCtx.lineWidth = 1 * meshZoom;
   meshCtx.strokeStyle = "rgba(120,140,200,0.25)";
   meshCtx.beginPath();
@@ -939,14 +963,15 @@ function drawMesh() {
   });
   meshCtx.stroke();
 
-  // Draw nodes
   meshNodes.forEach((n) => {
     n.pulse += preset.pulseSpeed;
     const pulsedSize = preset.size + Math.sin(n.pulse) * 1.5;
 
     if (n.highlight) {
       meshCtx.fillStyle =
-        n.highlight === "gold" ? "rgba(255,200,60,0.9)" : "rgba(200,60,255,0.9)";
+        n.highlight === "gold"
+          ? "rgba(255,200,60,0.9)"
+          : "rgba(200,60,255,0.9)";
     } else {
       meshCtx.fillStyle = preset.nodeColor;
     }
@@ -962,38 +987,26 @@ function drawMesh() {
   });
 }
 
-// -------------------------------------------------------
-// ANIMATION LOOP
-// -------------------------------------------------------
-
 function animateMeshGraph() {
-  const preset = MESH_PRESETS[meshMode] || MESH_PRESETS.gravity;
+  if (!meshCanvas) return;
+  const ratio = window.devicePixelRatio || 1;
 
   meshNodes.forEach((n) => {
     n.x += n.vx;
     n.y += n.vy;
 
-    // bounce
-    if (n.x < 0 || n.x > meshCanvas.width / window.devicePixelRatio) n.vx *= -1;
-    if (n.y < 0 || n.y > meshCanvas.height / window.devicePixelRatio) n.vy *= -1;
+    if (n.x < 0 || n.x > meshCanvas.width / ratio) n.vx *= -1;
+    if (n.y < 0 || n.y > meshCanvas.height / ratio) n.vy *= -1;
   });
 
   drawMesh();
   meshAnimFrame = requestAnimationFrame(animateMeshGraph);
 }
 
-// -------------------------------------------------------
-// MODE SWITCHING
-// -------------------------------------------------------
-
 function setMeshMode(mode) {
   meshMode = mode;
   showToast(`Mesh mode → ${mode}`);
 }
-
-// -------------------------------------------------------
-// INIT + HOOKS
-// -------------------------------------------------------
 
 function initMeshExplorer() {
   initMeshGraph();
@@ -1002,7 +1015,6 @@ function initMeshExplorer() {
     resizeMeshCanvas();
   });
 
-  // Buttons in UI
   const btnAlpha = document.querySelector("[data-mesh-mode='alpha']");
   const btnNew = document.querySelector("[data-mesh-mode='new']");
   const btnGravity = document.querySelector("[data-mesh-mode='gravity']");
@@ -1016,16 +1028,12 @@ function initMeshExplorer() {
 }
 
 // -------------------------------------------------------
-// DEL 7 — HOLO HUD & MICRO-PANELS
-// Neon gas ring • XP pulse • Inventory slide-out
+// HOLO HUD & MICRO-PANELS
 // -------------------------------------------------------
 
-// ---------- HOLO HUD STATE ----------
-let holoHudTick = 0;
-let gasPulseValue = 0.2; 
+let gasPulseValue = 0.2;
 let xpPulse = 0;
 
-// ---------- CREATE HOLO HUD DOM ----------
 function initHoloHud() {
   const container = document.getElementById("holo-hud");
   if (!container) return;
@@ -1051,7 +1059,6 @@ function initHoloHud() {
   `;
 }
 
-// ---------- GAS RING DRAWING ----------
 function drawGasRing(value) {
   const canvas = document.getElementById("gasRing");
   if (!canvas) return;
@@ -1064,14 +1071,12 @@ function drawGasRing(value) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // background ring
   ctx.beginPath();
   ctx.arc(center, center, radius, 0, Math.PI * 2);
   ctx.strokeStyle = "rgba(40,50,90,0.5)";
   ctx.lineWidth = 8;
   ctx.stroke();
 
-  // neon ring
   ctx.beginPath();
   ctx.arc(center, center, radius, start, end);
   ctx.strokeStyle = "rgba(52,255,240,0.9)";
@@ -1082,13 +1087,11 @@ function drawGasRing(value) {
   ctx.shadowBlur = 0;
 }
 
-// ---------- UPDATE HOLO HUD ----------
 function updateHoloHud() {
   const gasValEl = document.getElementById("gasRingValue");
   const xpEl = document.getElementById("holoXpLabel");
   const xpFill = document.getElementById("holoXpFill");
 
-  // Fake gas jitter (syncs with header)
   const base = 0.19;
   const jitter = Math.random() * 0.04;
   gasPulseValue = base + jitter;
@@ -1097,7 +1100,6 @@ function updateHoloHud() {
 
   drawGasRing(Math.min(gasPulseValue / 1.0, 1));
 
-  // XP Pulse Fill
   xpPulse += 0.02;
   const xpRatio = (state.xp % 100) / 100;
   const wave = Math.sin(xpPulse) * 0.05;
@@ -1107,12 +1109,7 @@ function updateHoloHud() {
   if (xpEl) xpEl.textContent = `${state.xp} XP`;
 }
 
-// animate
 setInterval(updateHoloHud, 800);
-
-// -------------------------------------------------------
-// MICRO-PANEL: INVENTORY SLIDEOUT
-// -------------------------------------------------------
 
 function initInventorySlideout() {
   const root = document.getElementById("inventory-slideout");
@@ -1134,6 +1131,7 @@ function initInventorySlideout() {
   invBtn.addEventListener("click", () => {
     root.classList.add("open");
     updateInventorySlideout();
+    vibrate(10);
   });
 
   const closeBtn = root.querySelector("#invClose");
@@ -1150,3 +1148,258 @@ function updateInventorySlideout() {
   if (s) s.textContent = state.shards;
   if (r) r.textContent = state.relics;
 }
+
+// -------------------------------------------------------
+// WALLET MOCK / CONNECT
+// -------------------------------------------------------
+
+async function connectWallet() {
+  if (!window.ethereum) {
+    showToast("No wallet found (mock only)");
+    return;
+  }
+  try {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const addr = await signer.getAddress();
+
+    spawnProvider = provider;
+    spawnSigner = signer;
+    spawnAddress = addr;
+
+    const addrEls = document.querySelectorAll("[data-wallet-address]");
+    addrEls.forEach((el) => {
+      el.textContent = shortenAddress(addr, 4);
+    });
+
+    const label = $("#wallet-status-label");
+    if (label) label.textContent = "Connected";
+
+    renderHeaderStats();
+    fetchEthBalance();
+    showToast("Wallet connected (mock)");
+  } catch (e) {
+    showToast("Wallet connection failed");
+  }
+}
+
+async function fetchEthBalance() {
+  if (!spawnProvider || !spawnAddress) return;
+  const balEl = $("#walletBalanceEth");
+  try {
+    const wei = await spawnProvider.getBalance(spawnAddress);
+    const eth = Number(ethers.utils.formatEther(wei));
+    if (balEl) balEl.textContent = `${eth.toFixed(4)} ETH`;
+  } catch (e) {}
+}
+
+function initWallet() {
+  const btn = $("#btn-connect");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    connectWallet();
+    playSound("click");
+  });
+}
+
+// -------------------------------------------------------
+// SETTINGS SHEET / ACCOUNT SHEET / ROLE / STREAK / SUPCAST
+// -------------------------------------------------------
+
+function initSettingsSheet() {
+  const btn = $("#settings-btn");
+  const backdrop = $("#settings-backdrop");
+  const close = $("#settings-close");
+  if (!btn || !backdrop || !close) return;
+
+  const hide = () => backdrop.classList.add("hidden");
+  const show = () => backdrop.classList.remove("hidden");
+
+  btn.addEventListener("click", () => {
+    show();
+    vibrate(10);
+  });
+  close.addEventListener("click", hide);
+  backdrop.addEventListener("click", (e) => {
+    if (e.target === backdrop) hide();
+  });
+
+  $$(".settings-card-builder").forEach((card) => {
+    card.addEventListener("click", () => {
+      const action = card.dataset.builderAction;
+      showToast(`Builder panel: ${action} (mock)`);
+    });
+  });
+}
+
+function initAccountSheet() {
+  const btn = $("#btn-account");
+  const backdrop = $("#account-sheet");
+  const closeBtn = $("#btn-close-account");
+  if (!btn || !backdrop || !closeBtn) return;
+
+  const open = () => {
+    backdrop.classList.remove("hidden");
+    backdrop.setAttribute("aria-hidden", "false");
+  };
+  const close = () => {
+    backdrop.classList.add("hidden");
+    backdrop.setAttribute("aria-hidden", "true");
+  };
+
+  btn.addEventListener("click", () => {
+    open();
+    vibrate(10);
+  });
+  closeBtn.addEventListener("click", close);
+  backdrop.addEventListener("click", (e) => {
+    if (e.target === backdrop) close();
+  });
+}
+
+function initRoleSheet() {
+  const chip = $("#mesh-role-chip");
+  const backdrop = $("#role-backdrop");
+  const close = $("#role-close");
+  const save = $("#save-role");
+  if (!chip || !backdrop || !close || !save) return;
+
+  let selectedRole = null;
+
+  const open = () => backdrop.classList.remove("hidden");
+  const hide = () => backdrop.classList.add("hidden");
+
+  chip.addEventListener("click", () => {
+    open();
+    vibrate(10);
+  });
+  close.addEventListener("click", hide);
+  backdrop.addEventListener("click", (e) => {
+    if (e.target === backdrop) hide();
+  });
+
+  $$(".role-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      $$(".role-card").forEach((c) => c.classList.remove("is-active"));
+      card.classList.add("is-active");
+      selectedRole = card.dataset.role;
+      save.disabled = !selectedRole;
+    });
+  });
+
+  save.addEventListener("click", () => {
+    if (!selectedRole) return;
+    state.role = selectedRole;
+
+    const labelEl = $("#meshRoleLabel");
+    const iconEl = $("#meshRoleIcon");
+    const mapping = {
+      dev: { label: "Dev / Builder", icon: "🧪" },
+      creator: { label: "Creator / Artist", icon: "🎨" },
+      hunter: { label: "Alpha hunter / Trader", icon: "⚡" },
+      collector: { label: "Collector / Fan", icon: "🎴" },
+    };
+    const cfg = mapping[selectedRole] || mapping.hunter;
+    if (labelEl) labelEl.textContent = cfg.label;
+    if (iconEl) iconEl.textContent = cfg.icon;
+
+    showToast(`Role set to ${cfg.label}`);
+    vibrate([20, 20, 20]);
+    hide();
+  });
+}
+
+function initStreak() {
+  const btn = $("#btn-checkin");
+  if (!btn) return;
+
+  btn.addEventListener("click", () => {
+    if (state.streakDays < state.weeklyTarget) {
+      state.streakDays += 1;
+    }
+    const xpGain = 15;
+    state.xp += xpGain;
+
+    pushEvent(state.homeEvents, {
+      kind: "xp",
+      label: "XP",
+      text: "Daily check-in ritual",
+      time: formatTime(),
+      meta: `+${xpGain} XP`,
+    });
+
+    renderMeshSnapshot();
+    renderActivityList($("#homeActivityList"), state.homeEvents);
+    showToast("Check-in complete · XP added");
+    playSound("reward");
+    vibrate([30, 20, 30]);
+  });
+}
+
+function initSupcast() {
+  const formBtn = $("#supcastSubmit");
+  const feed = $("#supcastFeed");
+  if (!formBtn || !feed) return;
+
+  formBtn.addEventListener("click", () => {
+    const ctxSel = $("#supcastContext");
+    const titleEl = $("#supcastTitle");
+    const tagsEl = $("#supcastTags");
+    const descEl = $("#supcastDescription");
+
+    const ctx = ctxSel ? ctxSel.value : "";
+    const title = titleEl?.value || "Untitled question";
+    const tags = tagsEl?.value || "";
+    const desc = descEl?.value || "";
+
+    const item = document.createElement("li");
+    item.className = "supcast-item";
+    item.innerHTML = `
+      <div class="supcast-item-title">${title}</div>
+      <div class="supcast-item-meta">${ctx} · ${tags}</div>
+      <div class="supcast-item-body">${desc || "No description"}</div>
+    `;
+    feed.prepend(item);
+
+    showToast("SupCast posted (mock)");
+    vibrate(15);
+
+    if (titleEl) titleEl.value = "";
+    if (tagsEl) tagsEl.value = "";
+    if (descEl) descEl.value = "";
+  });
+}
+
+// -------------------------------------------------------
+// BOOT
+// -------------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", () => {
+  initQuests();
+  seedHomeEvents();
+  seedMeshEvents();
+  seedLootEvents();
+
+  renderHeaderStats();
+  renderMeshSnapshot();
+  renderActivityList($("#homeActivityList"), state.homeEvents);
+  renderActivityList($("#meshEvents"), state.meshEvents);
+  renderInventory();
+
+  setupTabs();
+  setupLoot();
+  initMarketModule();
+  initMeshExplorer();
+  initHoloHud();
+  initInventorySlideout();
+  initWallet();
+  initSettingsSheet();
+  initAccountSheet();
+  initRoleSheet();
+  initStreak();
+  initSupcast();
+
+  enhanceProfilePanel();
+  applyCompactViewport();
+});
