@@ -33,10 +33,18 @@ body {
   color: var(--text-main);
 }
 
-.app-body {
-  min-height: 100vh;
+body.app-body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Inter", sans-serif;
+  background: radial-gradient(circle at top, #11193b 0, #030410 45%, #000 100%);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
-
 /* ========== [BLOCK 2] MESH BACKGROUND ========== */
 
 #mesh-bg {
@@ -1136,7 +1144,20 @@ body {
 .hidden {
   display: none !important;
 }
+/* ========== [BLOCK 3] APP-SHELL / LAYOUT ========== */
 
+.app-shell {
+  position: relative;
+  z-index: 2;
+  max-width: 420px;
+  margin: 24px auto 40px;   /* mer som din screenshot */
+  padding: 14px 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* behåll @media (min-width: 768px) {...} precis som den är */
 @media (min-width: 520px) {
   .app-shell {
     margin-top: 12px;
