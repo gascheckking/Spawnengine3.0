@@ -71,9 +71,9 @@ body.app-body {
 .app-shell {
   position: relative;
   z-index: 2;
-  max-width: 380px;
-  margin: 32px auto 82px;
-  padding: 16px 14px 18px;
+  max-width: 420px;                    /* större och mer som din screenshot */
+  margin: 8px auto 24px;               /* flyttar allt uppåt, tajtare layout */
+  padding: 10px 12px 14px;             /* mindre padding = mer innehåll syns */
   border-radius: var(--radius-shell);
   background: radial-gradient(circle at top, #071023 0, #020617 65%);
   box-shadow: var(--shadow-shell);
@@ -81,9 +81,8 @@ body.app-body {
   backdrop-filter: blur(26px);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 8px;                            /* kortare avstånd mellan komponenter */
 }
-
 @media (min-width: 768px) {
   .app-shell {
     max-width: 420px;
