@@ -74,6 +74,7 @@ body.app-body {
   max-width: 420px;                    /* större och mer som din screenshot */
   margin: 8px auto 24px;               /* flyttar allt uppåt, tajtare layout */
   padding: 10px 12px 14px;             /* mindre padding = mer innehåll syns */
+  padding-bottom: 120px;               /* FIXAR BOTTOM-NAV ÖVERLAPPEN */
   border-radius: var(--radius-shell);
   background: radial-gradient(circle at top, #071023 0, #020617 65%);
   box-shadow: var(--shadow-shell);
