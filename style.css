@@ -1092,3 +1092,190 @@ body.app-body {
 .hidden {
   display: none !important;
 }
+/* SPAWNENGINE – COMPACT OVERRIDES v0.1 */
+/* Allt här ligger sist = vinner över tidigare regler */
+
+.app-shell {
+  margin: 4px auto 20px;
+  padding: 6px 8px 120px;   /* 120px för bottom-nav */
+  gap: 4px;
+}
+
+/* Header / HUD ännu tajtare */
+.mesh-header {
+  padding: 8px 8px 10px;
+  border-radius: 20px;
+  gap: 6px;
+}
+
+.mesh-header-top {
+  margin-bottom: 4px;
+}
+
+.mesh-header-tags {
+  margin-top: 2px;
+  gap: 4px;
+}
+
+.hud-title-block {
+  margin-top: 4px;
+  margin-bottom: 2px;
+}
+
+.hud-title {
+  font-size: 20px;
+  line-height: 1.05;
+}
+
+.hud-subtitle {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+/* Stat-rad + KPI lite mindre */
+.stats-row {
+  margin-top: 6px;
+  gap: 4px;
+}
+
+.stat-pill {
+  padding: 5px 6px;
+  border-radius: 12px;
+}
+
+.header-kpis {
+  margin-top: 6px;
+  gap: 5px;
+}
+
+.kpi {
+  padding: 6px 8px;
+}
+
+/* Profilkort tajtare */
+.profile-card {
+  padding: 8px 8px;
+  border-radius: 16px;
+  gap: 6px;
+}
+
+.profile-avatar {
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
+}
+
+.profile-handle {
+  font-size: 12px;
+}
+
+.profile-sub {
+  font-size: 10px;
+}
+
+/* Cards / sektioner tajtare */
+.card-section {
+  margin-top: 6px;
+}
+
+.section-header {
+  margin-bottom: 4px;
+}
+
+.card {
+  padding: 8px 8px;
+  border-radius: 16px;
+}
+
+.card-title {
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.card-sub {
+  font-size: 10px;
+  margin-bottom: 6px;
+}
+
+.card-foot {
+  font-size: 9px;
+  margin-top: 4px;
+}
+
+/* Streak-komponenten */
+.streak-row {
+  padding: 8px 8px;
+  border-radius: 16px;
+  gap: 8px;
+}
+
+.streak-circle {
+  width: 66px;
+  height: 66px;
+}
+
+.streak-title {
+  font-size: 12px;
+}
+
+.streak-sub {
+  font-size: 10px;
+}
+
+/* Activity / quests */
+.activity-item,
+.quest-item {
+  padding: 6px 8px;
+  border-radius: 12px;
+}
+
+.activity-title,
+.quest-title {
+  font-size: 11px;
+}
+
+.activity-meta,
+.quest-meta {
+  font-size: 9px;
+}
+
+/* Tab content & segmented control */
+.tab-content {
+  margin-top: 6px;
+}
+
+.segmented {
+  margin: 6px 0;
+  gap: 4px;
+}
+
+.segmented-btn {
+  padding: 5px 4px;
+  font-size: 10px;
+}
+
+/* Lite mindre inputs */
+.field-input,
+.field-textarea,
+.field-select {
+  padding: 6px 8px;
+  font-size: 11px;
+}
+
+/* Bottom-nav – samma, men tajtare label */
+.bottom-nav {
+  bottom: 14px;
+}
+
+.bottom-nav-btn {
+  padding: 5px 4px 3px;
+  font-size: 9px;
+}
+
+.bottom-nav-icon {
+  font-size: 15px;
+}
+
+.bottom-nav-label {
+  font-size: 8px;
+}
