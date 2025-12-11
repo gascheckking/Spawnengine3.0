@@ -66,15 +66,15 @@ body.app-body {
   pointer-events: none;
 }
 
-/* APP SHELL */
+/* APP SHELL – MER KOMPAKT */
 
 .app-shell {
   position: relative;
   z-index: 2;
-  max-width: 420px;                    /* större och mer som din screenshot */
-  margin: 8px auto 24px;               /* flyttar allt uppåt, tajtare layout */
-  padding: 10px 12px 14px;             /* mindre padding = mer innehåll syns */
-  padding-bottom: 120px;               /* FIXAR BOTTOM-NAV ÖVERLAPPEN */
+  max-width: 420px;
+  margin: 4px auto 20px;          /* upp med hela HUD:en */
+  padding: 8px 10px 12px;         /* mindre padding */
+  padding-bottom: 120px;          /* så bottom-nav inte täcker */
   border-radius: var(--radius-shell);
   background: radial-gradient(circle at top, #071023 0, #020617 65%);
   box-shadow: var(--shadow-shell);
@@ -82,12 +82,13 @@ body.app-body {
   backdrop-filter: blur(26px);
   display: flex;
   flex-direction: column;
-  gap: 8px;                            /* kortare avstånd mellan komponenter */
+  gap: 6px;                       /* tajtare mellan blocken */
 }
+
 @media (min-width: 768px) {
   .app-shell {
     max-width: 420px;
-    margin-top: 40px;
+    margin-top: 32px;
   }
 }
 
@@ -101,7 +102,7 @@ body.app-body {
   z-index: 40;
   background: rgba(15, 23, 42, 0.96);
   color: var(--color-text);
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-radius: 999px;
   font-size: 12px;
   border: 1px solid rgba(148, 163, 184, 0.4);
@@ -135,7 +136,7 @@ body.app-body {
   border-radius: 24px 24px 0 0;
   box-shadow: 0 -18px 50px rgba(15, 23, 42, 0.9);
   border: 1px solid rgba(148, 163, 184, 0.45);
-  padding: 16px 18px 18px;
+  padding: 14px 16px 16px;
   overflow-y: auto;
 }
 
@@ -144,30 +145,30 @@ body.app-body {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .sheet-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
 }
 
 .sheet-section {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .sheet-section h3 {
-  font-size: 13px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--color-text-soft);
-  margin: 8px 0;
+  margin: 6px 0;
 }
 
 .sheet-sub {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--color-text-soft);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 /* SETTINGS */
@@ -175,50 +176,50 @@ body.app-body {
 .settings-row {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .settings-item {
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-radius: 14px;
   background: rgba(15, 23, 42, 0.9);
   border: 1px solid rgba(51, 65, 85, 0.9);
 }
 
 .settings-label {
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--color-text-soft);
 }
 
 .settings-main {
-  font-size: 13px;
-  margin-top: 3px;
+  font-size: 12px;
+  margin-top: 2px;
 }
 
 .settings-sub {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--color-text-soft);
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
 .settings-pill {
-  padding: 10px 12px;
+  padding: 9px 10px;
   border-radius: 999px;
   background: rgba(15, 23, 42, 0.92);
   border: 1px dashed rgba(148, 163, 184, 0.6);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 6px;
 }
 
 .settings-list {
-  padding-left: 18px;
+  padding-left: 16px;
   margin: 4px 0 0;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--color-text-soft);
 }
 
@@ -227,28 +228,28 @@ body.app-body {
 .role-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin: 8px 0 10px;
+  gap: 6px;
+  margin: 6px 0 8px;
 }
 
 .role-card {
   border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.55);
   background: radial-gradient(circle at top, rgba(34, 197, 235, 0.16), rgba(15, 23, 42, 0.98));
-  padding: 8px 10px;
+  padding: 7px 8px;
   text-align: left;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .role-card h4 {
-  margin: 0 0 3px;
-  font-size: 12px;
+  margin: 0 0 2px;
+  font-size: 11px;
 }
 
 .role-card p {
   margin: 0;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--color-text-soft);
 }
 
@@ -262,8 +263,8 @@ body.app-body {
 .btn-primary,
 .btn-outline {
   border-radius: 999px;
-  padding: 9px 14px;
-  font-size: 13px;
+  padding: 8px 12px;
+  font-size: 12px;
   font-weight: 500;
   border: none;
   cursor: pointer;
@@ -274,12 +275,12 @@ body.app-body {
 .btn-primary {
   background: linear-gradient(135deg, #06b6d4, #22c55e);
   color: #02111a;
-  box-shadow: 0 14px 30px rgba(34, 211, 238, 0.45);
+  box-shadow: 0 12px 26px rgba(34, 211, 238, 0.45);
 }
 
 .btn-primary:active {
   transform: translateY(1px) scale(0.98);
-  box-shadow: 0 4px 16px rgba(34, 211, 238, 0.32);
+  box-shadow: 0 4px 14px rgba(34, 211, 238, 0.32);
 }
 
 .btn-outline {
@@ -297,8 +298,8 @@ body.app-body {
 }
 
 .icon-button {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.6);
   background: radial-gradient(circle at top, rgba(37, 99, 235, 0.4), rgba(15, 23, 42, 0.95));
@@ -310,7 +311,7 @@ body.app-body {
 
 .icon-gear::before {
   content: "⚙️";
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .icon-close {
@@ -324,9 +325,9 @@ body.app-body {
 .chip {
   display: inline-flex;
   align-items: center;
-  padding: 6px 10px;
+  padding: 5px 9px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 10px;
   border: 1px solid rgba(148, 163, 184, 0.75);
   background: rgba(15, 23, 42, 0.9);
 }
@@ -343,7 +344,6 @@ body.app-body {
   background: radial-gradient(circle at top, rgba(56, 189, 248, 0.35), rgba(15, 23, 42, 0.96));
   border-color: rgba(56, 189, 248, 0.8);
   color: #e0f2fe;
-  font-size: 11px;
 }
 
 .chip-green {
@@ -361,11 +361,11 @@ body.app-body {
   color: #fef3c7;
 }
 
-/* HEADER / HUD — COMPACT SPAWNENGINE VERSION */
+/* HEADER / HUD — EXTRA KOMPAKT */
 
 .mesh-header {
-  border-radius: 24px;
-  padding: 12px 12px 14px;
+  border-radius: 22px;
+  padding: 10px 10px 11px;
   background: linear-gradient(
     140deg,
     rgba(15, 23, 42, 0.96),
@@ -375,21 +375,21 @@ body.app-body {
   box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .mesh-header-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px; /* lite tajtare */
+  margin-bottom: 4px;
 }
 
 .avatar-chip {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 9px;
+  gap: 6px;
+  padding: 3px 8px;
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.85);
   background: radial-gradient(
@@ -401,8 +401,8 @@ body.app-body {
 }
 
 .avatar-circle {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 999px;
   background: linear-gradient(135deg, #22d3ee, #0ea5e9);
   display: flex;
@@ -410,54 +410,56 @@ body.app-body {
   justify-content: center;
   color: #0b1120;
   font-weight: 600;
+  font-size: 13px;
 }
 
 .avatar-meta {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0;
 }
 
 .avatar-handle {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .avatar-sub {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--color-text-soft);
 }
 
 /* TAGS — mindre spacing */
 .mesh-header-tags {
-  margin-top: 4px;
+  margin-top: 2px;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 /* TITLE BLOCK — mer kompakt */
 .hud-title-block {
-  margin-top: 6px;
-  margin-bottom: 4px;
+  margin-top: 4px;
+  margin-bottom: 2px;
 }
 
 .hud-title {
-  font-size: 22px;
+  font-size: 18px;
   line-height: 1.1;
   letter-spacing: 0.01em;
 }
 
-/* SUBTITLE — lite större än förut och tajtare radavstånd */
+/* SUBTITLE */
 .hud-subtitle {
   margin-top: 2px;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.25;
   color: var(--color-text-soft);
 }
 
+/* CHIP-RAD */
 .mesh-header-row {
-  margin-top: 6px;
+  margin-top: 4px;
   display: flex;
   justify-content: space-between;
 }
@@ -465,22 +467,22 @@ body.app-body {
 .mesh-chip-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
 }
 
 /* STAT PILL ROW */
 .stats-row {
-  margin-top: 8px;
+  margin-top: 6px;
   display: flex;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: wrap;
 }
 
 .stat-pill {
   flex: 1;
   min-width: 0;
-  border-radius: 14px;
-  padding: 6px 8px;
+  border-radius: 12px;
+  padding: 5px 7px;
   border: 1px solid rgba(148, 163, 184, 0.7);
   background: radial-gradient(
     circle at top,
@@ -490,44 +492,44 @@ body.app-body {
 }
 
 .stat-label {
-  font-size: 10px;
+  font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--color-text-soft);
 }
 
 .stat-value {
-  font-size: 13px;
-  margin-top: 2px;
+  font-size: 12px;
+  margin-top: 1px;
 }
 
-/* CONNECT + WALLET ROW — lite tajtare */
+/* CONNECT + WALLET RAD */
 .wallet-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .wallet-status,
 .wallet-address,
 .wallet-balance {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--color-text-soft);
 }
 
-/* KPI GRID — mer kompakt */
+/* KPI GRID */
 .header-kpis {
-  margin-top: 8px;
+  margin-top: 6px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
+  gap: 4px;
 }
 
 .kpi {
-  padding: 8px 10px;
-  border-radius: 12px;
+  padding: 6px 8px;
+  border-radius: 11px;
   border: 1px solid rgba(148, 163, 184, 0.7);
   background: radial-gradient(
     circle at top,
@@ -537,50 +539,52 @@ body.app-body {
 }
 
 .kpi-label {
-  font-size: 10px;
+  font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--color-text-soft);
 }
 
 .kpi-value {
-  font-size: 13px;
+  font-size: 12px;
   margin-top: 1px;
 }
 
-/* FOOTNOTE — tajtare */
+/* FOOTNOTE */
 .header-note {
-  margin-top: 6px;
-  font-size: 11px;
+  margin-top: 4px;
+  font-size: 10px;
   line-height: 1.3;
   color: var(--color-text-soft);
 }
 
+/* PROFILE CARD */
+
 .profile-card {
-  border-radius: 20px;
-  padding: 10px 10px 10px;
+  border-radius: 18px;
+  padding: 8px 8px 9px;
   background: rgba(15, 23, 42, 0.95);
   border: 1px dashed rgba(148, 163, 184, 0.7);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .profile-main {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .profile-avatar {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 999px;
   background: linear-gradient(135deg, #0ea5e9, #22c55e);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .profile-meta {
@@ -589,20 +593,20 @@ body.app-body {
 }
 
 .profile-handle {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
 }
 
 .profile-sub {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--color-text-soft);
 }
 
 .profile-stats {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
-  margin-top: 4px;
+  gap: 8px;
+  margin-top: 3px;
 }
 
 .profile-stat {
@@ -611,14 +615,14 @@ body.app-body {
 }
 
 .profile-stat-label {
-  font-size: 10px;
+  font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--color-text-soft);
 }
 
 .profile-stat-value {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 /* MESH NAV (TOP TABS) */
@@ -626,19 +630,19 @@ body.app-body {
 .mesh-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
   margin-top: 2px;
 }
 
 .mesh-nav-btn {
   flex: 1;
   min-width: 0;
-  padding: 7px 6px;
+  padding: 6px 4px;
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.7);
   background: rgba(15, 23, 42, 0.96);
   color: var(--color-text-soft);
-  font-size: 11px;
+  font-size: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -660,7 +664,7 @@ body.app-body {
 /* TAB CONTENT */
 
 .tab-content {
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .tab-panel {
@@ -675,9 +679,9 @@ body.app-body {
 
 .streak-row {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   border-radius: var(--radius-card);
-  padding: 10px 10px;
+  padding: 8px 8px;
   background: radial-gradient(circle at top left, rgba(34, 197, 235, 0.26), rgba(15, 23, 42, 0.98));
   border: 1px solid rgba(34, 211, 238, 0.65);
   box-shadow: var(--shadow-card);
@@ -690,8 +694,8 @@ body.app-body {
 }
 
 .streak-circle {
-  width: 74px;
-  height: 74px;
+  width: 68px;
+  height: 68px;
   border-radius: 999px;
   border: 2px solid rgba(34, 211, 238, 0.8);
   display: flex;
@@ -703,13 +707,13 @@ body.app-body {
 }
 
 .streak-day-label {
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 .streak-day-value {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
 }
 
@@ -717,21 +721,21 @@ body.app-body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
 }
 
 .streak-title {
   font-weight: 600;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .streak-sub {
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .streak-bar {
   width: 100%;
-  height: 6px;
+  height: 5px;
   border-radius: 999px;
   background: rgba(15, 23, 42, 0.8);
   overflow: hidden;
@@ -747,31 +751,31 @@ body.app-body {
 /* CARD SECTIONS */
 
 .card-section {
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .section-header h2,
 .section-header h3 {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .section-sub {
   margin: 2px 0 0;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--color-text-soft);
 }
 
 .section-tag {
-  font-size: 10px;
-  padding: 4px 8px;
+  font-size: 9px;
+  padding: 3px 7px;
   border-radius: 999px;
   border: 1px dashed rgba(148, 163, 184, 0.7);
   color: var(--color-text-soft);
@@ -781,28 +785,28 @@ body.app-body {
 
 .card {
   border-radius: var(--radius-card);
-  padding: 10px 10px;
+  padding: 8px 8px;
   background: var(--color-bg-elevated);
   border: 1px solid var(--color-stroke-soft);
   box-shadow: var(--shadow-card);
 }
 
 .card-title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .card-sub {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--color-text-soft);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .card-foot {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--color-text-soft);
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 /* ACTIVITY LIST */
@@ -813,23 +817,23 @@ body.app-body {
   margin: 4px 0 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .activity-item {
-  border-radius: 14px;
-  padding: 7px 9px;
+  border-radius: 13px;
+  padding: 6px 8px;
   background: rgba(15, 23, 42, 0.96);
   border: 1px solid rgba(51, 65, 85, 0.9);
 }
 
 .activity-title {
-  font-size: 12px;
-  margin-bottom: 2px;
+  font-size: 11px;
+  margin-bottom: 1px;
 }
 
 .activity-meta {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--color-text-soft);
 }
 
@@ -837,8 +841,8 @@ body.app-body {
 
 .segmented {
   display: flex;
-  gap: 6px;
-  margin: 8px 0;
+  gap: 4px;
+  margin: 6px 0;
   border-radius: 999px;
   padding: 2px;
   background: rgba(15, 23, 42, 0.95);
@@ -849,8 +853,8 @@ body.app-body {
   flex: 1;
   min-width: 0;
   border-radius: 999px;
-  padding: 6px 4px;
-  font-size: 11px;
+  padding: 5px 3px;
+  font-size: 10px;
   border: none;
   background: transparent;
   color: var(--color-text-soft);
@@ -877,20 +881,20 @@ body.app-body {
 .slot-reels {
   display: flex;
   justify-content: space-between;
-  gap: 6px;
-  margin: 8px 0 10px;
+  gap: 4px;
+  margin: 6px 0 8px;
 }
 
 .slot-reel {
   flex: 1;
-  min-height: 40px;
-  border-radius: 12px;
+  min-height: 36px;
+  border-radius: 11px;
   border: 1px solid rgba(148, 163, 184, 0.7);
   background: radial-gradient(circle at top, rgba(30, 64, 175, 0.7), rgba(15, 23, 42, 0.98));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .slot-reel.spin {
@@ -921,16 +925,16 @@ body.app-body {
 .market-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: 4px;
+  margin-bottom: 6px;
 }
 
 .market-filter-chip {
-  padding: 5px 9px;
+  padding: 4px 8px;
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.8);
   background: rgba(15, 23, 42, 0.95);
-  font-size: 11px;
+  font-size: 10px;
   cursor: pointer;
 }
 
@@ -941,32 +945,32 @@ body.app-body {
 }
 
 .market-empty {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--color-text-soft);
 }
 
 .market-grid {
-  margin-top: 6px;
+  margin-top: 4px;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 6px;
+  gap: 5px;
 }
 
 .market-card {
-  border-radius: 16px;
-  padding: 8px 9px;
+  border-radius: 14px;
+  padding: 7px 8px;
   background: rgba(15, 23, 42, 0.96);
   border: 1px solid rgba(51, 65, 85, 0.95);
 }
 
 .market-title {
-  font-size: 12px;
-  margin-bottom: 2px;
+  font-size: 11px;
+  margin-bottom: 1px;
 }
 
 .market-meta,
 .market-tagline {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--color-text-soft);
 }
 
@@ -978,23 +982,23 @@ body.app-body {
   margin: 4px 0 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .quest-item {
-  border-radius: 14px;
-  padding: 7px 9px;
+  border-radius: 13px;
+  padding: 6px 8px;
   background: rgba(15, 23, 42, 0.96);
   border: 1px solid rgba(51, 65, 85, 0.95);
 }
 
 .quest-title {
-  font-size: 12px;
-  margin-bottom: 2px;
+  font-size: 11px;
+  margin-bottom: 1px;
 }
 
 .quest-meta {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--color-text-soft);
   display: flex;
   justify-content: space-between;
@@ -1004,7 +1008,7 @@ body.app-body {
 /* FIELDS */
 
 .field-label {
-  font-size: 11px;
+  font-size: 10px;
   margin-bottom: 2px;
   display: block;
 }
@@ -1013,11 +1017,11 @@ body.app-body {
 .field-textarea,
 .field-select {
   width: 100%;
-  border-radius: 12px;
+  border-radius: 11px;
   border: 1px solid rgba(51, 65, 85, 0.9);
   background: rgba(15, 23, 42, 0.96);
-  padding: 7px 9px;
-  font-size: 12px;
+  padding: 6px 8px;
+  font-size: 11px;
   color: var(--color-text);
   outline: none;
 }
@@ -1029,13 +1033,13 @@ body.app-body {
 }
 
 .mesh-output {
-  margin-top: 8px;
-  font-size: 11px;
+  margin-top: 6px;
+  font-size: 10px;
   white-space: pre-wrap;
   background: rgba(15, 23, 42, 0.95);
-  border-radius: 12px;
+  border-radius: 11px;
   border: 1px dashed rgba(148, 163, 184, 0.7);
-  padding: 8px 9px;
+  padding: 7px 8px;
 }
 
 /* BOTTOM NAV */
@@ -1086,248 +1090,9 @@ body.app-body {
 .bottom-nav-label {
   font-size: 9px;
 }
-.bottom-nav-label {
-  font-size: 9px;
-}
 
-/* --- SPAWNENGINE COMPACT PATCH v2 --- */
-
-/* 1) Zooma ut hela HUD:en lite */
-.app-shell {
-  max-width: 420px;
-  transform: scale(0.9);
-  transform-origin: top center;
-}
-
-/* 2) Mindre luft mellan header och första korten */
-.card-section {
-  margin-top: 6px;
-}
-.card-section:first-of-type {
-  margin-top: 4px;
-}
-
-/* 3) Kompaktare streak-kort */
-.streak-row {
-  padding: 8px 8px;
-}
-.streak-circle {
-  width: 64px;
-  height: 64px;
-}
-.streak-title {
-  font-size: 12px;
-}
-.streak-sub {
-  font-size: 10px;
-}
-
-/* 4) Mindre brödtext så hero-blocket inte “skriker” */
-.section-sub {
-  font-size: 10px;
-  line-height: 1.3;
-}
-.header-note {
-  font-size: 10px;
-  line-height: 1.3;
-}
-
-/* --- SLUT PÅ COMPACT PATCH --- */
-
- /* UTIL */
-
-.hidden {
-  display: none !important;
-}
 /* UTIL */
 
 .hidden {
   display: none !important;
-}
-/* SPAWNENGINE – COMPACT OVERRIDES v0.1 */
-/* Allt här ligger sist = vinner över tidigare regler */
-
-.app-shell {
-  margin: 4px auto 20px;
-  padding: 6px 8px 120px;   /* 120px för bottom-nav */
-  gap: 4px;
-}
-
-/* Header / HUD ännu tajtare */
-.mesh-header {
-  padding: 8px 8px 10px;
-  border-radius: 20px;
-  gap: 6px;
-}
-
-.mesh-header-top {
-  margin-bottom: 4px;
-}
-
-.mesh-header-tags {
-  margin-top: 2px;
-  gap: 4px;
-}
-
-.hud-title-block {
-  margin-top: 4px;
-  margin-bottom: 2px;
-}
-
-.hud-title {
-  font-size: 20px;
-  line-height: 1.05;
-}
-
-.hud-subtitle {
-  font-size: 12px;
-  line-height: 1.2;
-}
-
-/* Stat-rad + KPI lite mindre */
-.stats-row {
-  margin-top: 6px;
-  gap: 4px;
-}
-
-.stat-pill {
-  padding: 5px 6px;
-  border-radius: 12px;
-}
-
-.header-kpis {
-  margin-top: 6px;
-  gap: 5px;
-}
-
-.kpi {
-  padding: 6px 8px;
-}
-
-/* Profilkort tajtare */
-.profile-card {
-  padding: 8px 8px;
-  border-radius: 16px;
-  gap: 6px;
-}
-
-.profile-avatar {
-  width: 26px;
-  height: 26px;
-  font-size: 14px;
-}
-
-.profile-handle {
-  font-size: 12px;
-}
-
-.profile-sub {
-  font-size: 10px;
-}
-
-/* Cards / sektioner tajtare */
-.card-section {
-  margin-top: 6px;
-}
-
-.section-header {
-  margin-bottom: 4px;
-}
-
-.card {
-  padding: 8px 8px;
-  border-radius: 16px;
-}
-
-.card-title {
-  font-size: 12px;
-  margin-bottom: 2px;
-}
-
-.card-sub {
-  font-size: 10px;
-  margin-bottom: 6px;
-}
-
-.card-foot {
-  font-size: 9px;
-  margin-top: 4px;
-}
-
-/* Streak-komponenten */
-.streak-row {
-  padding: 8px 8px;
-  border-radius: 16px;
-  gap: 8px;
-}
-
-.streak-circle {
-  width: 66px;
-  height: 66px;
-}
-
-.streak-title {
-  font-size: 12px;
-}
-
-.streak-sub {
-  font-size: 10px;
-}
-
-/* Activity / quests */
-.activity-item,
-.quest-item {
-  padding: 6px 8px;
-  border-radius: 12px;
-}
-
-.activity-title,
-.quest-title {
-  font-size: 11px;
-}
-
-.activity-meta,
-.quest-meta {
-  font-size: 9px;
-}
-
-/* Tab content & segmented control */
-.tab-content {
-  margin-top: 6px;
-}
-
-.segmented {
-  margin: 6px 0;
-  gap: 4px;
-}
-
-.segmented-btn {
-  padding: 5px 4px;
-  font-size: 10px;
-}
-
-/* Lite mindre inputs */
-.field-input,
-.field-textarea,
-.field-select {
-  padding: 6px 8px;
-  font-size: 11px;
-}
-
-/* Bottom-nav – samma, men tajtare label */
-.bottom-nav {
-  bottom: 14px;
-}
-
-.bottom-nav-btn {
-  padding: 5px 4px 3px;
-  font-size: 9px;
-}
-
-.bottom-nav-icon {
-  font-size: 15px;
-}
-
-.bottom-nav-label {
-  font-size: 8px;
 }
