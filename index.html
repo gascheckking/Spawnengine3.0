@@ -257,275 +257,183 @@
     </nav>
 
     <!-- MARKER_TAB_CONTENT -->
-    <!-- TAB PANELS -->
-    <main class="tab-content">
-      <!-- HOME -->
-      <section id="tab-home" class="tab-panel tab-panel-active">
-        <div class="streak-row">
-          <div class="streak-wheel">
-            <div class="streak-circle">
-              <div class="streak-day-label">DAY</div>
-              <div id="streakDays" class="streak-day-value">1</div>
-              <div class="streak-day-label">STREAK</div>
-            </div>
-          </div>
-          <div class="streak-copy">
-            <div class="streak-title">Daily ritual</div>
-            <p id="streakCopyText" class="streak-sub">
-              Keep the streak for <span id="streakRemaining">6</span> more days
-              for a full weekly run.
-            </p>
-            <div class="streak-bar">
-              <div id="streakBarFill" class="streak-bar-fill"></div>
-            </div>
-            <button id="btn-checkin" class="btn-outline">Check-in</button>
-          </div>
+<!-- TAB PANELS -->
+<div class="tab-content" id="tabContent">
+
+  <!-- HOME -->
+  <section class="tab-panel tab-panel-active" data-panel="home" id="panel-home">
+    <!-- Daily ritual card (endast här, inte i hero) -->
+    <section class="streak-row">
+      <div class="streak-wheel">
+        <div class="streak-circle">
+          <div class="streak-day-label">DAY</div>
+          <div class="streak-day-value" id="streakDay">1</div>
+          <div class="streak-day-label">STREAK</div>
+        </div>
+      </div>
+      <div class="streak-copy">
+        <div class="streak-title">Daily ritual</div>
+        <div class="streak-sub" id="streakCopy">
+          Keep the streak for 6 more days for a full weekly run.
+        </div>
+        <div class="streak-bar">
+          <div class="streak-bar-fill" id="streakBarFill" style="width: 18%"></div>
+        </div>
+        <button class="btn-outline full-width" id="btn-checkin">Check-in</button>
+      </div>
+    </section>
+
+    <section class="card-section">
+      <div class="section-header">
+        <div>
+          <h2>Mesh feed</h2>
+          <p class="section-sub">XP, packs & social mesh kring din wallet (mock).</p>
+        </div>
+        <span class="section-tag">Platform · Live mock</span>
+      </div>
+
+      <div class="card">
+        <ul class="activity-list" id="meshFeedList">
+          <li class="activity-item">
+            <div class="activity-title">SupCast reply marked as solved</div>
+            <div class="activity-meta">Support mesh · +45 XP</div>
+          </li>
+          <li class="activity-item">
+            <div class="activity-title">New follower bridged to Base</div>
+            <div class="activity-meta">Live mesh · bridge event</div>
+          </li>
+          <li class="activity-item">
+            <div class="activity-title">Daily mesh check-in completed</div>
+            <div class="activity-meta">Today · streak · +25 XP</div>
+          </li>
+          <li class="activity-item">
+            <div class="activity-title">feetsniffer.eth bought 250 of your Zora coin</div>
+            <div class="activity-meta">12 min ago · token_buy · +320 XP</div>
+          </li>
+          <li class="activity-item">
+            <div class="activity-title">Spawniz minted 3 packs on VibeMarket</div>
+            <div class="activity-meta">1 min ago · pack_open · +120 XP</div>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </section>
+
+  <!-- LOOT -->
+  <section class="tab-panel" data-panel="loot" id="panel-loot">
+    <section class="card-section">
+      <div class="section-header">
+        <div>
+          <h2>Loot</h2>
+          <p class="section-sub">Packs, drops, reveals.</p>
+        </div>
+        <span class="section-tag">Module</span>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Pack actions</div>
+        <div class="card-sub">Use packwidget/reveal to run CS-skin style opening.</div>
+        <button class="btn-primary full-width" id="btn-open-pack">Open a pack</button>
+        <div class="card-foot">Hooks: api/pack-actions.js</div>
+      </div>
+    </section>
+  </section>
+
+  <!-- MARKET -->
+  <section class="tab-panel" data-panel="market" id="panel-market">
+    <section class="card-section">
+      <div class="section-header">
+        <div>
+          <h2>Market</h2>
+          <p class="section-sub">Listings, buys, sells (mock now).</p>
+        </div>
+        <span class="section-tag">Module</span>
+      </div>
+
+      <div class="card">
+        <div class="market-filters">
+          <button class="market-filter-chip is-active" data-filter="all">All</button>
+          <button class="market-filter-chip" data-filter="packs">Packs</button>
+          <button class="market-filter-chip" data-filter="coins">Coins</button>
         </div>
 
-        <section class="card-section">
-          <header class="section-header">
-            <div>
-              <h2>Mesh feed</h2>
-              <p class="section-sub">
-                XP, packs & social mesh kring din wallet (mock).
-              </p>
-            </div>
-            <span class="section-tag">Platform · Live mock</span>
-          </header>
-          <ul id="homeActivityList" class="activity-list"></ul>
-        </section>
-      </section>
-
-      <!-- LOOT -->
-      <section id="tab-loot" class="tab-panel">
-        <header class="section-header">
-          <div>
-            <h2>Loot & Pull Lab</h2>
-            <p class="section-sub">
-              Packs, synthesis och inventory för SpawnEngine.
-            </p>
+        <div class="market-grid" id="marketGrid">
+          <div class="market-card">
+            <div class="market-title">Spawn Pack #0435</div>
+            <div class="market-meta">Floor: 0.003 ETH · 12 listed</div>
+            <div class="market-tagline">api/marketplace-listings.js</div>
           </div>
-          <span class="section-tag">Pillar · Packs</span>
-        </header>
-
-        <div class="segmented">
-          <button
-            class="segmented-btn segmented-btn-active"
-            data-loot-view="packs"
-          >
-            Packs
-          </button>
-          <button class="segmented-btn" data-loot-view="slot">
-            Slot
-          </button>
-          <button class="segmented-btn" data-loot-view="history">
-            History
-          </button>
-        </div>
-
-        <div id="lootView-packs" class="loot-view loot-view-active">
-          <div class="card">
-            <div class="card-title">Starter mesh pack</div>
-            <p class="card-sub">
-              Simulated pack open med Fragments, Shards &amp; Relic-chans.
-            </p>
-            <button id="btn-open-pack" class="btn-primary full-width">
-              Simulate pack open
-            </button>
-            <p class="card-foot">
-              I riktig version ersätts detta av en riktig pack-widget /
-              kontrakt.
-            </p>
-          </div>
-
-          <section class="card-section">
-            <header class="section-header">
-              <div>
-                <h3>Recent loot</h3>
-                <p class="section-sub">
-                  Senaste pack-öppningar & synthesis.
-                </p>
-              </div>
-            </header>
-            <ul id="lootEvents" class="activity-list"></ul>
-          </section>
-        </div>
-
-        <div id="lootView-slot" class="loot-view">
-          <div class="card">
-            <div class="card-title">Mesh Slot · Experimental</div>
-            <p class="card-sub">
-              Spin to simulate pack RNG – UX only (no real tokens yet).
-            </p>
-            <div class="slot-reels" id="slotReels">
-              <div class="slot-reel">❇️</div>
-              <div class="slot-reel">💠</div>
-              <div class="slot-reel">✨</div>
-            </div>
-            <button id="btn-slot-spin" class="btn-primary full-width">
-              Spin
-            </button>
-            <p id="slotResult" class="card-foot"></p>
+          <div class="market-card">
+            <div class="market-title">SPN Coin (demo)</div>
+            <div class="market-meta">24h: +8% · Volume: 1.2 ETH</div>
+            <div class="market-tagline">api/spawnengine-token.js</div>
           </div>
         </div>
+      </div>
+    </section>
+  </section>
 
-        <div id="lootView-history" class="loot-view">
-          <div class="card">
-            <div class="card-title">Loot history</div>
-            <p class="card-sub">
-              Demo-logg av senaste spins & pack-opens (mock).
-            </p>
-            <ul id="lootHistory" class="activity-list"></ul>
-          </div>
+  <!-- MESH -->
+  <section class="tab-panel" data-panel="mesh" id="panel-mesh">
+    <section class="card-section">
+      <div class="section-header">
+        <div>
+          <h2>Mesh</h2>
+          <p class="section-sub">Protocol + modules + create flows.</p>
         </div>
-      </section>
+        <span class="section-tag">Core</span>
+      </div>
 
-      <!-- MARKET -->
-      <section id="tab-market" class="tab-panel">
-        <header class="section-header">
-          <div>
-            <h2>Onchain Market · Base</h2>
-            <p class="section-sub">
-              Follow packs, tokens and creators across Base.
-            </p>
-          </div>
-          <span class="section-tag">Pillar · Market</span>
-        </header>
+      <div class="card">
+        <div class="card-title">Creator mesh</div>
+        <div class="card-sub">Create modules, wire signals, push XP routes.</div>
 
-        <div id="marketFilters" class="market-filters">
-          <button class="market-filter-chip is-active" data-filter="all">
-            All
-          </button>
-          <button class="market-filter-chip" data-filter="packs">
-            Packs
-          </button>
-          <button class="market-filter-chip" data-filter="tokens">
-            Tokens
-          </button>
-          <button class="market-filter-chip" data-filter="collectibles">
-            Collectibles
-          </button>
-          <button class="market-filter-chip" data-filter="services">
-            Services
-          </button>
+        <label class="field-label" for="meshPrompt">SpawnBot command</label>
+        <textarea class="field-textarea" id="meshPrompt" rows="4"
+          placeholder="Create a module for me that…"></textarea>
+
+        <button class="btn-primary full-width" id="btn-run-mesh" style="margin-top:8px;">
+          Run mesh
+        </button>
+
+        <div class="mesh-output" id="meshOutput">Ready.</div>
+      </div>
+    </section>
+  </section>
+
+  <!-- SUPCAST -->
+  <section class="tab-panel" data-panel="supcast" id="panel-supcast">
+    <section class="card-section">
+      <div class="section-header">
+        <div>
+          <h2>SupCast</h2>
+          <p class="section-sub">Support mesh, replies, solves → XP.</p>
         </div>
+        <span class="section-tag">Support</span>
+      </div>
 
-        <div id="marketEmpty" class="market-empty" style="display: none">
-          No listings for this filter yet.
-        </div>
+      <div class="card">
+        <ul class="quest-list" id="supcastList">
+          <li class="quest-item">
+            <div class="quest-title">Ticket #1023 — “Pack reveal not loading”</div>
+            <div class="quest-meta"><span>Open</span><span>+45 XP</span></div>
+          </li>
+          <li class="quest-item">
+            <div class="quest-title">Ticket #1024 — “Listing sync delay”</div>
+            <div class="quest-meta"><span>Open</span><span>+30 XP</span></div>
+          </li>
+          <li class="quest-item">
+            <div class="quest-title">Ticket #1025 — “Wallet connect UX”</div>
+            <div class="quest-meta"><span>Solved</span><span>+60 XP</span></div>
+          </li>
+        </ul>
+        <div class="card-foot">Hooks: supcast.js + api/activity.js</div>
+      </div>
+    </section>
+  </section>
 
-        <div id="marketGrid" class="market-grid"></div>
-      </section>
-
-      <!-- MESH / QUESTS / AI -->
-      <section id="tab-mesh" class="tab-panel">
-        <header class="section-header">
-          <div>
-            <h2>Mesh brain</h2>
-            <p class="section-sub">
-              Quests, AI Mesh helper och SupCast hooks.
-            </p>
-          </div>
-          <span class="section-tag">Pillar · Mesh</span>
-        </header>
-
-        <section class="card-section">
-          <header class="section-header">
-            <div>
-              <h3>Mesh quests</h3>
-              <p class="section-sub">
-                Daily, weekly & support quests som matar dina XP streams.
-              </p>
-            </div>
-          </header>
-          <ul id="questList" class="quest-list"></ul>
-        </section>
-
-        <section class="card-section">
-          <header class="section-header">
-            <div>
-              <h3>AI Mesh helper (mock)</h3>
-              <p class="section-sub">
-                Takes the latest SupCast and turns it into a UX / prompt
-                concept.
-              </p>
-            </div>
-          </header>
-          <div class="card">
-            <label class="field-label" for="meshInput">
-              Latest challenge / problem
-            </label>
-            <textarea
-              id="meshInput"
-              class="field-textarea"
-              rows="3"
-              placeholder="Describe a Base / Vibe / Zora problem…"
-            ></textarea>
-            <button id="btn-mesh-generate" class="btn-primary full-width">
-              Generate Mesh concept
-            </button>
-            <pre id="meshOutput" class="mesh-output"></pre>
-          </div>
-        </section>
-      </section>
-
-      <!-- SUPCAST -->
-      <section id="tab-supcast" class="tab-panel">
-        <header class="section-header">
-          <div>
-            <h2>SupCast · Support mesh</h2>
-            <p class="section-sub">
-              Support, feedback och dev-linje för SpawnEngine (mock).
-            </p>
-          </div>
-          <span class="section-tag">Pillar · Support</span>
-        </header>
-
-        <div class="card supcast-create">
-          <div class="card-title">Create SupCast</div>
-          <label class="field-label" for="supcastTitle">Title</label>
-          <input
-            id="supcastTitle"
-            type="text"
-            class="field-input"
-            placeholder="What do you want to tell Base / Vibe / Zora?"
-          />
-          <label class="field-label" for="supcastBody">Context</label>
-          <textarea
-            id="supcastBody"
-            class="field-textarea"
-            rows="3"
-            placeholder="Describe your idea, bug or experience…"
-          ></textarea>
-          <label class="field-label" for="supcastCategory">Category</label>
-          <select id="supcastCategory" class="field-input">
-            <option value="Base App">Base App</option>
-            <option value="VibeMarket">VibeMarket</option>
-            <option value="Zora">Zora</option>
-            <option value="SpawnEngine" selected>SpawnEngine</option>
-          </select>
-          <button id="btn-supcast-send" class="btn-primary full-width">
-            Send SupCast (mock)
-          </button>
-        </div>
-
-        <section class="card-section">
-          <header class="section-header">
-            <div>
-              <h3>Latest SupCasts</h3>
-              <p class="section-sub">
-                Lokalt feed som kan bli input till AI Mesh helper.
-              </p>
-            </div>
-          </header>
-          <ul id="supcastFeed" class="activity-list"></ul>
-        </section>
-      </section>
-    </main>
-  </div>
-  <!-- /APP SHELL -->
-
-  <!-- MARKER_BOTTOM_NAV -->
+</div>
+<!-- MARKER_TAB_CONTENT_END -->
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <button class="bottom-nav-btn is-active" data-tab="home">
