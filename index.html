@@ -1,463 +1,490 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  />
-  <title>SpawnEngine · Mesh HUD</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+  <title>SpawnEngine · Mesh HUD</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="app-body">
-  <!-- TOAST -->
-  <div id="toast" class="toast"></div>
+    <div id="toast" class="toast"></div>
 
-  <!-- SETTINGS FULLSCREEN SHEET -->
-  <div id="settings-backdrop" class="sheet-backdrop hidden">
-    <div class="sheet settings-sheet">
-      <div class="sheet-header">
-        <div class="sheet-title">Settings · Mesh profile</div>
-        <button id="settings-close" class="icon-button">
-          <span class="icon-close">✕</span>
-        </button>
-      </div>
+    <div id="settings-backdrop" class="sheet-backdrop hidden">
+    <div class="sheet settings-sheet">
+      <div class="sheet-header">
+        <div class="sheet-title">Settings · Mesh profile</div>
+        <button id="settings-close" class="icon-button">
+          <span class="icon-close">✕</span>
+        </button>
+      </div>
 
-      <div class="sheet-section">
-        <h3>Account & mesh</h3>
-        <div class="settings-row">
-          <div class="settings-item">
-            <div class="settings-label">Handle</div>
-            <div class="settings-main">@spawniz</div>
-            <div class="settings-sub">Mesh ID · Creator</div>
-          </div>
-          <div class="settings-item">
-            <div class="settings-label">Connected wallet</div>
-            <div class="settings-main wallet-address" data-wallet-address>
-              Not connected
-            </div>
-            <div class="settings-sub">Base mainnet</div>
-          </div>
-        </div>
-      </div>
+      <div class="sheet-section">
+        <h3>Account & mesh</h3>
+        <div class="settings-row">
+          <div class="settings-item">
+            <div class="settings-label">Handle</div>
+            <div class="settings-main">@spawniz</div>
+            <div class="settings-sub">Mesh ID · Creator</div>
+          </div>
+          <div class="settings-item">
+            <div class="settings-label">Connected wallet</div>
+            <div class="settings-main wallet-address" data-wallet-address>
+              Not connected
+            </div>
+            <div class="settings-sub">Base mainnet</div>
+          </div>
+        </div>
+      </div>
 
-      <div class="sheet-section">
-        <h3>Role & lanes</h3>
-        <p class="sheet-sub">
-          Välj hur du vill att SpawnEngine ska behandla din XP och quests.
-        </p>
-        <div class="role-grid">
-          <button class="role-card" data-role="dev">
-            <h4>🧪 Dev / Builder</h4>
-            <p>Contracts, bots, infra, miniapps.</p>
-          </button>
-          <button class="role-card" data-role="creator">
-            <h4>🎨 Creator / Artist</h4>
-            <p>Cards, packs, tokens, art drops.</p>
-          </button>
-          <button class="role-card" data-role="hunter">
-            <h4>⚡ Alpha hunter</h4>
-            <p>Trading, snipes, PnL, packs.</p>
-          </button>
-          <button class="role-card" data-role="collector">
-            <h4>🎴 Collector / Fan</h4>
-            <p>Open, collect, complete sets.</p>
-          </button>
-        </div>
-        <button id="save-role" class="btn-primary full-width" disabled>
-          Save role
-        </button>
-      </div>
+      <div class="sheet-section">
+        <h3>Role & lanes</h3>
+        <p class="sheet-sub">
+          Välj hur du vill att SpawnEngine ska behandla din XP och quests.
+        </p>
+        <div class="role-grid">
+          <button class="role-card" data-role="dev">
+            <h4>🧪 Dev / Builder</h4>
+            <p>Contracts, bots, infra, miniapps.</p>
+          </button>
+          <button class="role-card" data-role="creator">
+            <h4>🎨 Creator / Artist</h4>
+            <p>Cards, packs, tokens, art drops.</p>
+          </button>
+          <button class="role-card" data-role="hunter">
+            <h4>⚡ Alpha hunter</h4>
+            <p>Trading, snipes, PnL, packs.</p>
+          </button>
+          <button class="role-card" data-role="collector">
+            <h4>🎴 Collector / Fan</h4>
+            <p>Open, collect, complete sets.</p>
+          </button>
+        </div>
+        <button id="save-role" class="btn-primary full-width" disabled>
+          Save role
+        </button>
+      </div>
 
-      <div class="sheet-section">
-        <h3>Connected platforms</h3>
-        <div class="settings-row">
-          <div class="settings-pill">
-            <div class="settings-label">Farcaster</div>
-            <div class="settings-main">WarpAI Miniapp</div>
-            <span class="chip chip-green">Active</span>
-          </div>
-          <div class="settings-pill">
-            <div class="settings-label">Zora</div>
-            <div class="settings-main">Creator mints</div>
-            <span class="chip chip-purple">Docked</span>
-          </div>
-          <div class="settings-pill">
-            <div class="settings-label">VibeMarket</div>
-            <div class="settings-main">Pack sync</div>
-            <span class="chip chip-amber">Planned</span>
-          </div>
-        </div>
-      </div>
+      <div class="sheet-section">
+        <h3>Connected platforms</h3>
+        <div class="settings-row">
+          <div class="settings-pill">
+            <div class="settings-label">Farcaster</div>
+            <div class="settings-main">WarpAI Miniapp</div>
+            <span class="chip chip-green">Active</span>
+          </div>
+          <div class="settings-pill">
+            <div class="settings-label">Zora</div>
+            <div class="settings-main">Creator mints</div>
+            <span class="chip chip-purple">Docked</span>
+          </div>
+          <div class="settings-pill">
+            <div class="settings-label">VibeMarket</div>
+            <div class="settings-main">Pack sync</div>
+            <span class="chip chip-amber">Planned</span>
+          </div>
+        </div>
+      </div>
 
-      <div class="sheet-section">
-        <h3>Advanced mesh</h3>
-        <ul class="settings-list">
-          <li>Notification rules & SupCast alerts (mock)</li>
-          <li>Onchain privacy defaults (mock)</li>
-          <li>Gas limits & safety rails (mock)</li>
-          <li>Dev hooks & API keys (mock)</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <!-- /SETTINGS -->
+      <div class="sheet-section">
+        <h3>Advanced mesh</h3>
+        <ul class="settings-list">
+          <li>Notification rules & SupCast alerts (mock)</li>
+          <li>Onchain privacy defaults (mock)</li>
+          <li>Gas limits & safety rails (mock)</li>
+          <li>Dev hooks & API keys (mock)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+      <div id="mesh-bg">
+    <canvas id="meshCanvas"></canvas>
+    <div class="mesh-overlay"></div>
+  </div>
 
-  <!-- FULLSCREEN BACKGROUND MESH -->
-  <div id="mesh-bg">
-    <canvas id="meshCanvas"></canvas>
-    <div class="mesh-overlay"></div>
-  </div>
+    <div class="app-shell" id="app-container">
 
-  <!-- APP SHELL -->
-  <div class="app-shell" id="app-container">
+            <header class="mesh-header card-section">
+      <div class="mesh-header-top">
+        <button id="btn-account" class="avatar-chip">
+          <div class="avatar-circle">S</div>
+          <div class="avatar-meta">
+            <div class="avatar-handle">@spawniz</div>
+            <div class="avatar-sub">Mesh ID · Creator</div>
+          </div>
+        </button>
 
-    <!-- MARKER_MESH_HEADER -->
-    <!-- HERO CARD -->
-    <header class="mesh-header card-section">
-      <div class="mesh-header-top">
-        <button id="btn-account" class="avatar-chip">
-          <div class="avatar-circle">S</div>
-          <div class="avatar-meta">
-            <div class="avatar-handle">@spawniz</div>
-            <div class="avatar-sub">Mesh ID · Creator</div>
-          </div>
-        </button>
+        <button id="settings-btn" class="icon-button" aria-label="Settings">
+          <span class="icon-gear"></span>
+        </button>
+      </div>
 
-        <button id="settings-btn" class="icon-button" aria-label="Settings">
-          <span class="icon-gear"></span>
-        </button>
-      </div>
+      <div class="mesh-header-tags">
+        <span class="pill">Base · Mesh ecosystems</span>
+        <span class="pill pill-soft" id="meshRolePill">
+          Creator / Artist
+        </span>
+        <span class="pill pill-outline">Farcaster ready</span>
+      </div>
 
-      <div class="mesh-header-tags">
-        <span class="pill">Base · Mesh ecosystems</span>
-        <span class="pill pill-soft" id="meshRolePill">
-          Creator / Artist
-        </span>
-        <span class="pill pill-outline">Farcaster ready</span>
-      </div>
-
-      <div class="mesh-header-main">
-        <div class="hud-title-block">
-          <h1 class="hud-title">SpawnEngine</h1>
+      <div class="mesh-header-main">
+        <div class="hud-title-block">
+          <h1 class="hud-title">SpawnEngine</h1>
 <p class="hud-subtitle">Onchain mesh protocol · Base</p>
-          </p>
-        </div>
-      </div>
+        </div>
+      </div>
 
-      <div class="mesh-header-row">
-        <div class="mesh-chip-row">
-          <span class="platform-pill">v0.5 Creator Token Mesh</span>
-          <span class="platform-pill">v1.0 Pack Protocol</span>
-        </div>
-      </div>
+      <div class="mesh-header-row">
+        <div class="mesh-chip-row">
+          <span class="platform-pill">v0.5 Creator Token Mesh</span>
+          <span class="platform-pill">v1.0 Pack Protocol</span>
+        </div>
+      </div>
 
-      <div class="mesh-header-row stats-row">
-        <div class="stat-pill">
-          <span class="stat-label">GAS</span>
-          <span id="gasEstimate" class="stat-value">~0.20 gwei est.</span>
-        </div>
-        <div class="stat-pill">
-          <span class="stat-label">MODE</span>
-          <span class="stat-value">Single mesh · Demo</span>
-        </div>
-        <div class="stat-pill">
-          <span class="stat-label">WALLETS</span>
-          <span id="activeWallets" class="stat-value">0</span>
-        </div>
-      </div>
+      <div class="mesh-header-row stats-row">
+        <div class="stat-pill">
+          <span class="stat-label">GAS</span>
+          <span id="gasEstimate" class="stat-value">~0.20 gwei est.</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">MODE</span>
+          <span class="stat-value">Single mesh · Demo</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">WALLETS</span>
+          <span id="activeWallets" class="stat-value">0</span>
+        </div>
+      </div>
 
-      <div class="wallet-row">
-        <button id="btn-connect" class="btn-primary">Connect</button>
-        <span id="wallet-status-label" class="wallet-status">
-          Not connected
-        </span>
-        <span class="wallet-address" data-wallet-address>
-          Not connected
-        </span>
-        <span id="walletBalanceEth" class="wallet-balance">0.0000 ETH</span>
-      </div>
+      <div class="wallet-row">
+        <button id="btn-connect" class="btn-primary">Connect</button>
+        <span id="wallet-status-label" class="wallet-status">
+          Not connected
+        </span>
+        <span class="wallet-address" data-wallet-address>
+          Not connected
+        </span>
+        <span id="walletBalanceEth" class="wallet-balance">0.0000 ETH</span>
+      </div>
 
-      <div class="header-kpis">
-        <div class="kpi">
-          <div class="kpi-label">XP Balance</div>
-          <div id="xpBalance" class="kpi-value">1575 XP</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">SPN Balance</div>
-          <div id="spawnBalance" class="kpi-value">497 SPN</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">Sync</div>
-          <div class="kpi-value">Mesh demo · v0.4</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">Active wallets</div>
-          <div id="activeWalletsStat" class="kpi-value">0</div>
-        </div>
-      </div>
+      <div class="header-kpis">
+        <div class="kpi">
+          <div class="kpi-label">XP Balance</div>
+          <div id="xpBalance" class="kpi-value">1575 XP</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">SPN Balance</div>
+          <div id="spawnBalance" class="kpi-value">497 SPN</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Sync</div>
+          <div class="kpi-value">Mesh demo · v0.4</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Active wallets</div>
+          <div id="activeWalletsStat" class="kpi-value">0</div>
+        </div>
+      </div>
 
-      <p class="header-note">
-        XP kör mock just nu · senare kopplas den mot riktiga mesh-signaler.
-      </p>
-    </header>
-    <!-- /HERO CARD -->
-    <!-- /HERO CARD -->
+      <p class="header-note">
+        XP kör mock just nu · senare kopplas den mot riktiga mesh-signaler.
+      </p>
+    </header>
+            <section class="profile-card">
+      <div class="profile-main">
+        <div class="profile-avatar">S</div>
+        <div class="profile-meta">
+          <div class="profile-handle">@spawniz</div>
+          <div class="profile-sub">Mesh ID · Creator</div>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <div class="profile-stat-label">XP</div>
+          <div class="profile-stat-value">1600</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-label">SPN</div>
+          <div class="profile-stat-value">497</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-label">Wallets</div>
+          <div class="profile-stat-value">0</div>
+        </div>
+      </div>
+    </section>
+                        <nav class="mesh-nav" aria-label="Mesh sections">
+      <button class="mesh-nav-btn is-active" data-tab="home" id="meshNavHome">
+        <span class="mesh-nav-icon">🏠</span>
+        <span class="mesh-nav-label">Home</span>
+      </button>
+      <button class="mesh-nav-btn" data-tab="loot" id="meshNavLoot">
+        <span class="mesh-nav-icon">🎁</span>
+        <span class="mesh-nav-label">Loot</span>
+      </button>
+      <button class="mesh-nav-btn" data-tab="market" id="meshNavMarket">
+        <span class="mesh-nav-icon">⚡️</span>
+        <span class="mesh-nav-label">Market</span>
+      </button>
+      <button class="mesh-nav-btn" data-tab="mesh" id="meshNavMesh">
+        <span class="mesh-nav-icon">🌀</span>
+        <span class="mesh-nav-label">Mesh</span>
+      </button>
+      <button class="mesh-nav-btn" data-tab="supcast" id="meshNavSupcast">
+        <span class="mesh-nav-icon">📡</span>
+        <span class="mesh-nav-label">SupCast</span>
+      </button>
+    </nav>
 
-    <!-- COMPACT PROFILE CARD (MITTEN) -->
-    <section class="profile-card">
-      <div class="profile-main">
-        <div class="profile-avatar">S</div>
-        <div class="profile-meta">
-          <div class="profile-handle">@spawniz</div>
-          <div class="profile-sub">Mesh ID · Creator</div>
-        </div>
-      </div>
-      <div class="profile-stats">
-        <div class="profile-stat">
-          <div class="profile-stat-label">XP</div>
-          <div class="profile-stat-value">1600</div>
-        </div>
-        <div class="profile-stat">
-          <div class="profile-stat-label">SPN</div>
-          <div class="profile-stat-value">497</div>
-        </div>
-        <div class="profile-stat">
-          <div class="profile-stat-label">Wallets</div>
-          <div class="profile-stat-value">0</div>
-        </div>
-      </div>
-    </section>
-        <!-- MARKER_PROFILE_CARD -->
-    <!-- MARKER_PROFILE_CARD_END -->
+    <div class="tab-content" id="tabContent">
 
-    <!-- MARKER_TOP_MESH_NAV -->
-    <!-- TOP TABS (MESH NAV) -->
-    <nav class="mesh-nav" aria-label="Mesh sections">
-      <button class="mesh-nav-btn is-active" data-tab="home" id="meshNavHome">
-        <span class="mesh-nav-icon">🏠</span>
-        <span class="mesh-nav-label">Home</span>
-      </button>
-      <button class="mesh-nav-btn" data-tab="loot" id="meshNavLoot">
-        <span class="mesh-nav-icon">🎁</span>
-        <span class="mesh-nav-label">Loot</span>
-      </button>
-      <button class="mesh-nav-btn" data-tab="market" id="meshNavMarket">
-        <span class="mesh-nav-icon">⚡️</span>
-        <span class="mesh-nav-label">Market</span>
-      </button>
-      <button class="mesh-nav-btn" data-tab="mesh" id="meshNavMesh">
-        <span class="mesh-nav-icon">🌀</span>
-        <span class="mesh-nav-label">Mesh</span>
-      </button>
-      <button class="mesh-nav-btn" data-tab="supcast" id="meshNavSupcast">
-        <span class="mesh-nav-icon">📡</span>
-        <span class="mesh-nav-label">SupCast</span>
-      </button>
-    </nav>
+    <section class="tab-panel tab-panel-active" data-panel="home" id="panel-home">
+        <section class="streak-row">
+      <div class="streak-wheel">
+        <div class="streak-circle">
+          <div class="streak-day-label">DAY</div>
+          <div class="streak-day-value" id="streakDay">1</div>
+          <div class="streak-day-label">STREAK</div>
+        </div>
+      </div>
+      <div class="streak-copy">
+        <div class="streak-title">Daily ritual</div>
+        <div class="streak-sub" id="streakCopy">
+          Keep the streak for 6 more days for a full weekly run.
+        </div>
+        <div class="streak-bar">
+          <div class="streak-bar-fill" id="streakBarFill" style="width: 18%"></div>
+        </div>
+        <button class="btn-outline full-width" id="btn-checkin">Check-in</button>
+      </div>
+    </section>
 
-    <!-- MARKER_TAB_CONTENT -->
-<!-- TAB PANELS -->
-<div class="tab-content" id="tabContent">
+    <section class="card-section">
+      <div class="section-header">
+        <div>
+          <h2>Mesh feed</h2>
+          <p class="section-sub">XP, packs & social mesh kring din wallet (mock).</p>
+        </div>
+        <span class="section-tag">Platform · Live mock</span>
+      </div>
 
-  <!-- HOME -->
-  <section class="tab-panel tab-panel-active" data-panel="home" id="panel-home">
-    <!-- Daily ritual card (endast här, inte i hero) -->
-    <section class="streak-row">
-      <div class="streak-wheel">
-        <div class="streak-circle">
-          <div class="streak-day-label">DAY</div>
-          <div class="streak-day-value" id="streakDay">1</div>
-          <div class="streak-day-label">STREAK</div>
-        </div>
-      </div>
-      <div class="streak-copy">
-        <div class="streak-title">Daily ritual</div>
-        <div class="streak-sub" id="streakCopy">
-          Keep the streak for 6 more days for a full weekly run.
-        </div>
-        <div class="streak-bar">
-          <div class="streak-bar-fill" id="streakBarFill" style="width: 18%"></div>
-        </div>
-        <button class="btn-outline full-width" id="btn-checkin">Check-in</button>
-      </div>
-    </section>
+      <div class="card">
+        
+<div id="mesh-activity-content" style="
+    /* Återanvänd primära stilar */
+    padding: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #E0E0F8;
+    background-color: #14142A;
+">
 
-    <section class="card-section">
-      <div class="section-header">
-        <div>
-          <h2>Mesh feed</h2>
-          <p class="section-sub">XP, packs & social mesh kring din wallet (mock).</p>
-        </div>
-        <span class="section-tag">Platform · Live mock</span>
-      </div>
+    <header style="
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #3A3A5E;
+    ">
+        <h2 style="font-size: 16px; margin: 0; color: #00BFFF;">UNIFIED MESH FEED</h2>
+        <div style="display: flex; gap: 8px;">
+            <span style="font-size: 11px; padding: 4px 8px; border-radius: 4px; background: #3A3A5E; color: white;">All</span>
+            <span style="font-size: 11px; padding: 4px 8px; border-radius: 4px; border: 1px solid #3A3A5E; color: #A0A0C0;">Packs</span>
+            <span style="font-size: 11px; padding: 4px 8px; border-radius: 4px; border: 1px solid #3A3A5E; color: #A0A0C0;">Social</span>
+        </div>
+    </header>
 
-      <div class="card">
-        <ul class="activity-list" id="meshFeedList">
-          <li class="activity-item">
-            <div class="activity-title">SupCast reply marked as solved</div>
-            <div class="activity-meta">Support mesh · +45 XP</div>
-          </li>
-          <li class="activity-item">
-            <div class="activity-title">New follower bridged to Base</div>
-            <div class="activity-meta">Live mesh · bridge event</div>
-          </li>
-          <li class="activity-item">
-            <div class="activity-title">Daily mesh check-in completed</div>
-            <div class="activity-meta">Today · streak · +25 XP</div>
-          </li>
-          <li class="activity-item">
-            <div class="activity-title">feetsniffer.eth bought 250 of your Zora coin</div>
-            <div class="activity-meta">12 min ago · token_buy · +320 XP</div>
-          </li>
-          <li class="activity-item">
-            <div class="activity-title">Spawniz minted 3 packs on VibeMarket</div>
-            <div class="activity-meta">1 min ago · pack_open · +120 XP</div>
-          </li>
-        </ul>
-      </div>
-    </section>
-  </section>
+    <ul style="list-style: none; padding: 0;">
+        
+        <li class="activity-item" style="display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px dotted #3A3A5E;">
+            <span style="font-size: 20px;">📦</span> <div style="flex-grow: 1;">
+                <p style="font-size: 12px; margin: 0; font-weight: bold;">
+                    <span style="color: #FFD700;">@spawniz</span> <span style="color: #A0A0C0;">opened 3 Packs.</span>
+                </p>
+                <p style="font-size: 10px; color: #A0A0C0; margin: 4px 0 0 0;">
+                    Received: 1 Shard, 2 Fragments. **+120 XP**
+                </p>
+            </div>
+            <span style="font-size: 10px; color: #4CAF50;">1 min ago</span>
+        </li>
 
-  <!-- LOOT -->
-  <section class="tab-panel" data-panel="loot" id="panel-loot">
-    <section class="card-section">
-      <div class="section-header">
-        <div>
-          <h2>Loot</h2>
-          <p class="section-sub">Packs, drops, reveals.</p>
-        </div>
-        <span class="section-tag">Module</span>
-      </div>
+        <li class="activity-item" style="display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px dotted #3A3A5E;">
+            <span style="font-size: 20px;">💬</span> <div style="flex-grow: 1;">
+                <p style="font-size: 12px; margin: 0; font-weight: bold;">
+                    <span style="color: #00BFFF;">@stevieraykatz</span> <span style="color: #E0E0F8;">cast: "Stoked to share ERC-8092..."</span>
+                </p>
+                <p style="font-size: 10px; color: #A0A0C0; margin: 4px 0 0 0;">
+                    ERC-8092: Associated Accounts. Read the spec on Github.
+                </p>
+            </div>
+            <span style="font-size: 10px; color: #A0A0C0;">25m ago</span>
+        </li>
+        
+        <li class="activity-item" style="display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px dotted #3A3A5E;">
+            <span style="font-size: 20px;">⚡</span> <div style="flex-grow: 1;">
+                <p style="font-size: 12px; margin: 0; font-weight: bold;">
+                    <span style="color: #4CAF50;">Daily Ritual Completed!</span>
+                </p>
+                <p style="font-size: 10px; color: #A0A0C0; margin: 4px 0 0 0;">
+                    You are on a **DAY 4** Streak. Next reward: +500 SPN.
+                </p>
+            </div>
+            <span style="font-size: 10px; color: #A0A0C0;">Yesterday</span>
+        </li>
 
-      <div class="card">
-        <div class="card-title">Pack actions</div>
-        <div class="card-sub">Use packwidget/reveal to run CS-skin style opening.</div>
-        <button class="btn-primary full-width" id="btn-open-pack">Open a pack</button>
-        <div class="card-foot">Hooks: api/pack-actions.js</div>
-      </div>
-    </section>
-  </section>
-
-  <!-- MARKET -->
-  <section class="tab-panel" data-panel="market" id="panel-market">
-    <section class="card-section">
-      <div class="section-header">
-        <div>
-          <h2>Market</h2>
-          <p class="section-sub">Listings, buys, sells (mock now).</p>
-        </div>
-        <span class="section-tag">Module</span>
-      </div>
-
-      <div class="card">
-        <div class="market-filters">
-          <button class="market-filter-chip is-active" data-filter="all">All</button>
-          <button class="market-filter-chip" data-filter="packs">Packs</button>
-          <button class="market-filter-chip" data-filter="coins">Coins</button>
-        </div>
-
-        <div class="market-grid" id="marketGrid">
-          <div class="market-card">
-            <div class="market-title">Spawn Pack #0435</div>
-            <div class="market-meta">Floor: 0.003 ETH · 12 listed</div>
-            <div class="market-tagline">api/marketplace-listings.js</div>
-          </div>
-          <div class="market-card">
-            <div class="market-title">SPN Coin (demo)</div>
-            <div class="market-meta">24h: +8% · Volume: 1.2 ETH</div>
-            <div class="market-tagline">api/spawnengine-token.js</div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </section>
-
-  <!-- MESH -->
-  <section class="tab-panel" data-panel="mesh" id="panel-mesh">
-    <section class="card-section">
-      <div class="section-header">
-        <div>
-          <h2>Mesh</h2>
-          <p class="section-sub">Protocol + modules + create flows.</p>
-        </div>
-        <span class="section-tag">Core</span>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Creator mesh</div>
-        <div class="card-sub">Create modules, wire signals, push XP routes.</div>
-
-        <label class="field-label" for="meshPrompt">SpawnBot command</label>
-        <textarea class="field-textarea" id="meshPrompt" rows="4"
-          placeholder="Create a module for me that…"></textarea>
-
-        <button class="btn-primary full-width" id="btn-run-mesh" style="margin-top:8px;">
-          Run mesh
-        </button>
-
-        <div class="mesh-output" id="meshOutput">Ready.</div>
-      </div>
-    </section>
-  </section>
-
-  <!-- SUPCAST -->
-  <section class="tab-panel" data-panel="supcast" id="panel-supcast">
-    <section class="card-section">
-      <div class="section-header">
-        <div>
-          <h2>SupCast</h2>
-          <p class="section-sub">Support mesh, replies, solves → XP.</p>
-        </div>
-        <span class="section-tag">Support</span>
-      </div>
-
-      <div class="card">
-        <ul class="quest-list" id="supcastList">
-          <li class="quest-item">
-            <div class="quest-title">Ticket #1023 — “Pack reveal not loading”</div>
-            <div class="quest-meta"><span>Open</span><span>+45 XP</span></div>
-          </li>
-          <li class="quest-item">
-            <div class="quest-title">Ticket #1024 — “Listing sync delay”</div>
-            <div class="quest-meta"><span>Open</span><span>+30 XP</span></div>
-          </li>
-          <li class="quest-item">
-            <div class="quest-title">Ticket #1025 — “Wallet connect UX”</div>
-            <div class="quest-meta"><span>Solved</span><span>+60 XP</span></div>
-          </li>
-        </ul>
-        <div class="card-foot">Hooks: supcast.js + api/activity.js</div>
-      </div>
-    </section>
-  </section>
+        <li class="activity-item" style="display: flex; gap: 10px; padding: 10px 0;">
+            <span style="font-size: 20px;">🔥</span> <div style="flex-grow: 1;">
+                <p style="font-size: 12px; margin: 0; font-weight: bold;">
+                    <span style="color: #F44336;">@0xfeetsniffer.eth</span> <span style="color: #A0A0C0;">burned 250 Zora Tokens.</span>
+                </p>
+                <p style="font-size: 10px; color: #A0A0C0; margin: 4px 0 0 0;">
+                    Protocol registered event. Reward sent to creator wallet.
+                </p>
+            </div>
+            <span style="font-size: 10px; color: #A0A0C0;">12/8/25</span>
+        </li>
+    </ul>
 
 </div>
-<!-- MARKER_TAB_CONTENT_END -->
-  <!-- BOTTOM NAV -->
-  <nav class="bottom-nav">
-    <button class="bottom-nav-btn is-active" data-tab="home">
-      <span class="bottom-nav-icon">🏠</span>
-      <span class="bottom-nav-label">Home</span>
-    </button>
-    <button class="bottom-nav-btn" data-tab="loot">
-      <span class="bottom-nav-icon">🎁</span>
-      <span class="bottom-nav-label">Loot</span>
-    </button>
-    <button class="bottom-nav-btn" data-tab="market">
-      <span class="bottom-nav-icon">⚡️</span>
-      <span class="bottom-nav-label">Market</span>
-    </button>
-    <button class="bottom-nav-btn" data-tab="mesh">
-      <span class="bottom-nav-icon">🌀</span>
-      <span class="bottom-nav-label">Mesh</span>
-    </button>
-    <button class="bottom-nav-btn" data-tab="supcast">
-      <span class="bottom-nav-icon">📡</span>
-      <span class="bottom-nav-label">SupCast</span>
-    </button>
-  </nav>
+      </div>
+    </section>
+  </section>
 
-  <script src="app.js" defer></script>
+    <section class="tab-panel" data-panel="loot" id="panel-loot">
+    <section class="card-section">
+      <div class="section-header">
+        <div>
+          <h2>Loot</h2>
+          <p class="section-sub">Packs, drops, reveals.</p>
+        </div>
+        <span class="section-tag">Module</span>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Pack actions</div>
+        <div class="card-sub">Use packwidget/reveal to run CS-skin style opening.</div>
+        <button class="btn-primary full-width" id="btn-open-pack">Open a pack</button>
+        <div class="card-foot">Hooks: api/pack-actions.js</div>
+      </div>
+    </section>
+  </section>
+
+    <section class="tab-panel" data-panel="market" id="panel-market">
+    <section class="card-section">
+      <div class="section-header">
+        <div>
+          <h2>Market</h2>
+          <p class="section-sub">Listings, buys, sells (mock now).</p>
+        </div>
+        <span class="section-tag">Module</span>
+      </div>
+
+      <div class="card">
+        <div class="market-filters">
+          <button class="market-filter-chip is-active" data-filter="all">All</button>
+          <button class="market-filter-chip" data-filter="packs">Packs</button>
+          <button class="market-filter-chip" data-filter="coins">Coins</button>
+        </div>
+
+        <div class="market-grid" id="marketGrid">
+          <div class="market-card">
+            <div class="market-title">Spawn Pack #0435</div>
+            <div class="market-meta">Floor: 0.003 ETH · 12 listed</div>
+            <div class="market-tagline">api/marketplace-listings.js</div>
+          </div>
+          <div class="market-card">
+            <div class="market-title">SPN Coin (demo)</div>
+            <div class="market-meta">24h: +8% · Volume: 1.2 ETH</div>
+            <div class="market-tagline">api/spawnengine-token.js</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+    <section class="tab-panel" data-panel="mesh" id="panel-mesh">
+    <section class="card-section">
+      <div class="section-header">
+        <div>
+          <h2>Mesh</h2>
+          <p class="section-sub">Protocol + modules + create flows.</p>
+        </div>
+        <span class="section-tag">Core</span>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Creator mesh</div>
+        <div class="card-sub">Create modules, wire signals, push XP routes.</div>
+
+        <label class="field-label" for="meshPrompt">SpawnBot command</label>
+        <textarea class="field-textarea" id="meshPrompt" rows="4"
+          placeholder="Create a module for me that…"></textarea>
+
+        <button class="btn-primary full-width" id="btn-run-mesh" style="margin-top:8px;">
+          Run mesh
+        </button>
+
+        <div class="mesh-output" id="meshOutput">Ready.</div>
+      </div>
+    </section>
+  </section>
+
+    <section class="tab-panel" data-panel="supcast" id="panel-supcast">
+    <section class="card-section">
+      <div class="section-header">
+        <div>
+          <h2>SupCast</h2>
+          <p class="section-sub">Support mesh, replies, solves → XP.</p>
+        </div>
+        <span class="section-tag">Support</span>
+      </div>
+
+      <div class="card">
+        <ul class="quest-list" id="supcastList">
+          <li class="quest-item">
+            <div class="quest-title">Ticket #1023 — “Pack reveal not loading”</div>
+            <div class="quest-meta"><span>Open</span><span>+45 XP</span></div>
+          </li>
+          <li class="quest-item">
+            <div class="quest-title">Ticket #1024 — “Listing sync delay”</div>
+            <div class="quest-meta"><span>Open</span><span>+30 XP</span></div>
+          </li>
+          <li class="quest-item">
+            <div class="quest-title">Ticket #1025 — “Wallet connect UX”</div>
+            <div class="quest-meta"><span>Solved</span><span>+60 XP</span></div>
+          </li>
+        </ul>
+        <div class="card-foot">Hooks: supcast.js + api/activity.js</div>
+      </div>
+    </section>
+  </section>
+
+</div>
+    <nav class="bottom-nav">
+    <button class="bottom-nav-btn is-active" data-tab="home">
+      <span class="bottom-nav-icon">🏠</span>
+      <span class="bottom-nav-label">Home</span>
+    </button>
+    <button class="bottom-nav-btn" data-tab="loot">
+      <span class="bottom-nav-icon">🎁</span>
+      <span class="bottom-nav-label">Loot</span>
+    </button>
+    <button class="bottom-nav-btn" data-tab="market">
+      <span class="bottom-nav-icon">⚡️</span>
+      <span class="bottom-nav-label">Market</span>
+    </button>
+    <button class="bottom-nav-btn" data-tab="mesh">
+      <span class="bottom-nav-icon">🌀</span>
+      <span class="bottom-nav-label">Mesh</span>
+    </button>
+    <button class="bottom-nav-btn" data-tab="supcast">
+      <span class="bottom-nav-icon">📡</span>
+      <span class="bottom-nav-label">SupCast</span>
+    </button>
+  </nav>
+
+  <script src="app.js" defer></script>
 </body>
 </html>
