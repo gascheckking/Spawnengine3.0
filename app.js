@@ -296,7 +296,7 @@ function pushEvent(listEl, payload, max = 16) {
 
   seedEvents.forEach((e) => pushEvent(list, e));
 
-  // Periodic mock events
+  // Periodic mock events //
   setInterval(() => {
     const samples = [
       {
