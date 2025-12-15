@@ -1,4 +1,4 @@
-// mesh-bg.js — soft animated mesh background för SpawnEngine · Mesh HUD
+// mesh-bg.js — soft animated mesh background för SpawnEngine · Mesh HUD .
 
 (function () {
   const canvas = document.getElementById("mesh-canvas");
