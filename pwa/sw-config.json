@@ -1,14 +1,33 @@
-// pwa/sw-config.json (Mock-konfiguration)
 {
-  "cacheName": "spawnengine-mesh-v1",
+  "cacheName": "spawnengine-mesh-v3.1",
   "globPatterns": [
-    "**/*.{html,css,js,png,json}"
+    "**/*.{html,css,js,png,jpg,svg,json,woff2}"
   ],
   "runtimeCaching": [
     {
       "urlPattern": "/api/",
-      "handler": "CacheFirst"
+      "handler": "NetworkFirst",
+      "options": {
+        "cacheName": "spawnengine-api-cache",
+        "expiration": { "maxEntries": 50, "maxAgeSeconds": 86400 }
+      }
+    },
+    {
+      "urlPattern": "/modules/",
+      "handler": "CacheFirst",
+      "options": {
+        "cacheName": "spawnengine-modules-cache",
+        "expiration": { "maxEntries": 30, "maxAgeSeconds": 259200 }
+      }
+    },
+    {
+      "urlPattern": "/assets/",
+      "handler": "CacheFirst",
+      "options": {
+        "cacheName": "spawnengine-assets-cache",
+        "expiration": { "maxEntries": 60, "maxAgeSeconds": 259200 }
+      }
     }
   ],
-  "description": "Configuration used for generating the Service Worker."
+  "description": "SpawnEngine Mesh Layer v3.1 — Offline-Ready PWA Configuration"
 }
