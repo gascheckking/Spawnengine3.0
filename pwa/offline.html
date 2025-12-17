@@ -1,22 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offline · SpawnEngine Mesh</title>
-    <style>
-        body {
-            background-color: #02030a;
-            color: #f5f7ff;
-            font-family: system-ui, sans-serif;
-            text-align: center;
-            padding-top: 50px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpawnEngine · Offline Mode</title>
+  <style>
+    body {
+      background: radial-gradient(circle at 30% 50%, #0a0e26, #01020a);
+      color: #d7e0ff;
+      font-family: system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.8em;
+      margin-bottom: 0.4em;
+    }
+    p {
+      font-size: 1em;
+      color: #9aa2cc;
+      max-width: 80%;
+      line-height: 1.4;
+    }
+    .signal {
+      background-color: #121630;
+      border: 1px solid #2b2f5c;
+      border-radius: 10px;
+      padding: 0.8em 1.2em;
+      margin-top: 1.2em;
+      color: #6ff6ff;
+      font-size: 0.9em;
+    }
+  </style>
 </head>
 <body>
-    <h1>🛰️ Mesh Disconnected</h1>
-    <p>You are currently offline. The App Shell is loaded, but some data streams are inactive.</p>
-    <p>Please check your network connection.</p>
+  <h1>🛰️ Mesh Disconnected</h1>
+  <p>Your device is offline. The Mesh app shell is active, but live XP streams and onchain feeds are paused.</p>
+  <div class="signal">Trying to reconnect to Base Mesh Layer...</div>
+  <script>
+    // —— auto-refresh when online again —— //
+    window.addEventListener("online", () => {
+      location.reload();
+    });
+  </script>
 </body>
 </html>
