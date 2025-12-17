@@ -1,37 +1,27 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Pack Reveal Widget · Module</title>
-  <link rel="stylesheet" href="./reveal.css" />
-</head>
-<body>
-  <div id="reveal-root" class="reveal-root">
+<div id="packWidget" class="pack-widget">
+  <header class="pack-header">
+    <h2>🎴 Pack Reveal</h2>
+    <button id="openPackBtn">Open Pack</button>
+  </header>
 
-    <h2 class="reveal-title">SpawnEngine Pack #471</h2>
-    <p class="reveal-sub">Öppna ditt Pack och se vad du har vunnit!</p>
-
-    <div class="reveal-pack-container">
-      
-      <div id="pack-cover" class="pack-cover">
-        <div class="pack-logo">📦</div>
-        <p>SpawnEngine Base Pack</p>
-      </div>
-
-      <div id="reveal-results" class="reveal-results hidden"></div>
-
+  <div class="pack-display">
+    <div class="pack-card" id="packCard">
+      <p>Tap to open your Mesh pack</p>
     </div>
-
-    <button id="reveal-open-btn" class="reveal-open-btn">
-      Öppna Pack (Stake 50 XP)
-    </button>
-
-    <p id="reveal-status" class="reveal-status">
-      Klicka för att konsumera packen on-chain.
-    </p>
-
   </div>
 
-  <script src="./reveal.js"></script>
-</body>
-</html>
+  <section class="pack-inventory">
+    <h3>Your Inventory</h3>
+    <ul>
+      <li>Fragments: <span id="invFragments">0</span></li>
+      <li>Shards: <span id="invShards">0</span></li>
+      <li>Relics: <span id="invRelics">0</span></li>
+    </ul>
+    <button id="synthesizeBtn">Synthesize Relic</button>
+  </section>
+
+  <div id="revealLog" class="reveal-log">
+    <h4>Recent Loot</h4>
+    <ul id="lootEvents"></ul>
+  </div>
+</div>
