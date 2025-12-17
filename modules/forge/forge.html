@@ -1,0 +1,73 @@
+<!-- /modules/forge/forge.html -->
+<div class="forge-container">
+  <!--——— HEADER ——-->
+  <header class="forge-header">
+    <h1 class="forge-title">🛠️ Creator Forge</h1>
+    <p class="forge-subtitle">Deploy tokens, packs, and utilities directly to the Mesh.</p>
+  </header>
+
+  <!--——— DEPLOY TABS ——-->
+  <div class="forge-tabs">
+    <button class="forge-tab active" data-tab="token">Token</button>
+    <button class="forge-tab" data-tab="pack">Pack</button>
+    <button class="forge-tab" data-tab="utility">Utility</button>
+  </div>
+
+  <!--——— TOKEN DEPLOY ——-->
+  <section class="forge-section" id="forge-token">
+    <h2 class="forge-section-title">Token Creator</h2>
+    <p class="forge-desc">Deploy your own Mesh Token with one click.</p>
+    <form id="forgeTokenForm" class="forge-form">
+      <label>Name</label>
+      <input type="text" id="tokenName" placeholder="MyToken" required />
+      <label>Symbol</label>
+      <input type="text" id="tokenSymbol" placeholder="MTK" required />
+      <label>Initial Supply</label>
+      <input type="number" id="tokenSupply" value="100000" min="1" />
+      <button type="submit" class="forge-btn">Deploy Token</button>
+    </form>
+  </section>
+
+  <!--——— PACK CREATOR ——-->
+  <section class="forge-section hidden" id="forge-pack">
+    <h2 class="forge-section-title">Pack Creator</h2>
+    <p class="forge-desc">Define rarity and deploy your onchain pack.</p>
+
+    <form id="forgePackForm" class="forge-form">
+      <label>Pack Name</label>
+      <input type="text" id="packName" placeholder="Starter Pack" required />
+      <label>Rarity Weights (Common–Legendary)</label>
+      <input type="text" id="packRarity" placeholder="70,20,8,2" />
+      <label>Price (ETH)</label>
+      <input type="number" id="packPrice" step="0.001" placeholder="0.025" required />
+      <button type="submit" class="forge-btn">Deploy Pack</button>
+    </form>
+  </section>
+
+  <!--——— UTILITY MODULE ——-->
+  <section class="forge-section hidden" id="forge-utility">
+    <h2 class="forge-section-title">Utility Module</h2>
+    <p class="forge-desc">Attach XP hooks, quests, or automation rules.</p>
+
+    <form id="forgeUtilityForm" class="forge-form">
+      <label>Module Type</label>
+      <select id="utilityType">
+        <option>XP Hook</option>
+        <option>Automation</option>
+        <option>Quest</option>
+      </select>
+      <label>Description</label>
+      <textarea id="utilityDesc" placeholder="Describe what this module does..."></textarea>
+      <button type="submit" class="forge-btn">Deploy Utility</button>
+    </form>
+  </section>
+
+  <!--——— DEPLOY LOG ——-->
+  <section class="forge-section">
+    <h2 class="forge-section-title">Deployment Log</h2>
+    <ul id="forgeLog" class="forge-log"></ul>
+  </section>
+
+  <!--——— TOAST ——-->
+  <div id="forgeToast" class="forge-toast"></div>
+</div>
