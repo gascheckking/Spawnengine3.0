@@ -1,151 +1,82 @@
-// modules/marketplace/listings.js
+/* ============================================================
+   SpawnEngine Marketplace Module v3.1
+   Handles marketplace listings and simulated purchases
+   ============================================================ */
 
-/**
- * Mock-data för marknadslistningar.
- */
-const MOCK_LISTINGS = [
-  {
-    id: 1,
-    title: "Pack Opener Widget",
-    description: "Integration widget for pack opening in external apps.",
-    icon: "📦",
-    price: "0.025 ETH",
-    participants: 120,
-    type: "widget",
-    trending: true,
-  },
-  {
-    id: 2,
-    title: "Alpha Access Pass",
-    description: "Grants early access to new SpawnEngine features.",
-    icon: "🔑",
-    price: "0.10 ETH",
-    participants: 25,
-    type: "pass",
-    trending: true,
-  },
-  {
-    id: 3,
-    title: "Builder Role Token",
-    description: "Unlocks the 'Builder' role with development tools.",
-    icon: "🛠️",
-    price: "0.08 ETH",
-    participants: 45,
-    type: "role",
-    trending: false,
-  },
-  {
-    id: 4,
-    title: "Community Vibe Share",
-    description: "Governance token representing a stake in the Vibe DAO.",
-    icon: "V",
-    price: "0.015 ETH",
-    participants: 300,
-    type: "token",
-    trending: false,
-  },
-  {
-    id: 5,
-    title: "Exclusive Mesh Theme",
-    description: "Dark mode theme with neon blue accents.",
-    icon: "✨",
-    price: "0.03 ETH",
-    participants: 60,
-    type: "cosmetic",
-    trending: false,
-  },
-];
+import { getMarketplaceListings, simulatePurchase } from "../../api/marketplace-listings.js";
 
-/**
- * HTML-template för ett kort.
- */
-function createListingCard(listing, isTrending = false) {
-  const cardClass = isTrending
-    ? "market-card market-card-trending"
-    : "market-card";
+const listingsArea = document.getElementById("listingsArea");
+const refreshBtn = document.getElementById("refreshListings");
 
-  return `
-    <article class="${cardClass}" data-id="${listing.id}">
-      <div class="market-card-icon">${listing.icon}</div>
-      <h4>${listing.title}</h4>
-      <p class="market-card-desc">${listing.description}</p>
+/* —— Load and render marketplace listings —— */
+export async function renderMarketplace() {
+  listingsArea.innerHTML = `<div class="loader">Loading listings...</div>`;
 
-      <div class="market-card-footer">
-        <span class="market-card-price">${listing.price}</span>
-        <span class="market-card-participants">${listing.participants} users</span>
+  try {
+    const listings = await getMarketplaceListings();
 
-        <button class="link-btn market-card-btn" data-action="view-details">
-          Details
-        </button>
-      </div>
-    </article>
-  `;
-}
-
-/**
- * Renderar trending + alla listningar.
- */
-function renderListings() {
-  const trendingRow = document.getElementById("marketTrendingRow");
-  const allGrid = document.getElementById("marketAllGrid");
-
-  if (trendingRow) {
-    trendingRow.innerHTML = MOCK_LISTINGS
-      .filter((l) => l.trending)
-      .map((l) => createListingCard(l, true))
-      .join("");
-  }
-
-  if (allGrid) {
-    allGrid.innerHTML = MOCK_LISTINGS.map((l) =>
-      createListingCard(l, false)
-    ).join("");
-  }
-}
-
-/**
- * Hanterar “Details”.
- */
-function handleMarketActions() {
-  const marketPanel = document.querySelector(".tab-panel#tab-market");
-  if (!marketPanel) return;
-
-  marketPanel.addEventListener("click", (e) => {
-    if (e.target.dataset.action !== "view-details") return;
-
-    const card = e.target.closest(".market-card");
-    const id = card?.dataset.id;
-    if (!id) return;
-
-    const listing = MOCK_LISTINGS.find((l) => String(l.id) === id);
-    if (!listing) return;
-
-    if (typeof openMarketDetails === "function") {
-      openMarketDetails(listing);
+    if (!listings || listings.length === 0) {
+      listingsArea.innerHTML = `<p>No active listings available.</p>`;
       return;
     }
 
-    if (typeof showToast === "function") {
-      showToast(`Viewing: ${listing.title}`);
-    } else {
-      console.log(`Viewing: ${listing.title}`);
-    }
-  });
+    listingsArea.innerHTML = listings.map(item => `
+      <div class="listing-card" data-id="${item.id}">
+        <h3>${item.name}</h3>
+        <p><span class="price">${item.price} ${item.currency}</span></p>
+        <p>Seller: ${item.seller}</p>
+        <p>Type: ${item.type}</p>
+        <p>Qty: ${item.quantity}</p>
+      </div>
+    `).join("");
 
-  const buyBtn = document.getElementById("btn-buy-spn");
-  if (buyBtn) {
-    buyBtn.addEventListener("click", () => {
-      if (typeof showToast === "function") {
-        showToast("Simulating DEX swap for SPN.");
-      }
-    });
+    attachPurchaseListeners();
+  } catch (err) {
+    listingsArea.innerHTML = `<p>Error loading listings. Try again later.</p>`;
+    console.error("Marketplace load error:", err);
   }
 }
 
-/**
- * Init exporteras globalt så app.js kan anropa den.
- */
-window.initMarketplace = function () {
-  renderListings();
-  handleMarketActions();
-};
+/* —— Simulated purchase action —— */
+function attachPurchaseListeners() {
+  const cards = document.querySelectorAll(".listing-card");
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      const id = parseInt(card.dataset.id);
+      const result = simulatePurchase(id);
+      showPurchaseToast(result.message, result.success);
+    });
+  });
+}
+
+/* —— UI Toast Feedback —— */
+function showPurchaseToast(message, success = true) {
+  const toast = document.createElement("div");
+  toast.className = "market-toast";
+  toast.style = `
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: ${success ? "#4df2ff" : "#ff4d4d"};
+    color: #000;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-family: system-ui, sans-serif;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    z-index: 9999;
+  `;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+/* —— Refresh handler —— */
+if (refreshBtn) {
+  refreshBtn.addEventListener("click", () => {
+    renderMarketplace();
+  });
+}
+
+/* —— Auto-init on load —— */
+window.addEventListener("DOMContentLoaded", renderMarketplace);
