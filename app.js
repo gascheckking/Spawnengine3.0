@@ -2,6 +2,9 @@
    SpawnEngine v3.1 — Reforge App Core (JS Engine)
    ==================================================== */
 
+//——— MESH CORE IMPORT ———//
+import { MeshCore } from "./core/mesh-core.js";
+
 // ---------- GLOBAL STATE ----------
 let currentTheme = localStorage.getItem("spawnTheme") || "glassbase";
 let userProfile = null;
@@ -10,6 +13,11 @@ let feed = [];
 
 // ---------- INIT ----------
 document.addEventListener("DOMContentLoaded", async () => {
+  // — MESH CORE BOOT —
+  await MeshCore.init();
+  console.log("SpawnEngine MeshCore online:", MeshCore.getProfile());
+
+  // — UI INIT SEQUENCE —
   document.body.dataset.theme = currentTheme;
   setupNavigation();
   setupThemeSwitcher();
