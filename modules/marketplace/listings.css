@@ -1,10 +1,14 @@
-/* modules/marketplace/listings.css */
+<div id="marketplace" class="marketplace-container">
+  <header class="market-header">
+    <h2>🛒 Marketplace</h2>
+    <button id="refreshListings">⟳ Refresh</button>
+  </header>
 
-/* Inga ytterligare stilar behövs här, 
-   då all styling för .market-view, .market-card etc. 
-   redan finns i den globala style.css */
+  <section id="listingsArea" class="listings-grid">
+    <div class="loader">Loading Mesh Listings...</div>
+  </section>
 
-/* Endast en placeholder */
-.market-view {
-  /* ensures consistency */
-}
+  <footer class="market-footer">
+    <p class="tip">💡 Tap a listing to simulate a purchase</p>
+  </footer>
+</div>
