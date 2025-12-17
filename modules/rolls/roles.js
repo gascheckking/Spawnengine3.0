@@ -1,82 +1,97 @@
-(function () {
-  
-  // Helper-funktion för att efterlikna en asynkron Web3/API-transaktion
-  function simulateWeb3Call(durationMs) {
-    return new Promise(resolve => setTimeout(resolve, durationMs));
-  }
+/* ============================================================
+   SpawnEngine Roles Module v3.1
+   Role management for Mesh identities
+   ============================================================ */
 
-  // Huvudmodulens initiationsfunktion
-  function initRollSelection(rootId) {
-    const root = document.getElementById(rootId);
-    if (!root) return;
+import { getProfile, updateProfileRole } from "../../api/user-profile.js";
 
-    const cards = root.querySelectorAll('.role-card');
-    const confirmBtn = document.getElementById('role-confirm-btn');
-    const statusDisplay = document.getElementById('role-status');
-    let selectedRole = null;
+/* —— Elements —— */
+const roleDisplay = document.getElementById("roleDisplay");
+const roleList = document.getElementById("roleList");
 
-    if (!cards.length || !confirmBtn || !statusDisplay) return;
+/* —— Mock Role Definitions —— */
+const AVAILABLE_ROLES = [
+  {
+    id: "builder",
+    title: "Builder",
+    desc: "Construct tools, interfaces, and Mesh modules.",
+    emoji: "🧱",
+  },
+  {
+    id: "trader",
+    title: "Trader",
+    desc: "Buy, sell, and swap assets within the Mesh economy.",
+    emoji: "💱",
+  },
+  {
+    id: "collector",
+    title: "Collector",
+    desc: "Gather rare packs and relics to boost your Mesh XP.",
+    emoji: "🎴",
+  },
+  {
+    id: "operator",
+    title: "Operator",
+    desc: "Manage nodes and optimize onchain Mesh flow.",
+    emoji: "⚙️",
+  },
+  {
+    id: "vibe",
+    title: "Vibe Agent",
+    desc: "Shape the Mesh culture. Influence. Engage. Lead.",
+    emoji: "✨",
+  },
+];
 
-    // 1. Hantera Rollval
-    cards.forEach(card => {
-      card.addEventListener('click', () => {
-        // Ta bort 'selected' från alla kort
-        cards.forEach(c => c.classList.remove('selected'));
-        
-        // Markera det klickade kortet
-        card.classList.add('selected');
-        selectedRole = card.getAttribute('data-role');
-        
-        confirmBtn.disabled = false;
-        confirmBtn.textContent = `Bekräfta Roll: ${selectedRole}`;
-        statusDisplay.textContent = `Roll vald: ${selectedRole}. Klicka på knappen för att spara.`;
-      });
+/* —— Render Role List —— */
+function renderRoles() {
+  const user = getProfile();
+  roleDisplay.textContent = user.currentRole;
+
+  roleList.innerHTML = AVAILABLE_ROLES.map(role => `
+    <div class="role-card" data-id="${role.id}">
+      <div class="role-icon">${role.emoji}</div>
+      <h4>${role.title}</h4>
+      <p>${role.desc}</p>
+    </div>
+  `).join("");
+
+  attachRoleEvents();
+}
+
+/* —— Handle Role Selection —— */
+function attachRoleEvents() {
+  const cards = document.querySelectorAll(".role-card");
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      const selected = card.dataset.id;
+      updateProfileRole(selected);
+      renderRoles();
+      showToast(`Role changed to ${selected.toUpperCase()}`);
     });
-
-    // 2. Hantera Bekräftelse/Sparande
-    const handleConfirm = async () => {
-      if (!selectedRole || confirmBtn.disabled) return;
-      
-      confirmBtn.disabled = true;
-      statusDisplay.textContent = `Skickar ${selectedRole} till SpawnEngine API (on-chain TX)...`;
-      
-      try {
-        // Simulera en transaktion som lagrar rollen (via din api/user-profile.js)
-        await simulateWeb3Call(2500); 
-        
-        statusDisplay.textContent = `🎉 Roll '${selectedRole}' sparad! Din nya Badge är nu aktiv.`;
-        
-        // Här skulle du i produktion:
-        // 1. Skicka TX till smart contract/backend.
-        // 2. Omdirigera användaren eller ladda nästa vy.
-        // 3. (Mock) Lägg till en 'completed' klass för att visa att det är klart
-        confirmBtn.textContent = "Roll sparad!";
-        confirmBtn.classList.add('role-saved');
-
-      } catch (error) {
-        statusDisplay.textContent = "FEL: Rollen kunde inte sparas on-chain. Försök igen.";
-        console.error("Roll saving error:", error);
-      } finally {
-        // Vi håller knappen inaktiverad efter lyckad sparning (detta är on-boarding)
-      }
-    };
-
-    // Event Listener
-    confirmBtn.addEventListener("click", handleConfirm);
-    
-    // Initial status
-    statusDisplay.textContent = "Anslut för att välja din Roll och låsa upp din första Quest.";
-  }
-
-  // Exponera modulen globalt
-  window.SpawnRolls = {
-    init: initRollSelection,
-  };
-  
-  // Starta modulen för den fristående demon
-  document.addEventListener("DOMContentLoaded", () => {
-    if (document.getElementById("roles-root")) {
-      initRollSelection("roles-root");
-    }
   });
-})();
+}
+
+/* —— UI Feedback Toast —— */
+function showToast(message) {
+  const toast = document.createElement("div");
+  toast.textContent = message;
+  toast.style = `
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4df2ff;
+    color: #000;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-family: system-ui, sans-serif;
+    z-index: 9999;
+  `;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+}
+
+/* —— Init —— */
+window.addEventListener("DOMContentLoaded", renderRoles);
