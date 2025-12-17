@@ -1,23 +1,127 @@
 {
-  "name": "SpawnEngine · Mesh HUD",
+  "name": "SpawnEngine",
   "short_name": "SpawnEngine",
-  "description": "Onchain mesh HUD for packs, quests and SupCast.",
-  "start_url": "/",
+  "description": "The Onchain Operating System — Mesh, XP, Packs, and SupCast support in one hub.",
+  "lang": "en",
+  "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#020208",
-  "theme_color": "#0af2ff",
+  "background_color": "#02030a",
+  "theme_color": "#0a0e26",
+  "categories": ["productivity", "finance", "game", "utility"],
+  "id": "app.spawnengine.mesh",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/logo.png",
-      "sizes": "512x512",
+      "src": "/icons/icon-256.png",
+      "sizes": "256x256",
       "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+
+  "screenshots": [
+    {
+      "src": "/screenshots/mesh-dashboard.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "Mesh Dashboard"
+    },
+    {
+      "src": "/screenshots/market-view.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "Marketplace & Widgets"
+    },
+    {
+      "src": "/screenshots/supcast-support.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "SupCast — Support-as-a-System"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Open Mesh HUD",
+      "short_name": "Mesh",
+      "description": "Open the Mesh dashboard and live XP feed.",
+      "url": "/#home",
+      "icons": [{ "src": "/icons/mesh-shortcut.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Open Loot",
+      "short_name": "Loot",
+      "description": "Open your packs and reveal loot.",
+      "url": "/#loot",
+      "icons": [{ "src": "/icons/loot-shortcut.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "SupCast Support",
+      "short_name": "SupCast",
+      "description": "View and solve support tickets.",
+      "url": "/#supcast",
+      "icons": [{ "src": "/icons/support-shortcut.png", "sizes": "192x192" }]
+    }
+  ],
+
+  "launch_handler": {
+    "client_mode": "auto"
+  },
+
+  "protocol_handlers": [
+    {
+      "protocol": "web+mesh",
+      "url": "/?open=%s"
+    }
+  ],
+
+  "file_handlers": [
+    {
+      "action": "/open",
+      "accept": {
+        "application/json": [".meshpack", ".spnpack"]
+      }
+    }
+  ],
+
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://spawnengine.vercel.app/manifest.json"
     }
   ]
 }
