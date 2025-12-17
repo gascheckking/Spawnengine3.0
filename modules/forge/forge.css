@@ -1,0 +1,191 @@
+/* /modules/forge/forge.css */
+/*——— CREATOR FORGE CORE ——*/
+.forge-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: "Inter", system-ui, sans-serif;
+  color: #e8f3ff;
+  background: radial-gradient(circle at top left, #05061a, #02030a);
+}
+
+/*——— HEADER ——*/
+.forge-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.forge-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  background: linear-gradient(90deg, #3cf6ff, #b9ff7a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.forge-subtitle {
+  font-size: 14px;
+  opacity: 0.75;
+}
+
+/*——— TABS ——*/
+.forge-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.forge-tab {
+  border: 1px solid rgba(120, 160, 255, 0.4);
+  background: rgba(8, 12, 28, 0.9);
+  color: #cfe3ff;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.forge-tab.active {
+  background: linear-gradient(135deg, #3cf6ff, #b9ff7a);
+  color: #050510;
+  box-shadow: 0 0 10px rgba(60, 255, 180, 0.3);
+}
+
+.forge-tab:hover:not(.active) {
+  border-color: rgba(100, 255, 200, 0.5);
+}
+
+/*——— SECTIONS ——*/
+.forge-section {
+  padding: 18px;
+  margin-bottom: 28px;
+  border-radius: 16px;
+  background: rgba(10, 14, 38, 0.75);
+  border: 1px solid rgba(130, 170, 255, 0.25);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.forge-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #9ec8ff;
+  margin-bottom: 8px;
+}
+
+.forge-desc {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
+
+/*——— FORMS ——*/
+.forge-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.forge-form label {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-top: 4px;
+}
+
+.forge-form input,
+.forge-form textarea,
+.forge-form select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(130, 170, 255, 0.3);
+  background: rgba(8, 12, 28, 0.95);
+  color: #e9f3ff;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.forge-form input:focus,
+.forge-form textarea:focus,
+.forge-form select:focus {
+  border-color: rgba(60, 255, 200, 0.6);
+}
+
+/*——— BUTTONS ——*/
+.forge-btn {
+  margin-top: 6px;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #3cf6ff, #b9ff7a);
+  color: #050510;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.forge-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(60, 255, 180, 0.3);
+}
+
+/*——— LOG ——*/
+.forge-log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  font-size: 13px;
+}
+
+.forge-log li {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(100, 160, 255, 0.1);
+}
+
+.forge-log li span {
+  color: #9ef7ff;
+}
+
+/*——— TOAST ——*/
+.forge-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #3cf6ff, #b9ff7a);
+  color: #050510;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1000;
+}
+
+.forge-toast.show {
+  opacity: 1;
+}
+
+/*——— UTILITY ——*/
+.hidden {
+  display: none !important;
+}
+
+/*——— RESPONSIVE ——*/
+@media (max-width: 600px) {
+  .forge-container {
+    padding: 14px;
+  }
+
+  .forge-tab {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
