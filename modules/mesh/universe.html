@@ -1,1 +1,36 @@
-placeholder
+<div id="meshUniverse" class="mesh-container">
+  <header class="mesh-header">
+    <h2>🌐 Mesh Universe</h2>
+    <p id="meshStatus">🟢 Online</p>
+  </header>
+
+  <section class="profile-section">
+    <div class="profile-card">
+      <h3 id="userHandle">@spawniz</h3>
+      <p id="userRole">Alpha Hunter / Trader</p>
+      <p>XP: <span id="xpBalance">0</span> · SPN: <span id="spnBalance">0</span></p>
+      <button id="connectWalletBtn">Connect Wallet</button>
+    </div>
+  </section>
+
+  <section class="token-section">
+    <div class="token-card">
+      <h3>SPN Token</h3>
+      <p>Price: <span id="tokenPrice">$0.00</span></p>
+      <p>Change: <span id="tokenChange">0%</span></p>
+      <p>TVL: <span id="tokenTVL">0 ETH</span></p>
+      <p>Participants: <span id="tokenUsers">0</span></p>
+    </div>
+  </section>
+
+  <section class="feed-section">
+    <h3>Live Mesh Feed</h3>
+    <ul id="meshFeedList" class="feed-list">
+      <li>Loading activity...</li>
+    </ul>
+  </section>
+
+  <footer class="mesh-footer">
+    <button id="refreshMeshBtn">⟳ Refresh Mesh</button>
+  </footer>
+</div>
