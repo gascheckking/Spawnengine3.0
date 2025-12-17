@@ -1,54 +1,34 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>SpawnEngine SlotMachine · Module</title>
-  <link rel="stylesheet" href="./slot.css" /> 
-</head>
-<body>
-  <div id="slot-root" class="slot-root">
-    <h1 class="slot-title">🔥 SPN SlotMachine</h1>
-    <p class="slot-sub">
-      Gamble with SpawnEng (SPN) tokens like a casino slot! Inspired by Dead or Alive and Bonanza. Bet SPN, spin reels, trigger freespins with scatters, and win multipliers. All outcomes mock for now – real onchain in production.
-    </p>
+<div id="slotMachine" class="slot-container">
+  <header class="slot-header">
+    <h2>🎰 SpawnEngine SlotMachine</h2>
+    <p class="slot-sub">Spin to earn Fragments, Shards or Relics. XP based on luck & streak!</p>
+  </header>
 
-    <div class="slot-machine">
-      <div class="slot-balance-info">
-        Balance: <span id="slot-balance">1000 SPN</span> (Mock)
-      </div>
-
-      <div class="slot-stake-info">
-        Bet: <select id="slot-bet-selector">
-          <option value="10">10 SPN</option>
-          <option value="50">50 SPN</option>
-          <option value="100" selected>100 SPN</option>
-          <option value="200">200 SPN</option>
-        </select>
-        <span id="slot-status-tx" class="slot-status-tx"></span>
-      </div>
-
-      <div class="slot-window">
-        <!-- 5 reels, each with 3 visible rows -->
-        <div class="slot-reel-column" id="slot-column-1"></div>
-        <div class="slot-reel-column" id="slot-column-2"></div>
-        <div class="slot-reel-column" id="slot-column-3"></div>
-        <div class="slot-reel-column" id="slot-column-4"></div>
-        <div class="slot-reel-column" id="slot-column-5"></div>
-      </div>
-      
-      <button id="slot-spin-btn" class="slot-spin-btn" disabled>
-        Ansluter plånbok...
-      </button>
-
-      <p id="slot-result" class="slot-result">Välkommen till SpawnEngine. Anslut för att börja.</p>
-      <p id="slot-freespins" class="slot-freespins">Freespins: 0</p>
-    </div>
-
-    <p class="slot-foot">
-      I produktion hanteras staking/utbetalning helt on-chain via Base. Freespins triggas med 3+ scatters (🌟). Wins baserat på paylines (10 lines).
-    </p>
+  <div class="slot-balance">
+    Balance: <span id="slotBalance">1000 SPN</span>
   </div>
 
-  <script src="./slot.js"></script>
-</body>
-</html>
+  <div class="slot-controls">
+    <label for="betSelect">Bet:</label>
+    <select id="betSelect">
+      <option value="10">10 SPN</option>
+      <option value="50">50 SPN</option>
+      <option value="100" selected>100 SPN</option>
+    </select>
+    <button id="spinBtn">SPIN</button>
+  </div>
+
+  <div class="slot-reels">
+    <div class="reel" id="reel1"></div>
+    <div class="reel" id="reel2"></div>
+    <div class="reel" id="reel3"></div>
+    <div class="reel" id="reel4"></div>
+    <div class="reel" id="reel5"></div>
+  </div>
+
+  <p id="slotResult" class="slot-result">Ready to spin...</p>
+
+  <footer class="slot-footer">
+    <button id="collectBtn" disabled>Collect Loot</button>
+  </footer>
+</div>
