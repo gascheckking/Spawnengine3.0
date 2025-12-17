@@ -1,14 +1,76 @@
-<div id="marketplace" class="marketplace-container">
-  <header class="market-header">
-    <h2>🛒 Marketplace</h2>
-    <button id="refreshListings">⟳ Refresh</button>
-  </header>
+.marketplace-container {
+  padding: 1.2em;
+  font-family: system-ui, sans-serif;
+  color: #e5eaff;
+}
 
-  <section id="listingsArea" class="listings-grid">
-    <div class="loader">Loading Mesh Listings...</div>
-  </section>
+.market-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1em;
+  border-bottom: 1px solid #2b2f5c;
+  padding-bottom: 0.6em;
+}
 
-  <footer class="market-footer">
-    <p class="tip">💡 Tap a listing to simulate a purchase</p>
-  </footer>
-</div>
+.market-header h2 {
+  font-size: 1.3em;
+  color: #77f2ff;
+}
+
+.market-header button {
+  background: #2b2f5c;
+  border: 1px solid #4df2ff;
+  color: #4df2ff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.listings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1em;
+}
+
+.listing-card {
+  background: #0a0e26;
+  border: 1px solid #2b2f5c;
+  border-radius: 12px;
+  padding: 1em;
+  transition: transform 0.15s ease, border 0.2s ease;
+}
+
+.listing-card:hover {
+  border-color: #4df2ff;
+  transform: translateY(-3px);
+}
+
+.listing-card h3 {
+  margin: 0.2em 0;
+  color: #ffffff;
+  font-size: 1.05em;
+}
+
+.listing-card p {
+  color: #9aa2cc;
+  font-size: 0.9em;
+  margin: 0.2em 0;
+}
+
+.listing-card .price {
+  font-weight: 600;
+  color: #77f2ff;
+}
+
+.loader {
+  text-align: center;
+  color: #9aa2cc;
+}
+
+.market-footer {
+  margin-top: 1.2em;
+  text-align: center;
+  color: #666b9a;
+  font-size: 0.9em;
+}
