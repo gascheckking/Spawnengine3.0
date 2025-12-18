@@ -15,7 +15,7 @@
   --glow: 0 0 25px rgba(60, 246, 255, 0.3);
   --radius: 16px;
   --font: 'Inter', system-ui, sans-serif;
-  --transition: 0.2s ease;
+  --transition: 0.25s ease;
 }
 
 /* Themes */
@@ -56,13 +56,115 @@ html, body {
 /* 🌌 Mesh Background */
 canvas#mesh-bg {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   z-index: 0;
   background: radial-gradient(circle at 30% 20%, rgba(20, 25, 55, 0.6), var(--bg));
 }
+
+/* ===========================================
+   ROLE SELECTION SCREEN (index.html)
+   =========================================== */
+
+.role-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  padding: 2rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.role-header {
+  margin-bottom: 3rem;
+}
+
+.logo-large {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 10px var(--accent));
+}
+
+.title-glow {
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  text-shadow: 0 0 25px var(--accent);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.role-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--glow);
+  backdrop-filter: blur(14px);
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.role-card h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.role-card p {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  line-height: 1.4;
+}
+
+.role-tag {
+  display: inline-block;
+  margin-top: 0.8rem;
+  font-size: 0.75rem;
+  opacity: 0.9;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #050510;
+  font-weight: 600;
+}
+
+.role-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 0 40px var(--accent);
+}
+
+/* Role-specific glow colors */
+.role-card.creator:hover { box-shadow: 0 0 35px #ff69b4; }
+.role-card.operator:hover { box-shadow: 0 0 35px #3cf6ff; }
+.role-card.explorer:hover { box-shadow: 0 0 35px #b9ff7a; }
+
+.role-footer {
+  margin-top: 3rem;
+  opacity: 0.6;
+  font-size: 0.85rem;
+}
+
+/* ===========================================
+   MESH HUD SCREEN (hud.html)
+   =========================================== */
 
 /* Header */
 .app-header {
@@ -77,21 +179,25 @@ canvas#mesh-bg {
   top: 0;
   z-index: 5;
 }
+
 .app-header .logo {
   width: 30px;
   height: 30px;
   margin-right: 8px;
 }
+
 .app-title {
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 0.03em;
 }
+
 .header-right {
   display: flex;
   align-items: center;
   gap: 10px;
 }
+
 .header-balance span {
   display: block;
   font-size: 0.75rem;
@@ -112,17 +218,6 @@ main {
 }
 .view.active {
   display: block;
-}
-
-/* Sections */
-h2 {
-  font-size: 1.2rem;
-  margin-bottom: 12px;
-}
-.section-sub {
-  opacity: 0.75;
-  font-size: 0.9rem;
-  margin-bottom: 10px;
 }
 
 /* Cards & Panels */
@@ -179,28 +274,6 @@ button:hover, .mesh-btn:hover {
   filter: brightness(1.1);
 }
 
-/* Inputs & Fields */
-.field-input,
-.field-textarea {
-  width: 100%;
-  background: rgba(10, 14, 30, 0.7);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  padding: 8px 10px;
-  font-family: var(--font);
-}
-.field-textarea {
-  min-height: 80px;
-  resize: none;
-}
-label.field-label {
-  font-size: 0.8rem;
-  opacity: 0.7;
-  margin-bottom: 4px;
-  display: block;
-}
-
 /* Nav */
 .bottom-nav {
   position: fixed;
@@ -250,95 +323,6 @@ label.field-label {
   transform: translateX(-50%) scale(1);
 }
 
-/* Settings */
-.settings-group {
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px 16px;
-  margin-bottom: 16px;
-}
-.settings-group h3 {
-  font-size: 1rem;
-  margin-bottom: 6px;
-}
-
-/* Switch Toggle */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 42px;
-  height: 22px;
-}
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.slider {
-  position: absolute;
-  cursor: pointer;
-  inset: 0;
-  background-color: rgba(100, 110, 150, 0.4);
-  border-radius: 22px;
-  transition: 0.2s;
-}
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 3px;
-  bottom: 3px;
-  background-color: var(--text);
-  border-radius: 50%;
-  transition: 0.2s;
-}
-input:checked + .slider {
-  background-color: var(--accent);
-}
-input:checked + .slider:before {
-  transform: translateX(20px);
-}
-
-/* Feeds & Lists */
-.mesh-feed, .support-feed, .tracker-feed {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.feed-item {
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 8px 10px;
-  font-size: 0.9rem;
-}
-
-/* Stats List */
-.mesh-stats {
-  list-style: none;
-  padding: 0;
-  text-align: left;
-  font-size: 0.9rem;
-}
-.mesh-stats li { margin-bottom: 0.5rem; }
-
-/* Modal */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(8px);
-  display: none;
-  z-index: 15;
-}
-.modal-backdrop.open {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
@@ -346,9 +330,7 @@ input:checked + .slider:before {
 }
 
 /* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-thumb {
   background: var(--accent);
   border-radius: 8px;
