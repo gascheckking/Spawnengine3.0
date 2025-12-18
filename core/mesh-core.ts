@@ -20,9 +20,12 @@ export class MeshCore {
   }
 
   pushEvent(event: string) {
-    this.feed.unshift(event);
-    this.emit("feedUpdate", event);
+  this.feed.unshift(event);
+  if (this.feed.length > 50) {
+    this.feed.pop(); // Rensa äldre event
   }
+  this.emit("feedUpdate", event);
+}
 
   gainXP(amount: number, reason = "action") {
     this.xp += amount;
