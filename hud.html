@@ -96,33 +96,57 @@
     </section>
 
     <!-- SETTINGS -->
-    <section id="settingsView" class="view">
-      <h2>Settings</h2>
-      <div class="settings-group">
-        <h3>Theme</h3>
-        <select id="themeSelect">
-          <option value="glassbase">Glass Base</option>
-          <option value="matrix">Matrix Pulse</option>
-          <option value="zoragold">Zora Gold</option>
-        </select>
-      </div>
+<section id="settingsView" class="view">
+  <h2>Settings</h2>
 
-      <div class="settings-group">
-        <h3>Offline Mode</h3>
-        <label class="switch">
-          <input type="checkbox" id="pwaToggle" />
-          <span class="slider"></span>
-        </label>
-      </div>
+  <div class="settings-group">
+    <h3>Theme</h3>
+    <select id="themeSelect">
+      <option value="glassbase">Glass Base</option>
+      <option value="matrix">Matrix Pulse</option>
+      <option value="zoragold">Zora Gold</option>
+    </select>
+  </div>
 
-      <div class="settings-group">
-        <h3>About</h3>
-        <p>SpawnEngine v3.1 — Mesh Protocol • Base / Zora / Farcaster</p>
-      </div>
-    </section>
-  </main>
+  <div class="settings-group">
+    <h3>Offline Mode</h3>
+    <label class="switch">
+      <input type="checkbox" id="pwaToggle" />
+      <span class="slider"></span>
+    </label>
+  </div>
 
-  <!-- ✦ Bottom Navigation ✦ -->
+  <div class="settings-group">
+    <h3>About</h3>
+    <p>SpawnEngine v3.1 — Mesh Protocol • Base / Zora / Farcaster</p>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboardView" class="view">
+  <h2>Mesh Dashboard</h2>
+
+  <div id="se-dashboard" class="se-dash">
+    <div class="se-stats-row">
+      <div class="se-stat-card">
+        <small>TOTAL XP</small>
+        <div id="dash-xp" class="se-stat-val">0</div>
+      </div>
+      <div class="se-stat-card">
+        <small>SPAWN</small>
+        <div id="dash-spawn" class="se-stat-val">0</div>
+      </div>
+    </div>
+
+    <div class="se-feed-container">
+      <div class="se-feed-header">ACTIVITY FEED</div>
+      <div id="dash-feed" class="se-feed-list"></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ✦ Bottom Navigation ✦ -->
 <nav class="bottom-nav">
   <button data-view="homeView" class="nav-btn active">Home</button>
   <button data-view="lootView" class="nav-btn">Loot</button>
