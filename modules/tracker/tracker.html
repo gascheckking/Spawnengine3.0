@@ -1,23 +1,41 @@
-<div class="tracker-wrapper">
-  <header class="tracker-header">
+<div id="mesh-canvas"></div>
+
+<div class="hud">
+  <div class="hud-top">
     <h2>SpawnEngine Tracker</h2>
-    <input type="text" id="walletSearch" placeholder="Paste wallet address or ENS" />
-    <button id="trackBtn">Track</button>
-  </header>
+    <button id="walletBtn">Connect Wallet</button>
+  </div>
 
-  <section class="tracker-summary">
-    <div class="card"><h3>XP</h3><p id="xpStat">0</p></div>
-    <div class="card"><h3>Gas (avg)</h3><p id="gasStat">-- Gwei</p></div>
-    <div class="card"><h3>Transactions</h3><p id="txCount">0</p></div>
-    <div class="card"><h3>Tokens</h3><p id="tokenCount">0</p></div>
-  </section>
+  <div class="hud-stats">
+    <div><span>XP</span><p id="xpStat">0</p></div>
+    <div><span>SPN</span><p id="spnStat">0.000</p></div>
+    <div><span>TX</span><p id="txStat">--</p></div>
+  </div>
 
-  <section class="tracker-activity">
-    <h3>Recent Activity</h3>
-    <ul id="activityFeed">
-      <li>No data yet</li>
-    </ul>
-  </section>
+  <div class="hud-search">
+    <input id="walletInput" placeholder="Enter wallet / ENS" />
+    <button id="trackWallet">Track</button>
+  </div>
+
+  <div class="hud-feed" id="activityFeed">
+    <p>Loading mesh activity...</p>
+  </div>
+
+  <button class="hud-profile-btn" id="openProfile">⚙️</button>
 </div>
-<script src="./tracker.js"></script>
+
+<div id="profilePanel" class="panel hidden">
+  <div class="panel-content">
+    <h3>Mesh Identity & Settings</h3>
+    <ul>
+      <li>Wallet: <span id="walletAddr">Not connected</span></li>
+      <li>Theme: <button id="toggleTheme">Toggle</button></li>
+      <li>Notifications: Coming soon</li>
+    </ul>
+    <button id="closeProfile">Close</button>
+  </div>
+</div>
+
 <link rel="stylesheet" href="./tracker.css">
+<script src="./mesh-bg.js"></script>
+<script src="./tracker.js"></script>
