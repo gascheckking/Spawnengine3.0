@@ -3,16 +3,16 @@
   "short_name": "SpawnEngine",
   "description": "The Onchain Operating System — Mesh, XP, Packs, and SupCast support in one hub.",
   "lang": "en",
+  "dir": "ltr",
+  "id": "app.spawnengine.mesh",
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#02030a",
   "theme_color": "#0a0e26",
-  "categories": ["productivity", "finance", "game", "utility"],
-  "id": "app.spawnengine.mesh",
-  "dir": "ltr",
   "prefer_related_applications": false,
+  "categories": ["productivity", "finance", "game", "utility"],
 
   "icons": [
     {
@@ -50,6 +50,12 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
 
@@ -79,22 +85,40 @@
       "name": "Open Mesh HUD",
       "short_name": "Mesh",
       "description": "Open the Mesh dashboard and live XP feed.",
-      "url": "/#home",
-      "icons": [{ "src": "/icons/mesh-shortcut.png", "sizes": "192x192" }]
+      "url": "/hud.html#home",
+      "icons": [
+        {
+          "src": "/icons/mesh-shortcut.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "Open Loot",
       "short_name": "Loot",
       "description": "Open your packs and reveal loot.",
-      "url": "/#loot",
-      "icons": [{ "src": "/icons/loot-shortcut.png", "sizes": "192x192" }]
+      "url": "/hud.html#loot",
+      "icons": [
+        {
+          "src": "/icons/loot-shortcut.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "SupCast Support",
       "short_name": "SupCast",
       "description": "View and solve support tickets.",
-      "url": "/#supcast",
-      "icons": [{ "src": "/icons/support-shortcut.png", "sizes": "192x192" }]
+      "url": "/hud.html#supcast",
+      "icons": [
+        {
+          "src": "/icons/support-shortcut.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ],
 
@@ -105,7 +129,7 @@
   "protocol_handlers": [
     {
       "protocol": "web+mesh",
-      "url": "/?open=%s"
+      "url": "/hud.html?open=%s"
     }
   ],
 
@@ -123,5 +147,7 @@
       "platform": "webapp",
       "url": "https://spawnengine.vercel.app/manifest.json"
     }
-  ]
+  ],
+
+  "display_override": ["window-controls-overlay", "standalone", "browser"]
 }
