@@ -4,6 +4,7 @@
 
 //——— MESH CORE IMPORT ———//
 import { MeshCore } from "./core/mesh-core.js";
+import { MeshBridge } from "./core/mesh-bridge.js"; // ✅ Lägg importen här uppe!
 
 // ---------- GLOBAL STATE ----------
 let currentTheme = localStorage.getItem("spawnTheme") || "glassbase";
@@ -13,11 +14,10 @@ let feed = [];
 
 // ---------- INIT ----------
 document.addEventListener("DOMContentLoaded", async () => {
-  
-  // —— Mesh Bridge —— //
-import { MeshBridge } from "./core/mesh-bridge.js";
-MeshBridge.init();
+  // —— MeshCore & Bridge Boot —— //
   await MeshCore.init();
+  MeshBridge.init(); // ✅ initiera direkt efter MeshCore
+
   console.log("SpawnEngine MeshCore online:", MeshCore.getProfile());
 
   // — UI INIT SEQUENCE —
@@ -35,7 +35,6 @@ MeshBridge.init();
   setupBot();
   bindRevealDemo();
 });
-
 // ---------- NAVIGATION ----------
 function setupNavigation() {
   const buttons = document.querySelectorAll(".nav-btn");
