@@ -1,56 +1,51 @@
-/* ====================================================
-   SPAWNENGINE v3.1 — Reforge App Core (JS Engine)
-   ==================================================== */
-
 //——— IMPORTER ———//
-import { meshCore } from "./core/MeshCore.js";
+import { MeshCore } from "./core/MeshCore.js";
 import { MeshBridge } from "./core/mesh-bridge.js";
-
-//——— GLOBAL STATE ———//
-
-// Skicka ett nytt pack till systemet (SpawnBot auto-öppnar)
-meshCore.emit("packReceived", {
-  name: "Genesis Mesh Pack",
-  pool: [
-    { name: "Mesh Fragment", rarity: "Fragment" },
-    { name: "Deep Shard", rarity: "Shard" },
-    { name: "Relic of Origin", rarity: "Relic" },
-    { name: "Solar Sigil", rarity: "Sigil" },
-    { name: "Ancient Core", rarity: "Core" },
-  ],
-});
-
-let currentTheme = localStorage.getItem("spawnTheme") || "glassbase";
-let userProfile = null;
-let marketplace = [];
-let feed = [];
-let eventCount = 0;
-let xpCount = 0;
+import { SpawnArena } from "./core/arena/spawn-arena.js";
 
 //——— INIT ———//
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // — MeshCore & Bridge Boot —
-    if (MeshCore && MeshCore.init) await MeshCore.init();
-    if (MeshBridge && MeshBridge.init) MeshBridge.init();
+    // 🧠 Initiera MeshCore (state, feed, XP)
+    if (MeshCore?.init) await MeshCore.init();
+
+    // 🌉 Starta MeshBridge (kopplar Core → UI → Pulse)
+    if (MeshBridge?.init) MeshBridge.init();
 
     console.log("%cSpawnEngine MeshCore online:", "color:#14b8a6", MeshCore?.getProfile?.());
 
-    // — UI INIT SEQUENCE —
+    // 🎨 Tema & UI
     document.body.dataset.theme = currentTheme;
     setupNavigation();
     setupThemeSwitcher();
     setupToast();
     setupSettings();
+
+    // 🏠 Ladda vyer
     await loadHome();
     await loadProfile();
     await loadMarketplace();
+
+    // ⚙️ Extra systemer
     setupLoot();
     setupSupport();
     setupTracker();
     setupBot();
     bindRevealDemo();
     setupPulseInteractions();
+
+    // 💾 Visa roll från localStorage
+    const savedRole = localStorage.getItem("spawnRole");
+    if (savedRole) console.log(`[SpawnEngine] Loaded role: ${savedRole}`);
+
+    // 🏁 Starta Arena sist (kopplad till MeshCore)
+    SpawnArena.init();
+
+    console.log("%c✅ UI Ready · Mesh Online", "color:#3cf6ff");
+  } catch (err) {
+    console.error("❌ SpawnEngine init failed:", err);
+  }
+});
 
     // — Display role from localStorage —
     const role = localStorage.getItem("spawnRole");
