@@ -1,6 +1,13 @@
-// SpawnBotCore.ts — Autonomous rules and triggers
+// ======================================================
+// 🤖 SPAWNBOT CORE v3.1 — Autonomous Integration Module
+// ------------------------------------------------------
+// Hanterar automatiska triggers (auto-open, auto-xp, auto-sync)
+// och kommunicerar direkt med MeshCore + SDK (reveal widget).
+// ------------------------------------------------------
+// © SpawnEngine / MeshOS 2025
+// ======================================================
 
-import { meshCore } from "./mesh-core";
+import { meshCore } from "./MeshCore";
 
 export class SpawnBotCore {
   private rules = {
@@ -9,12 +16,56 @@ export class SpawnBotCore {
     autoBridgeAssets: false,
   };
 
-  toggleRule(rule: keyof typeof this.rules) {
-    this.rules[rule] = !this.rules[rule];
-    meshCore.pushEvent(`SpawnBot toggled ${rule} → ${this.rules[rule] ? "ON" : "OFF"}`);
+  constructor() {
+    // Lyssna på “packReceived”-händelser från MeshCore
+    meshCore.on("packReceived", (packData: any) => {
+      if (this.rules.autoOpenPacks) {
+        this.handleAutoOpen(packData);
+      }
+    });
+
+    // Lyssna på feedUpdate för loggning
+    meshCore.on("feedUpdate", (event: any) => {
+      console.log("📡 [SpawnBot] Feed event:", event);
+    });
   }
 
-  getRules() {
+  // —— Hanterar auto-öppning —— //
+  private handleAutoOpen(packData: any) {
+    meshCore.pushEvent(`SpawnBot: Auto-opening ${packData.name}...`);
+
+    if (window.SpawnEngine?.reveal) {
+      window.SpawnEngine.reveal({
+        title: packData.name || "SpawnBot Auto-Reveal",
+        pool: packData.pool || [],
+        autoOpen: true,
+        onReveal: (result: any) => {
+          const xpGained =
+            result.rarity === "Legendary"
+              ? 500
+              : result.rarity === "Epic"
+              ? 200
+              : 50;
+
+          meshCore.gainXP(xpGained, `Opened ${result.name}`);
+          meshCore.pushEvent(`🤖 Bot found: ${result.name} (${result.rarity})`);
+          console.log("🎁 [SpawnBot] Reveal result:", result);
+        },
+      });
+    } else {
+      meshCore.pushEvent("⚠️ SpawnEngine SDK not loaded.");
+    }
+  }
+
+  // —— Toggle automatiska regler —— //
+  public toggleRule(rule: keyof typeof this.rules) {
+    this.rules[rule] = !this.rules[rule];
+    const state = this.rules[rule] ? "ON" : "OFF";
+    meshCore.pushEvent(`SpawnBot toggled ${rule} → ${state}`);
+  }
+
+  // —— Hämtar alla aktiva regler —— //
+  public getRules() {
     return this.rules;
   }
 }
