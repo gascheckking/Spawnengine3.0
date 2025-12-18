@@ -1,10 +1,10 @@
 // ======================================================
-// 🧠 SPAWNENGINE MESH CORE v3.1 Reforge
+// 🧠 SPAWNENGINE MESH CORE v3.1 — Reforge Build
 // ------------------------------------------------------
-// Central event-bus för hela plattformen.
-// Kopplar ihop mock-API, Firebase, SupCast och UI.
+// Central event-bus för hela SpawnEngine-plattformen.
+// Kopplar ihop mock-API, MeshBridge, UI och Mesh-bg.js.
 // ------------------------------------------------------
-//  © SpawnEngine / MeshOS
+//  © SpawnEngine / MeshOS — 2025
 // ======================================================
 
 //———IMPORT MOCK-API———//
@@ -22,11 +22,12 @@ export const MeshCore = {
     profile: null,
     listeners: {},
     lastEventId: 0,
+    initialized: false
   },
 
   //———INIT———//
   async init() {
-    console.log("🧩 [MeshCore] Booting SpawnEngine Mesh v3.1...");
+    console.log("%c🧩 [MeshCore] Booting SpawnEngine Mesh v3.1...", "color:#14b8a6");
 
     // Mock-data inläsning
     this.state.feed = getHomeFeed();
@@ -34,13 +35,20 @@ export const MeshCore = {
     this.state.token = getTokenData();
     this.state.profile = getProfile();
 
-    console.log("🧩 [MeshCore] Mock data loaded.");
+    console.log("%c[MeshCore] Mock data loaded.", "color:#6366f1");
 
     // Simulerad async delay
-    await new Promise((r) => setTimeout(r, 300));
+    await new Promise((r) => setTimeout(r, 400));
 
+    this.state.initialized = true;
     this.emit("mesh_ready", this.state);
-    console.log("✅ [MeshCore] Online & Ready.");
+
+    console.log("%c✅ [MeshCore] Online & Ready.", "color:#10b981");
+
+    // Starta mockad eventström
+    this.startEventStream();
+
+    return this.state;
   },
 
   //———EVENT DISPATCHER———//
@@ -76,15 +84,37 @@ export const MeshCore = {
     };
     this.state.feed.unshift(entry);
     this.emit("mesh_event", entry);
-    console.log(`[MeshCore] ${label}`);
+
+    // Triggera MeshBridge automatiskt
+    this.emit("event", {
+      type: this.mapKindToType(kind),
+      data: meta,
+      xp
+    });
+
+    console.log(`%c[MeshCore] ${label}`, "color:#3cf6ff");
     return entry;
+  },
+
+  //———KIND → TYPE MAPPNING———//
+  mapKindToType(kind) {
+    const map = {
+      "system": "SYSTEM",
+      "checkin": "XP_GAIN",
+      "wallet": "MARKET_BUY",
+      "firebase": "SYNC",
+      "market": "MARKET_BUY",
+      "social": "SOCIAL_CAST",
+      "reward": "CREATOR_REWARD"
+    };
+    return map[kind] || "GENERIC";
   },
 
   //———USER ACTIONS———//
   checkIn() {
     const xp = 50;
     this.state.profile.xpBalance += xp;
-    this.push(`Check-in complete (+${xp} XP)`, "checkin", xp);
+    this.push(`✅ Check-in complete (+${xp} XP)`, "checkin", xp);
     this.emit("profile_update", this.state.profile);
   },
 
@@ -93,16 +123,39 @@ export const MeshCore = {
     updateWalletStatus(newStatus);
     this.emit("wallet_status", newStatus);
     this.push(
-      newStatus ? "Wallet connected" : "Wallet disconnected",
+      newStatus ? "🔗 Wallet connected" : "🔴 Wallet disconnected",
       "wallet"
     );
+  },
+
+  rewardCreator(amount = 25) {
+    this.state.profile.xpBalance += amount;
+    this.push(`💎 Creator reward claimed (+${amount} XP)`, "reward", amount);
+  },
+
+  castToFarcaster() {
+    this.push("💬 Cast sent to Farcaster", "social", 10);
+  },
+
+  //———MOCK EVENT STREAM———//
+  startEventStream() {
+    const eventPool = [
+      () => this.checkIn(),
+      () => this.castToFarcaster(),
+      () => this.rewardCreator(),
+      () => this.toggleWalletConnection()
+    ];
+
+    setInterval(() => {
+      const action = eventPool[Math.floor(Math.random() * eventPool.length)];
+      action();
+    }, 8000); // 8 sekunder mellan “on-chain events”
   },
 
   //———EXTERNAL SYNC (Mock Firebase Bridge)———//
   async syncToFirebase(firebaseApi) {
     if (!firebaseApi) return console.warn("[MeshCore] Firebase not detected.");
-    this.push("Syncing feed to Firestore...", "firebase");
-    // Här skulle feeden pushas till "mesh_events"
+    this.push("☁️ Syncing feed to Firestore...", "firebase");
   },
 
   //———UTILS———//
@@ -118,7 +171,6 @@ export const MeshCore = {
     return this.state.token;
   },
 
-  //———DEBUG———//
   debugDump() {
     console.table(this.state.feed);
   },
