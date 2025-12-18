@@ -1,24 +1,25 @@
 /* ============================================================
-   SPAWNENGINE v3.1 — SERVICE WORKER
+   SPAWNENGINE v3.1 — SERVICE WORKER (Final)
    "The Hub, Not Another App"
    Handles cache, updates, offline & mesh heartbeat
    ============================================================ */
 
-/* —— init —— */
 const CACHE_NAME = "spawnengine-cache-v3.1";
 const CORE_ASSETS = [
   "/",
   "/index.html",
+  "/hud.html",
+  "/offline.html",
   "/style.css",
   "/app.js",
   "/mesh-bg.js",
-  "/spawnengine-sdk.js",
-  "/icons/icon-512.png",
+  "/logo.png",
+  "/icons/icon-512.png"
 ];
 
-/* —— install —— */
+/* —— INSTALL —— */
 self.addEventListener("install", (event) => {
-  console.log("⚙️ [SW] Installing...");
+  console.log("⚙️ [SW] Installing SpawnEngine v3.1...");
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log("📦 [SW] Caching core assets...");
@@ -28,9 +29,9 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-/* —— activate —— */
+/* —— ACTIVATE —— */
 self.addEventListener("activate", (event) => {
-  console.log("♻️ [SW] Activated");
+  console.log("♻️ [SW] Activated SpawnEngine");
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
@@ -43,84 +44,84 @@ self.addEventListener("activate", (event) => {
       )
     )
   );
-  return self.clients.claim();
+  self.clients.claim();
 });
 
-/* —— fetch-handler —— */
+/* —— FETCH HANDLER —— */
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  // Only handle GET requests
   if (req.method !== "GET") return;
 
-  // —— mesh-api-pass-through —— //
-  if (url.pathname.startsWith("/api/")) {
-    return; // don’t cache live API calls
-  }
+  // API-routes bypassas
+  if (url.pathname.startsWith("/api/")) return;
 
-  // —— cache-first —— //
   event.respondWith(
-    caches.match(req).then((cachedRes) => {
-      if (cachedRes) return cachedRes;
+    caches.match(req).then((cached) => {
+      if (cached) return cached;
       return fetch(req)
-        .then((netRes) => {
-          const copy = netRes.clone();
+        .then((res) => {
+          if (!res || res.status !== 200 || res.type !== "basic") return res;
+          const copy = res.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
-          return netRes;
+          return res;
         })
         .catch(() => caches.match("/offline.html"));
     })
   );
 });
 
-/* —— message-channel —— */
-self.addEventListener("message", (event) => {
+/* —— MESSAGE CHANNEL —— */
+self.addEventListener("message", async (event) => {
   const { type } = event.data || {};
   if (type === "CLEAR_CACHE") {
-    caches.keys().then((keys) => keys.forEach((k) => caches.delete(k)));
-    event.source.postMessage({ status: "Cache cleared" });
+    const keys = await caches.keys();
+    await Promise.all(keys.map((k) => caches.delete(k)));
+    event.source?.postMessage({ status: "Cache cleared" });
   }
 });
 
-/* —— mesh-heartbeat —— */
-const MESH_PING_INTERVAL = 60 * 1000; // 1 min
+/* —— MESH HEARTBEAT —— */
+const MESH_PING_INTERVAL = 60 * 1000;
 setInterval(async () => {
   try {
     const clients = await self.clients.matchAll({ includeUncontrolled: true });
-    clients.forEach((client) => {
+    clients.forEach((client) =>
       client.postMessage({
         type: "MESH_HEARTBEAT",
-        timestamp: Date.now(),
-      });
-    });
+        timestamp: Date.now()
+      })
+    );
   } catch (err) {
     console.warn("[SW] Heartbeat error:", err);
   }
 }, MESH_PING_INTERVAL);
 
-/* —— update-checker —— */
+/* —— UPDATE CHECKER —— */
 async function checkForUpdates() {
   const cache = await caches.open(CACHE_NAME);
-  for (let asset of CORE_ASSETS) {
+  for (const asset of CORE_ASSETS) {
     try {
       const netRes = await fetch(asset, { cache: "no-store" });
+      if (!netRes.ok) continue;
       const cachedRes = await cache.match(asset);
-      if (!cachedRes || netRes.headers.get("ETag") !== cachedRes.headers?.get("ETag")) {
-        console.log("🔁 [SW] Asset updated:", asset);
-        await cache.put(asset, netRes);
+      const netETag = netRes.headers.get("ETag");
+      const cacheETag = cachedRes?.headers?.get("ETag");
+
+      if (!cachedRes || (netETag && netETag !== cacheETag)) {
+        console.log("🔁 [SW] Updated asset:", asset);
+        await cache.put(asset, netRes.clone());
         const clients = await self.clients.matchAll({ includeUncontrolled: true });
         clients.forEach((client) =>
           client.postMessage({ type: "ASSET_UPDATED", asset })
         );
       }
     } catch (err) {
-      console.warn("⚠️ [SW] Update check failed:", asset, err);
+      console.warn("⚠️ [SW] Update check failed for", asset, err);
     }
   }
 }
 
-/* —— periodic-update —— */
-setInterval(() => {
-  checkForUpdates();
-}, 5 * 60 * 1000); // every 5 minutes
+/* —— PERIODIC UPDATE (5 min) —— */
+setInterval(checkForUpdates, 5 * 60 * 1000);
