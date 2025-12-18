@@ -1,1 +1,23 @@
-k
+<div class="tracker-wrapper">
+  <header class="tracker-header">
+    <h2>SpawnEngine Tracker</h2>
+    <input type="text" id="walletSearch" placeholder="Paste wallet address or ENS" />
+    <button id="trackBtn">Track</button>
+  </header>
+
+  <section class="tracker-summary">
+    <div class="card"><h3>XP</h3><p id="xpStat">0</p></div>
+    <div class="card"><h3>Gas (avg)</h3><p id="gasStat">-- Gwei</p></div>
+    <div class="card"><h3>Transactions</h3><p id="txCount">0</p></div>
+    <div class="card"><h3>Tokens</h3><p id="tokenCount">0</p></div>
+  </section>
+
+  <section class="tracker-activity">
+    <h3>Recent Activity</h3>
+    <ul id="activityFeed">
+      <li>No data yet</li>
+    </ul>
+  </section>
+</div>
+<script src="./tracker.js"></script>
+<link rel="stylesheet" href="./tracker.css">
