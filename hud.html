@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpawnEngine · Mesh HUD</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="logo.png" />
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.min.js"></script>
+</head>
+
+<body>
+  <!-- 🌌 Background Mesh Universe -->
+  <canvas id="mesh-bg"></canvas>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <img src="logo.png" alt="SpawnEngine Logo" class="logo" />
+      <h1 class="app-title">SpawnEngine</h1>
+    </div>
+    <div class="header-right">
+      <button id="connectWallet" class="btn-outline">Connect</button>
+      <div class="header-balance">
+        <span id="xpBalance">XP: 0</span>
+        <span id="spnBalance">SPN: 0.000</span>
+      </div>
+      <button id="openSettings" class="btn-icon">⚙️</button>
+    </div>
+  </header>
+
+  <!-- Main App -->
+  <main id="appContainer">
+    <!-- HOME -->
+    <section id="homeView" class="view active">
+      <h2>Mesh HUD</h2>
+      <div class="glass-panel">
+        <p class="section-sub">
+          Role: <span id="userRole">...</span>
+        </p>
+        <ul class="mesh-stats">
+          <li>🧠 Active Mesh Modules: <span id="meshModules">0</span></li>
+          <li>⚡ XP Streak: <span id="xpStreak">0</span> days</li>
+          <li>💸 Wallet: <span id="walletAddress">Not Connected</span></li>
+        </ul>
+        <div class="btn-group">
+          <button id="btnRefresh" class="btn-primary">Refresh Mesh</button>
+          <button id="btnBoost" class="btn-outline">Claim XP</button>
+        </div>
+      </div>
+      <div id="meshFeed" class="mesh-feed">
+        <p class="section-sub">Loading mesh activity...</p>
+      </div>
+    </section>
+
+    <!-- LOOT -->
+    <section id="lootView" class="view">
+      <h2>Loot & Rewards</h2>
+      <button id="openPackBtn" class="btn-primary">Open Pack</button>
+      <div id="inventoryStats" class="inventory-box">
+        <p>Fragments: <span id="fragCount">0</span></p>
+        <p>Shards: <span id="shardCount">0</span></p>
+        <p>Relics: <span id="relicCount">0</span></p>
+      </div>
+      <button id="synthBtn" class="btn-outline">Synthesize Relic</button>
+    </section>
+
+    <!-- MARKET -->
+    <section id="marketView" class="view">
+      <h2>Marketplace</h2>
+      <div id="marketList" class="market-card-list">
+        <p>Loading listings...</p>
+      </div>
+    </section>
+
+    <!-- TRACKER -->
+    <section id="trackerView" class="view">
+      <h2>SpawnTracker</h2>
+      <p>Track your wallet’s onchain footprint.</p>
+      <div id="trackerFeed" class="tracker-feed"></div>
+    </section>
+
+    <!-- BOT -->
+    <section id="botView" class="view">
+      <h2>SpawnBot Automations</h2>
+      <p>Automate your XP gains and mesh alerts.</p>
+      <div id="automationList"></div>
+    </section>
+
+    <!-- SUPCAST -->
+    <section id="supcastView" class="view">
+      <h2>SupCast Support</h2>
+      <textarea id="supportInput" placeholder="Describe your idea or issue..."></textarea>
+      <button id="submitSupport" class="btn-primary">Submit</button>
+      <div id="supportFeed" class="support-feed"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settingsView" class="view">
+      <h2>Settings</h2>
+
+      <div class="settings-group">
+        <h3>Theme</h3>
+        <select id="themeSelect">
+          <option value="glassbase">Glass Base</option>
+          <option value="matrix">Matrix Pulse</option>
+          <option value="zoragold">Zora Gold</option>
+        </select>
+      </div>
+
+      <div class="settings-group">
+        <h3>Offline Mode</h3>
+        <label class="switch">
+          <input type="checkbox" id="pwaToggle" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="settings-group">
+        <h3>About</h3>
+        <p>SpawnEngine v3.1 — Mesh Protocol • Base / Zora / Farcaster</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button data-view="homeView" class="nav-btn active">Home</button>
+    <button data-view="lootView" class="nav-btn">Loot</button>
+    <button data-view="marketView" class="nav-btn">Market</button>
+    <button data-view="trackerView" class="nav-btn">Tracker</button>
+    <button data-view="botView" class="nav-btn">Bot</button>
+    <button data-view="supcastView" class="nav-btn">SupCast</button>
+    <button data-view="settingsView" class="nav-btn">Settings</button>
+  </nav>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <!-- Modal Backdrop -->
+  <div id="modalBackdrop" class="modal-backdrop"></div>
+
+  <!-- Scripts -->
+  <script type="module">
+    import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.min.js";
+
+    // Role load
+    const role = localStorage.getItem("spawnRole") || "Explorer";
+    document.getElementById("userRole").textContent = role;
+
+    // Navigation logic
+    const navBtns = document.querySelectorAll(".nav-btn");
+    navBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        navBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const target = btn.dataset.view;
+        document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+        document.getElementById(target).classList.add("active");
+      });
+    });
+
+    // Wallet connection
+    const connectBtn = document.getElementById("connectWallet");
+    const walletEl = document.getElementById("walletAddress");
+    let provider, signer;
+
+    connectBtn.addEventListener("click", async () => {
+      if (window.ethereum) {
+        provider = new ethers.BrowserProvider(window.ethereum);
+        const accounts = await provider.send("eth_requestAccounts", []);
+        signer = await provider.getSigner();
+        walletEl.textContent = accounts[0];
+        toast("Wallet connected");
+      } else {
+        toast("No wallet found");
+      }
+    });
+
+    // Toast system
+    window.toast = (msg) => {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      setTimeout(() => el.classList.remove("show"), 2000);
+    };
+
+    // XP streak simulation
+    document.getElementById("btnBoost").addEventListener("click", () => {
+      const el = document.getElementById("xpStreak");
+      let val = parseInt(el.textContent);
+      val++;
+      el.textContent = val;
+      toast(`XP Streak boosted to ${val}`);
+    });
+
+    // Simple mesh refresh
+    document.getElementById("btnRefresh").addEventListener("click", () => {
+      const meshEl = document.getElementById("meshModules");
+      let count = Math.floor(Math.random() * 8) + 1;
+      meshEl.textContent = count;
+      toast("Mesh modules synced");
+    });
+  </script>
+
+  <script src="mesh-bg.js" defer></script>
+</body>
+</html>
