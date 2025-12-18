@@ -1,10 +1,10 @@
 // ======================================================
-// 🌌 SPAWNENGINE MESH BACKGROUND v3.1 — Reforge
+// 🌌 SPAWNENGINE MESH BACKGROUND v3.1 — Reforge (Final)
 // ------------------------------------------------------
 // Dynamisk interaktiv mesh-bakgrund för SpawnEngine UI.
 // Parallax, glow, touch-stöd och pulse-anrop.
 // ------------------------------------------------------
-// © SpawnEngine / MeshOS 2025
+// Optimerad för PWA + låg CPU vid idle
 // ======================================================
 
 class MeshBackground {
@@ -18,6 +18,7 @@ class MeshBackground {
     this.scrollOffset = 0;
     this.animationId = null;
     this.isVisible = true;
+    this.lastFrameTime = 0;
 
     this.particleCount = 120;
     this.maxDistance = 120;
@@ -38,7 +39,7 @@ class MeshBackground {
 
   //——— CANVAS SETUP ——//
   createCanvas() {
-    this.canvas = document.createElement("canvas");
+    this.canvas = document.getElementById("mesh-bg") || document.createElement("canvas");
     this.canvas.id = "mesh-bg";
     Object.assign(this.canvas.style, {
       position: "fixed",
@@ -48,25 +49,26 @@ class MeshBackground {
       height: "100%",
       pointerEvents: "none",
       zIndex: "0",
+      background: "radial-gradient(circle at 30% 20%, rgba(20,25,55,0.6), #03040d)"
     });
-    document.body.prepend(this.canvas);
+    if (!document.getElementById("mesh-bg")) document.body.prepend(this.canvas);
     this.ctx = this.canvas.getContext("2d");
     this.resize();
   }
 
   resize() {
+    const ratio = window.devicePixelRatio || 1;
     this.width = window.innerWidth;
     this.height = window.innerHeight;
-    this.canvas.width = this.width * devicePixelRatio;
-    this.canvas.height = this.height * devicePixelRatio;
-    this.ctx.scale(devicePixelRatio, devicePixelRatio);
+    this.canvas.width = this.width * ratio;
+    this.canvas.height = this.height * ratio;
+    this.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
 
   //——— PARTICLES ——//
   generateParticles() {
     this.particles = [];
     const colors = ["#14b8a6", "#6366f1"];
-
     for (let i = 0; i < this.particleCount; i++) {
       this.particles.push({
         x: Math.random() * this.width,
@@ -75,7 +77,7 @@ class MeshBackground {
         vy: (Math.random() - 0.5) * 0.6,
         radius: Math.random() * 2 + 1,
         opacity: Math.random() * 0.4 + 0.5,
-        color: this.lerpColor(colors[0], colors[1], Math.random()),
+        color: this.lerpColor(colors[0], colors[1], Math.random())
       });
     }
   }
@@ -83,18 +85,12 @@ class MeshBackground {
   lerpColor(a, b, t) {
     const ah = parseInt(a.replace("#", "0x"), 16);
     const bh = parseInt(b.replace("#", "0x"), 16);
-    const ar = ah >> 16,
-      ag = (ah >> 8) & 0xff,
-      ab = ah & 0xff;
-    const br = bh >> 16,
-      bg = (bh >> 8) & 0xff,
-      bb = bh & 0xff;
+    const ar = ah >> 16, ag = (ah >> 8) & 0xff, ab = ah & 0xff;
+    const br = bh >> 16, bg = (bh >> 8) & 0xff, bb = bh & 0xff;
     const rr = ar + t * (br - ar);
     const rg = ag + t * (bg - ag);
     const rb = ab + t * (bb - ab);
-    return `#${((1 << 24) + (rr << 16) + (rg << 8) + rb | 0)
-      .toString(16)
-      .slice(1)}`;
+    return `#${((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1)}`;
   }
 
   //——— UPDATE ——//
@@ -131,7 +127,6 @@ class MeshBackground {
         const dx = a.x - b.x;
         const dy = a.y - b.y;
         const dist = Math.hypot(dx, dy);
-
         if (dist < this.maxDistance) {
           const opacity = (1 - dist / this.maxDistance) * 0.4;
           this.ctx.globalAlpha = opacity;
@@ -150,16 +145,14 @@ class MeshBackground {
     this.particles.forEach((p) => {
       const parallaxX = p.x + this.scrollOffset / 50;
       const parallaxY = p.y + this.scrollOffset / 70;
-
       this.ctx.globalAlpha = p.opacity;
       this.ctx.fillStyle = p.color;
       this.ctx.shadowBlur = 12;
-      this.ctx.shadowColor = p.color + "40";
+      this.ctx.shadowColor = `${p.color}40`;
       this.ctx.beginPath();
       this.ctx.arc(parallaxX, parallaxY, p.radius, 0, Math.PI * 2);
       this.ctx.fill();
     });
-
     this.ctx.shadowBlur = 0;
     this.ctx.globalAlpha = 1;
   }
@@ -169,13 +162,20 @@ class MeshBackground {
   }
 
   //——— ANIMATE ——//
-  animate() {
+  animate(timestamp = 0) {
     if (!this.isVisible) return;
+    const delta = timestamp - this.lastFrameTime;
+    if (delta < 1000 / 60) {
+      this.animationId = requestAnimationFrame((t) => this.animate(t));
+      return;
+    }
+    this.lastFrameTime = timestamp;
+
     this.clear();
     this.updateParticles();
     this.drawConnections();
     this.drawParticles();
-    this.animationId = requestAnimationFrame(() => this.animate());
+    this.animationId = requestAnimationFrame((t) => this.animate(t));
   }
 
   //——— EVENTS ——//
@@ -210,7 +210,7 @@ class MeshBackground {
 
   //——— BONUS: ON-CHAIN PULSE ——//
   pulse(color = "#14b8a6", originX = this.width / 2, originY = this.height / 2) {
-    const pulseParticles = 12;
+    const pulseParticles = 14;
     const speed = 2.5;
     for (let i = 0; i < pulseParticles; i++) {
       const angle = (Math.PI * 2 * i) / pulseParticles;
@@ -224,7 +224,7 @@ class MeshBackground {
         radius: 2,
         opacity: 1,
         color,
-        life: 60,
+        life: 60
       });
     }
 
