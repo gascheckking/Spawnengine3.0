@@ -1,0 +1,66 @@
+.tracker-wrapper {
+  color: #fff;
+  background: radial-gradient(circle at top, #0a0f1a 0%, #05070a 100%);
+  min-height: 100vh;
+  padding: 1rem;
+  font-family: "Inter", sans-serif;
+}
+
+.tracker-header {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.tracker-header input {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: none;
+  background: #111420;
+  color: #0ff;
+}
+
+.tracker-header button {
+  background: linear-gradient(90deg, #00e6ff, #007bff);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.tracker-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card {
+  background: rgba(20, 25, 40, 0.8);
+  padding: 0.8rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+}
+
+.tracker-activity {
+  background: rgba(15, 20, 30, 0.9);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.1);
+}
+
+.tracker-activity ul {
+  list-style: none;
+  padding-left: 0;
+  font-size: 0.9rem;
+}
+
+.tracker-activity li {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
