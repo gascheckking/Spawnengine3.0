@@ -49,7 +49,7 @@ function renderRoles() {
   roleDisplay.textContent = user.currentRole;
 
   roleList.innerHTML = AVAILABLE_ROLES.map(role => `
-    <div class="role-card" data-id="${role.id}">
+    <div class="role-card ${role.id === user.currentRole.toLowerCase() ? "active" : ""}" data-id="${role.id}">
       <div class="role-icon">${role.emoji}</div>
       <h4>${role.title}</h4>
       <p>${role.desc}</p>
