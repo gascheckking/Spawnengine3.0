@@ -5,36 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SpawnEngine · Choose Your Role</title>
 
+  <!-- Manifest & Style -->
+  <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="logo.png" />
+  <script src="./pwa/sw-register.js" defer></script>
 </head>
 
 <body data-theme="glassbase">
-  <!-- ✦ Background Mesh Universe ✦ -->
+  <!-- 🌌 Background Mesh Universe -->
   <canvas id="mesh-bg"></canvas>
 
   <!-- ✦ Role Selection Screen ✦ -->
   <main class="role-container">
     <div class="role-header">
       <img src="logo.png" alt="SpawnEngine Logo" class="logo-large" />
-      <h1>SpawnEngine</h1>
-      <p>Choose your onchain identity and dive into the Mesh Universe</p>
+      <h1 class="title-glow">SpawnEngine</h1>
+      <p class="subtitle">Choose your onchain identity and dive into the Mesh Universe</p>
     </div>
 
     <div class="role-grid">
-      <div class="role-card" onclick="selectRole('creator')">
+      <div class="role-card creator" onclick="selectRole('creator')">
         <h2>🎨 Creator / Artist</h2>
         <p>Mint packs, earn XP, and grow your mesh through content and tokens.</p>
         <span class="role-tag">Farcaster Ready</span>
       </div>
 
-      <div class="role-card" onclick="selectRole('operator')">
+      <div class="role-card operator" onclick="selectRole('operator')">
         <h2>⚙️ Operator / Engineer</h2>
         <p>Automate XP flows, deploy packs, and manage mesh logic.</p>
         <span class="role-tag">Base • Layer 4</span>
       </div>
 
-      <div class="role-card" onclick="selectRole('explorer')">
+      <div class="role-card explorer" onclick="selectRole('explorer')">
         <h2>🌐 Explorer / User</h2>
         <p>Join quests, open packs, and explore onchain XP & Spawn rewards.</p>
         <span class="role-tag">Zora Mesh v3.1</span>
@@ -46,11 +49,21 @@
     </footer>
   </main>
 
+  <!-- ✦ Scripts ✦ -->
   <script>
+    // Role select + HUD redirect
     function selectRole(role) {
       localStorage.setItem("spawnRole", role);
       window.location.href = "hud.html";
     }
+
+    // Role hover glow
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".role-card").forEach(card => {
+        card.addEventListener("mouseenter", () => card.classList.add("hover"));
+        card.addEventListener("mouseleave", () => card.classList.remove("hover"));
+      });
+    });
   </script>
 
   <script src="mesh-bg.js" defer></script>
