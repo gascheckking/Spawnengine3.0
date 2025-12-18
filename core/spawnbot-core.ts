@@ -23,11 +23,6 @@ export class SpawnBotCore {
         this.handleAutoOpen(packData);
       }
     });
-
-    // Lyssna på feedUpdate för loggning
-    meshCore.on("feedUpdate", (event: any) => {
-      console.log("📡 [SpawnBot] Feed event:", event);
-    });
   }
 
   // —— Hanterar auto-öppning —— //
@@ -40,12 +35,16 @@ export class SpawnBotCore {
         pool: packData.pool || [],
         autoOpen: true,
         onReveal: (result: any) => {
-          const xpGained =
-            result.rarity === "Legendary"
-              ? 500
-              : result.rarity === "Epic"
-              ? 200
-              : 50;
+          const rarity = (result.rarity || "").toLowerCase();
+          let xpGained = 10;
+
+          switch (rarity) {
+            case "fragment": xpGained = 25; break;
+            case "shard": xpGained = 75; break;
+            case "relic": xpGained = 200; break;
+            case "sigil": xpGained = 400; break;
+            case "core": xpGained = 800; break;
+          }
 
           meshCore.gainXP(xpGained, `Opened ${result.name}`);
           meshCore.pushEvent(`🤖 Bot found: ${result.name} (${result.rarity})`);
