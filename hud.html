@@ -10,11 +10,11 @@
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.min.js"></script>
 </head>
 
-<body>
+<body data-theme="glassbase">
   <!-- 🌌 Background Mesh Universe -->
   <canvas id="mesh-bg"></canvas>
 
-  <!-- Header -->
+  <!-- ✦ Header ✦ -->
   <header class="app-header">
     <div class="header-left">
       <img src="logo.png" alt="SpawnEngine Logo" class="logo" />
@@ -30,15 +30,13 @@
     </div>
   </header>
 
-  <!-- Main App -->
+  <!-- ✦ Main Mesh HUD ✦ -->
   <main id="appContainer">
     <!-- HOME -->
     <section id="homeView" class="view active">
       <h2>Mesh HUD</h2>
       <div class="glass-panel">
-        <p class="section-sub">
-          Role: <span id="userRole">...</span>
-        </p>
+        <p class="section-sub">Role: <span id="userRole">Explorer</span></p>
         <ul class="mesh-stats">
           <li>🧠 Active Mesh Modules: <span id="meshModules">0</span></li>
           <li>⚡ XP Streak: <span id="xpStreak">0</span> days</li>
@@ -49,6 +47,7 @@
           <button id="btnBoost" class="btn-outline">Claim XP</button>
         </div>
       </div>
+
       <div id="meshFeed" class="mesh-feed">
         <p class="section-sub">Loading mesh activity...</p>
       </div>
@@ -66,7 +65,7 @@
       <button id="synthBtn" class="btn-outline">Synthesize Relic</button>
     </section>
 
-    <!-- MARKET -->
+    <!-- MARKETPLACE -->
     <section id="marketView" class="view">
       <h2>Marketplace</h2>
       <div id="marketList" class="market-card-list">
@@ -84,7 +83,7 @@
     <!-- BOT -->
     <section id="botView" class="view">
       <h2>SpawnBot Automations</h2>
-      <p>Automate your XP gains and mesh alerts.</p>
+      <p>Automate XP gains and mesh alerts.</p>
       <div id="automationList"></div>
     </section>
 
@@ -99,7 +98,6 @@
     <!-- SETTINGS -->
     <section id="settingsView" class="view">
       <h2>Settings</h2>
-
       <div class="settings-group">
         <h3>Theme</h3>
         <select id="themeSelect">
@@ -124,7 +122,7 @@
     </section>
   </main>
 
-  <!-- Bottom Navigation -->
+  <!-- ✦ Bottom Navigation ✦ -->
   <nav class="bottom-nav">
     <button data-view="homeView" class="nav-btn active">Home</button>
     <button data-view="lootView" class="nav-btn">Loot</button>
@@ -138,18 +136,18 @@
   <!-- Toast -->
   <div id="toast"></div>
 
-  <!-- Modal Backdrop -->
+  <!-- Modal -->
   <div id="modalBackdrop" class="modal-backdrop"></div>
 
-  <!-- Scripts -->
+  <!-- ✦ Scripts ✦ -->
   <script type="module">
     import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.min.js";
 
-    // Role load
+    //—— ROLE ———//
     const role = localStorage.getItem("spawnRole") || "Explorer";
     document.getElementById("userRole").textContent = role;
 
-    // Navigation logic
+    //—— NAVIGATION ———//
     const navBtns = document.querySelectorAll(".nav-btn");
     navBtns.forEach(btn => {
       btn.addEventListener("click", () => {
@@ -161,7 +159,7 @@
       });
     });
 
-    // Wallet connection
+    //—— WALLET ———//
     const connectBtn = document.getElementById("connectWallet");
     const walletEl = document.getElementById("walletAddress");
     let provider, signer;
@@ -171,14 +169,14 @@
         provider = new ethers.BrowserProvider(window.ethereum);
         const accounts = await provider.send("eth_requestAccounts", []);
         signer = await provider.getSigner();
-        walletEl.textContent = accounts[0];
+        walletEl.textContent = accounts[0].slice(0, 6) + "..." + accounts[0].slice(-4);
         toast("Wallet connected");
       } else {
         toast("No wallet found");
       }
     });
 
-    // Toast system
+    //—— TOAST SYSTEM ———//
     window.toast = (msg) => {
       const el = document.getElementById("toast");
       el.textContent = msg;
@@ -186,7 +184,7 @@
       setTimeout(() => el.classList.remove("show"), 2000);
     };
 
-    // XP streak simulation
+    //—— XP BOOST ———//
     document.getElementById("btnBoost").addEventListener("click", () => {
       const el = document.getElementById("xpStreak");
       let val = parseInt(el.textContent);
@@ -195,12 +193,21 @@
       toast(`XP Streak boosted to ${val}`);
     });
 
-    // Simple mesh refresh
+    //—— MESH REFRESH ———//
     document.getElementById("btnRefresh").addEventListener("click", () => {
       const meshEl = document.getElementById("meshModules");
       let count = Math.floor(Math.random() * 8) + 1;
       meshEl.textContent = count;
       toast("Mesh modules synced");
+    });
+
+    //—— SETTINGS THEME ———//
+    const themeSelect = document.getElementById("themeSelect");
+    themeSelect.value = localStorage.getItem("spawnTheme") || "glassbase";
+    themeSelect.addEventListener("change", e => {
+      document.body.dataset.theme = e.target.value;
+      localStorage.setItem("spawnTheme", e.target.value);
+      toast(`Theme: ${e.target.value}`);
     });
   </script>
 
