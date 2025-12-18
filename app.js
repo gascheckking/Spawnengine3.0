@@ -234,54 +234,34 @@ function bindRevealDemo() {
   });
 }
 
-// ---------- MESH BACKGROUND ----------
-const canvas = document.getElementById("meshCanvas");
-const ctx = canvas.getContext("2d");
-let w, h, particles = [];
+// ---------- MESH PULSE INTERACTION ----------
+let eventCount = 0;
+let xpCount = 0;
 
-function resize() {
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
-}
-window.addEventListener("resize", resize);
-resize();
+const updateStats = () => {
+  const eEl = document.getElementById("eventCount");
+  const xEl = document.getElementById("xpCount");
+  if (eEl) eEl.innerText = eventCount;
+  if (xEl) xEl.innerText = xpCount;
+};
 
-for (let i = 0; i < 42; i++) {
-  particles.push({
-    x: Math.random() * w,
-    y: Math.random() * h,
-    vx: (Math.random() - 0.5) * 0.6,
-    vy: (Math.random() - 0.5) * 0.6,
-    r: Math.random() * 2 + 0.5
+// Koppla puls-animationer till valfria knappar i UI:t
+const packBtn = document.getElementById("openPackBtn");
+const synthBtn = document.getElementById("synthBtn");
+
+if (packBtn) {
+  packBtn.addEventListener("click", () => {
+    eventCount++;
+    spawnMeshPulse("#14b8a6"); // teal
+    updateStats();
   });
 }
 
-function drawMesh() {
-  ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = "rgba(60, 246, 255, 0.4)";
-  for (let p of particles) {
-    p.x += p.vx;
-    p.y += p.vy;
-    if (p.x < 0 || p.x > w) p.vx *= -1;
-    if (p.y < 0 || p.y > h) p.vy *= -1;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x;
-      const dy = particles[i].y - particles[j].y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 100) {
-        ctx.strokeStyle = "rgba(60, 246, 255, 0.15)";
-        ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.stroke();
-      }
-    }
-  }
-  requestAnimationFrame(drawMesh);
+if (synthBtn) {
+  synthBtn.addEventListener("click", () => {
+    eventCount++;
+    xpCount += 10;
+    spawnMeshPulse("#6366f1"); // indigo
+    updateStats();
+  });
 }
-drawMesh();
