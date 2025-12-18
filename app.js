@@ -16,26 +16,38 @@ let xpCount = 0;
 
 //——— INIT ———//
 document.addEventListener("DOMContentLoaded", async () => {
-  // — MeshCore & Bridge Boot —
-  await MeshCore.init();
-  MeshBridge.init();
-  console.log("%cSpawnEngine MeshCore online:", "color:#14b8a6", MeshCore.getProfile());
+  try {
+    // — MeshCore & Bridge Boot —
+    if (MeshCore && MeshCore.init) await MeshCore.init();
+    if (MeshBridge && MeshBridge.init) MeshBridge.init();
 
-  // — UI INIT SEQUENCE —
-  document.body.dataset.theme = currentTheme;
-  setupNavigation();
-  setupThemeSwitcher();
-  setupToast();
-  setupSettings();
-  await loadHome();
-  await loadProfile();
-  await loadMarketplace();
-  setupLoot();
-  setupSupport();
-  setupTracker();
-  setupBot();
-  bindRevealDemo();
-  setupPulseInteractions();
+    console.log("%cSpawnEngine MeshCore online:", "color:#14b8a6", MeshCore?.getProfile?.());
+
+    // — UI INIT SEQUENCE —
+    document.body.dataset.theme = currentTheme;
+    setupNavigation();
+    setupThemeSwitcher();
+    setupToast();
+    setupSettings();
+    await loadHome();
+    await loadProfile();
+    await loadMarketplace();
+    setupLoot();
+    setupSupport();
+    setupTracker();
+    setupBot();
+    bindRevealDemo();
+    setupPulseInteractions();
+
+    // — Display role from localStorage —
+    const role = localStorage.getItem("spawnRole");
+    if (role) {
+      console.log(`🧩 Active Role: ${role}`);
+      toast(`Role active: ${role.toUpperCase()}`);
+    }
+  } catch (err) {
+    console.error("⚠️ SpawnEngine boot error:", err);
+  }
 });
 
 //——— NAVIGATION ———//
@@ -59,7 +71,7 @@ window.toast = (msg) => {
   if (!el) return;
   el.textContent = msg;
   el.classList.add("show");
-  setTimeout(() => el.classList.remove("show"), 1200);
+  setTimeout(() => el.classList.remove("show"), 1500);
 };
 
 //——— THEME ———//
@@ -87,10 +99,15 @@ function setupSettings() {
 //——— PROFILE ———//
 async function loadProfile() {
   try {
-    const { getProfile } = await import("./api/user-profile.js");
-    userProfile = getProfile();
-    document.getElementById("xpBalance").textContent = `XP: ${userProfile.xpBalance}`;
-    document.getElementById("spnBalance").textContent = `SPN: ${userProfile.spnBalance}`;
+    const mockProfile = {
+      name: "Spawn Operator",
+      walletAddress: "0xFAcE...C0DE",
+      xpBalance: 4200,
+      spnBalance: 3.14,
+    };
+    userProfile = mockProfile;
+    document.getElementById("xpBalance").textContent = `XP: ${mockProfile.xpBalance}`;
+    document.getElementById("spnBalance").textContent = `SPN: ${mockProfile.spnBalance}`;
   } catch (err) {
     console.error("Profile load error:", err);
   }
@@ -99,11 +116,15 @@ async function loadProfile() {
 //——— HOME FEED ———//
 async function loadHome() {
   try {
-    const { getHomeFeed } = await import("./api/mesh-feed.js");
-    feed = getHomeFeed();
+    const mockFeed = [
+      "🌀 Mesh Pulse detected on Base.",
+      "🎨 Creator minted a new pack.",
+      "📡 Operator deployed automation node.",
+      "💠 Explorer claimed XP reward.",
+    ];
     const el = document.getElementById("meshFeed");
     el.innerHTML = "";
-    feed.forEach((item) => {
+    mockFeed.forEach((item) => {
       const div = document.createElement("div");
       div.className = "feed-item";
       div.textContent = item;
@@ -117,11 +138,15 @@ async function loadHome() {
 //——— MARKETPLACE ———//
 async function loadMarketplace() {
   try {
-    const { getMarketplaceListings } = await import("./api/marketplace-listings.js");
-    marketplace = getMarketplaceListings();
+    const mockListings = [
+      { id: 1, name: "Genesis Pack", type: "Pack", seller: "@spawniz", price: "0.02", currency: "ETH" },
+      { id: 2, name: "Mesh Node", type: "Automation", seller: "@operator", price: "0.01", currency: "ETH" },
+      { id: 3, name: "Zora Relic", type: "Relic", seller: "@collector", price: "0.005", currency: "ETH" },
+    ];
+
     const list = document.getElementById("marketList");
     list.innerHTML = "";
-    marketplace.forEach((item) => {
+    mockListings.forEach((item) => {
       const card = document.createElement("div");
       card.className = "market-card";
       card.innerHTML = `
@@ -135,18 +160,15 @@ async function loadMarketplace() {
         <div class="market-card-meta">
           <div class="market-card-price">${item.price} ${item.currency}</div>
           <button class="market-card-btn" data-id="${item.id}">Buy</button>
-          <button class="market-card-btn js-reveal-demo">Reveal demo</button>
+          <button class="market-card-btn js-reveal-demo">Reveal</button>
         </div>`;
       list.appendChild(card);
     });
 
-    list.addEventListener("click", async (e) => {
+    list.addEventListener("click", (e) => {
       if (e.target.classList.contains("market-card-btn") && e.target.dataset.id) {
         const id = parseInt(e.target.dataset.id);
-        const { simulatePurchase } = await import("./api/marketplace-listings.js");
-        const res = simulatePurchase(id);
-        toast(res.message);
-        if (res.success) loadMarketplace();
+        toast(`💸 Purchased item #${id}`);
       }
     });
   } catch (err) {
@@ -159,22 +181,26 @@ function setupLoot() {
   const openBtn = document.getElementById("openPackBtn");
   const synthBtn = document.getElementById("synthBtn");
 
-  openBtn.addEventListener("click", async () => {
-    const { simulatePackOpen } = await import("./api/pack-actions.js");
-    const result = simulatePackOpen();
-    toast(result.events.join(", "));
-    updateInventory(result.inventory);
-  });
+  const inventory = { fragments: 3, shards: 1, relics: 0 };
+  updateInventory(inventory);
 
-  synthBtn.addEventListener("click", async () => {
-    const { simulateSynthesis } = await import("./api/pack-actions.js");
-    const result = simulateSynthesis();
-    toast(result.message);
-    updateInventory(result.inventory);
-  });
+  if (openBtn) {
+    openBtn.addEventListener("click", () => {
+      toast("🎁 Pack opened! You gained 1 Shard.");
+      spawnMeshPulse("#14b8a6");
+      inventory.shards++;
+      updateInventory(inventory);
+    });
+  }
 
-  const { getInventory } = await import("./api/pack-actions.js");
-  updateInventory(getInventory());
+  if (synthBtn) {
+    synthBtn.addEventListener("click", () => {
+      toast("⚗️ Relic synthesized!");
+      spawnMeshPulse("#6366f1");
+      inventory.relics++;
+      updateInventory(inventory);
+    });
+  }
 }
 
 function updateInventory(inv) {
@@ -188,6 +214,8 @@ function setupSupport() {
   const input = document.getElementById("supportInput");
   const submit = document.getElementById("submitSupport");
   const feed = document.getElementById("supportFeed");
+
+  if (!input || !submit) return;
 
   submit.addEventListener("click", () => {
     const text = input.value.trim();
@@ -204,8 +232,9 @@ function setupSupport() {
 //——— TRACKER ———//
 function setupTracker() {
   const feed = document.getElementById("trackerFeed");
+  if (!feed) return;
   feed.innerHTML = `
-    <div class="feed-item">👣 Tracked wallet: ${userProfile?.walletAddress || "0x..."}</div>
+    <div class="feed-item">👣 Tracking wallet: ${userProfile?.walletAddress || "0x...C0DE"}</div>
     <div class="feed-item">💸 Last pack purchase detected (mock).</div>
     <div class="feed-item">📈 XP event registered.</div>
   `;
@@ -214,9 +243,10 @@ function setupTracker() {
 //——— SPAWNBOT ———//
 function setupBot() {
   const list = document.getElementById("automationList");
+  if (!list) return;
   list.innerHTML = `
     <div class="feed-item">🤖 Auto-claim streak XP — ON</div>
-    <div class="feed-item">⚙️ Alert: Gas < 0.05 Gwei</div>
+    <div class="feed-item">⚙️ Gas Alert < 0.05 Gwei</div>
     <div class="feed-item">📡 Watch Creator: @spawniz</div>
   `;
 }
@@ -225,24 +255,13 @@ function setupBot() {
 function bindRevealDemo() {
   document.body.addEventListener("click", (e) => {
     if (e.target.classList.contains("js-reveal-demo")) {
-      if (window.SpawnEngine && SpawnEngine.reveal) {
-        SpawnEngine.reveal({
-          title: "Pack Reveal Demo",
-          autoOpen: true,
-          onReveal: (win) => toast(`You pulled: ${win.name} (${win.rarity})`)
-        });
-      } else {
-        toast("SDK not loaded");
-      }
+      toast("✨ Pack reveal triggered!");
     }
   });
 }
 
 //——— MESH PULSE INTERAKTION ———//
 function setupPulseInteractions() {
-  const packBtn = document.getElementById("openPackBtn");
-  const synthBtn = document.getElementById("synthBtn");
-
   const updateStats = () => {
     const eEl = document.getElementById("eventCount");
     const xEl = document.getElementById("xpCount");
@@ -250,20 +269,11 @@ function setupPulseInteractions() {
     if (xEl) xEl.innerText = xpCount;
   };
 
-  if (packBtn) {
-    packBtn.addEventListener("click", () => {
+  document.body.addEventListener("click", (e) => {
+    if (e.target.id === "openPackBtn" || e.target.id === "synthBtn") {
       eventCount++;
-      spawnMeshPulse("#14b8a6"); // Teal pulse
+      xpCount += 5;
       updateStats();
-    });
-  }
-
-  if (synthBtn) {
-    synthBtn.addEventListener("click", () => {
-      eventCount++;
-      xpCount += 10;
-      spawnMeshPulse("#6366f1"); // Indigo pulse
-      updateStats();
-    });
-  }
+    }
+  });
 }
