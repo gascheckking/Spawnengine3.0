@@ -1,28 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const trackBtn = document.getElementById("trackBtn");
-  const walletInput = document.getElementById("walletSearch");
+  const walletBtn = document.getElementById("walletBtn");
   const feed = document.getElementById("activityFeed");
+  const trackWallet = document.getElementById("trackWallet");
+  const input = document.getElementById("walletInput");
+  const profile = document.getElementById("profilePanel");
 
-  trackBtn.addEventListener("click", () => {
-    const addr = walletInput.value.trim();
-    if (!addr) return alert("Enter wallet address or ENS");
+  walletBtn.addEventListener("click", () => alert("Wallet connect coming soon"));
 
-    feed.innerHTML = "<li>Loading data...</li>";
+  document.getElementById("openProfile").onclick = () => profile.classList.remove("hidden");
+  document.getElementById("closeProfile").onclick = () => profile.classList.add("hidden");
 
-    // Mock: simulera on-chain data
+  trackWallet.addEventListener("click", () => {
+    const addr = input.value.trim();
+    if (!addr) return alert("Enter wallet or ENS");
+    feed.innerHTML = "<p>Loading...</p>";
     setTimeout(() => {
-      document.getElementById("xpStat").textContent = Math.floor(Math.random() * 2000);
-      document.getElementById("gasStat").textContent = (Math.random() * 50).toFixed(2) + " Gwei";
-      document.getElementById("txCount").textContent = Math.floor(Math.random() * 500);
-      document.getElementById("tokenCount").textContent = Math.floor(Math.random() * 30);
-
       const mock = [
-        "Minted pack #12 on Zora",
-        "Swapped 0.3 ETH for $SPWN",
-        "Claimed 20 XP bonus",
-        "Opened rare pack (Mythic Tier)"
+        `${addr.slice(0,6)} swapped 0.3 ETH on Base`,
+        `${addr.slice(0,6)} minted pack #9`,
+        `${addr.slice(0,6)} earned +120 XP`,
       ];
-      feed.innerHTML = mock.map(e => `<li>${e}</li>`).join("");
+      feed.innerHTML = mock.map(x => `<p>${x}</p>`).join("");
     }, 800);
   });
 });
