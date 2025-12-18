@@ -3,7 +3,7 @@
    Casino-style Mesh loot system with XP/Item rewards
    ============================================================ */
 
-import { getInventory, simulatePackOpen } from "../api/pack-actions.js";
+import { getInventory, simulatePackOpen } from "../../api/pack-actions.js";
 
 /* —— Elements —— */
 const reels = [
