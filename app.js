@@ -3,10 +3,20 @@
    ==================================================== */
 
 //——— IMPORTER ———//
-import { MeshCore } from "./core/mesh-core.js";
+import { meshCore } from "./core/MeshCore.js";
 import { MeshBridge } from "./core/mesh-bridge.js";
 
 //——— GLOBAL STATE ———//
+
+// Skicka ett nytt pack till systemet
+meshCore.emit("packReceived", {
+  name: "Cyber Chest",
+  pool: [
+    { name: "Neon Blade", rarity: "Epic" },
+    { name: "Rusty Bolt", rarity: "Common" },
+    { name: "Star Key", rarity: "Legendary" },
+  ],
+});
 let currentTheme = localStorage.getItem("spawnTheme") || "glassbase";
 let userProfile = null;
 let marketplace = [];
