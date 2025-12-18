@@ -20,7 +20,7 @@ const slotResult = document.getElementById("slotResult");
 const slotBalance = document.getElementById("slotBalance");
 
 /* —— Config —— */
-const SYMBOLS = ["🍒", "💎", "⭐", "🔔", "7️⃣", "💥", "W", "S"];
+const SYMBOLS = ["🍒", "💎", "⭐", "🔔", "7️⃣", "💥", "⚙️", "🎴"];
 let balance = 1000;
 let lastLoot = null;
 
@@ -32,10 +32,12 @@ function randomSymbol() {
 function rollReels() {
   reels.forEach((r, i) => {
     r.textContent = randomSymbol();
-    r.style.transform = "translateY(-20px)";
+    r.style.transform = "translateY(-30px)";
+    r.style.opacity = "0.6";
     setTimeout(() => {
       r.style.transform = "translateY(0)";
-    }, 200 * i);
+      r.style.opacity = "1";
+    }, 150 * (i + 1));
   });
 }
 
@@ -51,7 +53,7 @@ spinBtn.addEventListener("click", () => {
   collectBtn.disabled = true;
   balance -= bet;
   slotBalance.textContent = `${balance} SPN`;
-  slotResult.textContent = "Spinning...";
+  slotResult.textContent = "🎡 Spinning...";
 
   rollReels();
 
@@ -59,21 +61,25 @@ spinBtn.addEventListener("click", () => {
     const symbols = reels.map(() => randomSymbol());
     reels.forEach((r, i) => (r.textContent = symbols[i]));
 
-    const isWin = symbols.every((s) => s === symbols[0]);
+    const winSymbol = symbols[0];
+    const isWin = symbols.every((s) => s === winSymbol);
+
     if (isWin) {
       const reward = simulatePackOpen();
       balance += 200;
       lastLoot = reward;
-      slotResult.textContent = `🎉 JACKPOT! You won +200 SPN and loot!`;
+      slotResult.textContent = `🎉 JACKPOT! Matched ${winSymbol} — +200 SPN + loot!`;
       showToast("Jackpot loot unlocked!");
       collectBtn.disabled = false;
+      reels.forEach((r) => r.classList.add("win"));
     } else {
       slotResult.textContent = "No win this time. Try again!";
+      reels.forEach((r) => r.classList.remove("win"));
     }
 
     slotBalance.textContent = `${balance} SPN`;
     spinBtn.disabled = false;
-  }, 2000);
+  }, 2200);
 });
 
 /* —— Collect Loot —— */
