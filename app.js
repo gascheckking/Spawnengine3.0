@@ -1,24 +1,25 @@
 /* ====================================================
-   SpawnEngine v3.1 — Reforge App Core (JS Engine)
+   SPAWNENGINE v3.1 — Reforge App Core (JS Engine)
    ==================================================== */
 
-//——— MESH CORE IMPORT ———//
+//——— IMPORTER ———//
 import { MeshCore } from "./core/mesh-core.js";
-import { MeshBridge } from "./core/mesh-bridge.js"; // ✅ Lägg importen här uppe!
+import { MeshBridge } from "./core/mesh-bridge.js";
 
-// ---------- GLOBAL STATE ----------
+//——— GLOBAL STATE ———//
 let currentTheme = localStorage.getItem("spawnTheme") || "glassbase";
 let userProfile = null;
 let marketplace = [];
 let feed = [];
+let eventCount = 0;
+let xpCount = 0;
 
-// ---------- INIT ----------
+//——— INIT ———//
 document.addEventListener("DOMContentLoaded", async () => {
-  // —— MeshCore & Bridge Boot —— //
+  // — MeshCore & Bridge Boot —
   await MeshCore.init();
-  MeshBridge.init(); // ✅ initiera direkt efter MeshCore
-
-  console.log("SpawnEngine MeshCore online:", MeshCore.getProfile());
+  MeshBridge.init();
+  console.log("%cSpawnEngine MeshCore online:", "color:#14b8a6", MeshCore.getProfile());
 
   // — UI INIT SEQUENCE —
   document.body.dataset.theme = currentTheme;
@@ -34,23 +35,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupTracker();
   setupBot();
   bindRevealDemo();
+  setupPulseInteractions();
 });
-// ---------- NAVIGATION ----------
+
+//——— NAVIGATION ———//
 function setupNavigation() {
   const buttons = document.querySelectorAll(".nav-btn");
-  buttons.forEach(btn => {
+  buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      buttons.forEach(b => b.classList.remove("active"));
+      buttons.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       const target = btn.dataset.view;
-      document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+      document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
       document.getElementById(target).classList.add("active");
       window.scrollTo(0, 0);
     });
   });
 }
 
-// ---------- TOAST ----------
+//——— TOAST ———//
 window.toast = (msg) => {
   const el = document.getElementById("toast");
   if (!el) return;
@@ -59,30 +62,29 @@ window.toast = (msg) => {
   setTimeout(() => el.classList.remove("show"), 1200);
 };
 
-// ---------- THEME ----------
+//——— THEME ———//
 function setupThemeSwitcher() {
   const select = document.getElementById("themeSelect");
   if (!select) return;
   select.value = currentTheme;
-  select.addEventListener("change", e => {
+  select.addEventListener("change", (e) => {
     const theme = e.target.value;
     document.body.dataset.theme = theme;
     localStorage.setItem("spawnTheme", theme);
-    toast(`Theme: ${theme}`);
+    toast(`Theme set to: ${theme}`);
   });
 }
 
-// ---------- SETTINGS ----------
+//——— SETTINGS ———//
 function setupSettings() {
   const toggle = document.getElementById("pwaToggle");
   if (!toggle) return;
   toggle.addEventListener("change", (e) => {
-    if (e.target.checked) toast("Offline mode enabled");
-    else toast("Online mode active");
+    toast(e.target.checked ? "Offline mode enabled" : "Online mode active");
   });
 }
 
-// ---------- PROFILE ----------
+//——— PROFILE ———//
 async function loadProfile() {
   try {
     const { getProfile } = await import("./api/user-profile.js");
@@ -94,14 +96,14 @@ async function loadProfile() {
   }
 }
 
-// ---------- HOME FEED ----------
+//——— HOME FEED ———//
 async function loadHome() {
   try {
     const { getHomeFeed } = await import("./api/mesh-feed.js");
     feed = getHomeFeed();
     const el = document.getElementById("meshFeed");
     el.innerHTML = "";
-    feed.forEach(item => {
+    feed.forEach((item) => {
       const div = document.createElement("div");
       div.className = "feed-item";
       div.textContent = item;
@@ -112,14 +114,14 @@ async function loadHome() {
   }
 }
 
-// ---------- MARKETPLACE ----------
+//——— MARKETPLACE ———//
 async function loadMarketplace() {
   try {
     const { getMarketplaceListings } = await import("./api/marketplace-listings.js");
     marketplace = getMarketplaceListings();
     const list = document.getElementById("marketList");
     list.innerHTML = "";
-    marketplace.forEach(item => {
+    marketplace.forEach((item) => {
       const card = document.createElement("div");
       card.className = "market-card";
       card.innerHTML = `
@@ -152,7 +154,7 @@ async function loadMarketplace() {
   }
 }
 
-// ---------- LOOT ----------
+//——— LOOT ———//
 function setupLoot() {
   const openBtn = document.getElementById("openPackBtn");
   const synthBtn = document.getElementById("synthBtn");
@@ -181,7 +183,7 @@ function updateInventory(inv) {
   document.getElementById("relicCount").textContent = inv.relics;
 }
 
-// ---------- SUPPORT (SupCast) ----------
+//——— SUPPORT (SupCast) ———//
 function setupSupport() {
   const input = document.getElementById("supportInput");
   const submit = document.getElementById("submitSupport");
@@ -199,7 +201,7 @@ function setupSupport() {
   });
 }
 
-// ---------- TRACKER ----------
+//——— TRACKER ———//
 function setupTracker() {
   const feed = document.getElementById("trackerFeed");
   feed.innerHTML = `
@@ -209,7 +211,7 @@ function setupTracker() {
   `;
 }
 
-// ---------- SPAWNBOT ----------
+//——— SPAWNBOT ———//
 function setupBot() {
   const list = document.getElementById("automationList");
   list.innerHTML = `
@@ -219,7 +221,7 @@ function setupBot() {
   `;
 }
 
-// ---------- REVEAL DEMO ----------
+//——— REVEAL DEMO ———//
 function bindRevealDemo() {
   document.body.addEventListener("click", (e) => {
     if (e.target.classList.contains("js-reveal-demo")) {
@@ -236,34 +238,32 @@ function bindRevealDemo() {
   });
 }
 
-// ---------- MESH PULSE INTERACTION ----------
-let eventCount = 0;
-let xpCount = 0;
+//——— MESH PULSE INTERAKTION ———//
+function setupPulseInteractions() {
+  const packBtn = document.getElementById("openPackBtn");
+  const synthBtn = document.getElementById("synthBtn");
 
-const updateStats = () => {
-  const eEl = document.getElementById("eventCount");
-  const xEl = document.getElementById("xpCount");
-  if (eEl) eEl.innerText = eventCount;
-  if (xEl) xEl.innerText = xpCount;
-};
+  const updateStats = () => {
+    const eEl = document.getElementById("eventCount");
+    const xEl = document.getElementById("xpCount");
+    if (eEl) eEl.innerText = eventCount;
+    if (xEl) xEl.innerText = xpCount;
+  };
 
-// Koppla puls-animationer till valfria knappar i UI:t
-const packBtn = document.getElementById("openPackBtn");
-const synthBtn = document.getElementById("synthBtn");
+  if (packBtn) {
+    packBtn.addEventListener("click", () => {
+      eventCount++;
+      spawnMeshPulse("#14b8a6"); // Teal pulse
+      updateStats();
+    });
+  }
 
-if (packBtn) {
-  packBtn.addEventListener("click", () => {
-    eventCount++;
-    spawnMeshPulse("#14b8a6"); // teal
-    updateStats();
-  });
-}
-
-if (synthBtn) {
-  synthBtn.addEventListener("click", () => {
-    eventCount++;
-    xpCount += 10;
-    spawnMeshPulse("#6366f1"); // indigo
-    updateStats();
-  });
+  if (synthBtn) {
+    synthBtn.addEventListener("click", () => {
+      eventCount++;
+      xpCount += 10;
+      spawnMeshPulse("#6366f1"); // Indigo pulse
+      updateStats();
+    });
+  }
 }
