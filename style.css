@@ -1,10 +1,11 @@
-/* ===========================================
-   SpawnEngine v3.1 — Glass Base + Zora Gold + Mesh Universe
-   =========================================== */
-
+/* ============================================================
+   SPAWNENGINE v3.1 — Glass Base + Zora Gold + Mesh Universe
+   ============================================================ */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
-/* Core Theme Variables */
+/* ============================================================
+   Core Theme Variables
+   ============================================================ */
 :root {
   --bg: #03040d;
   --bg-glass: rgba(10, 12, 26, 0.6);
@@ -18,7 +19,9 @@
   --transition: 0.25s ease;
 }
 
-/* Themes */
+/* ============================================================
+   Themes
+   ============================================================ */
 body[data-theme="matrix"] {
   --bg: #000;
   --text: #0aff9d;
@@ -37,12 +40,10 @@ body[data-theme="zoragold"] {
   --glow: 0 0 25px rgba(255, 200, 87, 0.4);
 }
 
-/* Base Reset */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* ============================================================
+   Base Reset
+   ============================================================ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
   width: 100%;
   height: 100%;
@@ -63,10 +64,9 @@ canvas#mesh-bg {
   background: radial-gradient(circle at 30% 20%, rgba(20, 25, 55, 0.6), var(--bg));
 }
 
-/* ===========================================
+/* ============================================================
    ROLE SELECTION SCREEN (index.html)
-   =========================================== */
-
+   ============================================================ */
 .role-container {
   position: relative;
   z-index: 2;
@@ -151,7 +151,7 @@ canvas#mesh-bg {
   box-shadow: 0 0 40px var(--accent);
 }
 
-/* Role-specific glow colors */
+/* Specific Hover Glow */
 .role-card.creator:hover { box-shadow: 0 0 35px #ff69b4; }
 .role-card.operator:hover { box-shadow: 0 0 35px #3cf6ff; }
 .role-card.explorer:hover { box-shadow: 0 0 35px #b9ff7a; }
@@ -162,11 +162,9 @@ canvas#mesh-bg {
   font-size: 0.85rem;
 }
 
-/* ===========================================
+/* ============================================================
    MESH HUD SCREEN (hud.html)
-   =========================================== */
-
-/* Header */
+   ============================================================ */
 .app-header {
   display: flex;
   justify-content: space-between;
@@ -204,7 +202,9 @@ canvas#mesh-bg {
   opacity: 0.9;
 }
 
-/* Main Container */
+/* ============================================================
+   Main Container
+   ============================================================ */
 main {
   position: relative;
   z-index: 2;
@@ -216,11 +216,11 @@ main {
   display: none;
   animation: fadeIn 0.25s ease;
 }
-.view.active {
-  display: block;
-}
+.view.active { display: block; }
 
-/* Cards & Panels */
+/* ============================================================
+   Panels & Cards
+   ============================================================ */
 .market-card,
 .mesh-box,
 .inventory-box,
@@ -239,7 +239,9 @@ main {
   margin: 0 auto;
 }
 
-/* Buttons */
+/* ============================================================
+   Buttons
+   ============================================================ */
 button, .btn-outline, .btn-primary, .btn-icon, .mesh-btn {
   cursor: pointer;
   border-radius: 999px;
@@ -249,8 +251,7 @@ button, .btn-outline, .btn-primary, .btn-icon, .mesh-btn {
   border: none;
   transition: var(--transition);
 }
-.btn-primary,
-.mesh-btn.teal {
+.btn-primary {
   background: linear-gradient(135deg, var(--accent), var(--accent-alt));
   color: #050510;
 }
@@ -263,18 +264,18 @@ button, .btn-outline, .btn-primary, .btn-icon, .mesh-btn {
   background: transparent;
   border: 1px solid var(--border);
   font-size: 1.2rem;
-  line-height: 1;
   width: 36px;
   height: 36px;
+  line-height: 1;
 }
-.mesh-btn.indigo { background-color: #6366f1; color: #fff; }
-.mesh-btn.red { background-color: #ef4444; color: #fff; }
-button:hover, .mesh-btn:hover {
-  transform: scale(1.03);
+button:hover {
+  transform: scale(1.05);
   filter: brightness(1.1);
 }
 
-/* Nav */
+/* ============================================================
+   Navigation
+   ============================================================ */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -303,7 +304,9 @@ button:hover, .mesh-btn:hover {
   text-shadow: 0 0 8px var(--accent);
 }
 
-/* Toast */
+/* ============================================================
+   Toast
+   ============================================================ */
 #toast {
   position: fixed;
   bottom: 80px;
@@ -323,15 +326,26 @@ button:hover, .mesh-btn:hover {
   transform: translateX(-50%) scale(1);
 }
 
-/* Animations */
+/* ============================================================
+   Animations & Scrollbar
+   ============================================================ */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-thumb {
   background: var(--accent);
   border-radius: 8px;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 768px) {
+  .role-grid { grid-template-columns: 1fr; }
+  .app-header { flex-direction: column; gap: 8px; text-align: center; }
+  .header-right { flex-wrap: wrap; justify-content: center; }
+  .glass-panel { width: 100%; }
 }
