@@ -4,23 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SpawnEngine · Mesh Protocol</title>
+
+  <!-- Manifest & Fonts -->
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
-  <script src="pwa/sw-register.js" defer></script>
-</head>
-<body>
+  <link rel="icon" type="image/png" href="logo.png" />
 
-  <!-- 🌌 Background Mesh Universe -->
+  <!-- PWA Register -->
+  <script src="./pwa/sw-register.js" defer></script>
+</head>
+
+<body>
+  <!-- ✦ Background Mesh Universe ✦ -->
   <canvas id="mesh-bg"></canvas>
 
-  <!-- Header -->
+  <!-- ✦ Header ✦ -->
   <header class="app-header">
     <div class="header-left">
       <img src="logo.png" alt="SpawnEngine Logo" class="logo" />
       <h1 class="app-title">SpawnEngine</h1>
     </div>
     <div class="header-right">
-      <button id="connectWallet" class="btn-outline">Connect Wallet</button>
+      <button id="connectWallet" class="btn-outline">Connect</button>
       <div class="header-balance">
         <span id="xpBalance">XP: 0</span>
         <span id="spnBalance">SPN: 0.000</span>
@@ -29,15 +34,17 @@
     </div>
   </header>
 
-  <!-- Main App Container -->
-  <main id="appContainer" style="position: relative; z-index: 1;">
+  <!-- ✦ Main App Container ✦ -->
+  <main id="appContainer">
+    <!-- HOME -->
     <section id="homeView" class="view active">
       <h2>Mesh HUD</h2>
-      <div class="mesh-feed" id="meshFeed">
-        <p class="section-sub">Loading mesh feed...</p>
+      <div id="meshFeed" class="mesh-feed">
+        <p class="section-sub">Loading mesh activity...</p>
       </div>
     </section>
 
+    <!-- LOOT -->
     <section id="lootView" class="view">
       <h2>Loot & Rewards</h2>
       <button class="btn-primary" id="openPackBtn">Open Pack</button>
@@ -49,43 +56,35 @@
       <button id="synthBtn" class="btn-outline">Synthesize Relic</button>
     </section>
 
+    <!-- MARKETPLACE -->
     <section id="marketView" class="view">
       <h2>Marketplace</h2>
-      <div class="market-card-list" id="marketList">
+      <div id="marketList" class="market-card-list">
         <p>Loading listings...</p>
       </div>
     </section>
 
-    <section id="meshView" class="view">
-      <h2>Mesh Overview</h2>
-      <div id="meshModules" class="mesh-box">
-        <p>Active modules:</p>
-        <ul id="meshModuleList"></ul>
-      </div>
-    </section>
-
-    <section id="supcastView" class="view">
-      <h2>SupCast Support</h2>
-      <p>Submit ideas, bugs or support tickets to get XP rewards.</p>
-      <textarea id="supportInput" placeholder="Describe your issue or idea..."></textarea>
-      <button id="submitSupport" class="btn-primary">Submit Ticket</button>
-      <div id="supportFeed" class="support-feed"></div>
-    </section>
-
+    <!-- TRACKER -->
     <section id="trackerView" class="view">
       <h2>SpawnTracker</h2>
-      <p>Wallets & Onchain Log (mock data)</p>
       <div id="trackerFeed" class="tracker-feed"></div>
     </section>
 
+    <!-- SPAWNBOT -->
     <section id="botView" class="view">
       <h2>SpawnBot Automations</h2>
-      <p>Create rules and alerts for your mesh.</p>
-      <div id="automationList">
-        <p>No automations yet.</p>
-      </div>
+      <div id="automationList"></div>
     </section>
 
+    <!-- SUPCAST -->
+    <section id="supcastView" class="view">
+      <h2>SupCast Support</h2>
+      <textarea id="supportInput" placeholder="Describe your issue or idea..."></textarea>
+      <button id="submitSupport" class="btn-primary">Submit</button>
+      <div id="supportFeed" class="support-feed"></div>
+    </section>
+
+    <!-- SETTINGS -->
     <section id="settingsView" class="view">
       <h2>Settings</h2>
 
@@ -99,45 +98,11 @@
       </div>
 
       <div class="settings-group">
-        <h3>Platform</h3>
+        <h3>Offline Mode</h3>
         <label class="switch">
           <input type="checkbox" id="pwaToggle" />
           <span class="slider"></span>
         </label>
-        <label for="pwaToggle">Offline Mode (PWA)</label>
-      </div>
-
-      <div class="settings-group">
-        <h3>Docked Apps & SDK</h3>
-        <p class="section-sub">Drop-in widgets for miniapps.</p>
-
-        <div class="supcast-block">
-          <h4>1) Include SDK</h4>
-          <input class="field-input" value='<script src="https://onsdag.vercel.app/spawnengine-sdk.js"></script>' readonly />
-        </div>
-
-        <div class="supcast-block">
-          <h4>2) Add Button</h4>
-          <input class="field-input" value='<button id="openPack">Open pack</button>' readonly />
-        </div>
-
-        <div class="supcast-block">
-          <h4>3) Call Reveal</h4>
-          <textarea class="field-input field-textarea" readonly>
-document.getElementById('openPack').onclick = () => {
-  SpawnEngine.reveal({
-    title: 'My Pack Reveal',
-    pool: [
-      { name: 'Common', rarity: 'Common' },
-      { name: 'Rare', rarity: 'Rare' },
-      { name: 'Epic', rarity: 'Epic' },
-      { name: 'Legendary', rarity: 'Legendary' }
-    ],
-    onReveal: (win) => console.log('WIN:', win)
-  });
-};
-          </textarea>
-        </div>
       </div>
 
       <div class="settings-group">
@@ -147,15 +112,14 @@ document.getElementById('openPack').onclick = () => {
     </section>
   </main>
 
-  <!-- Bottom Nav -->
+  <!-- ✦ Bottom Nav ✦ -->
   <nav class="bottom-nav">
     <button data-view="homeView" class="nav-btn active">Home</button>
     <button data-view="lootView" class="nav-btn">Loot</button>
     <button data-view="marketView" class="nav-btn">Market</button>
-    <button data-view="meshView" class="nav-btn">Mesh</button>
-    <button data-view="supcastView" class="nav-btn">SupCast</button>
     <button data-view="trackerView" class="nav-btn">Tracker</button>
     <button data-view="botView" class="nav-btn">Bot</button>
+    <button data-view="supcastView" class="nav-btn">SupCast</button>
     <button data-view="settingsView" class="nav-btn">Settings</button>
   </nav>
 
@@ -165,9 +129,8 @@ document.getElementById('openPack').onclick = () => {
   <!-- Modal Backdrop -->
   <div id="modalBackdrop" class="modal-backdrop"></div>
 
-  <!-- 🔧 Scripts -->
-<script src="mesh-bg.js" defer></script>
-<script src="app.js" defer></script>
-<script src="./pwa/sw-register.js" defer></script>
+  <!-- ✦ Scripts ✦ -->
+  <script type="module" src="app.js"></script>
+  <script src="mesh-bg.js" defer></script>
 </body>
 </html>
