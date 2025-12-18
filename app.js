@@ -13,7 +13,10 @@ let feed = [];
 
 // ---------- INIT ----------
 document.addEventListener("DOMContentLoaded", async () => {
-  // — MESH CORE BOOT —
+  
+  // —— Mesh Bridge —— //
+import { MeshBridge } from "./core/mesh-bridge.js";
+MeshBridge.init();
   await MeshCore.init();
   console.log("SpawnEngine MeshCore online:", MeshCore.getProfile());
 
