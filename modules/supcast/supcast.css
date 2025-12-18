@@ -1,0 +1,128 @@
+.supcast-container {
+  color: #e5eaff;
+  font-family: system-ui, sans-serif;
+  padding: 1.4em;
+}
+
+.supcast-header h2 {
+  color: #4df2ff;
+  margin-bottom: 0.3em;
+}
+
+.supcast-sub {
+  color: #9aa2cc;
+  font-size: 0.9em;
+  margin-bottom: 1.4em;
+}
+
+.supcast-create {
+  background: #0a0e26;
+  border: 1px solid #2b2f5c;
+  border-radius: 10px;
+  padding: 1em;
+  margin-bottom: 1.4em;
+}
+
+.supcast-input {
+  width: 100%;
+  min-height: 80px;
+  background: #11152e;
+  color: #e5eaff;
+  border: 1px solid #2b2f5c;
+  border-radius: 8px;
+  padding: 0.8em;
+  font-family: inherit;
+  resize: vertical;
+  margin-bottom: 0.6em;
+}
+
+.supcast-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.supcast-controls select {
+  background: #0a0e26;
+  border: 1px solid #4df2ff;
+  color: #e5eaff;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.btn-primary {
+  background: #4df2ff;
+  color: #000;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.supcast-feed h3 {
+  color: #77f2ff;
+  margin-bottom: 0.6em;
+}
+
+.supcast-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+.supcast-item {
+  background: #111436;
+  border: 1px solid #2b2f5c;
+  border-radius: 10px;
+  padding: 0.8em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.supcast-item-main {
+  max-width: 70%;
+}
+
+.supcast-title {
+  color: #fff;
+  font-weight: 600;
+}
+
+.supcast-meta {
+  color: #9aa2cc;
+  font-size: 0.8em;
+}
+
+.supcast-actions {
+  text-align: right;
+}
+
+.supcast-btn {
+  background: #4df2ff;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.supcast-status {
+  color: #79ffb6;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.supcast-open {
+  border-color: #4df2ff;
+}
+
+.supcast-claimed {
+  border-color: #f2c84d;
+}
+
+.supcast-solved {
+  border-color: #79ffb6;
+}
