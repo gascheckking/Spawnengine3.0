@@ -1,19 +1,16 @@
 /* ============================================================
-   SpawnEngine SlotMachine v3.1
+   SpawnEngine SlotMachine v3.2 — Stable Build
    Mesh Casino Mini-Game — Spin to earn XP, Fragments & Relics
-   Stable build for Vercel / MeshCore
    ============================================================ */
 
 import { getInventory, simulatePackOpen } from "../../api/pack-actions.js";
 
-/* —— Elements —— */
-const reels = [
-  document.getElementById("reel1"),
-  document.getElementById("reel2"),
-  document.getElementById("reel3"),
-  document.getElementById("reel4"),
-  document.getElementById("reel5"),
-];
+/* —— DOM Elements —— */
+const reels = [];
+for (let i = 1; i <= 5; i++) {
+  const el = document.getElementById(`reel${i}`);
+  if (el) reels.push(el);
+}
 const spinBtn = document.getElementById("spinBtn");
 const collectBtn = document.getElementById("collectBtn");
 const betSelect = document.getElementById("betSelect");
@@ -81,7 +78,9 @@ function handleSpin() {
 function handleCollect() {
   if (!lastLoot) return;
   const inv = getInventory();
-  showToast(`Loot added: ${lastLoot.events.join(", ")} | Inv: ${inv.fragments}F / ${inv.shards}S`);
+  showToast(
+    `Loot added: ${lastLoot.events.join(", ")} | Inv: ${inv.fragments}F / ${inv.shards}S`
+  );
   lastLoot = null;
   collectBtn.disabled = true;
 }
@@ -111,6 +110,7 @@ function showToast(message) {
 /* —— Init —— */
 window.addEventListener("DOMContentLoaded", () => {
   slotBalance.textContent = `${balance} SPN`;
-  spinBtn.addEventListener("click", handleSpin);
-  collectBtn.addEventListener("click", handleCollect);
+
+  if (spinBtn) spinBtn.addEventListener("click", handleSpin);
+  if (collectBtn) collectBtn.addEventListener("click", handleCollect);
 });
