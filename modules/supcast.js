@@ -2,7 +2,7 @@
    SPAWNENGINE SUPCAST MODULE v1.0
    Support-as-a-System · Mesh-connected Knowledge Layer
    ============================================================ */
-
+window.SpawnMesh = window.SpawnMesh || { event: () => {} };
 /* —— mock-database —— */
 let SUPCAST_TICKETS = [
   {
