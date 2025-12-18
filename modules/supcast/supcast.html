@@ -1,0 +1,36 @@
+<!-- ============================================================
+     SPAWNENGINE SUPCAST v1.0
+     Support-as-a-System · Mesh-connected Knowledge Layer
+     ============================================================ -->
+
+<div id="supcastModule" class="supcast-container">
+  <header class="supcast-header">
+    <h2>💬 SupCast Support</h2>
+    <p class="supcast-sub">
+      Report issues, suggest features, or claim XP by helping others.
+    </p>
+  </header>
+
+  <section class="supcast-create">
+    <textarea
+      id="supportInput"
+      class="supcast-input"
+      placeholder="Describe your issue, idea, or feedback..."
+    ></textarea>
+    <div class="supcast-controls">
+      <select id="supportCategory">
+        <option value="General">General</option>
+        <option value="Network">Network</option>
+        <option value="Performance">Performance</option>
+        <option value="UX">User Experience</option>
+        <option value="Bug">Bug Report</option>
+      </select>
+      <button id="submitSupport" class="btn-primary">Submit</button>
+    </div>
+  </section>
+
+  <section class="supcast-feed">
+    <h3>Active Tickets</h3>
+    <div id="supcastFeed" class="supcast-list">Loading tickets...</div>
+  </section>
+</div>
