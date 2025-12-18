@@ -1,7 +1,14 @@
+/* ============================================================
+   SpawnEngine Roles v3.1
+   Role Selection & Display
+   ============================================================ */
+
 .roles-container {
   color: #e5eaff;
   font-family: system-ui, sans-serif;
   padding: 1.2em;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .roles-header {
@@ -11,21 +18,23 @@
 }
 
 .roles-header h2 {
-  font-size: 1.3em;
+  font-size: 1.4em;
   color: #77f2ff;
+  margin: 0;
 }
 
 .roles-sub {
   color: #9aa2cc;
   font-size: 0.9em;
+  margin-top: 0.3em;
 }
 
 .current-role {
-  background: #0a0e26;
+  background: rgba(15, 18, 40, 0.8);
   border: 1px solid #2b2f5c;
   border-radius: 10px;
   padding: 1em;
-  margin-bottom: 1em;
+  margin-bottom: 1.2em;
 }
 
 .current-role h3 {
@@ -33,45 +42,63 @@
   color: #4df2ff;
 }
 
+.current-role span {
+  font-size: 0.95em;
+  color: #9aa2cc;
+}
+
 .roles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 0.8em;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1em;
 }
 
 .role-card {
   background: #111436;
   border: 1px solid #2b2f5c;
   border-radius: 10px;
-  padding: 0.8em;
+  padding: 0.9em;
   text-align: center;
   transition: all 0.25s ease;
   cursor: pointer;
+  box-shadow: 0 0 0 rgba(77, 242, 255, 0);
 }
 
 .role-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   border-color: #4df2ff;
+  box-shadow: 0 0 10px rgba(77, 242, 255, 0.3);
 }
 
 .role-card.active {
   background: linear-gradient(145deg, #0a0e26, #18214b);
   border-color: #4df2ff;
+  box-shadow: 0 0 15px rgba(77, 242, 255, 0.5);
 }
 
 .role-card h4 {
   margin: 0.4em 0;
   color: #fff;
+  font-size: 1em;
 }
 
 .role-card p {
   font-size: 0.85em;
   color: #9aa2cc;
+  margin: 0.3em 0;
+}
+
+.role-icon {
+  font-size: 1.6em;
+  color: #4df2ff;
+  margin-bottom: 0.3em;
 }
 
 .roles-footer {
-  margin-top: 1.2em;
+  margin-top: 1.5em;
   text-align: center;
   font-size: 0.9em;
   color: #666b9a;
+  border-top: 1px solid #2b2f5c;
+  padding-top: 0.8em;
 }
