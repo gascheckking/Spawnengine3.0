@@ -8,15 +8,18 @@ import { MeshBridge } from "./core/mesh-bridge.js";
 
 //——— GLOBAL STATE ———//
 
-// Skicka ett nytt pack till systemet
+// Skicka ett nytt pack till systemet (SpawnBot auto-öppnar)
 meshCore.emit("packReceived", {
-  name: "Cyber Chest",
+  name: "Genesis Mesh Pack",
   pool: [
-    { name: "Neon Blade", rarity: "Epic" },
-    { name: "Rusty Bolt", rarity: "Common" },
-    { name: "Star Key", rarity: "Legendary" },
+    { name: "Mesh Fragment", rarity: "Fragment" },
+    { name: "Deep Shard", rarity: "Shard" },
+    { name: "Relic of Origin", rarity: "Relic" },
+    { name: "Solar Sigil", rarity: "Sigil" },
+    { name: "Ancient Core", rarity: "Core" },
   ],
 });
+
 let currentTheme = localStorage.getItem("spawnTheme") || "glassbase";
 let userProfile = null;
 let marketplace = [];
