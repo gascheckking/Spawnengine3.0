@@ -9,8 +9,9 @@
   <script src="pwa/sw-register.js" defer></script>
 </head>
 <body>
-  <!-- Background Mesh Universe -->
-  <canvas id="meshCanvas"></canvas>
+
+  <!-- 🌌 Background Mesh Universe -->
+  <canvas id="mesh-bg"></canvas>
 
   <!-- Header -->
   <header class="app-header">
@@ -29,7 +30,7 @@
   </header>
 
   <!-- Main App Container -->
-  <main id="appContainer">
+  <main id="appContainer" style="position: relative; z-index: 1;">
     <section id="homeView" class="view active">
       <h2>Mesh HUD</h2>
       <div class="mesh-feed" id="meshFeed">
@@ -164,9 +165,10 @@ document.getElementById('openPack').onclick = () => {
   <!-- Modal Backdrop -->
   <div id="modalBackdrop" class="modal-backdrop"></div>
 
-  <!-- Scripts -->
-  <script src="mesh-bg.js"></script>
-  <script src="app.js"></script>
-  <script src="./pwa/sw-register.js"></script>
+  <!-- 🔧 Scripts -->
+  <script src="mesh-bg.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="./pwa/sw-register.js" defer></script>
+
 </body>
 </html>
