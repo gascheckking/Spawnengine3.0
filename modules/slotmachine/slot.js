@@ -1,6 +1,7 @@
 /* ============================================================
    SpawnEngine SlotMachine v3.1
-   Casino-style Mesh loot system with XP/Item rewards
+   Mesh Casino Mini-Game — Spin to earn XP, Fragments & Relics
+   Stable build for Vercel / MeshCore
    ============================================================ */
 
 import { getInventory, simulatePackOpen } from "../../api/pack-actions.js";
@@ -20,7 +21,7 @@ const slotResult = document.getElementById("slotResult");
 const slotBalance = document.getElementById("slotBalance");
 
 /* —— Config —— */
-const SYMBOLS = ["🍒", "💎", "⭐", "🔔", "7️⃣", "💥", "⚙️", "🎴"];
+const SYMBOLS = ["🍒", "💎", "⭐", "🔔", "7️⃣", "💥", "W", "S"];
 let balance = 1000;
 let lastLoot = null;
 
@@ -32,20 +33,18 @@ function randomSymbol() {
 function rollReels() {
   reels.forEach((r, i) => {
     r.textContent = randomSymbol();
-    r.style.transform = "translateY(-30px)";
-    r.style.opacity = "0.6";
+    r.style.transform = "translateY(-25px)";
     setTimeout(() => {
       r.style.transform = "translateY(0)";
-      r.style.opacity = "1";
-    }, 150 * (i + 1));
+    }, 120 * i);
   });
 }
 
 /* —— Spin Logic —— */
-spinBtn.addEventListener("click", () => {
+function handleSpin() {
   const bet = parseInt(betSelect.value);
   if (balance < bet) {
-    showToast("Not enough SPN!");
+    showToast("❌ Not enough SPN!");
     return;
   }
 
@@ -53,7 +52,7 @@ spinBtn.addEventListener("click", () => {
   collectBtn.disabled = true;
   balance -= bet;
   slotBalance.textContent = `${balance} SPN`;
-  slotResult.textContent = "🎡 Spinning...";
+  slotResult.textContent = "Spinning... 🎡";
 
   rollReels();
 
@@ -61,37 +60,33 @@ spinBtn.addEventListener("click", () => {
     const symbols = reels.map(() => randomSymbol());
     reels.forEach((r, i) => (r.textContent = symbols[i]));
 
-    const winSymbol = symbols[0];
-    const isWin = symbols.every((s) => s === winSymbol);
-
+    const isWin = symbols.every((s) => s === symbols[0]);
     if (isWin) {
       const reward = simulatePackOpen();
       balance += 200;
       lastLoot = reward;
-      slotResult.textContent = `🎉 JACKPOT! Matched ${winSymbol} — +200 SPN + loot!`;
+      slotResult.textContent = `🎉 JACKPOT! You won +200 SPN & loot!`;
       showToast("Jackpot loot unlocked!");
       collectBtn.disabled = false;
-      reels.forEach((r) => r.classList.add("win"));
     } else {
       slotResult.textContent = "No win this time. Try again!";
-      reels.forEach((r) => r.classList.remove("win"));
     }
 
     slotBalance.textContent = `${balance} SPN`;
     spinBtn.disabled = false;
-  }, 2200);
-});
+  }, 2000);
+}
 
 /* —— Collect Loot —— */
-collectBtn.addEventListener("click", () => {
+function handleCollect() {
   if (!lastLoot) return;
   const inv = getInventory();
   showToast(`Loot added: ${lastLoot.events.join(", ")} | Inv: ${inv.fragments}F / ${inv.shards}S`);
   lastLoot = null;
   collectBtn.disabled = true;
-});
+}
 
-/* —— Toast System —— */
+/* —— Toast —— */
 function showToast(message) {
   const toast = document.createElement("div");
   toast.textContent = message;
@@ -107,6 +102,7 @@ function showToast(message) {
     font-weight: 600;
     font-family: system-ui, sans-serif;
     z-index: 9999;
+    box-shadow: 0 0 15px rgba(77,242,255,0.6);
   `;
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 2500);
@@ -115,4 +111,6 @@ function showToast(message) {
 /* —— Init —— */
 window.addEventListener("DOMContentLoaded", () => {
   slotBalance.textContent = `${balance} SPN`;
+  spinBtn.addEventListener("click", handleSpin);
+  collectBtn.addEventListener("click", handleCollect);
 });
