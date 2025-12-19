@@ -105,3 +105,4 @@ export const ForgeTerminal = {
     addLine(`Unknown command: ${cmd}. Type /help`);
   },
 };
+window.ForgeTerminal = ForgeTerminal;
