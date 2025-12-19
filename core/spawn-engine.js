@@ -1,17 +1,18 @@
 /* ============================================================
-   SPAWNENGINE · Core Engine v1.5 (Final Build)
+   SPAWNENGINE · Core Engine v1.5 (Final Build, Synced)
    Master Orchestrator — MeshKernel · ForgeAI · SpawnChain · WorldEngine
    ============================================================ */
 
 import { MeshKernel } from "./kernel/mesh-kernel.js";
 import { MeshSync } from "./kernel/mesh-sync.js";
 import { EventLoop } from "./kernel/event-loop.js";
-import { ForgeAI } from "./forge-ai.js";
-import { ForgeUI } from "./forge-ui.js";
-import { ForgeTerminal } from "./forge-terminal.js";
+import { ForgeAI } from "./forge/forge-ai.js";
+import { ForgeUI } from "./forge/forge-ui.js";
+import { ForgeTerminal } from "./forge/forge-terminal.js";
 import { SpawnChain } from "./spawnchain/spawn-chain.js";
 import { WorldEngine } from "./worlds/world-engine.js";
 import { WorldMint } from "./worlds/world-mint.js";
+import { WorldHub } from "./worlds/worldhub.js"; // 🔹 Ny för Hub-initiering
 
 export const SpawnEngine = {
   initialized: false,
@@ -74,16 +75,27 @@ export const SpawnEngine = {
       /* —— WORLD ENGINE LINK —— */
       setTimeout(() => {
         try {
-          console.log("🌍 Linking WorldEngine & Mint");
           if (WorldEngine && WorldMint) {
             window.WorldEngine = WorldEngine;
             window.WorldMint = WorldMint;
-            console.log("🪙 WorldEngine & WorldMint ready");
+            console.log("🌍 WorldEngine + WorldMint linked");
           }
         } catch (err) {
           console.error("❌ WorldEngine link failed:", err);
         }
       }, 8500);
+
+      /* —— WORLD HUB INIT —— */
+      setTimeout(() => {
+        try {
+          if (WorldHub?.init) {
+            WorldHub.init("worldHubView");
+            console.log("🌐 WorldHub view initialized");
+          }
+        } catch (err) {
+          console.error("❌ WorldHub init failed:", err);
+        }
+      }, 9500);
 
       this.initialized = true;
       console.log("%c✅ SpawnEngine Core Online", "color:#b9ff7a; font-weight:bold;");
@@ -107,11 +119,17 @@ export const SpawnEngine = {
 /* —— Global Exposure —— */
 if (typeof window !== "undefined") {
   window.SpawnEngine = SpawnEngine;
-  console.log("%c🧩 SpawnEngine Core module registered globally", "color:#14b8a6;");
+  console.log("%c🧩 SpawnEngine Core registered globally", "color:#14b8a6;");
 }
 
 /* —— Auto Boot —— */
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("⚙️ Booting SpawnEngine auto sequence...");
   await SpawnEngine.init();
+
+  // Bonus: skapa Genesis-world om ingen finns
+  if (window.WorldEngine && WorldEngine.listWorlds().length === 0) {
+    WorldEngine.createWorld("Genesis", "@spawniz");
+    console.log("🌐 Genesis world auto-created");
+  }
 });
