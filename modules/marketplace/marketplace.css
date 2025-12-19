@@ -1,0 +1,19 @@
+.market-container {
+  text-align:center;
+  padding:1.2em;
+}
+.market-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:12px;
+  margin-top:1em;
+}
+.market-card {
+  background:var(--bg-glass);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1em;
+}
+.market-card button{
+  margin-top:.6em;
+}
