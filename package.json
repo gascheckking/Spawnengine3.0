@@ -1,0 +1,10 @@
+{
+  "name": "spawnengine3",
+  "version": "1.0.0",
+  "description": "SpawnEngine 3.0 modular mesh system",
+  "type": "module",
+  "scripts": {
+    "start": "vercel dev",
+    "build": "vercel build"
+  }
+}
