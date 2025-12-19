@@ -1,0 +1,104 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: radial-gradient(ellipse at top, #08102a, #020617);
+  color: #e5eaff;
+  overflow-x: hidden;
+}
+
+.hub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em 2em;
+  background: rgba(5, 10, 30, 0.7);
+  border-bottom: 1px solid #1c2d5c;
+  backdrop-filter: blur(12px);
+}
+
+.hub-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+}
+
+.hub-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.hub-main {
+  max-width: 900px;
+  margin: 2em auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+
+.hub-panel {
+  background: rgba(15, 25, 60, 0.8);
+  border: 1px solid #2b3d7a;
+  border-radius: 16px;
+  padding: 1.4em;
+  box-shadow: 0 0 20px rgba(70, 140, 255, 0.2);
+}
+
+.hub-panel h2, .hub-panel h3 {
+  color: #4df2ff;
+  margin-top: 0;
+}
+
+.hub-btn, .hub-btn-primary, .hub-btn-outline {
+  font-weight: 600;
+  padding: 0.5em 1em;
+  border-radius: 10px;
+  cursor: pointer;
+  border: none;
+}
+
+.hub-btn-primary {
+  background: linear-gradient(135deg, #4df2ff, #9aff7f);
+  color: #000;
+}
+
+.hub-btn-outline {
+  border: 1px solid #4df2ff;
+  background: transparent;
+  color: #4df2ff;
+}
+
+.hub-stats {
+  display: flex;
+  gap: 1.5em;
+  margin: 1em 0;
+  flex-wrap: wrap;
+}
+
+.stat {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.6em 1em;
+  border-radius: 8px;
+  font-size: 0.95em;
+}
+
+.hub-footer {
+  text-align: center;
+  padding: 1em;
+  border-top: 1px solid #2b3d7a;
+  font-size: 0.9em;
+  color: #9aa2cc;
+}
+
+.hub-footer nav {
+  display: flex;
+  justify-content: center;
+  gap: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+.hub-footer a {
+  color: #4df2ff;
+  text-decoration: none;
+  font-weight: 600;
+}
