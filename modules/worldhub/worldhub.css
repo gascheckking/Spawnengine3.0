@@ -1,0 +1,34 @@
+.world-actions {
+  display: flex;
+  gap: 0.5em;
+  margin-bottom: 1em;
+}
+.world-actions input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-glass);
+  color: var(--text);
+}
+.world-list {
+  display: grid;
+  gap: 1em;
+}
+.world-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1em;
+  box-shadow: var(--glow);
+}
+.world-card h3 { color: var(--accent); margin-bottom: 0.4em; }
+.world-card small { opacity: 0.7; }
+.world-card button {
+  margin-top: 0.5em;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #000;
+  font-weight: 600;
+}
