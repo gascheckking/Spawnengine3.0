@@ -1,4 +1,3 @@
-
 /* ============================================================
    SPAWNENGINE · MeshSync v1.0
    Live synchronization between Kernel, ForgeAI and SpawnChain
