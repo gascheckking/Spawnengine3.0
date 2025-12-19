@@ -197,3 +197,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ForgeTerminal.init("forgeTerminal");
   }, 6000);
 });
+import { SpawnEngine } from "./core/spawn-engine.js";
+
+document.addEventListener("DOMContentLoaded", () => {
+  SpawnEngine.init();
+});
