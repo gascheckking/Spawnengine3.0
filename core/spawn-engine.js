@@ -6,9 +6,9 @@
 import { MeshKernel } from "./kernel/mesh-kernel.js";
 import { MeshSync } from "./kernel/mesh-sync.js";
 import { EventLoop } from "./kernel/event-loop.js";
-import { ForgeAI } from "./forge/forge-ai.js";
-import { ForgeUI } from "./forge/forge-ui.js";
-import { ForgeTerminal } from "./forge/forge-terminal.js";
+import { ForgeAI } from "./forge-ai.js";
+import { ForgeUI } from "./forge-ui.js";
+import { ForgeTerminal } from "./forge-terminal.js";
 import { SpawnChain } from "./spawnchain/spawn-chain.js";
 
 export const SpawnEngine = {
