@@ -6,6 +6,7 @@
 import { ForgeAI } from "./core/forge/forge-ai.js";
 import { ForgeUI } from "./core/forge/forge-ui.js";
 import { ForgeTerminal } from "./core/forge/forge-terminal.js";
+import { MeshSync } from "./core/kernel/mesh-sync.js";
 
 (function () {
   if (window.SpawnEngine?.__sdkLoaded) return;
