@@ -1,7 +1,9 @@
 //——— IMPORTER ———//
-import { MeshCore } from "./core/MeshCore.js";
+import { MeshCore } from "./core/mesh-core.js";
 import { MeshBridge } from "./core/mesh-bridge.js";
 import { SpawnArena } from "./core/arena/spawn-arena.js";
+import { ForgeAI } from "./core/forge-ai.js";
+import { ForgeUI } from "./core/forge-ui.js";
 
 //——— INIT ———//
 document.addEventListener("DOMContentLoaded", async () => {
@@ -11,6 +13,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 🌉 Starta MeshBridge (kopplar Core → UI → Pulse)
     if (MeshBridge?.init) MeshBridge.init();
+
+    // 🧬 Starta ForgeAI och ForgeUI
+    ForgeAI.init();
+    setTimeout(() => {
+      ForgeUI.init();
+      ForgeAI.renderForgePanel("meshFeed");
+    }, 5000);
 
     console.log("%cSpawnEngine MeshCore online:", "color:#14b8a6", MeshCore?.getProfile?.());
 
@@ -47,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-    // — Display role from localStorage —
+// — Display role from localStorage —
     const role = localStorage.getItem("spawnRole");
     if (role) {
       console.log(`🧩 Active Role: ${role}`);
