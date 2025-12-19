@@ -1,38 +1,64 @@
 /* ============================================================
-   SPAWNENGINE · Unified Bootstrap v1.0
-   Brings Forge, Chain, Arena, Bot & UI online together.
+   SPAWNENGINE · Core Engine v1.2
+   Master Orchestrator — MeshKernel · ForgeAI · SpawnChain · EventLoop
    ============================================================ */
 
+import { MeshKernel } from "./kernel/mesh-kernel.js";
+import { MeshSync } from "./kernel/mesh-sync.js";
+import { EventLoop } from "./kernel/event-loop.js";
 import { ForgeAI } from "./forge/forge-ai.js";
 import { ForgeUI } from "./forge/forge-ui.js";
 import { ForgeTerminal } from "./forge/forge-terminal.js";
 import { SpawnChain } from "./spawnchain/spawn-chain.js";
-import { SpawnArena } from "./arena/spawn-arena.js";
-import { MeshCore } from "./MeshCore.js";
-import { MeshBridge } from "./mesh-bridge.js";
 
 export const SpawnEngine = {
+  initialized: false,
+
   async init() {
-    console.log("🧠 Booting SpawnEngine Unified System…");
+    if (this.initialized) {
+      console.warn("⚠️ SpawnEngine already initialized");
+      return;
+    }
 
-    // --- CORE SETUP ---
-    await MeshCore.init?.();
-    MeshBridge.init?.();
-    SpawnArena.init?.();
+    console.log("%c🚀 Booting SpawnEngine Core v1.2", "color:#3cf6ff; font-weight:bold;");
 
-    // --- FORGE SYSTEM ---
-    ForgeAI.init();
-    setTimeout(() => ForgeUI.init(), 2500);
-    setTimeout(() => ForgeTerminal.init("forgeTerminal"), 4000);
+    try {
+      // 🧠 Initiera kärnsystem
+      if (MeshKernel?.init) await MeshKernel.init();
+      if (SpawnChain?.init) SpawnChain.init();
 
-    // --- SPAWNCHAIN ---
-    setTimeout(() => {
-      SpawnChain.init();
-      SpawnChain.renderLedger("meshFeed");
-    }, 6000);
+      // 🧬 Initiera Forge
+      setTimeout(() => {
+        ForgeAI.init();
+        ForgeUI.init();
+        ForgeAI.renderForgePanel("meshFeed");
+      }, 3000);
 
-    console.log("%c✅ SpawnEngine Fully Online", "color:#3cf6ff;font-weight:bold;");
+      // 💻 Initiera ForgeTerminal
+      setTimeout(() => {
+        ForgeTerminal.init("forgeTerminal");
+      }, 5000);
+
+      // 🌐 Initiera MeshSync
+      setTimeout(() => {
+        MeshSync.init();
+      }, 7000);
+
+      // ⏱ Starta autonoma loopen
+      setTimeout(() => {
+        EventLoop.start();
+      }, 9000);
+
+      this.initialized = true;
+      console.log("%c✅ SpawnEngine Core Online", "color:#b9ff7a; font-weight:bold;");
+    } catch (err) {
+      console.error("❌ SpawnEngine init failed:", err);
+    }
   },
 };
 
-window.SpawnEngine = SpawnEngine;
+/* —— Global exposure —— */
+window.SpawnEngine = window.SpawnEngine || {};
+window.SpawnEngine.Core = SpawnEngine;
+
+console.log("%c🧩 SpawnEngine Core module loaded", "color:#14b8a6;");
