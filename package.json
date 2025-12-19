@@ -4,17 +4,8 @@
   "description": "SpawnEngine 3.0 — Modular Mesh & World System",
   "type": "module",
   "license": "MIT",
-  "author": "gascheckking",
   "scripts": {
-    "dev": "vercel dev",
-    "build": "vercel build",
-    "start": "vercel start"
-  },
-  "keywords": [
-    "spawnengine",
-    "mesh",
-    "worlds",
-    "forge",
-    "vercel"
-  ]
+    "build": "echo 'Static build for Vercel'",
+    "start": "echo 'Run static files via Vercel'"
+  }
 }
