@@ -1,10 +1,20 @@
 {
   "name": "spawnengine3",
   "version": "1.0.0",
-  "description": "SpawnEngine 3.0 modular mesh system",
+  "description": "SpawnEngine 3.0 — Modular Mesh & World System",
   "type": "module",
+  "license": "MIT",
+  "author": "gascheckking",
   "scripts": {
-    "start": "vercel dev",
-    "build": "vercel build"
-  }
+    "dev": "vercel dev",
+    "build": "vercel build",
+    "start": "vercel start"
+  },
+  "keywords": [
+    "spawnengine",
+    "mesh",
+    "worlds",
+    "forge",
+    "vercel"
+  ]
 }
