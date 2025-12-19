@@ -1,104 +1,75 @@
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  background: radial-gradient(ellipse at top, #08102a, #020617);
-  color: #e5eaff;
-  overflow-x: hidden;
+/* ============================================================
+   SPAWNENGINE HUD v3.2 Styles
+   ============================================================ */
+.hud-container { position: relative; z-index: 2; color: var(--text); }
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  box-shadow: var(--glow);
 }
 
-.hub-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1em 2em;
-  background: rgba(5, 10, 30, 0.7);
-  border-bottom: 1px solid #1c2d5c;
-  backdrop-filter: blur(12px);
+.hud-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 16px; position: sticky; top: 0; z-index: 5;
 }
+.hud-logo { width: 28px; height: 28px; margin-right: 8px; }
+.hud-title { font-size: 1.1rem; font-weight: 700; }
 
-.hub-left {
-  display: flex;
-  align-items: center;
-  gap: 0.6em;
+.hud-right { display: flex; align-items: center; gap: 10px; }
+.hud-stat { font-size: 0.8rem; opacity: 0.9; }
+
+.hud-btn, .hud-icon, .btn-primary, .btn-outline {
+  cursor: pointer; border-radius: 8px; border: none;
+  padding: 8px 14px; font-weight: 600;
 }
-
-.hub-logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+.btn-primary {
+  background: linear-gradient(135deg,var(--accent),var(--accent-alt));
+  color:#050510;
 }
-
-.hub-main {
-  max-width: 900px;
-  margin: 2em auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5em;
-}
-
-.hub-panel {
-  background: rgba(15, 25, 60, 0.8);
-  border: 1px solid #2b3d7a;
-  border-radius: 16px;
-  padding: 1.4em;
-  box-shadow: 0 0 20px rgba(70, 140, 255, 0.2);
-}
-
-.hub-panel h2, .hub-panel h3 {
-  color: #4df2ff;
-  margin-top: 0;
-}
-
-.hub-btn, .hub-btn-primary, .hub-btn-outline {
-  font-weight: 600;
-  padding: 0.5em 1em;
-  border-radius: 10px;
-  cursor: pointer;
-  border: none;
-}
-
-.hub-btn-primary {
-  background: linear-gradient(135deg, #4df2ff, #9aff7f);
-  color: #000;
-}
-
-.hub-btn-outline {
-  border: 1px solid #4df2ff;
+.btn-outline {
   background: transparent;
-  color: #4df2ff;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.hud-icon { font-size: 1.1rem; }
+
+main#hudViews { padding: 16px; height: calc(100vh - 120px); overflow-y: auto; }
+.hud-view { display: none; }
+.hud-view.active { display: block; animation: fadeIn 0.3s ease; }
+
+.hud-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.hud-feed { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-top: 10px; }
+
+.hud-btnrow { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
+textarea#supcastInput {
+  width: 100%; min-height: 80px; background: var(--bg-glass);
+  border: 1px solid var(--border); color: var(--text);
+  padding: 8px; border-radius: 8px; margin-bottom: 10px;
 }
 
-.hub-stats {
-  display: flex;
-  gap: 1.5em;
-  margin: 1em 0;
-  flex-wrap: wrap;
+.hud-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  display: flex; justify-content: space-around; align-items: center;
+  height: 56px; border-top: 1px solid var(--border);
 }
+.hud-nav button {
+  background: transparent; border: none; color: var(--text);
+  font-size: 0.8rem; flex: 1; height: 100%;
+}
+.hud-nav button.active { color: var(--accent); text-shadow: 0 0 8px var(--accent); }
 
-.stat {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.6em 1em;
-  border-radius: 8px;
-  font-size: 0.95em;
+#hudToast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: var(--bg-glass); padding: 8px 14px; border-radius: 8px;
+  border: 1px solid var(--border); opacity: 0; transition: 0.3s;
 }
+#hudToast.show { opacity: 1; }
 
-.hub-footer {
-  text-align: center;
-  padding: 1em;
-  border-top: 1px solid #2b3d7a;
-  font-size: 0.9em;
-  color: #9aa2cc;
-}
-
-.hub-footer nav {
-  display: flex;
-  justify-content: center;
-  gap: 1.2em;
-  margin-bottom: 0.5em;
-}
-
-.hub-footer a {
-  color: #4df2ff;
-  text-decoration: none;
-  font-weight: 600;
-}
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
