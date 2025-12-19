@@ -7,7 +7,9 @@ import { ForgeAI } from "./core/forge/forge-ai.js";
 import { ForgeUI } from "./core/forge/forge-ui.js";
 import { ForgeTerminal } from "./core/forge/forge-terminal.js";
 import { MeshSync } from "./core/kernel/mesh-sync.js";
+import { SpawnEngine } from "./core/spawn-engine.js";
 
+/* —— CORE SDK SELF-INJECT —— */
 (function () {
   if (window.SpawnEngine?.__sdkLoaded) return;
   window.SpawnEngine = window.SpawnEngine || {};
@@ -185,21 +187,23 @@ import { MeshSync } from "./core/kernel/mesh-sync.js";
   console.log("%cSpawnEngine SDK v1.1 loaded", "color:#3cf6ff");
 })();
 
-/* —— FORGE AI / UI / TERMINAL INIT —— */
-document.addEventListener("DOMContentLoaded", () => {
-  ForgeAI.init();
+/* ============================================================
+   FORGE & CORE INIT SEQUENCE
+   ============================================================ */
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("⚙️ Booting SpawnEngine SDK sequence...");
+  await SpawnEngine.init();
 
   setTimeout(() => {
+    ForgeAI.init();
     ForgeUI.init();
     ForgeAI.renderForgePanel("meshFeed");
-  }, 5000);
+  }, 4000);
 
   setTimeout(() => {
     ForgeTerminal.init("forgeTerminal");
+    MeshSync.init();
   }, 6000);
-});
-import { SpawnEngine } from "./core/spawn-engine.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  SpawnEngine.init();
+  console.log("%c✅ SpawnEngine SDK Fully Online", "color:#3cf6ff;font-weight:bold;");
 });
