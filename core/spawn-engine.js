@@ -58,7 +58,8 @@ export const SpawnEngine = {
 };
 
 /* —— Global exposure —— */
-window.SpawnEngine = window.SpawnEngine || {};
-window.SpawnEngine.Core = SpawnEngine;
-
-console.log("%c🧩 SpawnEngine Core module loaded", "color:#14b8a6;");
+if (typeof window !== "undefined") {
+  window.SpawnEngine = window.SpawnEngine || {};
+  window.SpawnEngine.Core = SpawnEngine;
+  console.log("%c🧩 SpawnEngine Core module loaded", "color:#14b8a6;");
+}
