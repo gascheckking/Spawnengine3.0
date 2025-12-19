@@ -1,0 +1,39 @@
+# ============================================================
+# SPAWNENGINE 3.0 — Git Ignore
+# ============================================================
+
+# System & environment
+.DS_Store
+Thumbs.db
+.env
+.env.local
+.env.*.local
+
+# Build & cache
+node_modules/
+.vercel/
+.cache/
+dist/
+build/
+tmp/
+temp/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE / editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS + Misc
+*.swp
+*.bak
+*.old
+*.tmp
+
+# SpawnEngine specific
+spawnengine-cache/
+mesh-output/
+forge-temp/
