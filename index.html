@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SpawnEngine · Choose Your Role</title>
 
-  <!-- Manifest & Style -->
+  <!-- ✅ Manifest & Style -->
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="logo.png" />
-  <script src="./pwa/sw-register.js" defer></script>
 </head>
 
 <body data-theme="glassbase">
@@ -66,8 +65,9 @@
     });
   </script>
 
+  <!-- ✅ Scripts that actually exist -->
   <script src="mesh-bg.js" defer></script>
   <script src="spawnengine-sdk.js" defer></script>
-  <script type="module" src="./core/dashboard.js"></script>
+  <script src="spawnengine.js" defer></script>
 </body>
 </html>
