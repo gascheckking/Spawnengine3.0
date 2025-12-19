@@ -1,46 +1,118 @@
-import { renderSupCastList } from "../supcast/supcast.js";
+/* ============================================================
+   SPAWNENGINE HUD v3.2 — Mesh UI Core
+   ============================================================ */
+import { getInventory, simulatePackOpen, simulateSynthesis } from "../../api/pack-actions.js";
+import { createTicket, getTickets, renderSupCastList } from "../supcast/supcast.js";
 
-const role = localStorage.getItem("meshRole") || "Explorer";
-document.getElementById("hubRole").textContent = role;
+/* — Global State — */
+let balanceXp = 0;
+let balanceSpn = 0.000;
+let role = localStorage.getItem("spawnRole") || "Explorer";
+let inventory = getInventory();
 
-document.getElementById("hubRefresh").addEventListener("click", () => {
-  document.getElementById("hubModules").textContent = Math.floor(Math.random() * 10);
-  showToast("Mesh synced successfully!");
-});
-
-document.getElementById("hubXPBoost").addEventListener("click", () => {
-  const el = document.getElementById("hubStreak");
-  let val = parseInt(el.textContent);
-  el.textContent = val + 1;
-  showToast(`XP Streak: ${val + 1}`);
-});
-
-document.getElementById("openSupcast").addEventListener("click", () => {
-  window.location.href = "../supcast/supcast.html";
-});
-
-// SupCast mini render
+/* — DOM Ready — */
 window.addEventListener("DOMContentLoaded", () => {
-  renderSupCastList("miniSupcastFeed");
+  document.getElementById("hudRole").textContent = role;
+  updateInventory();
+  bindNavigation();
+  bindHUD();
+  toast("HUD v3.2 loaded");
 });
 
-// Toast helper
-function showToast(msg) {
-  const el = document.createElement("div");
+/* — NAVIGATION — */
+function bindNavigation() {
+  const buttons = document.querySelectorAll(".hud-nav button");
+  buttons.forEach((btn) =>
+    btn.addEventListener("click", () => {
+      buttons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      const view = btn.dataset.view;
+      document.querySelectorAll(".hud-view").forEach((v) => v.classList.remove("active"));
+      document.getElementById(view).classList.add("active");
+    })
+  );
+}
+
+/* — CORE EVENTS — */
+function bindHUD() {
+  const xpEl = document.getElementById("hudXp");
+  const spnEl = document.getElementById("hudSpn");
+
+  document.getElementById("hudBoost").addEventListener("click", () => {
+    balanceXp += 50;
+    xpEl.textContent = `XP: ${balanceXp}`;
+    toast("+50 XP claimed");
+  });
+
+  document.getElementById("hudRefresh").addEventListener("click", () => {
+    const modules = Math.floor(Math.random() * 10) + 1;
+    document.getElementById("hudModules").textContent = modules;
+    toast(`Mesh synced (${modules} modules)`);
+  });
+
+  /* LOOT */
+  document.getElementById("lootOpen").addEventListener("click", () => {
+    const reward = simulatePackOpen();
+    inventory = reward.inventory;
+    updateInventory();
+    toast("🎁 Pack opened!");
+  });
+
+  document.getElementById("lootSynth").addEventListener("click", () => {
+    const res = simulateSynthesis();
+    inventory = res.inventory;
+    updateInventory();
+    toast(res.message);
+  });
+
+  /* FORGE */
+  document.getElementById("forgeStart").addEventListener("click", () => {
+    const result = simulateSynthesis();
+    document.getElementById("forgeResult").textContent = result.message;
+    updateInventory();
+    toast("Forge attempt executed");
+  });
+
+  /* SUPCAST */
+  document.getElementById("supcastSend").addEventListener("click", () => {
+    const text = document.getElementById("supcastInput").value.trim();
+    if (!text) return toast("Enter message");
+    createTicket(text, "General", "@spawniz");
+    document.getElementById("supcastInput").value = "";
+    renderSupCastList("supcastFeed");
+    toast("🎫 Ticket submitted");
+  });
+
+  renderSupCastList("supcastFeed");
+
+  /* SETTINGS */
+  const themeSelect = document.getElementById("hudTheme");
+  themeSelect.value = localStorage.getItem("spawnTheme") || "glassbase";
+  themeSelect.addEventListener("change", (e) => {
+    document.body.dataset.theme = e.target.value;
+    localStorage.setItem("spawnTheme", e.target.value);
+    toast(`Theme set to ${e.target.value}`);
+  });
+
+  /* TRACKER */
+  const tf = document.getElementById("trackerFeed");
+  tf.innerHTML = `
+    <div>👣 Tracking: ${localStorage.getItem("wallet") || "0x...C0DE"}</div>
+    <div>💸 XP claim event registered.</div>
+    <div>📈 Loot data synced.</div>`;
+}
+
+/* — Inventory UI — */
+function updateInventory() {
+  document.getElementById("hudFrag").textContent = inventory.fragments;
+  document.getElementById("hudShard").textContent = inventory.shards;
+  document.getElementById("hudRelic").textContent = inventory.relics;
+}
+
+/* — Toast — */
+function toast(msg) {
+  const el = document.getElementById("hudToast");
   el.textContent = msg;
-  el.style = `
-    position: fixed;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #4df2ff;
-    color: #000;
-    padding: 8px 16px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-family: system-ui, sans-serif;
-    z-index: 9999;
-  `;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 2500);
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 2000);
 }
