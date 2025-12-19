@@ -1,0 +1,60 @@
+/* ============================================================
+   SPAWNENGINE · Forge Terminal Styles v1.0
+   ============================================================ */
+
+#forgeTerminal {
+  background: rgba(10, 12, 26, 0.7);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.8em;
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  box-shadow: var(--glow);
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.terminal-header {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.4em;
+}
+
+.terminal-output {
+  flex: 1;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  padding: 0.4em;
+  line-height: 1.4;
+}
+
+.line.cmd { color: var(--accent-alt); }
+.line.error { color: #ff7676; }
+.cmd { color: var(--accent); font-weight: 600; }
+
+.terminal-input {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  padding-top: 0.4em;
+}
+
+.prompt {
+  margin-right: 6px;
+  color: var(--accent-alt);
+}
+
+#terminalCmd {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  flex: 1;
+  outline: none;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+}
