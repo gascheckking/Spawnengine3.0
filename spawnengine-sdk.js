@@ -1,7 +1,11 @@
 /* ============================================================
-   SPAWNENGINE SDK v1.0 — Drop-In Widget Kit (Final Build)
-   "Roblox for Onchain" · Widget Module (Pack Reveal)
+   SPAWNENGINE SDK v1.1 — Drop-In Widget Kit (Final Build)
+   "Roblox for Onchain" · Widget Module (Pack Reveal + Forge)
    ============================================================ */
+
+import { ForgeAI } from "./core/forge/forge-ai.js";
+import { ForgeUI } from "./core/forge/forge-ui.js";
+import { ForgeTerminal } from "./core/forge/forge-terminal.js";
 
 (function () {
   if (window.SpawnEngine?.__sdkLoaded) return;
@@ -82,9 +86,7 @@
   /* —— REVEAL MODAL —— */
   function openReveal(opts = {}) {
     injectCSS();
-
-    if (document.querySelector(".se-reveal-backdrop")) return; // prevent duplicates
-
+    if (document.querySelector(".se-reveal-backdrop")) return;
     const pool = Array.isArray(opts.pool) && opts.pool.length ? opts.pool : defaultPool;
     const title = opts.title || "SpawnEngine Reveal";
     const onReveal = typeof opts.onReveal === "function" ? opts.onReveal : () => {};
@@ -179,5 +181,19 @@
   };
   window.SpawnEngine.ready = true;
 
-  console.log("%cSpawnEngine SDK v1.0 loaded", "color:#3cf6ff");
+  console.log("%cSpawnEngine SDK v1.1 loaded", "color:#3cf6ff");
 })();
+
+/* —— FORGE AI / UI / TERMINAL INIT —— */
+document.addEventListener("DOMContentLoaded", () => {
+  ForgeAI.init();
+
+  setTimeout(() => {
+    ForgeUI.init();
+    ForgeAI.renderForgePanel("meshFeed");
+  }, 5000);
+
+  setTimeout(() => {
+    ForgeTerminal.init("forgeTerminal");
+  }, 6000);
+});
