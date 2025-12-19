@@ -5,7 +5,6 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "build": "echo 'Static build for Vercel'",
-    "start": "echo 'Run static files via Vercel'"
+    "build": "echo 'Static site — no build needed'"
   }
 }
