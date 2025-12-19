@@ -1,0 +1,38 @@
+.builder-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+  margin-bottom: 1.5em;
+}
+
+.builder-actions input,
+.builder-actions textarea {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-glass);
+  color: var(--text);
+}
+
+.builder-actions textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.app-list {
+  display: grid;
+  gap: 1em;
+}
+
+.app-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1em;
+  box-shadow: var(--glow);
+}
+
+.app-card h4 {
+  color: var(--accent);
+  margin-bottom: 0.4em;
+}
