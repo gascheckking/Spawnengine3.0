@@ -1,6 +1,6 @@
 /* ============================================================
-   SPAWNENGINE · Core Engine v1.2
-   Master Orchestrator — MeshKernel · ForgeAI · SpawnChain · EventLoop
+   SPAWNENGINE · Core Engine v1.5 (Final Build)
+   Master Orchestrator — MeshKernel · ForgeAI · SpawnChain · WorldEngine
    ============================================================ */
 
 import { MeshKernel } from "./kernel/mesh-kernel.js";
@@ -10,6 +10,8 @@ import { ForgeAI } from "./forge-ai.js";
 import { ForgeUI } from "./forge-ui.js";
 import { ForgeTerminal } from "./forge-terminal.js";
 import { SpawnChain } from "./spawnchain/spawn-chain.js";
+import { WorldEngine } from "./worlds/world-engine.js";
+import { WorldMint } from "./worlds/world-mint.js";
 
 export const SpawnEngine = {
   initialized: false,
@@ -20,34 +22,68 @@ export const SpawnEngine = {
       return;
     }
 
-    console.log("%c🚀 Booting SpawnEngine Core v1.2", "color:#3cf6ff; font-weight:bold;");
+    console.log("%c🚀 Booting SpawnEngine Core v1.5", "color:#3cf6ff; font-weight:bold;");
 
     try {
-      // 🧠 Initiera kärnsystem
+      /* —— CORE SYSTEMS —— */
       if (MeshKernel?.init) await MeshKernel.init();
       if (SpawnChain?.init) SpawnChain.init();
 
-      // 🧬 Initiera Forge
+      /* —— FORGE MODULES —— */
       setTimeout(() => {
-        ForgeAI.init();
-        ForgeUI.init();
-        ForgeAI.renderForgePanel("meshFeed");
-      }, 3000);
+        try {
+          ForgeAI.init?.();
+          ForgeUI.init?.();
+          ForgeAI.renderForgePanel?.("meshFeed");
+          console.log("🧬 Forge subsystem online");
+        } catch (err) {
+          console.error("❌ Forge init failed:", err);
+        }
+      }, 2500);
 
-      // 💻 Initiera ForgeTerminal
+      /* —— TERMINAL —— */
       setTimeout(() => {
-        ForgeTerminal.init("forgeTerminal");
-      }, 5000);
+        try {
+          ForgeTerminal.init?.("forgeTerminal");
+          console.log("💻 Forge Terminal active");
+        } catch (err) {
+          console.error("❌ ForgeTerminal init failed:", err);
+        }
+      }, 4500);
 
-      // 🌐 Initiera MeshSync
+      /* —— NETWORK SYNC —— */
       setTimeout(() => {
-        MeshSync.init();
-      }, 7000);
+        try {
+          MeshSync.init?.();
+          console.log("🌐 MeshSync active");
+        } catch (err) {
+          console.error("❌ MeshSync init failed:", err);
+        }
+      }, 6000);
 
-      // ⏱ Starta autonoma loopen
+      /* —— EVENT LOOP —— */
       setTimeout(() => {
-        EventLoop.start();
-      }, 9000);
+        try {
+          EventLoop.start?.();
+          console.log("⏱ EventLoop running");
+        } catch (err) {
+          console.error("❌ EventLoop start failed:", err);
+        }
+      }, 7500);
+
+      /* —— WORLD ENGINE LINK —— */
+      setTimeout(() => {
+        try {
+          console.log("🌍 Linking WorldEngine & Mint");
+          if (WorldEngine && WorldMint) {
+            window.WorldEngine = WorldEngine;
+            window.WorldMint = WorldMint;
+            console.log("🪙 WorldEngine & WorldMint ready");
+          }
+        } catch (err) {
+          console.error("❌ WorldEngine link failed:", err);
+        }
+      }, 8500);
 
       this.initialized = true;
       console.log("%c✅ SpawnEngine Core Online", "color:#b9ff7a; font-weight:bold;");
@@ -55,11 +91,27 @@ export const SpawnEngine = {
       console.error("❌ SpawnEngine init failed:", err);
     }
   },
+
+  /* —— Simple helper methods —— */
+  createWorld(name) {
+    if (!WorldEngine) return console.warn("WorldEngine missing");
+    return WorldEngine.createWorld(name);
+  },
+
+  mintWorld(worldId) {
+    if (!WorldMint) return console.warn("WorldMint missing");
+    return WorldMint.mintWorld(worldId);
+  },
 };
 
-/* —— Global exposure —— */
+/* —— Global Exposure —— */
 if (typeof window !== "undefined") {
-  window.SpawnEngine = window.SpawnEngine || {};
-  window.SpawnEngine.Core = SpawnEngine;
-  console.log("%c🧩 SpawnEngine Core module loaded", "color:#14b8a6;");
+  window.SpawnEngine = SpawnEngine;
+  console.log("%c🧩 SpawnEngine Core module registered globally", "color:#14b8a6;");
 }
+
+/* —— Auto Boot —— */
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("⚙️ Booting SpawnEngine auto sequence...");
+  await SpawnEngine.init();
+});
