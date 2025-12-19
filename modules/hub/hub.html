@@ -1,69 +1,115 @@
 <!-- ============================================================
-     SPAWNENGINE · MESH HUB v3.1
-     Central dashboard after role selection
+     SPAWNENGINE HUD v3.2
+     Modular Mesh Interface — XP · Forge · SupCast · Bot · Tracker
      ============================================================ -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SpawnEngine · Mesh Hub</title>
-  <link rel="stylesheet" href="hub.css">
-  <link rel="icon" href="../../logo.png">
-</head>
+<div id="hudApp" class="hud-container">
 
-<body>
-  <canvas id="hub-bg"></canvas>
-
-  <header class="hub-header">
-    <div class="hub-left">
-      <img src="../../logo.png" class="hub-logo" alt="SpawnEngine Logo">
-      <h1>SpawnEngine · Mesh Hub</h1>
+  <!-- HEADER -->
+  <header class="hud-header glass">
+    <div class="hud-left">
+      <img src="../../assets/icons/icon-96.png" class="hud-logo" alt="SpawnEngine Logo">
+      <h2 class="hud-title">SpawnEngine</h2>
     </div>
-    <div class="hub-right">
-      <button id="hubConnect" class="hub-btn">Connect</button>
-      <span id="hubXP">XP: 0</span>
-      <span id="hubSPN">SPN: 0.000</span>
+    <div class="hud-right">
+      <span id="hudXp" class="hud-stat">XP: 0</span>
+      <span id="hudSpn" class="hud-stat">SPN: 0.000</span>
+      <button id="hudConnect" class="hud-btn">Connect</button>
+      <button id="hudSettings" class="hud-icon">⚙️</button>
     </div>
   </header>
 
-  <main class="hub-main">
-    <section class="hub-panel intro">
-      <h2>Welcome, <span id="hubRole">Builder</span></h2>
-      <p>Your onchain identity is active in Mesh Layer.</p>
-      <div class="hub-stats">
-        <div class="stat">🧠 Modules <span id="hubModules">4</span></div>
-        <div class="stat">⚡ XP Streak <span id="hubStreak">2</span></div>
-        <div class="stat">💳 Wallet <span id="hubWallet">Not connected</span></div>
+  <!-- MAIN -->
+  <main id="hudViews">
+
+    <!-- HOME -->
+    <section id="hud-home" class="hud-view active">
+      <h3>Mesh Overview</h3>
+      <div class="hud-card">
+        <p>Role: <span id="hudRole">Explorer</span></p>
+        <p>Active Modules: <span id="hudModules">0</span></p>
+        <p>Wallet: <span id="hudWallet">Not Connected</span></p>
+        <div class="hud-btnrow">
+          <button id="hudRefresh" class="btn-primary">Sync Mesh</button>
+          <button id="hudBoost" class="btn-outline">Claim XP</button>
+        </div>
       </div>
-      <div class="hub-actions">
-        <button id="hubRefresh" class="hub-btn-primary">Refresh Mesh</button>
-        <button id="hubXPBoost" class="hub-btn-outline">Claim XP</button>
+      <div id="hudFeed" class="hud-feed">Loading mesh activity…</div>
+    </section>
+
+    <!-- LOOT -->
+    <section id="hud-loot" class="hud-view">
+      <h3>Loot & Rewards</h3>
+      <div class="hud-card">
+        <button id="lootOpen" class="btn-primary">Open Pack</button>
+        <div class="hud-inv">
+          <p>Fragments: <span id="hudFrag">0</span></p>
+          <p>Shards: <span id="hudShard">0</span></p>
+          <p>Relics: <span id="hudRelic">0</span></p>
+        </div>
+        <button id="lootSynth" class="btn-outline">Synthesize Relic</button>
       </div>
     </section>
 
-    <section class="hub-panel hub-feed">
-      <h3>🛰 Mesh Feed</h3>
-      <div id="hubFeed">Loading mesh events...</div>
+    <!-- FORGE -->
+    <section id="hud-forge" class="hud-view">
+      <h3>Forge Lab</h3>
+      <div class="hud-card">
+        <p>Combine Fragments + Shards → Relic</p>
+        <button id="forgeStart" class="btn-primary">Forge Now</button>
+        <div id="forgeResult" class="hud-subtext">Ready.</div>
+      </div>
     </section>
 
-    <section class="hub-panel supcast-mini">
-      <h3>🎙 SupCast Support</h3>
-      <div id="miniSupcastFeed">Loading SupCast feed...</div>
-      <button id="openSupcast" class="hub-btn-outline">Open SupCast</button>
+    <!-- SUPCAST -->
+    <section id="hud-supcast" class="hud-view">
+      <h3>SupCast Support</h3>
+      <textarea id="supcastInput" placeholder="Describe your idea or issue…"></textarea>
+      <button id="supcastSend" class="btn-primary">Submit</button>
+      <div id="supcastFeed" class="hud-feed"></div>
     </section>
+
+    <!-- BOT -->
+    <section id="hud-bot" class="hud-view">
+      <h3>SpawnBot Automations</h3>
+      <div class="hud-feed">
+        <div>🤖 Auto-claim XP — ON</div>
+        <div>⚙️ Gas Alert &lt; 0.05 Gwei</div>
+        <div>📡 Watch Creator: @spawniz</div>
+      </div>
+    </section>
+
+    <!-- TRACKER -->
+    <section id="hud-tracker" class="hud-view">
+      <h3>Tracker</h3>
+      <div id="trackerFeed" class="hud-feed"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="hud-settings" class="hud-view">
+      <h3>Settings</h3>
+      <div class="hud-card">
+        <label>Theme:</label>
+        <select id="hudTheme">
+          <option value="glassbase">Glass Base</option>
+          <option value="matrix">Matrix Pulse</option>
+          <option value="zoragold">Zora Gold</option>
+        </select>
+      </div>
+    </section>
+
   </main>
 
-  <footer class="hub-footer">
-    <nav>
-      <a href="../../index.html">Home</a>
-      <a href="../slotmachine/slot.html">SlotMachine</a>
-      <a href="../forge/forge.html">Forge</a>
-      <a href="../supcast/supcast.html">SupCast</a>
-    </nav>
-    <p>SpawnEngine Mesh Layer · v3.1</p>
-  </footer>
+  <!-- NAVIGATION -->
+  <nav class="hud-nav glass">
+    <button data-view="hud-home" class="active">Home</button>
+    <button data-view="hud-loot">Loot</button>
+    <button data-view="hud-forge">Forge</button>
+    <button data-view="hud-supcast">SupCast</button>
+    <button data-view="hud-bot">Bot</button>
+    <button data-view="hud-tracker">Tracker</button>
+    <button data-view="hud-settings">Settings</button>
+  </nav>
 
-  <script type="module" src="hub.js"></script>
-</body>
-</html>
+  <!-- Toast -->
+  <div id="hudToast"></div>
+</div>
