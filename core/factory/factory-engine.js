@@ -27,6 +27,7 @@ export const FactoryEngine = {
       config,
       createdAt: timestamp,
       status: "deployed",
+      xp: 0,
     };
 
     this.registry.push(app);
