@@ -1,0 +1,75 @@
+/* ============================================================
+   SPAWNENGINE HUD v3.2 Styles
+   ============================================================ */
+.hud-container { position: relative; z-index: 2; color: var(--text); }
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  box-shadow: var(--glow);
+}
+
+.hud-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 16px; position: sticky; top: 0; z-index: 5;
+}
+.hud-logo { width: 28px; height: 28px; margin-right: 8px; }
+.hud-title { font-size: 1.1rem; font-weight: 700; }
+
+.hud-right { display: flex; align-items: center; gap: 10px; }
+.hud-stat { font-size: 0.8rem; opacity: 0.9; }
+
+.hud-btn, .hud-icon, .btn-primary, .btn-outline {
+  cursor: pointer; border-radius: 8px; border: none;
+  padding: 8px 14px; font-weight: 600;
+}
+.btn-primary {
+  background: linear-gradient(135deg,var(--accent),var(--accent-alt));
+  color:#050510;
+}
+.btn-outline {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.hud-icon { font-size: 1.1rem; }
+
+main#hudViews { padding: 16px; height: calc(100vh - 120px); overflow-y: auto; }
+.hud-view { display: none; }
+.hud-view.active { display: block; animation: fadeIn 0.3s ease; }
+
+.hud-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.hud-feed { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-top: 10px; }
+
+.hud-btnrow { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
+textarea#supcastInput {
+  width: 100%; min-height: 80px; background: var(--bg-glass);
+  border: 1px solid var(--border); color: var(--text);
+  padding: 8px; border-radius: 8px; margin-bottom: 10px;
+}
+
+.hud-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  display: flex; justify-content: space-around; align-items: center;
+  height: 56px; border-top: 1px solid var(--border);
+}
+.hud-nav button {
+  background: transparent; border: none; color: var(--text);
+  font-size: 0.8rem; flex: 1; height: 100%;
+}
+.hud-nav button.active { color: var(--accent); text-shadow: 0 0 8px var(--accent); }
+
+#hudToast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: var(--bg-glass); padding: 8px 14px; border-radius: 8px;
+  border: 1px solid var(--border); opacity: 0; transition: 0.3s;
+}
+#hudToast.show { opacity: 1; }
+
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
