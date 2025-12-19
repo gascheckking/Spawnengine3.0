@@ -1,0 +1,69 @@
+<!-- ============================================================
+     SPAWNENGINE · MESH HUB v3.1
+     Central dashboard after role selection
+     ============================================================ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpawnEngine · Mesh Hub</title>
+  <link rel="stylesheet" href="hub.css">
+  <link rel="icon" href="../../logo.png">
+</head>
+
+<body>
+  <canvas id="hub-bg"></canvas>
+
+  <header class="hub-header">
+    <div class="hub-left">
+      <img src="../../logo.png" class="hub-logo" alt="SpawnEngine Logo">
+      <h1>SpawnEngine · Mesh Hub</h1>
+    </div>
+    <div class="hub-right">
+      <button id="hubConnect" class="hub-btn">Connect</button>
+      <span id="hubXP">XP: 0</span>
+      <span id="hubSPN">SPN: 0.000</span>
+    </div>
+  </header>
+
+  <main class="hub-main">
+    <section class="hub-panel intro">
+      <h2>Welcome, <span id="hubRole">Builder</span></h2>
+      <p>Your onchain identity is active in Mesh Layer.</p>
+      <div class="hub-stats">
+        <div class="stat">🧠 Modules <span id="hubModules">4</span></div>
+        <div class="stat">⚡ XP Streak <span id="hubStreak">2</span></div>
+        <div class="stat">💳 Wallet <span id="hubWallet">Not connected</span></div>
+      </div>
+      <div class="hub-actions">
+        <button id="hubRefresh" class="hub-btn-primary">Refresh Mesh</button>
+        <button id="hubXPBoost" class="hub-btn-outline">Claim XP</button>
+      </div>
+    </section>
+
+    <section class="hub-panel hub-feed">
+      <h3>🛰 Mesh Feed</h3>
+      <div id="hubFeed">Loading mesh events...</div>
+    </section>
+
+    <section class="hub-panel supcast-mini">
+      <h3>🎙 SupCast Support</h3>
+      <div id="miniSupcastFeed">Loading SupCast feed...</div>
+      <button id="openSupcast" class="hub-btn-outline">Open SupCast</button>
+    </section>
+  </main>
+
+  <footer class="hub-footer">
+    <nav>
+      <a href="../../index.html">Home</a>
+      <a href="../slotmachine/slot.html">SlotMachine</a>
+      <a href="../forge/forge.html">Forge</a>
+      <a href="../supcast/supcast.html">SupCast</a>
+    </nav>
+    <p>SpawnEngine Mesh Layer · v3.1</p>
+  </footer>
+
+  <script type="module" src="hub.js"></script>
+</body>
+</html>
