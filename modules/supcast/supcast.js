@@ -217,3 +217,5 @@ window.SupCast = {
 };
 
 console.log("🧩 SupCast module initialized · v3.1");
+console.clear();
+console.log("🧩 Loading SupCast module v3.1...");
