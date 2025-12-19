@@ -348,4 +348,53 @@ button:hover {
   .app-header { flex-direction: column; gap: 8px; text-align: center; }
   .header-right { flex-wrap: wrap; justify-content: center; }
   .glass-panel { width: 100%; }
+}/* ===========================================
+   SPAWNENGINE DASHBOARD
+   =========================================== */
+.se-dash {
+  width: min(380px, 90%);
+  margin: 0 auto;
+  background: rgba(10, 12, 26, 0.95);
+  border: 1px solid rgba(140, 184, 255, 0.3);
+  border-radius: 16px;
+  padding: 20px;
+  font-family: var(--font, 'Inter', sans-serif);
+  color: #f3f6ff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.se-stats-row { display: flex; gap: 10px; margin-bottom: 15px; }
+
+.se-stat-card {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: 10px;
+  border-left: 3px solid var(--accent, #3cf6ff);
+}
+
+.se-stat-card small { font-size: 10px; opacity: 0.6; letter-spacing: 1px; }
+.se-stat-val { font-size: 20px; font-weight: bold; color: #3cf6ff; }
+
+.se-feed-header { font-size: 11px; font-weight: bold; margin-bottom: 8px; opacity: 0.8; }
+.se-feed-list {
+  height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.se-feed-item {
+  font-size: 12px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  border-left: 2px solid rgba(185, 255, 122, 0.5);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
 }
