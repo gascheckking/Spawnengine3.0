@@ -10,17 +10,13 @@ if ("serviceWorker" in navigator) {
 
       console.log("🛰️ [SpawnEngine] Service Worker registered:", registration.scope);
 
-      // —— update handling —— //
-      if (registration.waiting) {
-        showUpdatePrompt();
-      }
+      if (registration.waiting) showUpdatePrompt();
 
       registration.addEventListener("updatefound", () => {
         const newWorker = registration.installing;
         newWorker.addEventListener("statechange", () => {
-          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller)
             showUpdatePrompt();
-          }
         });
       });
     } catch (error) {
@@ -29,7 +25,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-/* —— update prompt —— */
 function showUpdatePrompt() {
   const bar = document.createElement("div");
   bar.innerHTML = `
@@ -59,13 +54,9 @@ function showUpdatePrompt() {
     </div>
   `;
   document.body.appendChild(bar);
-
-  document.getElementById("updateApp").onclick = () => {
-    window.location.reload(true);
-  };
+  document.getElementById("updateApp").onclick = () => window.location.reload(true);
 }
 
-/* —— offline detection —— */
 window.addEventListener("offline", () => {
   console.warn("📡 [SpawnEngine] Lost connection — switching to cached mode.");
 });
