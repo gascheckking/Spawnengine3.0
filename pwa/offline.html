@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SpawnEngine · Offline Mode</title>
   <style>
     body {
@@ -16,10 +16,7 @@
       height: 100vh;
       text-align: center;
     }
-    h1 {
-      font-size: 1.8em;
-      margin-bottom: 0.4em;
-    }
+    h1 { font-size: 1.8em; margin-bottom: 0.4em; }
     p {
       font-size: 1em;
       color: #9aa2cc;
@@ -42,10 +39,7 @@
   <p>Your device is offline. The Mesh app shell is active, but live XP streams and onchain feeds are paused.</p>
   <div class="signal">Trying to reconnect to Base Mesh Layer...</div>
   <script>
-    // —— auto-refresh when online again —— //
-    window.addEventListener("online", () => {
-      location.reload();
-    });
+    window.addEventListener("online", () => location.reload());
   </script>
 </body>
 </html>
