@@ -1,20 +1,15 @@
 <!-- /modules/arena/arena.html -->
 <div class="arena-container">
-  <!--——— ARENA HEADER ——-->
   <header class="arena-header">
     <h1 class="arena-title">⚔️ Contest Arena</h1>
     <p class="arena-subtitle">Join bounties, reveal packs, climb leaderboards.</p>
   </header>
 
-  <!--——— ACTIVE CONTESTS ——-->
   <section class="arena-section">
     <h2 class="arena-section-title">Active Contests</h2>
-    <div id="arenaContests" class="arena-contest-list">
-      <!-- contests injected from arena.js -->
-    </div>
+    <div id="arenaContests" class="arena-contest-list"></div>
   </section>
 
-  <!--——— LEADERBOARD ——-->
   <section class="arena-section">
     <h2 class="arena-section-title">Leaderboard</h2>
     <div class="arena-leaderboard">
@@ -28,22 +23,16 @@
             <th>Wins</th>
           </tr>
         </thead>
-        <tbody id="arenaLeaderboardBody">
-          <!-- leaderboard rows injected -->
-        </tbody>
+        <tbody id="arenaLeaderboardBody"></tbody>
       </table>
     </div>
   </section>
 
-  <!--——— EVENT LOG ——-->
   <section class="arena-section">
     <h2 class="arena-section-title">Live Feed</h2>
-    <ul id="arenaEventLog" class="arena-feed">
-      <!-- events added here dynamically -->
-    </ul>
+    <ul id="arenaEventLog" class="arena-feed"></ul>
   </section>
 
-  <!--——— JOIN MODAL ——-->
   <div id="arenaJoinModal" class="arena-modal">
     <div class="arena-modal-content">
       <h3 id="arenaJoinTitle">Join Contest</h3>
@@ -53,6 +42,5 @@
     </div>
   </div>
 
-  <!--——— RESULT TOAST ——-->
   <div id="arenaToast" class="arena-toast"></div>
 </div>
