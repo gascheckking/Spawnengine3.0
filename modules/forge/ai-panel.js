@@ -7,19 +7,21 @@ const input = document.getElementById("aiInput");
 const sendBtn = document.getElementById("aiSend");
 const output = document.getElementById("aiOutput");
 
-sendBtn.addEventListener("click", () => {
-  const msg = input.value.trim();
-  if (!msg) return;
-  const reply = generateResponse(msg);
-  output.innerHTML += `<p><strong>You:</strong> ${msg}</p>`;
-  setTimeout(() => {
-    output.innerHTML += `<p><strong>AI:</strong> ${reply}</p>`;
-    XPPulse.trigger(window.innerWidth / 2, window.innerHeight / 2, "#4df2ff");
-    toast("AI Pulse triggered.");
-  }, 600);
-  input.value = "";
-  output.scrollTop = output.scrollHeight;
-});
+if (sendBtn) {
+  sendBtn.addEventListener("click", () => {
+    const msg = input.value.trim();
+    if (!msg) return;
+    const reply = generateResponse(msg);
+    output.innerHTML += `<p><strong>You:</strong> ${msg}</p>`;
+    setTimeout(() => {
+      output.innerHTML += `<p><strong>AI:</strong> ${reply}</p>`;
+      XPPulse.trigger(window.innerWidth / 2, window.innerHeight / 2, "#4df2ff");
+      if (window.toast) toast("AI Pulse triggered.");
+    }, 600);
+    input.value = "";
+    output.scrollTop = output.scrollHeight;
+  });
+}
 
 function generateResponse(msg) {
   const responses = [
