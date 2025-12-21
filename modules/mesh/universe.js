@@ -1,5 +1,5 @@
 /* ============================================================
-   SpawnEngine Mesh Universe Module v3.1
+   SPAWNENGINE · Mesh Universe Module v3.1
    Handles Mesh Feed, Profile, Token Data & Network Status
    ============================================================ */
 
@@ -7,6 +7,14 @@ import { getHomeFeed } from "../../api/mesh-feed.js";
 import { getProfile, updateWalletStatus } from "../../api/user-profile.js";
 import { getTokenData } from "../../api/spawnengine-token.js";
 import { getSystemActivity } from "../../api/activity.js";
+
+/* —— Inject CSS automatically —— */
+if (!document.querySelector('link[href="modules/mesh/universe.css"]')) {
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "modules/mesh/universe.css";
+  document.head.appendChild(link);
+}
 
 /* —— Element references —— */
 const xpEl = document.getElementById("xpBalance");
