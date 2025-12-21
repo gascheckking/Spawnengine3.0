@@ -38,12 +38,14 @@ function bindHUD() {
   const xpEl = document.getElementById("hudXp");
   const spnEl = document.getElementById("hudSpn");
 
+  /* XP BOOST */
   document.getElementById("hudBoost").addEventListener("click", () => {
     balanceXp += 50;
     xpEl.textContent = `XP: ${balanceXp}`;
     toast("+50 XP claimed");
   });
 
+  /* MESH SYNC */
   document.getElementById("hudRefresh").addEventListener("click", () => {
     const modules = Math.floor(Math.random() * 10) + 1;
     document.getElementById("hudModules").textContent = modules;
