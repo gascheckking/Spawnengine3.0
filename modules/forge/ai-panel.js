@@ -1,5 +1,5 @@
 /* ============================================================
-   SPAWNENGINE AI-PANEL v4.4 — Safe External Init
+   SPAWNENGINE AI-PANEL v4.6 — Safe External Init
    ============================================================ */
 import { XPPulse } from "./xp-pulse.js";
 
@@ -13,6 +13,13 @@ export function initAIPanel() {
     return;
   }
 
+  // ✨ Auto-resize för textarea
+  input.addEventListener("input", () => {
+    input.style.height = "auto";
+    input.style.height = input.scrollHeight + "px";
+  });
+
+  // 🧠 Skicka meddelande
   function sendMessage() {
     const msg = input.value.trim();
     if (!msg) return;
@@ -28,6 +35,7 @@ export function initAIPanel() {
     }, 600);
 
     input.value = "";
+    input.style.height = "auto";
   }
 
   sendBtn.addEventListener("click", sendMessage);
@@ -47,7 +55,7 @@ function generateResponse(msg) {
     "Building sub-node...",
     "Forging XP pathways...",
     "Deploying data relay...",
-    "Executing onchain mutation...",
+    "Executing on-chain mutation...",
   ];
   return responses[Math.floor(Math.random() * responses.length)];
 }
