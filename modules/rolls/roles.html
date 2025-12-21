@@ -1,30 +1,37 @@
 <!-- ============================================================
-     SPAWNENGINE · PACK WIDGET v3.2
+     SPAWNENGINE · ROLES v3.2
+     Onchain Identity Selector — Creator / Operator / Explorer
      ============================================================ -->
-<div id="packWidget" class="pack-widget">
-  <header class="pack-header">
-    <h2>🎴 Pack Reveal</h2>
-    <button id="openPackBtn">Open Pack</button>
+<div id="rolesModule" class="roles-container">
+  <header class="roles-header">
+    <h2>🧬 Choose Your Role</h2>
+    <p class="roles-sub">
+      Select your Mesh identity to shape your experience inside SpawnEngine.
+    </p>
   </header>
 
-  <div class="pack-display">
-    <div class="pack-card" id="packCard">
-      <p>Tap to open your Mesh pack</p>
+  <section class="roles-grid">
+    <div class="role-card" data-role="Creator">
+      <h3>🎨 Creator / Artist</h3>
+      <p>Mint packs, earn XP, and grow your mesh through content and tokens.</p>
+      <span class="role-tag">Farcaster Ready</span>
     </div>
-  </div>
 
-  <section class="pack-inventory">
-    <h3>Your Inventory</h3>
-    <ul>
-      <li>Fragments: <span id="invFragments">0</span></li>
-      <li>Shards: <span id="invShards">0</span></li>
-      <li>Relics: <span id="invRelics">0</span></li>
-    </ul>
-    <button id="synthesizeBtn">Synthesize Relic</button>
+    <div class="role-card" data-role="Operator">
+      <h3>⚙️ Operator / Engineer</h3>
+      <p>Automate XP flows, deploy packs, and manage mesh logic.</p>
+      <span class="role-tag">Base • Layer 4</span>
+    </div>
+
+    <div class="role-card" data-role="Explorer">
+      <h3>🌐 Explorer / User</h3>
+      <p>Join quests, open packs, and explore onchain XP & Spawn rewards.</p>
+      <span class="role-tag">Zora Mesh v3.1</span>
+    </div>
   </section>
 
-  <div id="revealLog" class="reveal-log">
-    <h4>Recent Loot</h4>
-    <ul id="lootEvents"></ul>
-  </div>
+  <footer class="roles-footer">
+    <p id="selectedRole">Select your onchain role</p>
+    <button id="confirmRole" class="btn-primary">Confirm Role</button>
+  </footer>
 </div>
