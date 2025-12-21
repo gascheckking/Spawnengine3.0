@@ -1,9 +1,17 @@
 /* ============================================================
-   SpawnEngine Pack Widget v3.1
+   SPAWNENGINE · PACK WIDGET v3.2
    Handles Pack Reveal, Inventory, and Relic Synthesis
    ============================================================ */
 
 import { simulatePackOpen, getInventory, simulateSynthesis } from "../../api/pack-actions.js";
+
+/* —— Inject CSS automatically —— */
+if (!document.querySelector('link[href="modules/packwidget/reveal.css"]')) {
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "modules/packwidget/reveal.css";
+  document.head.appendChild(link);
+}
 
 /* —— Elements —— */
 const packCard = document.getElementById("packCard");
@@ -23,7 +31,7 @@ function renderInventory() {
 }
 
 /* —— Pack Opening —— */
-openPackBtn.addEventListener("click", () => {
+openPackBtn?.addEventListener("click", () => {
   packCard.classList.add("opening");
   packCard.innerHTML = "<p>Opening...</p>";
 
@@ -33,12 +41,12 @@ openPackBtn.addEventListener("click", () => {
     packCard.innerHTML = `<p>${result.events.join("<br>")}</p>`;
     renderInventory();
     logLoot(result.events);
-    showToast("Pack opened successfully!");
+    showToast("🎁 Pack opened successfully!");
   }, 1500);
 });
 
 /* —— Synthesis Action —— */
-synthesizeBtn.addEventListener("click", () => {
+synthesizeBtn?.addEventListener("click", () => {
   const result = simulateSynthesis();
   renderInventory();
   logLoot([result.message]);
@@ -47,7 +55,7 @@ synthesizeBtn.addEventListener("click", () => {
 
 /* —— Loot Log —— */
 function logLoot(events) {
-  const newEntries = events.map(e => `<li>${e}</li>`).join("");
+  const newEntries = events.map((e) => `<li>${e}</li>`).join("");
   lootEvents.innerHTML = newEntries + lootEvents.innerHTML;
 }
 
