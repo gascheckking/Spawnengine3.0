@@ -48,7 +48,7 @@ function hexToRgb(hex) {
   return `${(c >> 16) & 255}, ${(c >> 8) & 255}, ${c & 255}`;
 }
 
-window.XPPulse = {
+export const XPPulse = {
   trigger(x, y, color = "#4df2ff") {
     addPulse(x, y, color);
   },
