@@ -6,9 +6,9 @@
   <title>SpawnEngine · Mesh HUD</title>
 
   <!-- ✅ Manifest & Style -->
-  <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" type="image/png" href="assets/icons/logo.png" />
+  <link rel="manifest" href="../../manifest.json" />
+  <link rel="stylesheet" href="../../style.css" />
+  <link rel="icon" type="image/png" href="../../assets/icons/favicon.png" />
 
   <!-- ✅ Meta / SEO -->
   <meta name="theme-color" content="#0a0e26" />
@@ -16,7 +16,6 @@
 </head>
 
 <body data-theme="glassbase">
-
   <!-- 🌌 Background -->
   <canvas id="mesh-bg"></canvas>
 
@@ -29,7 +28,7 @@
     <!-- HEADER -->
     <header class="hud-header glass">
       <div class="hud-left">
-        <img src="assets/icons/icon-96.png" class="hud-logo" alt="SpawnEngine Logo">
+        <img src="../../assets/logo.png" class="hud-logo" alt="SpawnEngine Logo" />
         <h2 class="hud-title">SpawnEngine</h2>
       </div>
       <div class="hud-right">
@@ -42,7 +41,6 @@
 
     <!-- MAIN -->
     <main id="hudViews">
-
       <!-- HOME -->
       <section id="hud-home" class="hud-view active">
         <h3>Mesh Overview</h3>
@@ -134,7 +132,6 @@
         <h2>Forge Terminal</h2>
         <div id="forgeTerminal"></div>
       </section>
-
     </main>
 
     <!-- NAVIGATION -->
@@ -155,10 +152,10 @@
   </div>
 
   <!-- 🧩 Forge + AI Integration -->
-  <script type="module" src="modules/forge/index.js"></script>
+  <script type="module" src="../forge/index.js"></script>
 
   <!-- ✅ Core Logic -->
-  <script type="module" src="app.js"></script>
-  <script src="mesh-bg.js" defer></script>
+  <script type="module" src="../../app.js"></script>
+  <script src="../../mesh-bg.js" defer></script>
 </body>
 </html>
