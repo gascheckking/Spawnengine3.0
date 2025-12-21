@@ -1,77 +1,153 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SpawnEngine · Choose Your Role</title>
+/* ============================================================
+   SPAWNENGINE · GLOBAL STYLE v3.2
+   Root-level UI · Mesh UI Base Theme
+   ============================================================ */
 
-  <!-- ✅ Manifest & Style -->
-  <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" type="image/png" href="assets/icons/logo.png" />
+:root {
+  --bg: #04060a;
+  --bg-glass: rgba(10, 12, 20, 0.75);
+  --accent: #4df2ff;
+  --accent2: #b9ff7a;
+  --text: #e5eaff;
+  --border: rgba(255, 255, 255, 0.08);
+  --glow: 0 0 15px rgba(77, 242, 255, 0.15);
+}
 
-  <!-- ✅ Meta / SEO -->
-  <meta name="theme-color" content="#0a0e26" />
-  <meta name="description" content="SpawnEngine · Modular Mesh Protocol" />
-</head>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", system-ui, sans-serif;
+}
 
-<body data-theme="glassbase">
-  <!-- 🌌 Background Mesh Universe -->
-  <canvas id="mesh-bg"></canvas>
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  <!-- ✦ Role Selection Screen ✦ -->
-  <main class="role-container">
-    <div class="role-header">
-      <img src="assets/icons/logo.png" alt="SpawnEngine Logo" class="logo-large" />
-      <h1 class="title-glow">SpawnEngine</h1>
-      <p class="subtitle">Choose your onchain identity and dive into the Mesh Universe</p>
-    </div>
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1, h2, h3, h4 {
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 0.3em;
+}
 
-    <div class="role-grid">
-      <div class="role-card creator" onclick="selectRole('creator')">
-        <h2>🎨 Creator / Artist</h2>
-        <p>Mint packs, earn XP, and grow your mesh through content and tokens.</p>
-        <span class="role-tag">Farcaster Ready</span>
-      </div>
+p, span, li {
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
 
-      <div class="role-card operator" onclick="selectRole('operator')">
-        <h2>⚙️ Operator / Engineer</h2>
-        <p>Automate XP flows, deploy packs, and manage mesh logic.</p>
-        <span class="role-tag">Base • Layer 4</span>
-      </div>
+a {
+  color: var(--accent2);
+  text-decoration: none;
+}
 
-      <div class="role-card explorer" onclick="selectRole('explorer')">
-        <h2>🌐 Explorer / User</h2>
-        <p>Join quests, open packs, and explore onchain XP & Spawn rewards.</p>
-        <span class="role-tag">Zora Mesh v3.1</span>
-      </div>
-    </div>
+/* ============================================================
+   GLOBAL UI ELEMENTS
+   ============================================================ */
+button {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
 
-    <footer class="role-footer">
-      <p>v3.1 · Modular Mesh Protocol · Base / Zora / Farcaster</p>
-    </footer>
-  </main>
+button:hover {
+  transform: scale(1.04);
+  filter: brightness(1.1);
+}
 
-  <!-- ✦ Scripts ✦ -->
-  <script>
-    // Role select + HUD redirect
-    function selectRole(role) {
-      localStorage.setItem("spawnRole", role);
-      window.location.href = "hud.html";
-    }
+input, textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 0.5em 0.8em;
+}
 
-    // Hover glow
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".role-card").forEach(card => {
-        card.addEventListener("mouseenter", () => card.classList.add("hover"));
-        card.addEventListener("mouseleave", () => card.classList.remove("hover"));
-      });
-    });
-  </script>
+/* ============================================================
+   LAYOUTS
+   ============================================================ */
+.main-container {
+  padding: 1.4em;
+  max-width: 960px;
+  margin: 0 auto;
+}
 
-  <!-- ✅ Core Scripts -->
-  <script src="mesh-bg.js" defer></script>
-  <script src="spawnengine-sdk.js" defer></script>
-  <script src="app.js" defer></script>
-</body>
-</html>
+/* ============================================================
+   CARD / PANEL STYLES
+   ============================================================ */
+.card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1em;
+  box-shadow: var(--glow);
+  margin-bottom: 1em;
+}
+
+.card h3 {
+  color: var(--accent);
+}
+
+.card p {
+  color: #9aa2cc;
+}
+
+/* ============================================================
+   ROLE / HERO STYLES (for Role Selection & Onboarding)
+   ============================================================ */
+.role-container {
+  text-align: center;
+  padding: 2em;
+}
+
+.role-header .logo-large {
+  width: 96px;
+  margin-bottom: 1em;
+}
+
+.title-glow {
+  font-size: 2rem;
+  color: var(--accent2);
+  text-shadow: 0 0 12px rgba(77, 242, 255, 0.4);
+}
+
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1em;
+  margin-top: 2em;
+}
+
+.role-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.2em;
+  transition: 0.25s ease;
+}
+
+.role-card:hover {
+  border-color: var(--accent2);
+  transform: translateY(-3px);
+}
+
+/* ============================================================
+   FOOTER / META
+   ============================================================ */
+footer {
+  text-align: center;
+  color: #9aa2cc;
+  font-size: 0.85rem;
+  margin-top: 2em;
+  padding: 1em 0;
+}
