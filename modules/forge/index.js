@@ -1,5 +1,3 @@
-import "./forge-terminal.js";
-import "./forge-terminal.css";
 // modules/forge/index.js
 import "./forge.js";
 import "./xp-pulse.js"; // XPPulse always first
