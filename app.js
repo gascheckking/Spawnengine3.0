@@ -1,3 +1,7 @@
+/* ============================================================
+   SPAWNENGINE APP v3.3 — Mesh Universe Core
+   ============================================================ */
+
 //——— IMPORTER ———//
 import { MeshCore } from "./core/mesh-core.js";
 import { MeshBridge } from "./core/mesh-bridge.js";
@@ -5,25 +9,28 @@ import { SpawnArena } from "./core/arena/spawn-arena.js";
 import { ForgeAI } from "./core/forge-ai.js";
 import { ForgeUI } from "./core/forge-ui.js";
 
+//——— GLOBAL STATE ———//
+let userProfile = {};
+let eventCount = 0;
+let xpCount = 0;
+let forgeActive = false;
+const currentTheme = localStorage.getItem("spawnTheme") || "glassbase";
+
 //——— INIT ———//
 document.addEventListener("DOMContentLoaded", async () => {
   try {
+    console.log("%c🚀 SpawnEngine MeshCore Booting...", "color:#3cf6ff");
+
     // 🧠 Initiera MeshCore (state, feed, XP)
     if (MeshCore?.init) await MeshCore.init();
 
     // 🌉 Starta MeshBridge (kopplar Core → UI → Pulse)
     if (MeshBridge?.init) MeshBridge.init();
 
-    // 🧬 Starta ForgeAI och ForgeUI
-    ForgeAI.init();
-    setTimeout(() => {
-      ForgeUI.init();
-      ForgeAI.renderForgePanel("meshFeed");
-    }, 5000);
+    // ⚙️ Starta Forge + AI-panel
+    setupForgeSystems();
 
-    console.log("%cSpawnEngine MeshCore online:", "color:#14b8a6", MeshCore?.getProfile?.());
-
-    // 🎨 Tema & UI
+    // 🎨 UI / Tema
     document.body.dataset.theme = currentTheme;
     setupNavigation();
     setupThemeSwitcher();
@@ -45,7 +52,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 💾 Visa roll från localStorage
     const savedRole = localStorage.getItem("spawnRole");
-    if (savedRole) console.log(`[SpawnEngine] Loaded role: ${savedRole}`);
+    if (savedRole) {
+      console.log(`🧩 Active Role: ${savedRole}`);
+      toast(`Role active: ${savedRole.toUpperCase()}`);
+    }
 
     // 🏁 Starta Arena sist (kopplad till MeshCore)
     SpawnArena.init();
@@ -56,40 +66,80 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// — Display role from localStorage —
-    const role = localStorage.getItem("spawnRole");
-    if (role) {
-      console.log(`🧩 Active Role: ${role}`);
-      toast(`Role active: ${role.toUpperCase()}`);
-    }
-  } catch (err) {
-    console.error("⚠️ SpawnEngine boot error:", err);
-  }
-});
+/* ============================================================
+   FORGE + AI SYSTEM
+   ============================================================ */
+function setupForgeSystems() {
+  try {
+    // 🧬 Forge AI init
+    ForgeAI.init();
 
-//——— NAVIGATION ———//
+    // 🪄 ForgeUI laddas efter 5s delay
+    setTimeout(() => {
+      ForgeUI.init();
+      ForgeAI.renderForgePanel("meshFeed");
+    }, 5000);
+
+    // 🔮 Skapa AI-overlay för pulse feedback
+    createForgeOverlay();
+
+    console.log("%c🧬 Forge + AI systems online", "color:#b9ff7a");
+  } catch (err) {
+    console.error("Forge init error:", err);
+  }
+}
+
+/* — Forge Overlay (visar XP + AI action pulses) — */
+function createForgeOverlay() {
+  const overlay = document.createElement("div");
+  overlay.id = "forgeOverlay";
+  overlay.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-size: 0.85rem;
+    box-shadow: var(--glow);
+    backdrop-filter: blur(12px);
+    z-index: 9999;
+    display: none;
+  `;
+  document.body.appendChild(overlay);
+}
+
+/* — AI-triggered pulse — */
+window.spawnForgePulse = (message, color = "#3cf6ff") => {
+  const overlay = document.getElementById("forgeOverlay");
+  if (!overlay) return;
+  overlay.style.display = "block";
+  overlay.style.borderColor = color;
+  overlay.textContent = `✨ ${message}`;
+  overlay.style.boxShadow = `0 0 15px ${color}`;
+  setTimeout(() => (overlay.style.display = "none"), 2500);
+};
+
+/* ============================================================
+   NAVIGATION & UI
+   ============================================================ */
 function setupNavigation() {
   const buttons = document.querySelectorAll(".nav-btn");
+  if (!buttons.length) return;
+
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
       buttons.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       const target = btn.dataset.view;
       document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
-      document.getElementById(target).classList.add("active");
+      document.getElementById(target)?.classList.add("active");
       window.scrollTo(0, 0);
     });
   });
 }
-
-//——— TOAST ———//
-window.toast = (msg) => {
-  const el = document.getElementById("toast");
-  if (!el) return;
-  el.textContent = msg;
-  el.classList.add("show");
-  setTimeout(() => el.classList.remove("show"), 1500);
-};
 
 //——— THEME ———//
 function setupThemeSwitcher() {
@@ -113,7 +163,9 @@ function setupSettings() {
   });
 }
 
-//——— PROFILE ———//
+/* ============================================================
+   PROFILE + HOME + MARKET
+   ============================================================ */
 async function loadProfile() {
   try {
     const mockProfile = {
@@ -130,7 +182,6 @@ async function loadProfile() {
   }
 }
 
-//——— HOME FEED ———//
 async function loadHome() {
   try {
     const mockFeed = [
@@ -140,6 +191,7 @@ async function loadHome() {
       "💠 Explorer claimed XP reward.",
     ];
     const el = document.getElementById("meshFeed");
+    if (!el) return;
     el.innerHTML = "";
     mockFeed.forEach((item) => {
       const div = document.createElement("div");
@@ -152,7 +204,6 @@ async function loadHome() {
   }
 }
 
-//——— MARKETPLACE ———//
 async function loadMarketplace() {
   try {
     const mockListings = [
@@ -162,6 +213,7 @@ async function loadMarketplace() {
     ];
 
     const list = document.getElementById("marketList");
+    if (!list) return;
     list.innerHTML = "";
     mockListings.forEach((item) => {
       const card = document.createElement("div");
@@ -193,7 +245,9 @@ async function loadMarketplace() {
   }
 }
 
-//——— LOOT ———//
+/* ============================================================
+   MODULES — Loot, Support, Tracker, Bot
+   ============================================================ */
 function setupLoot() {
   const openBtn = document.getElementById("openPackBtn");
   const synthBtn = document.getElementById("synthBtn");
@@ -204,7 +258,7 @@ function setupLoot() {
   if (openBtn) {
     openBtn.addEventListener("click", () => {
       toast("🎁 Pack opened! You gained 1 Shard.");
-      spawnMeshPulse("#14b8a6");
+      spawnForgePulse("Pack opened", "#14b8a6");
       inventory.shards++;
       updateInventory(inventory);
     });
@@ -213,7 +267,7 @@ function setupLoot() {
   if (synthBtn) {
     synthBtn.addEventListener("click", () => {
       toast("⚗️ Relic synthesized!");
-      spawnMeshPulse("#6366f1");
+      spawnForgePulse("Relic forged", "#ffefba");
       inventory.relics++;
       updateInventory(inventory);
     });
@@ -221,17 +275,15 @@ function setupLoot() {
 }
 
 function updateInventory(inv) {
-  document.getElementById("fragCount").textContent = inv.fragments;
-  document.getElementById("shardCount").textContent = inv.shards;
-  document.getElementById("relicCount").textContent = inv.relics;
+  document.getElementById("fragCount")?.textContent = inv.fragments;
+  document.getElementById("shardCount")?.textContent = inv.shards;
+  document.getElementById("relicCount")?.textContent = inv.relics;
 }
 
-//——— SUPPORT (SupCast) ———//
 function setupSupport() {
   const input = document.getElementById("supportInput");
   const submit = document.getElementById("submitSupport");
   const feed = document.getElementById("supportFeed");
-
   if (!input || !submit) return;
 
   submit.addEventListener("click", () => {
@@ -246,7 +298,6 @@ function setupSupport() {
   });
 }
 
-//——— TRACKER ———//
 function setupTracker() {
   const feed = document.getElementById("trackerFeed");
   if (!feed) return;
@@ -257,27 +308,28 @@ function setupTracker() {
   `;
 }
 
-//——— SPAWNBOT ———//
 function setupBot() {
   const list = document.getElementById("automationList");
   if (!list) return;
   list.innerHTML = `
     <div class="feed-item">🤖 Auto-claim streak XP — ON</div>
-    <div class="feed-item">⚙️ Gas Alert < 0.05 Gwei</div>
+    <div class="feed-item">⚙️ Gas Alert &lt; 0.05 Gwei</div>
     <div class="feed-item">📡 Watch Creator: @spawniz</div>
   `;
 }
 
-//——— REVEAL DEMO ———//
+/* ============================================================
+   VISUALS — Pulse & Reveal
+   ============================================================ */
 function bindRevealDemo() {
   document.body.addEventListener("click", (e) => {
     if (e.target.classList.contains("js-reveal-demo")) {
       toast("✨ Pack reveal triggered!");
+      spawnForgePulse("Reveal demo executed", "#b9ff7a");
     }
   });
 }
 
-//——— MESH PULSE INTERAKTION ———//
 function setupPulseInteractions() {
   const updateStats = () => {
     const eEl = document.getElementById("eventCount");
@@ -291,6 +343,25 @@ function setupPulseInteractions() {
       eventCount++;
       xpCount += 5;
       updateStats();
+      spawnForgePulse("XP +5", "#4df2ff");
     }
   });
 }
+
+/* ============================================================
+   TOAST — Reusable notifications
+   ============================================================ */
+function setupToast() {
+  if (!document.getElementById("toast")) {
+    const el = document.createElement("div");
+    el.id = "toast";
+    document.body.appendChild(el);
+  }
+}
+window.toast = (msg) => {
+  const el = document.getElementById("toast");
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 1500);
+};
