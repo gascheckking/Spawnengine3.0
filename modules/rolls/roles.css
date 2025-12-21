@@ -1,104 +1,138 @@
 /* ============================================================
-   SpawnEngine Roles v3.1
-   Role Selection & Display
+   SPAWNENGINE · PACK WIDGET v3.2 — Pack Reveal + Synthesis
    ============================================================ */
 
-.roles-container {
+.pack-widget {
   color: #e5eaff;
   font-family: system-ui, sans-serif;
   padding: 1.2em;
-  max-width: 800px;
+  max-width: 420px;
   margin: 0 auto;
+  background: radial-gradient(circle at top left, #05061a, #02030a);
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.08);
 }
 
-.roles-header {
+/* —— HEADER —— */
+.pack-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid #2b2f5c;
+  padding-bottom: 0.4em;
   margin-bottom: 1em;
-  padding-bottom: 0.5em;
 }
 
-.roles-header h2 {
-  font-size: 1.4em;
+.pack-header h2 {
+  font-size: 1.3em;
   color: #77f2ff;
-  margin: 0;
 }
 
-.roles-sub {
+#openPackBtn {
+  background: #2b2f5c;
+  border: 1px solid #4df2ff;
+  color: #4df2ff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+#openPackBtn:hover {
+  background: #4df2ff;
+  color: #000;
+}
+
+/* —— PACK CARD —— */
+.pack-card {
+  width: 220px;
+  height: 140px;
+  background: linear-gradient(145deg, #0a0e26, #141a40);
+  border: 1px solid #4df2ff;
+  border-radius: 12px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #9aa2cc;
-  font-size: 0.9em;
-  margin-top: 0.3em;
+  transition: all 0.3s ease;
+  text-align: center;
 }
 
-.current-role {
-  background: rgba(15, 18, 40, 0.8);
+.pack-card.opening {
+  animation: glowPulse 1s infinite alternate;
+}
+
+@keyframes glowPulse {
+  from { box-shadow: 0 0 5px #4df2ff; }
+  to { box-shadow: 0 0 20px #4df2ff; }
+}
+
+/* —— INVENTORY —— */
+.pack-inventory {
+  margin-top: 1.4em;
+  background: rgba(20, 25, 55, 0.4);
   border: 1px solid #2b2f5c;
   border-radius: 10px;
   padding: 1em;
-  margin-bottom: 1.2em;
 }
 
-.current-role h3 {
-  margin: 0 0 0.5em 0;
-  color: #4df2ff;
+.pack-inventory h3 {
+  margin-top: 0;
+  color: #77f2ff;
 }
 
-.current-role span {
-  font-size: 0.95em;
-  color: #9aa2cc;
-}
-
-.roles-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 1em;
-}
-
-.role-card {
-  background: #111436;
-  border: 1px solid #2b2f5c;
-  border-radius: 10px;
-  padding: 0.9em;
-  text-align: center;
-  transition: all 0.25s ease;
-  cursor: pointer;
-  box-shadow: 0 0 0 rgba(77, 242, 255, 0);
-}
-
-.role-card:hover {
-  transform: translateY(-3px);
-  border-color: #4df2ff;
-  box-shadow: 0 0 10px rgba(77, 242, 255, 0.3);
-}
-
-.role-card.active {
-  background: linear-gradient(145deg, #0a0e26, #18214b);
-  border-color: #4df2ff;
-  box-shadow: 0 0 15px rgba(77, 242, 255, 0.5);
-}
-
-.role-card h4 {
+.pack-inventory ul {
+  list-style: none;
+  padding: 0;
   margin: 0.4em 0;
-  color: #fff;
-  font-size: 1em;
 }
 
-.role-card p {
-  font-size: 0.85em;
-  color: #9aa2cc;
-  margin: 0.3em 0;
+.pack-inventory li {
+  font-size: 0.95em;
+  color: #c6d0ff;
+  padding: 0.3em 0;
 }
 
-.role-icon {
-  font-size: 1.6em;
-  color: #4df2ff;
-  margin-bottom: 0.3em;
+#synthesizeBtn {
+  margin-top: 0.8em;
+  background: #4df2ff;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: transform 0.2s ease;
 }
 
-.roles-footer {
-  margin-top: 1.5em;
-  text-align: center;
-  font-size: 0.9em;
-  color: #666b9a;
+#synthesizeBtn:hover {
+  transform: scale(1.05);
+}
+
+/* —— REVEAL LOG —— */
+.reveal-log {
+  margin-top: 1.8em;
   border-top: 1px solid #2b2f5c;
-  padding-top: 0.8em;
+  padding-top: 0.6em;
+}
+
+.reveal-log h4 {
+  margin: 0 0 0.4em 0;
+  color: #77f2ff;
+}
+
+.reveal-log ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.9em;
+  color: #9aa2cc;
+}
+
+.reveal-log li {
+  padding: 0.4em 0;
+  border-bottom: 1px solid #1e244d;
 }
