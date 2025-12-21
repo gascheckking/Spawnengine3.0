@@ -1,3 +1,8 @@
+/* ============================================================
+   SPAWNENGINE · SUPCAST v3.2
+   Support-as-a-System · Mesh-connected Knowledge Layer
+   ============================================================ */
+
 .supcast-container {
   color: #e5eaff;
   font-family: system-ui, sans-serif;
@@ -15,12 +20,14 @@
   margin-bottom: 1.4em;
 }
 
+/* —— CREATE —— */
 .supcast-create {
   background: #0a0e26;
   border: 1px solid #2b2f5c;
   border-radius: 10px;
   padding: 1em;
   margin-bottom: 1.4em;
+  box-shadow: 0 0 12px rgba(77, 242, 255, 0.05);
 }
 
 .supcast-input {
@@ -48,18 +55,25 @@
   color: #e5eaff;
   border-radius: 6px;
   padding: 6px 10px;
+  font-size: 0.9em;
 }
 
 .btn-primary {
-  background: #4df2ff;
+  background: linear-gradient(135deg, #4df2ff, #b9ff7a);
   color: #000;
   border: none;
   padding: 8px 14px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
+  transition: 0.2s ease;
 }
 
+.btn-primary:hover {
+  transform: scale(1.05);
+}
+
+/* —— FEED —— */
 .supcast-feed h3 {
   color: #77f2ff;
   margin-bottom: 0.6em;
@@ -79,10 +93,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: border-color 0.3s ease;
 }
 
-.supcast-item-main {
-  max-width: 70%;
+.supcast-item:hover {
+  border-color: #4df2ff;
 }
 
 .supcast-title {
@@ -95,10 +110,6 @@
   font-size: 0.8em;
 }
 
-.supcast-actions {
-  text-align: right;
-}
-
 .supcast-btn {
   background: #4df2ff;
   color: #000;
@@ -107,22 +118,15 @@
   padding: 5px 10px;
   cursor: pointer;
   font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.supcast-btn:hover {
+  background: #b9ff7a;
 }
 
 .supcast-status {
   color: #79ffb6;
   font-weight: 600;
   font-size: 0.9em;
-}
-
-.supcast-open {
-  border-color: #4df2ff;
-}
-
-.supcast-claimed {
-  border-color: #f2c84d;
-}
-
-.supcast-solved {
-  border-color: #79ffb6;
 }
