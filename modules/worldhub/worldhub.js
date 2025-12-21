@@ -1,12 +1,13 @@
 /* ============================================================
-   SPAWNVERSE · WorldHub UI v1.1
-   Frontend controller for WorldEngine
+   SPAWNVERSE · WorldHub Controller v1.2
+   Integrated with HUD + MeshCore
    ============================================================ */
 
+import { MeshCore } from "../../core/MeshCore.js";
 import { WorldEngine } from "../../core/worlds/world-engine.js";
 import { WorldMint } from "../../core/worlds/world-mint.js";
 
-/* — Auto inject CSS if missing (safety) — */
+/* — Auto inject CSS if missing — */
 if (!document.querySelector('link[href="modules/worldhub/worldhub.css"]')) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
@@ -19,28 +20,32 @@ const input = document.getElementById("worldNameInput");
 const createBtn = document.getElementById("createWorldBtn");
 const listEl = document.getElementById("worldList");
 
-/* — Render worlds — */
+/* — Render all Worlds — */
 function renderWorlds() {
-  const worlds = WorldEngine.listWorlds();
+  const worlds = WorldEngine.listWorlds?.() || [];
   if (!worlds.length) {
-    listEl.innerHTML = `<p style="opacity:0.7">No worlds created yet.</p>`;
+    listEl.innerHTML = `<p style="opacity:0.6;">No worlds created yet. Start your first mesh!</p>`;
     return;
   }
-  listEl.innerHTML = worlds.map(
-    (w) => `
+
+  listEl.innerHTML = worlds
+    .map(
+      (w) => `
     <div class="world-card">
       <h3>${w.name}</h3>
       <small>Owner: ${w.owner}</small><br/>
-      <small>Modules: ${w.modules.length} · XP: ${w.xp}</small><br/>
+      <small>Modules: ${w.modules?.length ?? 0} · XP: ${w.xp ?? 0}</small><br/>
       <button data-id="${w.id}" class="mintBtn">Mint</button>
     </div>
   `
-  ).join("");
+    )
+    .join("");
 
   document.querySelectorAll(".mintBtn").forEach((btn) =>
     btn.addEventListener("click", () => {
       WorldMint.mintWorld(btn.dataset.id);
-      toast(`🪙 World minted onchain`);
+      MeshCore.addXP?.(25);
+      toast(`🪙 World minted! +25 XP`);
     })
   );
 }
@@ -49,7 +54,7 @@ function renderWorlds() {
 createBtn.addEventListener("click", () => {
   const name = input.value.trim();
   if (!name) return toast("Enter a name first!");
-  WorldEngine.createWorld(name, "@spawnUser");
+  WorldEngine.createWorld(name, MeshCore.state?.user || "@spawnUser");
   input.value = "";
   renderWorlds();
   toast(`🌍 World '${name}' created!`);
@@ -67,5 +72,5 @@ function toast(msg) {
 /* — Init — */
 window.addEventListener("DOMContentLoaded", () => {
   renderWorlds();
-  console.log("🌐 WorldHub UI initialized (v1.1)");
+  console.log("🌐 WorldHub module initialized (HUD integrated v1.2)");
 });
