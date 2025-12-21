@@ -1,65 +1,55 @@
 /* ============================================================
-   SPAWNENGINE · PACK WIDGET v3.2
-   Handles Pack Reveal, Inventory, and Relic Synthesis
+   SPAWNENGINE · ROLES v3.2
+   Role Selector and Identity Handler for Mesh Onboarding
    ============================================================ */
 
-import { simulatePackOpen, getInventory, simulateSynthesis } from "../../api/pack-actions.js";
+import { MeshCore } from "../../core/MeshCore.js";
 
-/* —— Inject CSS automatically —— */
-if (!document.querySelector('link[href="modules/packwidget/reveal.css"]')) {
+/* —— Auto-inject CSS —— */
+if (!document.querySelector('link[href="modules/roles/roles.css"]')) {
   const link = document.createElement("link");
   link.rel = "stylesheet";
-  link.href = "modules/packwidget/reveal.css";
+  link.href = "modules/roles/roles.css";
   document.head.appendChild(link);
 }
 
 /* —— Elements —— */
-const packCard = document.getElementById("packCard");
-const openPackBtn = document.getElementById("openPackBtn");
-const synthesizeBtn = document.getElementById("synthesizeBtn");
-const invFragments = document.getElementById("invFragments");
-const invShards = document.getElementById("invShards");
-const invRelics = document.getElementById("invRelics");
-const lootEvents = document.getElementById("lootEvents");
+const roleButtons = document.querySelectorAll("[data-role]");
+const roleDisplay = document.getElementById("selectedRole");
+const confirmBtn = document.getElementById("confirmRole");
 
-/* —— Render Inventory —— */
-function renderInventory() {
-  const inv = getInventory();
-  invFragments.textContent = inv.fragments;
-  invShards.textContent = inv.shards;
-  invRelics.textContent = inv.relics;
+/* —— State —— */
+let selectedRole = localStorage.getItem("spawnRole") || null;
+
+/* —— Render Current Role —— */
+function updateRoleDisplay() {
+  if (roleDisplay) {
+    roleDisplay.textContent = selectedRole
+      ? `Current Role: ${selectedRole}`
+      : "Select your onchain role";
+  }
 }
 
-/* —— Pack Opening —— */
-openPackBtn?.addEventListener("click", () => {
-  packCard.classList.add("opening");
-  packCard.innerHTML = "<p>Opening...</p>";
+/* —— Select Role —— */
+roleButtons.forEach((btn) =>
+  btn.addEventListener("click", () => {
+    selectedRole = btn.dataset.role;
+    roleButtons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    updateRoleDisplay();
+  })
+);
 
-  setTimeout(() => {
-    const result = simulatePackOpen();
-    packCard.classList.remove("opening");
-    packCard.innerHTML = `<p>${result.events.join("<br>")}</p>`;
-    renderInventory();
-    logLoot(result.events);
-    showToast("🎁 Pack opened successfully!");
-  }, 1500);
+/* —— Confirm Role —— */
+confirmBtn?.addEventListener("click", () => {
+  if (!selectedRole) return showToast("Select a role first!");
+  localStorage.setItem("spawnRole", selectedRole);
+  MeshCore.state.role = selectedRole;
+  showToast(`✅ Role set to ${selectedRole}`);
+  console.log(`Role confirmed: ${selectedRole}`);
 });
 
-/* —— Synthesis Action —— */
-synthesizeBtn?.addEventListener("click", () => {
-  const result = simulateSynthesis();
-  renderInventory();
-  logLoot([result.message]);
-  showToast(result.message);
-});
-
-/* —— Loot Log —— */
-function logLoot(events) {
-  const newEntries = events.map((e) => `<li>${e}</li>`).join("");
-  lootEvents.innerHTML = newEntries + lootEvents.innerHTML;
-}
-
-/* —— Toast System —— */
+/* —— Toast —— */
 function showToast(message) {
   const toast = document.createElement("div");
   toast.textContent = message;
@@ -81,4 +71,7 @@ function showToast(message) {
 }
 
 /* —— Init —— */
-window.addEventListener("DOMContentLoaded", renderInventory);
+window.addEventListener("DOMContentLoaded", () => {
+  updateRoleDisplay();
+  console.log("🧬 Roles module loaded (v3.2)");
+});
