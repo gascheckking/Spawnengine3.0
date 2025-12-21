@@ -1,27 +1,30 @@
 <!-- ============================================================
-     SpawnEngine Roles Module v3.1
-     Manage and Select Onchain Roles
+     SPAWNENGINE · PACK WIDGET v3.2
      ============================================================ -->
-
-<div id="rolesModule" class="roles-container">
-  <header class="roles-header">
-    <h2>🎭 Mesh Roles</h2>
-    <p class="roles-sub">Choose your onchain identity and earn XP for actions.</p>
+<div id="packWidget" class="pack-widget">
+  <header class="pack-header">
+    <h2>🎴 Pack Reveal</h2>
+    <button id="openPackBtn">Open Pack</button>
   </header>
 
-  <section id="currentRole" class="current-role">
-    <h3>Current Role</h3>
-    <p id="roleDisplay">Loading...</p>
-  </section>
-
-  <section class="roles-selection">
-    <h3>Available Roles</h3>
-    <div id="roleList" class="roles-grid">
-      <!-- Roles will be dynamically rendered here -->
+  <div class="pack-display">
+    <div class="pack-card" id="packCard">
+      <p>Tap to open your Mesh pack</p>
     </div>
+  </div>
+
+  <section class="pack-inventory">
+    <h3>Your Inventory</h3>
+    <ul>
+      <li>Fragments: <span id="invFragments">0</span></li>
+      <li>Shards: <span id="invShards">0</span></li>
+      <li>Relics: <span id="invRelics">0</span></li>
+    </ul>
+    <button id="synthesizeBtn">Synthesize Relic</button>
   </section>
 
-  <footer class="roles-footer">
-    <p>Tip: Roles unlock access to Mesh features like Trading, Building & XP Mining.</p>
-  </footer>
+  <div id="revealLog" class="reveal-log">
+    <h4>Recent Loot</h4>
+    <ul id="lootEvents"></ul>
+  </div>
 </div>
