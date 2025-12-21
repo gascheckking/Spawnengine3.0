@@ -1,6 +1,9 @@
-/* Inject AI Panel dynamically on HUD load */
+/* ============================================================
+   SPAWNENGINE AI PANEL INJECTOR v4.2
+   ============================================================ */
 import "./ai-panel.js";
 import "./xp-pulse.js";
+
 const panel = document.createElement("div");
 fetch("modules/forge/ai-panel.html")
   .then((r) => r.text())
