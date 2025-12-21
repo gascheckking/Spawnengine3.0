@@ -1,0 +1,112 @@
+/* ============================================================
+   SPAWNENGINE · ROLE SELECT UI v2.0
+   Dedicated styling for onboarding & role-selection screen
+   ============================================================ */
+
+:root {
+  --accent: #4df2ff;
+  --accent2: #b9ff7a;
+  --text: #e5eaff;
+  --bg: #050810;
+  --border: rgba(255, 255, 255, 0.08);
+}
+
+/* Role container layout */
+.role-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 100vh;
+  padding: 2em;
+  background: radial-gradient(circle at center, #0b0f26 0%, #020308 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Animated glow mesh background */
+#mesh-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.3;
+  background: radial-gradient(circle at center, rgba(77,242,255,0.15), transparent 70%);
+  animation: pulse 6s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(1.05); }
+}
+
+/* Header section */
+.role-header {
+  margin-bottom: 2em;
+}
+
+.role-header .logo-large {
+  width: 96px;
+  height: auto;
+  filter: drop-shadow(0 0 10px rgba(77,242,255,0.5));
+}
+
+.title-glow {
+  color: var(--accent2);
+  font-size: 2.4rem;
+  text-shadow: 0 0 14px rgba(77,242,255,0.4);
+  margin-top: 0.5em;
+}
+
+.subtitle {
+  color: #9aa2cc;
+  font-size: 1rem;
+  margin-top: 0.5em;
+}
+
+/* Role grid */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5em;
+  width: 100%;
+  max-width: 900px;
+}
+
+.role-card {
+  background: rgba(10, 12, 22, 0.8);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.6em;
+  transition: 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(77,242,255,0.1);
+}
+
+.role-card:hover,
+.role-card.hover {
+  border-color: var(--accent);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 0 25px rgba(77,242,255,0.3);
+}
+
+.role-tag {
+  display: inline-block;
+  margin-top: 0.8em;
+  font-size: 0.8rem;
+  color: #4df2ff;
+  background: rgba(77, 242, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.2em 0.6em;
+}
+
+/* Footer */
+.role-footer {
+  margin-top: 3em;
+  color: #888fbf;
+  font-size: 0.85rem;
+  text-align: center;
+}
