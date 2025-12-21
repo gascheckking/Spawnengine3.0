@@ -1,400 +1,77 @@
-/* ============================================================
-   SPAWNENGINE v3.1 — Glass Base + Zora Gold + Mesh Universe
-   ============================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpawnEngine · Choose Your Role</title>
 
-/* ============================================================
-   Core Theme Variables
-   ============================================================ */
-:root {
-  --bg: #03040d;
-  --bg-glass: rgba(10, 12, 26, 0.6);
-  --text: #f4f6ff;
-  --accent: #3cf6ff;
-  --accent-alt: #b9ff7a;
-  --border: rgba(136, 176, 255, 0.35);
-  --glow: 0 0 25px rgba(60, 246, 255, 0.3);
-  --radius: 16px;
-  --font: 'Inter', system-ui, sans-serif;
-  --transition: 0.25s ease;
-}
+  <!-- ✅ Manifest & Style -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="assets/icons/logo.png" />
 
-/* ============================================================
-   Themes
-   ============================================================ */
-body[data-theme="matrix"] {
-  --bg: #000;
-  --text: #0aff9d;
-  --accent: #00ffc3;
-  --accent-alt: #00ffa2;
-  --border: rgba(0, 255, 163, 0.3);
-  --glow: 0 0 25px rgba(0, 255, 163, 0.3);
-}
+  <!-- ✅ Meta / SEO -->
+  <meta name="theme-color" content="#0a0e26" />
+  <meta name="description" content="SpawnEngine · Modular Mesh Protocol" />
+</head>
 
-body[data-theme="zoragold"] {
-  --bg: #07050f;
-  --text: #fff6e5;
-  --accent: #ffc14d;
-  --accent-alt: #ffefba;
-  --border: rgba(255, 206, 102, 0.4);
-  --glow: 0 0 25px rgba(255, 200, 87, 0.4);
-}
+<body data-theme="glassbase">
+  <!-- 🌌 Background Mesh Universe -->
+  <canvas id="mesh-bg"></canvas>
 
-/* ============================================================
-   Base Reset
-   ============================================================ */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font);
-  -webkit-tap-highlight-color: transparent;
-}
+  <!-- ✦ Role Selection Screen ✦ -->
+  <main class="role-container">
+    <div class="role-header">
+      <img src="assets/icons/logo.png" alt="SpawnEngine Logo" class="logo-large" />
+      <h1 class="title-glow">SpawnEngine</h1>
+      <p class="subtitle">Choose your onchain identity and dive into the Mesh Universe</p>
+    </div>
 
-/* 🌌 Mesh Background */
-canvas#mesh-bg {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  background: radial-gradient(circle at 30% 20%, rgba(20, 25, 55, 0.6), var(--bg));
-}
+    <div class="role-grid">
+      <div class="role-card creator" onclick="selectRole('creator')">
+        <h2>🎨 Creator / Artist</h2>
+        <p>Mint packs, earn XP, and grow your mesh through content and tokens.</p>
+        <span class="role-tag">Farcaster Ready</span>
+      </div>
 
-/* ============================================================
-   ROLE SELECTION SCREEN (index.html)
-   ============================================================ */
-.role-container {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  text-align: center;
-  padding: 2rem;
-  animation: fadeIn 0.5s ease-out;
-}
+      <div class="role-card operator" onclick="selectRole('operator')">
+        <h2>⚙️ Operator / Engineer</h2>
+        <p>Automate XP flows, deploy packs, and manage mesh logic.</p>
+        <span class="role-tag">Base • Layer 4</span>
+      </div>
 
-.role-header {
-  margin-bottom: 3rem;
-}
+      <div class="role-card explorer" onclick="selectRole('explorer')">
+        <h2>🌐 Explorer / User</h2>
+        <p>Join quests, open packs, and explore onchain XP & Spawn rewards.</p>
+        <span class="role-tag">Zora Mesh v3.1</span>
+      </div>
+    </div>
 
-.logo-large {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 12px;
-  filter: drop-shadow(0 0 10px var(--accent));
-}
+    <footer class="role-footer">
+      <p>v3.1 · Modular Mesh Protocol · Base / Zora / Farcaster</p>
+    </footer>
+  </main>
 
-.title-glow {
-  font-size: 2.2rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  text-shadow: 0 0 25px var(--accent);
-  margin-bottom: 8px;
-}
+  <!-- ✦ Scripts ✦ -->
+  <script>
+    // Role select + HUD redirect
+    function selectRole(role) {
+      localStorage.setItem("spawnRole", role);
+      window.location.href = "hud.html";
+    }
 
-.subtitle {
-  font-size: 1rem;
-  opacity: 0.8;
-}
+    // Hover glow
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".role-card").forEach(card => {
+        card.addEventListener("mouseenter", () => card.classList.add("hover"));
+        card.addEventListener("mouseleave", () => card.classList.remove("hover"));
+      });
+    });
+  </script>
 
-.role-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
-  width: 100%;
-  max-width: 900px;
-}
-
-.role-card {
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  box-shadow: var(--glow);
-  backdrop-filter: blur(14px);
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.role-card h2 {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-}
-
-.role-card p {
-  font-size: 0.9rem;
-  opacity: 0.85;
-  line-height: 1.4;
-}
-
-.role-tag {
-  display: inline-block;
-  margin-top: 0.8rem;
-  font-size: 0.75rem;
-  opacity: 0.9;
-  padding: 4px 8px;
-  border-radius: 8px;
-  background: var(--accent);
-  color: #050510;
-  font-weight: 600;
-}
-
-.role-card:hover {
-  transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 0 40px var(--accent);
-}
-
-/* Specific Hover Glow */
-.role-card.creator:hover { box-shadow: 0 0 35px #ff69b4; }
-.role-card.operator:hover { box-shadow: 0 0 35px #3cf6ff; }
-.role-card.explorer:hover { box-shadow: 0 0 35px #b9ff7a; }
-
-.role-footer {
-  margin-top: 3rem;
-  opacity: 0.6;
-  font-size: 0.85rem;
-}
-
-/* ============================================================
-   MESH HUD SCREEN (hud.html)
-   ============================================================ */
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 18px;
-  background: var(--bg-glass);
-  backdrop-filter: blur(18px);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 5;
-}
-
-.app-header .logo {
-  width: 30px;
-  height: 30px;
-  margin-right: 8px;
-}
-
-.app-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.header-balance span {
-  display: block;
-  font-size: 0.75rem;
-  opacity: 0.9;
-}
-
-/* ============================================================
-   Main Container
-   ============================================================ */
-main {
-  position: relative;
-  z-index: 2;
-  height: calc(100vh - 120px);
-  overflow-y: auto;
-  padding: 16px;
-}
-.view {
-  display: none;
-  animation: fadeIn 0.25s ease;
-}
-.view.active { display: block; }
-
-/* ============================================================
-   Panels & Cards
-   ============================================================ */
-.market-card,
-.mesh-box,
-.inventory-box,
-.glass-panel {
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 14px;
-  box-shadow: var(--glow);
-}
-.glass-panel {
-  backdrop-filter: blur(12px);
-  text-align: center;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-/* ============================================================
-   Buttons
-   ============================================================ */
-button, .btn-outline, .btn-primary, .btn-icon, .mesh-btn {
-  cursor: pointer;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: 10px 16px;
-  border: none;
-  transition: var(--transition);
-}
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent), var(--accent-alt));
-  color: #050510;
-}
-.btn-outline {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-.btn-icon {
-  background: transparent;
-  border: 1px solid var(--border);
-  font-size: 1.2rem;
-  width: 36px;
-  height: 36px;
-  line-height: 1;
-}
-button:hover {
-  transform: scale(1.05);
-  filter: brightness(1.1);
-}
-
-/* ============================================================
-   Navigation
-   ============================================================ */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: var(--bg-glass);
-  backdrop-filter: blur(12px);
-  border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 10;
-}
-.nav-btn {
-  background: transparent;
-  color: var(--text);
-  font-weight: 500;
-  font-size: 0.8rem;
-  border: none;
-  flex: 1;
-  padding: 10px;
-}
-.nav-btn.active {
-  color: var(--accent);
-  text-shadow: 0 0 8px var(--accent);
-}
-
-/* ============================================================
-   Toast
-   ============================================================ */
-#toast {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%) scale(0.9);
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 10px 16px;
-  border-radius: 999px;
-  opacity: 0;
-  transition: 0.3s;
-  z-index: 20;
-}
-#toast.show {
-  opacity: 1;
-  transform: translateX(-50%) scale(1);
-}
-
-/* ============================================================
-   Animations & Scrollbar
-   ============================================================ */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-thumb {
-  background: var(--accent);
-  border-radius: 8px;
-}
-
-/* ============================================================
-   Responsive
-   ============================================================ */
-@media (max-width: 768px) {
-  .role-grid { grid-template-columns: 1fr; }
-  .app-header { flex-direction: column; gap: 8px; text-align: center; }
-  .header-right { flex-wrap: wrap; justify-content: center; }
-  .glass-panel { width: 100%; }
-}/* ===========================================
-   SPAWNENGINE DASHBOARD
-   =========================================== */
-.se-dash {
-  width: min(380px, 90%);
-  margin: 0 auto;
-  background: rgba(10, 12, 26, 0.95);
-  border: 1px solid rgba(140, 184, 255, 0.3);
-  border-radius: 16px;
-  padding: 20px;
-  font-family: var(--font, 'Inter', sans-serif);
-  color: #f3f6ff;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
-.se-stats-row { display: flex; gap: 10px; margin-bottom: 15px; }
-
-.se-stat-card {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 12px;
-  border-radius: 10px;
-  border-left: 3px solid var(--accent, #3cf6ff);
-}
-
-.se-stat-card small { font-size: 10px; opacity: 0.6; letter-spacing: 1px; }
-.se-stat-val { font-size: 20px; font-weight: bold; color: #3cf6ff; }
-
-.se-feed-header { font-size: 11px; font-weight: bold; margin-bottom: 8px; opacity: 0.8; }
-.se-feed-list {
-  height: 180px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.se-feed-item {
-  font-size: 12px;
-  padding: 6px 8px;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 6px;
-  border-left: 2px solid rgba(185, 255, 122, 0.5);
-  animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-10px); }
-  to { opacity: 1; transform: translateX(0); }
-}
+  <!-- ✅ Core Scripts -->
+  <script src="mesh-bg.js" defer></script>
+  <script src="spawnengine-sdk.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
