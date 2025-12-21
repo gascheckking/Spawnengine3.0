@@ -1,5 +1,5 @@
 /* ============================================================
-   SPAWNENGINE · Pack Reveal Controller v2.0
+   SPAWNENGINE · Pack Reveal Controller v3.3
    Connects Reveal Widget ⇆ MeshCore ⇆ SpawnChain ⇆ Visualizer
    ============================================================ */
 
@@ -27,8 +27,8 @@ export const PackReveal = {
 
     this.playSound("/assets/sounds/reveal.mp3");
 
-    // Simulate network delay
-    await new Promise((r) => setTimeout(r, 2500));
+    // Simulate reveal delay
+    await new Promise((r) => setTimeout(r, 2200));
 
     const reward = this.getReward();
     this.status.textContent = `You found: ${reward.name}`;
@@ -39,7 +39,6 @@ export const PackReveal = {
 
     if (window.MeshVisualizer) window.MeshVisualizer.trigger("mint");
     if (window.MeshCore?.gainXP) window.MeshCore.gainXP(50, "Pack Reveal");
-
     if (window.SpawnChain?.register) {
       window.SpawnChain.register({
         id: "PACK-" + Date.now(),
@@ -72,5 +71,5 @@ export const PackReveal = {
 /* —— Global Exposure —— */
 if (typeof window !== "undefined") {
   window.PackReveal = PackReveal;
-  setTimeout(() => PackReveal.init(), 1000);
+  setTimeout(() => PackReveal.init(), 800);
 }
