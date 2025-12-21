@@ -1,5 +1,6 @@
 /* ============================================================
-   SPAWNVERSE · WorldHub Styles v1.0
+   SPAWNVERSE · WorldHub Styles v1.3
+   MeshCore-Tuned — Adds glow pulse, smooth transitions & XP feedback
    ============================================================ */
 
 .worldhub-actions {
@@ -13,8 +14,15 @@
   padding: 10px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background: rgba(10, 12, 26, 0.65);
+  background: rgba(10, 12, 26, 0.75);
   color: var(--text);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.worldhub-actions input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow, rgba(77,242,255,0.4));
 }
 
 .worldhub-list {
@@ -23,17 +31,18 @@
 }
 
 .worldhub-card {
-  background: rgba(15, 17, 34, 0.75);
+  background: rgba(15, 17, 34, 0.8);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1em;
-  box-shadow: var(--glow);
-  transition: 0.25s ease;
+  box-shadow: 0 0 8px rgba(77,242,255,0.15);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .worldhub-card:hover {
   transform: translateY(-2px);
   border-color: var(--accent);
+  box-shadow: 0 0 16px rgba(77,242,255,0.25);
 }
 
 .worldhub-card h3 {
@@ -43,6 +52,7 @@
 
 .worldhub-card small {
   opacity: 0.75;
+  font-size: 0.85em;
 }
 
 .worldhub-card button {
@@ -53,10 +63,22 @@
   color: #000;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease;
+  box-shadow: 0 0 10px rgba(77,242,255,0.2);
 }
 
 .worldhub-card button:hover {
+  transform: scale(1.05);
   background: #fff;
   color: var(--accent);
+}
+
+@keyframes meshGlow {
+  0% { box-shadow: 0 0 6px rgba(77,242,255,0.25); }
+  100% { box-shadow: 0 0 18px rgba(77,242,255,0.5); }
+}
+
+.worldhub-card.active {
+  animation: meshGlow 1s infinite alternate;
+  border-color: var(--accent);
 }
