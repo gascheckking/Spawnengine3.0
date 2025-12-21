@@ -1,9 +1,17 @@
 /* ============================================================
-   SpawnEngine Forge UI v3.1
-   Mesh Forge – item crafting & module synthesis system
+   SPAWNENGINE · FORGE UI v3.2
+   Mesh Forge — Item Crafting & Module Synthesis System
    ============================================================ */
 
 import { getInventory, simulateSynthesis } from "../api/pack-actions.js";
+
+/* —— Auto inject CSS (optional) —— */
+if (!document.querySelector('link[href="modules/forge/forge-ui.css"]')) {
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "modules/forge/forge-ui.css";
+  document.head.appendChild(link);
+}
 
 /* —— Elements —— */
 const forgePanel = document.getElementById("forgePanel");
@@ -14,16 +22,16 @@ const invReadout = document.getElementById("forgeInventory");
 /* —— Helpers —— */
 function updateForgeInventory() {
   const inv = getInventory();
-  if (invReadout) {
-    invReadout.innerHTML = `
-      🔹 Fragments: ${inv.fragments} <br>
-      🔸 Shards: ${inv.shards} <br>
-      🪄 Relics: ${inv.relics}
-    `;
-  }
+  if (!invReadout) return;
+  invReadout.innerHTML = `
+    🔹 Fragments: ${inv.fragments} <br>
+    🔸 Shards: ${inv.shards} <br>
+    🪄 Relics: ${inv.relics}
+  `;
 }
 
 function logForge(msg) {
+  if (!forgeLog) return;
   const el = document.createElement("div");
   el.className = "forge-msg";
   el.textContent = msg;
@@ -31,15 +39,6 @@ function logForge(msg) {
   forgeLog.scrollTop = forgeLog.scrollHeight;
 }
 
-/* —— Core Action —— */
-function handleSynthesis() {
-  const result = simulateSynthesis();
-  logForge(result.message);
-  updateForgeInventory();
-  showToast(result.success ? "Relic successfully forged!" : "Forge failed!");
-}
-
-/* —— Toast UI —— */
 function showToast(message) {
   const toast = document.createElement("div");
   toast.textContent = message;
@@ -61,10 +60,19 @@ function showToast(message) {
   setTimeout(() => toast.remove(), 2500);
 }
 
+/* —— Core Forge Action —— */
+function handleSynthesis() {
+  const result = simulateSynthesis();
+  logForge(result.message);
+  updateForgeInventory();
+  showToast(result.success ? "🪄 Relic successfully forged!" : "⚠️ Forge attempt failed.");
+}
+
 /* —— Init —— */
 window.addEventListener("DOMContentLoaded", () => {
-  if (!forgePanel) return;
+  if (!forgePanel) return console.warn("Forge panel missing — skipping init");
   updateForgeInventory();
-  synthBtn.addEventListener("click", handleSynthesis);
+  synthBtn?.addEventListener("click", handleSynthesis);
   logForge("⚙️ Forge ready. Combine Fragments & Shards to mint Relics.");
+  console.log("✅ Forge UI loaded (v3.2)");
 });
