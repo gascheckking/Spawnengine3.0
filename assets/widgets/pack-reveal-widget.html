@@ -1,0 +1,90 @@
+<!-- ============================================================
+   SPAWNENGINE · PACK REVEAL WIDGET v3.3
+   Interactive, animated, sound-reactive pack reveal component
+   ============================================================ -->
+<div id="packRevealWidget" class="reveal-widget-base">
+  <div class="pack-frame">
+    <img src="/assets/img/pack-bg.webp" alt="Pack image" class="pack-image" id="packImage">
+    <img src="/assets/img/pack-bg-title.webp" alt="Pack title" class="pack-title-overlay">
+    <div class="pack-overlay"></div>
+  </div>
+
+  <div class="pack-info">
+    <h3 class="pack-title" id="packTitle">Mystery Pack</h3>
+    <p class="pack-status" id="packStatus">Ready to open</p>
+    <button id="packRevealBtn" class="pack-button">🔓 Open Pack</button>
+  </div>
+</div>
+
+<style>
+.reveal-widget-base {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: rgba(15, 18, 40, 0.85);
+  border: 1px solid var(--border, #333);
+  border-radius: 16px;
+  padding: 1em;
+  box-shadow: 0 0 16px rgba(77, 242, 255, 0.35);
+  max-width: 360px;
+  margin: auto;
+  transition: 0.4s ease;
+}
+.pack-frame {
+  position: relative;
+  width: 220px;
+  height: 220px;
+}
+.pack-image {
+  width: 100%;
+  border-radius: 12px;
+  filter: brightness(0.9);
+  transition: transform 0.6s ease, filter 0.3s ease;
+}
+.pack-title-overlay {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  opacity: 0.9;
+  pointer-events: none;
+  filter: drop-shadow(0 0 10px rgba(77, 242, 255, 0.6));
+}
+.pack-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(77,242,255,0.35), transparent 70%);
+  opacity: 0;
+  border-radius: 12px;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.pack-button {
+  margin-top: 1em;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent, #4df2ff);
+  color: #000;
+  font-weight: 700;
+  font-family: system-ui, sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.pack-button:hover {
+  background: #fff;
+  color: var(--accent, #4df2ff);
+}
+.pack-revealed .pack-overlay {
+  opacity: 1;
+}
+.pack-revealed .pack-image {
+  transform: scale(1.05) rotate(2deg);
+  filter: brightness(1.25);
+}
+</style>
+
+<script src="/assets/widgets/pack-reveal-widget.js"></script>
