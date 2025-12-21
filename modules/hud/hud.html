@@ -1,136 +1,164 @@
-<!-- ============================================================
-     SPAWNENGINE HUD v3.2
-     Modular Mesh Interface — XP · Forge · SupCast · Bot · Tracker
-     ============================================================ -->
-<div id="hudApp" class="hud-container">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpawnEngine · Mesh HUD</title>
 
-  <!-- HEADER -->
-  <header class="hud-header glass">
-    <div class="hud-left">
-      <img src="../../assets/icons/icon-96.png" class="hud-logo" alt="SpawnEngine Logo">
-      <h2 class="hud-title">SpawnEngine</h2>
-    </div>
-    <div class="hud-right">
-      <span id="hudXp" class="hud-stat">XP: 0</span>
-      <span id="hudSpn" class="hud-stat">SPN: 0.000</span>
-      <button id="hudConnect" class="hud-btn">Connect</button>
-      <button id="hudSettings" class="hud-icon">⚙️</button>
-    </div>
-  </header>
+  <!-- ✅ Manifest & Style -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="assets/icons/logo.png" />
 
-  <!-- MAIN -->
-  <main id="hudViews">
+  <!-- ✅ Meta / SEO -->
+  <meta name="theme-color" content="#0a0e26" />
+  <meta name="description" content="SpawnEngine · Modular Mesh Protocol HUD" />
+</head>
 
-    <!-- HOME -->
-    <section id="hud-home" class="hud-view active">
-      <h3>Mesh Overview</h3>
-      <div class="hud-card">
-        <p>Role: <span id="hudRole">Explorer</span></p>
-        <p>Active Modules: <span id="hudModules">0</span></p>
-        <p>Wallet: <span id="hudWallet">Not Connected</span></p>
-        <div class="hud-btnrow">
-          <button id="hudRefresh" class="btn-primary">Sync Mesh</button>
-          <button id="hudBoost" class="btn-outline">Claim XP</button>
+<body data-theme="glassbase">
+
+  <!-- 🌌 Background -->
+  <canvas id="mesh-bg"></canvas>
+
+  <!-- ============================================================
+       SPAWNENGINE HUD v3.2
+       Modular Mesh Interface — XP · Forge · SupCast · Bot · Tracker
+       ============================================================ -->
+  <div id="hudApp" class="hud-container">
+
+    <!-- HEADER -->
+    <header class="hud-header glass">
+      <div class="hud-left">
+        <img src="assets/icons/icon-96.png" class="hud-logo" alt="SpawnEngine Logo">
+        <h2 class="hud-title">SpawnEngine</h2>
+      </div>
+      <div class="hud-right">
+        <span id="hudXp" class="hud-stat">XP: 0</span>
+        <span id="hudSpn" class="hud-stat">SPN: 0.000</span>
+        <button id="hudConnect" class="hud-btn">Connect</button>
+        <button id="hudSettings" class="hud-icon">⚙️</button>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main id="hudViews">
+
+      <!-- HOME -->
+      <section id="hud-home" class="hud-view active">
+        <h3>Mesh Overview</h3>
+        <div class="hud-card">
+          <p>Role: <span id="hudRole">Explorer</span></p>
+          <p>Active Modules: <span id="hudModules">0</span></p>
+          <p>Wallet: <span id="hudWallet">Not Connected</span></p>
+          <div class="hud-btnrow">
+            <button id="hudRefresh" class="btn-primary">Sync Mesh</button>
+            <button id="hudBoost" class="btn-outline">Claim XP</button>
+          </div>
         </div>
-      </div>
-      <div id="hudFeed" class="hud-feed">Loading mesh activity…</div>
-    </section>
+        <div id="hudFeed" class="hud-feed">Loading mesh activity…</div>
+      </section>
 
-    <!-- LOOT -->
-    <section id="hud-loot" class="hud-view">
-      <h3>Loot & Rewards</h3>
-      <div class="hud-card">
-        <button id="lootOpen" class="btn-primary">Open Pack</button>
-        <div class="hud-inv">
-          <p>Fragments: <span id="hudFrag">0</span></p>
-          <p>Shards: <span id="hudShard">0</span></p>
-          <p>Relics: <span id="hudRelic">0</span></p>
+      <!-- LOOT -->
+      <section id="hud-loot" class="hud-view">
+        <h3>Loot & Rewards</h3>
+        <div class="hud-card">
+          <button id="lootOpen" class="btn-primary">Open Pack</button>
+          <div class="hud-inv">
+            <p>Fragments: <span id="hudFrag">0</span></p>
+            <p>Shards: <span id="hudShard">0</span></p>
+            <p>Relics: <span id="hudRelic">0</span></p>
+          </div>
+          <button id="lootSynth" class="btn-outline">Synthesize Relic</button>
         </div>
-        <button id="lootSynth" class="btn-outline">Synthesize Relic</button>
-      </div>
-    </section>
+      </section>
 
-    <!-- FORGE -->
-    <section id="hud-forge" class="hud-view">
-      <h3>Forge Lab</h3>
-      <div class="hud-card">
-        <p>Combine Fragments + Shards → Relic</p>
-        <button id="forgeStart" class="btn-primary">Forge Now</button>
-        <div id="forgeResult" class="hud-subtext">Ready.</div>
-      </div>
-    </section>
+      <!-- FORGE -->
+      <section id="hud-forge" class="hud-view">
+        <h3>Forge Lab</h3>
+        <div class="hud-card">
+          <p>Combine Fragments + Shards → Relic</p>
+          <button id="forgeStart" class="btn-primary">Forge Now</button>
+          <div id="forgeResult" class="hud-subtext">Ready.</div>
+        </div>
+      </section>
 
-    <!-- SUPCAST -->
-    <section id="hud-supcast" class="hud-view">
-      <h3>SupCast Support</h3>
-      <textarea id="supcastInput" placeholder="Describe your idea or issue…"></textarea>
-      <button id="supcastSend" class="btn-primary">Submit</button>
-      <div id="supcastFeed" class="hud-feed"></div>
-    </section>
+      <!-- SUPCAST -->
+      <section id="hud-supcast" class="hud-view">
+        <h3>SupCast Support</h3>
+        <textarea id="supcastInput" placeholder="Describe your idea or issue…"></textarea>
+        <button id="supcastSend" class="btn-primary">Submit</button>
+        <div id="supcastFeed" class="hud-feed"></div>
+      </section>
 
-    <!-- BOT -->
-    <section id="hud-bot" class="hud-view">
-      <h3>SpawnBot Automations</h3>
-      <div class="hud-feed">
-        <div>🤖 Auto-claim XP — ON</div>
-        <div>⚙️ Gas Alert &lt; 0.05 Gwei</div>
-        <div>📡 Watch Creator: @spawniz</div>
-      </div>
-    </section>
+      <!-- BOT -->
+      <section id="hud-bot" class="hud-view">
+        <h3>SpawnBot Automations</h3>
+        <div class="hud-feed">
+          <div>🤖 Auto-claim XP — ON</div>
+          <div>⚙️ Gas Alert &lt; 0.05 Gwei</div>
+          <div>📡 Watch Creator: @spawniz</div>
+        </div>
+      </section>
 
-    <!-- TRACKER -->
-    <section id="hud-tracker" class="hud-view">
-      <h3>Tracker</h3>
-      <div id="trackerFeed" class="hud-feed"></div>
-    </section>
+      <!-- TRACKER -->
+      <section id="hud-tracker" class="hud-view">
+        <h3>Tracker</h3>
+        <div id="trackerFeed" class="hud-feed"></div>
+      </section>
 
-    <!-- SETTINGS -->
-    <section id="hud-settings" class="hud-view">
-      <h3>Settings</h3>
-      <div class="hud-card">
-        <label>Theme:</label>
-        <select id="hudTheme">
-          <option value="glassbase">Glass Base</option>
-          <option value="matrix">Matrix Pulse</option>
-          <option value="zoragold">Zora Gold</option>
-        </select>
-      </div>
-    </section>
+      <!-- SETTINGS -->
+      <section id="hud-settings" class="hud-view">
+        <h3>Settings</h3>
+        <div class="hud-card">
+          <label>Theme:</label>
+          <select id="hudTheme">
+            <option value="glassbase">Glass Base</option>
+            <option value="matrix">Matrix Pulse</option>
+            <option value="zoragold">Zora Gold</option>
+          </select>
+        </div>
+      </section>
 
-    <!-- 🧩 WORLD HUB -->
-    <section id="worldHubView" class="view">
-      <h2>🌐 SpawnVerse WorldHub</h2>
-      <div class="world-actions">
-        <input id="worldNameInput" placeholder="Enter world name..." />
-        <button id="createWorldBtn" class="btn-primary">Create World</button>
-      </div>
-      <div id="worldList" class="world-list"></div>
-    </section>
+      <!-- 🧩 WORLD HUB -->
+      <section id="worldHubView" class="hud-view">
+        <h2>🌐 SpawnVerse WorldHub</h2>
+        <div class="world-actions">
+          <input id="worldNameInput" placeholder="Enter world name..." />
+          <button id="createWorldBtn" class="btn-primary">Create World</button>
+        </div>
+        <div id="worldList" class="world-list"></div>
+      </section>
 
-    <!-- 🧩 FORGE TERMINAL -->
-    <section id="forgeView" class="view">
-      <h2>Forge Terminal</h2>
-      <div id="forgeTerminal"></div>
-    </section>
+      <!-- 🧩 FORGE TERMINAL -->
+      <section id="forgeView" class="hud-view">
+        <h2>Forge Terminal</h2>
+        <div id="forgeTerminal"></div>
+      </section>
 
-  </main>
+    </main>
 
-  <!-- NAVIGATION -->
-  <nav class="hud-nav glass">
-    <button data-view="hud-home" class="active">Home</button>
-    <button data-view="hud-loot">Loot</button>
-    <button data-view="hud-forge">Forge</button>
-    <button data-view="hud-supcast">SupCast</button>
-    <button data-view="hud-bot">Bot</button>
-    <button data-view="hud-tracker">Tracker</button>
-    <button data-view="worldHubView" class="nav-btn">WorldHub</button>
-    <button data-view="hud-settings">Settings</button>
-    <button data-view="forgeView">Forge Terminal</button>
-  </nav>
+    <!-- NAVIGATION -->
+    <nav class="hud-nav glass">
+      <button data-view="hud-home" class="active">Home</button>
+      <button data-view="hud-loot">Loot</button>
+      <button data-view="hud-forge">Forge</button>
+      <button data-view="hud-supcast">SupCast</button>
+      <button data-view="hud-bot">Bot</button>
+      <button data-view="hud-tracker">Tracker</button>
+      <button data-view="worldHubView">WorldHub</button>
+      <button data-view="hud-settings">Settings</button>
+      <button data-view="forgeView">Forge Terminal</button>
+    </nav>
 
-  <!-- Toast -->
-  <div id="hudToast"></div>
-</div>
+    <!-- Toast -->
+    <div id="hudToast"></div>
+  </div>
 
-<!-- 🧩 Forge integration -->
-<script type="module" src="../modules/forge/index.js"></script>
+  <!-- 🧩 Forge + AI Integration -->
+  <script type="module" src="modules/forge/index.js"></script>
+
+  <!-- ✅ Core Logic -->
+  <script type="module" src="app.js"></script>
+  <script src="mesh-bg.js" defer></script>
+</body>
+</html>
