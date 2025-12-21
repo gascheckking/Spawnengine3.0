@@ -1,104 +1,94 @@
 /* ============================================================
-   SpawnEngine Roles v3.1
-   Role Selection & Display
+   SPAWNENGINE · ROLES v3.2
+   Mesh Role Selector — Creator / Operator / Explorer
    ============================================================ */
 
 .roles-container {
   color: #e5eaff;
   font-family: system-ui, sans-serif;
   padding: 1.2em;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.roles-header {
-  border-bottom: 1px solid #2b2f5c;
-  margin-bottom: 1em;
-  padding-bottom: 0.5em;
+  text-align: center;
 }
 
 .roles-header h2 {
-  font-size: 1.4em;
-  color: #77f2ff;
-  margin: 0;
+  color: #4df2ff;
+  margin-bottom: 0.3em;
 }
 
 .roles-sub {
   color: #9aa2cc;
   font-size: 0.9em;
-  margin-top: 0.3em;
-}
-
-.current-role {
-  background: rgba(15, 18, 40, 0.8);
-  border: 1px solid #2b2f5c;
-  border-radius: 10px;
-  padding: 1em;
   margin-bottom: 1.2em;
-}
-
-.current-role h3 {
-  margin: 0 0 0.5em 0;
-  color: #4df2ff;
-}
-
-.current-role span {
-  font-size: 0.95em;
-  color: #9aa2cc;
 }
 
 .roles-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1em;
+  margin-bottom: 1.2em;
 }
 
 .role-card {
-  background: #111436;
+  background: #0a0e26;
   border: 1px solid #2b2f5c;
-  border-radius: 10px;
-  padding: 0.9em;
-  text-align: center;
-  transition: all 0.25s ease;
+  border-radius: 12px;
+  padding: 1em;
   cursor: pointer;
-  box-shadow: 0 0 0 rgba(77, 242, 255, 0);
+  transition: all 0.25s ease;
+  box-shadow: 0 0 12px rgba(77, 242, 255, 0.08);
 }
 
 .role-card:hover {
-  transform: translateY(-3px);
   border-color: #4df2ff;
-  box-shadow: 0 0 10px rgba(77, 242, 255, 0.3);
+  transform: scale(1.03);
 }
 
 .role-card.active {
-  background: linear-gradient(145deg, #0a0e26, #18214b);
-  border-color: #4df2ff;
-  box-shadow: 0 0 15px rgba(77, 242, 255, 0.5);
+  border-color: #b9ff7a;
+  box-shadow: 0 0 18px rgba(185, 255, 122, 0.25);
 }
 
-.role-card h4 {
-  margin: 0.4em 0;
+.role-card h3 {
   color: #fff;
-  font-size: 1em;
+  margin-bottom: 0.4em;
 }
 
 .role-card p {
-  font-size: 0.85em;
   color: #9aa2cc;
-  margin: 0.3em 0;
+  font-size: 0.9em;
 }
 
-.role-icon {
-  font-size: 1.6em;
+.role-tag {
+  display: inline-block;
+  margin-top: 0.6em;
+  font-size: 0.8em;
   color: #4df2ff;
-  margin-bottom: 0.3em;
+  border: 1px solid #4df2ff33;
+  border-radius: 8px;
+  padding: 3px 8px;
 }
 
 .roles-footer {
-  margin-top: 1.5em;
-  text-align: center;
-  font-size: 0.9em;
-  color: #666b9a;
-  border-top: 1px solid #2b2f5c;
-  padding-top: 0.8em;
+  margin-top: 1.4em;
+}
+
+#selectedRole {
+  color: #b9ff7a;
+  font-weight: 600;
+  margin-bottom: 0.6em;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4df2ff, #b9ff7a);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
 }
