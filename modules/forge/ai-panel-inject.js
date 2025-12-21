@@ -1,11 +1,11 @@
 /* ============================================================
-   SPAWNENGINE · AI PANEL INJECTOR v4.5 — Ultra Stable
+   SPAWNENGINE · AI PANEL INJECTOR v4.6 — Universal ESM Safe
    ============================================================ */
 import { initAIPanel } from "./ai-panel.js";
 import "./xp-pulse.js";
 
-export default async function injectAIPanel() {
-  // 🧩 Säkerställ att DOM verkligen är färdig
+export async function injectAIPanel() {
+  // Säkerställ att DOM är redo
   if (document.readyState === "loading") {
     await new Promise((res) => document.addEventListener("DOMContentLoaded", res));
   }
@@ -25,7 +25,7 @@ export default async function injectAIPanel() {
     link.href = "modules/forge/ai-panel.css";
     document.head.appendChild(link);
 
-    // Initiera efter nästa render frame
+    // Initiera efter att panelen lagts till
     requestAnimationFrame(() => {
       initAIPanel();
       console.log("🤖 AI Panel injected + initialized");
