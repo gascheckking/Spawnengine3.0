@@ -1,60 +1,75 @@
 /* ============================================================
-   SPAWNENGINE · Forge Terminal Styles v1.0
+   SPAWNENGINE · Forge Terminal v1.0
+   Developer Console for Mesh Commands
    ============================================================ */
+import { XPPulse } from "./xp-pulse.js";
 
-#forgeTerminal {
-  background: rgba(10, 12, 26, 0.7);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 0.8em;
-  color: var(--text);
-  font-family: 'Courier New', monospace;
-  box-shadow: var(--glow);
-  height: 280px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden;
-}
+window.addEventListener("DOMContentLoaded", () => {
+  const term = document.getElementById("forgeTerminal");
+  if (!term) return;
 
-.terminal-header {
-  font-weight: 700;
-  color: var(--accent);
-  font-size: 0.9rem;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 0.4em;
-}
+  const output = document.createElement("div");
+  output.className = "terminal-output";
+  term.appendChild(output);
 
-.terminal-output {
-  flex: 1;
-  overflow-y: auto;
-  font-size: 0.85rem;
-  padding: 0.4em;
-  line-height: 1.4;
-}
+  const inputWrap = document.createElement("div");
+  inputWrap.className = "terminal-input";
+  inputWrap.innerHTML = `<span class="prompt">mesh&gt;</span>
+    <input type="text" id="terminalCmd" placeholder="Type command..." autocomplete="off" />`;
+  term.appendChild(inputWrap);
 
-.line.cmd { color: var(--accent-alt); }
-.line.error { color: #ff7676; }
-.cmd { color: var(--accent); font-weight: 600; }
+  const input = inputWrap.querySelector("#terminalCmd");
 
-.terminal-input {
-  display: flex;
-  align-items: center;
-  border-top: 1px solid var(--border);
-  padding-top: 0.4em;
-}
+  const logLine = (text, cls = "line") => {
+    const line = document.createElement("div");
+    line.className = cls;
+    line.textContent = text;
+    output.appendChild(line);
+    output.scrollTop = output.scrollHeight;
+  };
 
-.prompt {
-  margin-right: 6px;
-  color: var(--accent-alt);
-}
+  const commands = {
+    help() {
+      logLine("Available commands:", "cmd");
+      logLine("help — Show this list");
+      logLine("mint — Simulate mint pack");
+      logLine("xp — Show XP stats");
+      logLine("pulse — Trigger XP visual pulse");
+      logLine("clear — Clear terminal");
+    },
+    mint() {
+      logLine("Minting mock pack...");
+      setTimeout(() => {
+        logLine("✅ Pack minted successfully.", "cmd");
+        XPPulse.trigger(window.innerWidth / 2, window.innerHeight / 2, "#3cf6ff");
+      }, 600);
+    },
+    xp() {
+      const xp = Math.floor(Math.random() * 5000) + 1000;
+      logLine(`XP Balance: ${xp}`, "cmd");
+    },
+    pulse() {
+      logLine("💠 Triggering XP Pulse...", "cmd");
+      XPPulse.trigger(window.innerWidth / 2, window.innerHeight / 2, "#b9ff7a");
+    },
+    clear() {
+      output.innerHTML = "";
+    },
+  };
 
-#terminalCmd {
-  background: transparent;
-  border: none;
-  color: var(--text);
-  flex: 1;
-  outline: none;
-  font-family: 'Courier New', monospace;
-  font-size: 0.9rem;
-}
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const cmd = input.value.trim().toLowerCase();
+      if (!cmd) return;
+      logLine(`> ${cmd}`, "line cmd");
+      if (commands[cmd]) {
+        commands[cmd]();
+      } else {
+        logLine(`Unknown command: ${cmd}`, "line error");
+      }
+      input.value = "";
+    }
+  });
+
+  logLine("🧬 Forge Terminal Ready. Type 'help' for commands.", "cmd");
+});
