@@ -1,78 +1,65 @@
 /* ============================================================
-   SpawnEngine Roles Module v3.1
-   Role management for Mesh identities
+   SPAWNENGINE · PACK WIDGET v3.2
+   Handles Pack Reveal, Inventory, and Relic Synthesis
    ============================================================ */
 
-import { getProfile, updateProfileRole } from "../../api/user-profile.js";
+import { simulatePackOpen, getInventory, simulateSynthesis } from "../../api/pack-actions.js";
+
+/* —— Inject CSS automatically —— */
+if (!document.querySelector('link[href="modules/packwidget/reveal.css"]')) {
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "modules/packwidget/reveal.css";
+  document.head.appendChild(link);
+}
 
 /* —— Elements —— */
-const roleDisplay = document.getElementById("roleDisplay");
-const roleList = document.getElementById("roleList");
+const packCard = document.getElementById("packCard");
+const openPackBtn = document.getElementById("openPackBtn");
+const synthesizeBtn = document.getElementById("synthesizeBtn");
+const invFragments = document.getElementById("invFragments");
+const invShards = document.getElementById("invShards");
+const invRelics = document.getElementById("invRelics");
+const lootEvents = document.getElementById("lootEvents");
 
-/* —— Mock Role Definitions —— */
-const AVAILABLE_ROLES = [
-  {
-    id: "builder",
-    title: "Builder",
-    desc: "Construct tools, interfaces, and Mesh modules.",
-    emoji: "🧱",
-  },
-  {
-    id: "trader",
-    title: "Trader",
-    desc: "Buy, sell, and swap assets within the Mesh economy.",
-    emoji: "💱",
-  },
-  {
-    id: "collector",
-    title: "Collector",
-    desc: "Gather rare packs and relics to boost your Mesh XP.",
-    emoji: "🎴",
-  },
-  {
-    id: "operator",
-    title: "Operator",
-    desc: "Manage nodes and optimize onchain Mesh flow.",
-    emoji: "⚙️",
-  },
-  {
-    id: "vibe",
-    title: "Vibe Agent",
-    desc: "Shape the Mesh culture. Influence. Engage. Lead.",
-    emoji: "✨",
-  },
-];
-
-/* —— Render Role List —— */
-function renderRoles() {
-  const user = getProfile();
-  roleDisplay.textContent = user.currentRole;
-
-  roleList.innerHTML = AVAILABLE_ROLES.map(role => `
-    <div class="role-card ${role.id === user.currentRole.toLowerCase() ? "active" : ""}" data-id="${role.id}">
-      <div class="role-icon">${role.emoji}</div>
-      <h4>${role.title}</h4>
-      <p>${role.desc}</p>
-    </div>
-  `).join("");
-
-  attachRoleEvents();
+/* —— Render Inventory —— */
+function renderInventory() {
+  const inv = getInventory();
+  invFragments.textContent = inv.fragments;
+  invShards.textContent = inv.shards;
+  invRelics.textContent = inv.relics;
 }
 
-/* —— Handle Role Selection —— */
-function attachRoleEvents() {
-  const cards = document.querySelectorAll(".role-card");
-  cards.forEach(card => {
-    card.addEventListener("click", () => {
-      const selected = card.dataset.id;
-      updateProfileRole(selected);
-      renderRoles();
-      showToast(`Role changed to ${selected.toUpperCase()}`);
-    });
-  });
+/* —— Pack Opening —— */
+openPackBtn?.addEventListener("click", () => {
+  packCard.classList.add("opening");
+  packCard.innerHTML = "<p>Opening...</p>";
+
+  setTimeout(() => {
+    const result = simulatePackOpen();
+    packCard.classList.remove("opening");
+    packCard.innerHTML = `<p>${result.events.join("<br>")}</p>`;
+    renderInventory();
+    logLoot(result.events);
+    showToast("🎁 Pack opened successfully!");
+  }, 1500);
+});
+
+/* —— Synthesis Action —— */
+synthesizeBtn?.addEventListener("click", () => {
+  const result = simulateSynthesis();
+  renderInventory();
+  logLoot([result.message]);
+  showToast(result.message);
+});
+
+/* —— Loot Log —— */
+function logLoot(events) {
+  const newEntries = events.map((e) => `<li>${e}</li>`).join("");
+  lootEvents.innerHTML = newEntries + lootEvents.innerHTML;
 }
 
-/* —— UI Feedback Toast —— */
+/* —— Toast System —— */
 function showToast(message) {
   const toast = document.createElement("div");
   toast.textContent = message;
@@ -94,4 +81,4 @@ function showToast(message) {
 }
 
 /* —— Init —— */
-window.addEventListener("DOMContentLoaded", renderRoles);
+window.addEventListener("DOMContentLoaded", renderInventory);
