@@ -13,8 +13,8 @@ const CORE_ASSETS = [
   "/style.css",
   "/app.js",
   "/mesh-bg.js",
-  "/logo.png",
-  "/icons/icon-512.png"
+  "/assets/logo.png",
+"/assets/icons/icon-512.png"
 ];
 
 /* —— INSTALL —— */
