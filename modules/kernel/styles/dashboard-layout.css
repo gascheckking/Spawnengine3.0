@@ -1,0 +1,28 @@
+/* Mesh Kernel Dashboard Layout */
+.mesh-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  margin-top: 30px;
+  animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.panel {
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(10, 12, 22, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 18px rgba(0, 229, 255, 0.15);
+  transition: transform 0.2s ease-in-out;
+}
+
+.panel:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.35);
+}

@@ -1,0 +1,16 @@
+/* Mesh Kernel Styles Index */
+@import './mesh-theme.css';
+@import './dashboard-layout.css';
+@import './panels.css';
+@import './animations.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  background: var(--bg-dark);
+}

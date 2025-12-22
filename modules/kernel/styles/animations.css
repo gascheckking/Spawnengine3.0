@@ -1,0 +1,20 @@
+/* Animation Layer */
+@keyframes glowPulse {
+  0%, 100% { text-shadow: 0 0 10px var(--accent-purple), 0 0 25px var(--accent-blue); }
+  50% { text-shadow: 0 0 15px var(--accent-blue), 0 0 30px var(--accent-green); }
+}
+
+.glow-pulse {
+  animation: glowPulse 2.5s infinite alternate;
+}
+
+@keyframes shimmer {
+  0% { background-position: -100px 0; }
+  100% { background-position: 100px 0; }
+}
+
+.loading-bar {
+  background: linear-gradient(90deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.4), rgba(0, 255, 255, 0.1));
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
+}
