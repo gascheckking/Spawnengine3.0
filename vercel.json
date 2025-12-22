@@ -1,43 +1,21 @@
 {
   "version": 2,
-  "builds": [
+  "public": true,
+  "outputDirectory": ".",
+  "framework": null,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
     {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "assets/**/*",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "manifest.json",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "service-worker.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "modules/**/*",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "sw-config.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "sw-register.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "offline.html",
-      "use": "@vercel/static"
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+  "rewrites": [
+    { "source": "/app", "destination": "/app.html" },
+    { "source": "/hud", "destination": "/modules/hud/hud.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
