@@ -151,3 +151,80 @@ textarea {
     padding: 1em;
   }
 }
+/* ============================================================
+   BOOT SEQUENCE STYLES
+   ============================================================ */
+
+#bootOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, #030510 0%, #000 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  color: #4df2ff;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+  animation: bootFadeIn 0.8s ease-out;
+}
+
+.boot-center {
+  max-width: 320px;
+  width: 80%;
+}
+
+.boot-logo {
+  width: 96px;
+  height: auto;
+  filter: drop-shadow(0 0 14px rgba(77, 242, 255, 0.6));
+  margin-bottom: 20px;
+  animation: logoPulse 3s infinite ease-in-out;
+}
+
+.boot-text {
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-bottom: 14px;
+}
+
+.boot-bar {
+  width: 100%;
+  height: 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+
+.boot-bar-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #4df2ff, #b9ff7a);
+  box-shadow: 0 0 10px rgba(77,242,255,0.8);
+  transition: width 0.3s ease;
+}
+
+.fade-out {
+  animation: bootFadeOut 1s ease forwards;
+}
+
+/* Animations */
+@keyframes logoPulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes bootFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bootFadeOut {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.02); }
+}
