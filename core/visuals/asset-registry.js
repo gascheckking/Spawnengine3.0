@@ -5,7 +5,7 @@
 
 export const AssetRegistry = {
   images: {
-    logo: "/assets/icons/logo.png",
+    logo: "/assets/logo.png",
     favicon: "/assets/icons/favicon.png",
     packBg: "/assets/img/pack-bg.webp",
     packBgTitle: "/assets/img/pack-bg-title.webp",
