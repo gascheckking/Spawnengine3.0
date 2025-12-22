@@ -228,3 +228,58 @@ textarea {
   from { opacity: 1; transform: scale(1); }
   to { opacity: 0; transform: scale(1.02); }
 }
+/* ============================================================
+   MOBILE OPTIMIZATION · MeshOS v3.2
+   ============================================================ */
+
+@media (max-width: 768px) {
+  html, body {
+    font-size: 15px;
+    overflow-x: hidden;
+  }
+
+  .role-container, #meshApp {
+    padding: 1em;
+  }
+
+  h1, h2, h3 {
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .logo-large {
+    width: 80px;
+    height: auto;
+  }
+
+  .view {
+    padding: 0.8em;
+  }
+
+  textarea {
+    font-size: 0.9rem;
+  }
+
+  button, .btn-primary {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .hud-nav {
+    height: 60px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Ultra small screens (iPhone SE, etc.) */
+@media (max-width: 400px) {
+  h2 {
+    font-size: 1.2rem;
+  }
+  .boot-logo {
+    width: 72px;
+  }
+  .boot-text {
+    font-size: 0.8rem;
+  }
+}
