@@ -86,25 +86,30 @@
   <!-- ============================================================
        CORE SYSTEMS
        ============================================================ -->
-      <!-- 🧠 Boot System -->
-<script type="module" src="./core/ui/boot-sequence.js"></script>
 
-<!-- Kernel startar efter boot -->
-<script type="module" src="./core/kernel/init-kernel.js"></script>
+  <!-- 🧠 Boot System (runs first, triggers MeshKernel when done) -->
+  <script type="module" src="./core/ui/boot-sequence.js"></script>
+
+  <!-- Kernel Core -->
   <script type="module" src="./core/kernel/init-kernel.js"></script>
+
+  <!-- Forge Systems -->
   <script type="module" src="./core/forge/forge-ai.js"></script>
   <script type="module" src="./core/forge/forge-ui.js"></script>
   <script type="module" src="./core/forge/forge-terminal.js"></script>
   <script type="module" src="./core/forge/forge-kernel-bridge.js"></script>
 
+  <!-- World Systems -->
   <script type="module" src="./core/worlds/world-engine.js"></script>
   <script type="module" src="./core/worlds/world-mint.js"></script>
   <script type="module" src="./core/worlds/world-hub.js"></script>
 
+  <!-- Visual Systems -->
   <script type="module" src="./core/visuals/mesh-pulse.js"></script>
   <script type="module" src="./core/visuals/mesh-visualizer.js"></script>
   <script type="module" src="./core/visuals/asset-registry.js"></script>
 
+  <!-- Chain / Miniapps -->
   <script type="module" src="./core/spawnchain/spawn-chain.js"></script>
   <script type="module" src="./core/miniapps/miniapp-registry.js"></script>
   <script type="module" src="./core/spawn-arena.js"></script>
@@ -112,10 +117,10 @@
   <!-- ============================================================
        AI SYSTEMS
        ============================================================ -->
-  <script type="module" src="./ai/ai-core.js"></script>
-  <script type="module" src="./ai/ai-bridge.js"></script>
-  <script type="module" src="./ai/ai-worker.js"></script>
   <script type="module" src="./ai/ai-config.js"></script>
+  <script type="module" src="./ai/ai-bridge.js"></script>
+  <script type="module" src="./ai/ai-core.js"></script>
+  <script type="module" src="./ai/ai-worker.js"></script>
 
   <!-- ============================================================
        UI MODULES
@@ -124,11 +129,14 @@
   <script type="module" src="./modules/supcast/supcast.js"></script>
   <script type="module" src="./modules/tracker/tracker.js"></script>
   <script type="module" src="./modules/ai-panel.js"></script>
-  <script type="module" src="./modules/forge-ui.js"></script>
+
+  <!-- 🪩 Background Mesh -->
   <script src="mesh-bg.js" defer></script>
 
+  <!-- ============================================================
+       NAVIGATION LOGIC
+       ============================================================ -->
   <script>
-    // Simple View Switcher
     document.querySelectorAll('#mainNav button').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
