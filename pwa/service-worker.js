@@ -14,7 +14,7 @@ const CORE_ASSETS = [
   "/app.js",
   "/mesh-bg.js",
   "/assets/logo.png",
-"/assets/icons/icon-512.png"
+  "/assets/icons/icon-512.png",
 ];
 
 /* —— INSTALL —— */
@@ -51,10 +51,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
-
   if (req.method !== "GET") return;
-
-  // API-routes bypassas
   if (url.pathname.startsWith("/api/")) return;
 
   event.respondWith(
@@ -67,7 +64,7 @@ self.addEventListener("fetch", (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
           return res;
         })
-        .catch(() => caches.match("/offline.html"));
+        .catch(() => caches.match("/pwa/offline.html"));
     })
   );
 });
@@ -90,7 +87,7 @@ setInterval(async () => {
     clients.forEach((client) =>
       client.postMessage({
         type: "MESH_HEARTBEAT",
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     );
   } catch (err) {
@@ -108,7 +105,6 @@ async function checkForUpdates() {
       const cachedRes = await cache.match(asset);
       const netETag = netRes.headers.get("ETag");
       const cacheETag = cachedRes?.headers?.get("ETag");
-
       if (!cachedRes || (netETag && netETag !== cacheETag)) {
         console.log("🔁 [SW] Updated asset:", asset);
         await cache.put(asset, netRes.clone());
