@@ -14,7 +14,7 @@ export const BootSequence = {
     overlay.id = "bootOverlay";
     overlay.innerHTML = `
       <div class="boot-center">
-        <img src="assets/icons/logo.png" class="boot-logo" alt="SpawnEngine Logo" />
+<img src="assets/logo.png" class="boot-logo" alt="SpawnEngine Logo" />
         <div class="boot-text">SPAWNENGINE INITIALIZING</div>
         <div class="boot-bar"><div class="boot-bar-fill"></div></div>
       </div>
