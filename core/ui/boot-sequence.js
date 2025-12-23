@@ -1,108 +1,69 @@
-/* ============================================================
-   SPAWNENGINE · BOOT SEQUENCE v1.1
-   ------------------------------------------------------------
-   Handles startup overlay, logo animation, and boot sounds
-   before MeshKernel + Forge systems initialize.
-   ============================================================ */
-// === SpawnEngine Boot Overlay Fix (v3.6) ===
-document.addEventListener("DOMContentLoaded", () => {
-  const boot = document.createElement("div");
-  boot.id = "bootOverlay";
-  boot.innerHTML = `
-    <div class="boot-center">
-      <img src="assets/logo.png" class="boot-logo" alt="SpawnEngine logo" />
-      <div class="boot-text">SpawnEngine Initializing…</div>
-      <div class="boot-bar"><div class="boot-bar-fill"></div></div>
-    </div>
-  `;
-  document.body.appendChild(boot);
+// ============================================================
+// 🧠 SPAWNENGINE BOOT SEQUENCE v1.3 — Dark Mythic Edition
+// ============================================================
 
-  // Simulera laddning (du kan koppla till MeshCore.init sen)
-  let progress = 0;
-  const bar = boot.querySelector(".boot-bar-fill");
-  const timer = setInterval(() => {
-    progress += 5;
-    bar.style.width = progress + "%";
-    if (progress >= 100) {
-      clearInterval(timer);
-      boot.classList.add("fade-out");
-      setTimeout(() => boot.remove(), 700);
-    }
-  }, 120);
-});
-export const BootSequence = {
-  active: true,
-  soundEnabled: true,
+const BootSequence = {
+  active: false,
 
   async init() {
-    if (!this.active) return;
-    console.log("🚀 Boot sequence initialized...");
+    if (this.active || document.getElementById("bootOverlay")) return;
+    this.active = true;
 
-    // ✅ Create boot overlay
+    console.log("%c🚀 SpawnEngine BootSequence v1.3 — Engaging Mythic Mode", "color:#4df2ff; font-weight:bold");
+
     const overlay = document.createElement("div");
     overlay.id = "bootOverlay";
     overlay.innerHTML = `
       <div class="boot-center">
-        <img src="assets/logo.png" class="boot-logo" alt="SpawnEngine Logo" />
+        <img src="assets/logo.png" class="boot-logo pulse" alt="SpawnEngine Logo"/>
         <div class="boot-text">SPAWNENGINE INITIALIZING</div>
+        <div class="boot-subtitle">Mesh Kernel · Nebula Forge · Dark Mythic Protocol</div>
         <div class="boot-bar"><div class="boot-bar-fill"></div></div>
-      </div>
-    `;
+      </div>`;
     document.body.appendChild(overlay);
 
-    // ✅ Attempt boot sound (non-blocking)
-    if (this.soundEnabled) {
-      try {
-        const audio = new Audio("assets/sounds/reveal.mp3");
-        audio.volume = 0.4;
-        await audio.play();
-      } catch {
-        console.warn("🔇 Boot sound muted or not available");
-      }
+    try {
+      const audio = new Audio("assets/sounds/reveal.mp3");
+      audio.volume = 0.35;
+      audio.play().catch(() => console.log("🔇 Boot sound blocked – waiting for interaction"));
+    } catch (err) {
+      console.warn("Boot sound failed:", err);
     }
 
-    // ✅ Animate loading progress bar
-    let fill = overlay.querySelector(".boot-bar-fill");
+    const fill = overlay.querySelector(".boot-bar-fill");
     let progress = 0;
     const interval = setInterval(() => {
-      progress += Math.random() * 12;
+      progress += Math.random() * 8 + 6;
+      if (progress > 100) progress = 100;
       fill.style.width = `${progress}%`;
       if (progress >= 100) {
         clearInterval(interval);
-        this.finish();
+        setTimeout(() => this.finish(), 800);
       }
-    }, 180);
-
-    // Optional: trigger background pulse while loading
-    if (window.spawnMeshPulse) window.spawnMeshPulse("#4df2ff", 0.6);
+    }, 200);
   },
 
   finish() {
     const overlay = document.getElementById("bootOverlay");
     if (!overlay) return;
-
     overlay.classList.add("fade-out");
+
     setTimeout(() => {
       overlay.remove();
       this.active = false;
-      console.log("✅ SpawnEngine boot complete.");
+      console.log("%c✅ Mesh Online · Dark Mythic Engaged", "color:#b9ff7a; font-weight:bold");
 
-      // ✅ Trigger MeshKernel startup sequence
-      if (window.MeshKernel?.init) {
-        window.MeshKernel.init();
-        console.log("🧠 MeshKernel initialized from BootSequence.");
+      if (window.spawnMeshPulse) {
+        spawnMeshPulse("#4df2ff");
+        setTimeout(() => spawnMeshPulse("#b9ff7a"), 300);
+        setTimeout(() => spawnMeshPulse("#6ee2ff"), 600);
       }
-
-      // ✅ Optional visual confirmation
-      if (window.spawnMeshPulse) window.spawnMeshPulse("#b9ff7a", 1.0);
-    }, 1000);
-  },
+    }, 800);
+  }
 };
 
-/* ============================================================
-   AUTO-START
-   ============================================================ */
-if (typeof window !== "undefined") {
-  window.BootSequence = BootSequence;
-  document.addEventListener("DOMContentLoaded", () => BootSequence.init());
-}
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => BootSequence.init(), 150);
+});
+
+window.BootSequence = BootSequence;
