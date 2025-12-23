@@ -4,7 +4,32 @@
    Handles startup overlay, logo animation, and boot sounds
    before MeshKernel + Forge systems initialize.
    ============================================================ */
+// === SpawnEngine Boot Overlay Fix (v3.6) ===
+document.addEventListener("DOMContentLoaded", () => {
+  const boot = document.createElement("div");
+  boot.id = "bootOverlay";
+  boot.innerHTML = `
+    <div class="boot-center">
+      <img src="assets/logo.png" class="boot-logo" alt="SpawnEngine logo" />
+      <div class="boot-text">SpawnEngine Initializing…</div>
+      <div class="boot-bar"><div class="boot-bar-fill"></div></div>
+    </div>
+  `;
+  document.body.appendChild(boot);
 
+  // Simulera laddning (du kan koppla till MeshCore.init sen)
+  let progress = 0;
+  const bar = boot.querySelector(".boot-bar-fill");
+  const timer = setInterval(() => {
+    progress += 5;
+    bar.style.width = progress + "%";
+    if (progress >= 100) {
+      clearInterval(timer);
+      boot.classList.add("fade-out");
+      setTimeout(() => boot.remove(), 700);
+    }
+  }, 120);
+});
 export const BootSequence = {
   active: true,
   soundEnabled: true,
