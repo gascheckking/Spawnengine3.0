@@ -287,3 +287,52 @@ textarea {
   transform: translateY(-2px);
   box-shadow: 0 0 18px rgba(77,242,255,0.2);
 }
+#bootOverlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: radial-gradient(circle at center, #050816 0%, #01030a 100%);
+  z-index: 9999;
+  color: #4df2ff;
+  font-family: 'Inter', sans-serif;
+  animation: bootFadeIn 0.8s ease;
+}
+
+.boot-logo {
+  width: 100px;
+  filter: drop-shadow(0 0 15px rgba(77,242,255,0.8));
+  margin-bottom: 20px;
+  animation: logoPulse 2.5s infinite ease-in-out;
+}
+
+.boot-text {
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+  opacity: 0.85;
+  margin-bottom: 12px;
+}
+
+.boot-bar {
+  width: 200px;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.boot-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #4df2ff, #b9ff7a);
+  box-shadow: 0 0 12px rgba(77,242,255,0.6);
+  transition: width 0.3s ease;
+}
+
+.fade-out {
+  animation: bootFadeOut 0.8s ease forwards;
+}
+@keyframes bootFadeOut {
+  to { opacity: 0; transform: scale(1.02); }
+}
