@@ -336,3 +336,50 @@ textarea {
 @keyframes bootFadeOut {
   to { opacity: 0; transform: scale(1.02); }
 }
+/* BOOT SEQUENCE v1.3 — Dark Mythic */
+#bootOverlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #0a1428 0%, #030510 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 9999;
+  color: var(--text);
+  font-family: var(--font);
+  transition: opacity 0.8s ease-out;
+}
+#bootOverlay.fade-out { opacity: 0; pointer-events: none; }
+.boot-logo {
+  width: 96px; height: 96px; border-radius: 50%;
+  box-shadow: 0 0 30px rgba(77, 242, 255, 0.7);
+  margin-bottom: 32px;
+  animation: logoPulse 3s infinite ease-in-out;
+}
+.boot-text {
+  font-size: 1.4rem; font-weight: 800;
+  color: var(--accent); letter-spacing: 3px;
+  text-shadow: 0 0 20px rgba(77, 242, 255, 0.8);
+  margin-bottom: 12px;
+}
+.boot-subtitle {
+  font-size: 0.95rem; color: var(--text-muted);
+  opacity: 0.8; margin-bottom: 40px;
+}
+.boot-bar {
+  width: 300px; max-width: 80%; height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px; overflow: hidden;
+}
+.boot-bar-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-alt));
+  border-radius: 4px;
+  box-shadow: 0 0 20px rgba(77, 242, 255, 0.8);
+  transition: width 0.4s ease;
+}
+@keyframes logoPulse {
+  0%, 100% { box-shadow: 0 0 30px rgba(77,242,255,0.7); }
+  50% { box-shadow: 0 0 50px rgba(185,255,122,0.9); }
+}
