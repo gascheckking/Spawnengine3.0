@@ -3,73 +3,100 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SpawnEngine · Choose Your Role</title>
+  <title>SpawnEngine OS · Enter the Mesh</title>
 
-  <!-- ✅ Manifest & Style -->
+  <!-- ✅ Manifest & Styles -->
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="assets/logo.png" />
 
   <!-- ✅ Meta -->
-  <meta name="theme-color" content="#0a0e26" />
-  <meta name="description" content="SpawnEngine · Modular Mesh Protocol HUD" />
+  <meta name="theme-color" content="#030510" />
+  <meta name="description" content="SpawnEngine OS · Modular Mesh Universe v3.5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 </head>
 
-<body data-theme="glassbase">
-  <!-- 🌌 Background Mesh Universe -->
+<body data-theme="darkmythic">
+  <!-- 🌌 Animated Mesh Background -->
   <canvas id="mesh-bg"></canvas>
 
   <!-- ✦ Role Selection Screen ✦ -->
-  <main class="role-container">
+  <main class="role-container fade-in">
     <div class="role-header">
-<img src="assets/logo.png" alt="SpawnEngine Logo" class="logo-large" />
-      <h1 class="title-glow">SpawnEngine</h1>
-      <p class="subtitle">Choose your onchain identity and dive into the Mesh Universe</p>
+      <img src="assets/logo.png" alt="SpawnEngine Logo" class="logo-large pulse" />
+      <h1 class="title-glow">SpawnEngine OS</h1>
+      <p class="subtitle">Select your onchain identity and boot into the Mesh</p>
     </div>
 
     <div class="role-grid">
       <div class="role-card creator" onclick="selectRole('creator')">
-        <h2>🎨 Creator / Artist</h2>
-        <p>Mint packs, earn XP, and grow your mesh through content and tokens.</p>
-        <span class="role-tag">Farcaster Ready</span>
+        <h2>🎨 Creator</h2>
+        <p>Mint packs, deploy worlds, and forge AI-integrated mesh content.</p>
+        <span class="role-tag">Forge Access · Verified Creators</span>
       </div>
 
       <div class="role-card operator" onclick="selectRole('operator')">
-        <h2>⚙️ Operator / Engineer</h2>
-        <p>Automate XP flows, deploy packs, and manage mesh logic.</p>
-        <span class="role-tag">Base • Layer 4</span>
+        <h2>⚙️ Operator</h2>
+        <p>Automate XP streams, manage nodes, and optimize protocol flows.</p>
+        <span class="role-tag">Base · Layer 4 Access</span>
       </div>
 
       <div class="role-card explorer" onclick="selectRole('explorer')">
-        <h2>🌐 Explorer / User</h2>
-        <p>Join quests, open packs, and explore onchain XP & Spawn rewards.</p>
-        <span class="role-tag">Zora Mesh v3.1</span>
+        <h2>🌐 Explorer</h2>
+        <p>Join quests, open packs, and collect rewards within the Mesh Universe.</p>
+        <span class="role-tag">Zora · Farcaster</span>
       </div>
     </div>
 
     <footer class="role-footer">
-      <p>v3.1 · Modular Mesh Protocol · Base / Zora / Farcaster</p>
+      <p>v3.5 · Dark Mythic Platform · Base / Zora / Farcaster</p>
     </footer>
   </main>
 
+  <!-- ✦ Boot Sequence ✦ -->
+  <div id="bootOverlay">
+    <div class="boot-center">
+      <img src="assets/logo.png" class="boot-logo" />
+      <div class="boot-text">Initializing Mesh Kernel...</div>
+      <div class="boot-bar"><div class="boot-bar-fill"></div></div>
+    </div>
+  </div>
+
   <!-- ✦ Scripts ✦ -->
   <script>
-    // Role select + HUD redirect
+    // Role select → MeshOS
     function selectRole(role) {
       localStorage.setItem("spawnRole", role);
-window.location.href = "app.html";
+      window.location.href = "app.html";
     }
 
-    // Role hover glow
+    // Hover animation
     document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".role-card").forEach(card => {
+      document.querySelectorAll(".role-card").forEach((card) => {
         card.addEventListener("mouseenter", () => card.classList.add("hover"));
         card.addEventListener("mouseleave", () => card.classList.remove("hover"));
       });
     });
+
+    // Boot animation (dark mythic fade-in)
+    window.addEventListener("load", () => {
+      const boot = document.getElementById("bootOverlay");
+      const bar = document.querySelector(".boot-bar-fill");
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 5;
+        bar.style.width = progress + "%";
+        if (progress >= 100) {
+          clearInterval(interval);
+          boot.classList.add("fade-out");
+          setTimeout(() => boot.remove(), 800);
+        }
+      }, 80);
+    });
   </script>
 
-  <!-- ✅ Scripts that actually exist -->
+  <!-- ✅ Core Background Systems -->
   <script src="mesh-bg.js" defer></script>
   <script src="spawnengine-sdk.js" defer></script>
   <script src="spawnengine.js" defer></script>
