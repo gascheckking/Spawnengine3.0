@@ -40,18 +40,26 @@
     <footer class="role-footer">v3.6 · Dark Mythic Mesh Protocol</footer>
 </main>
 
-<!-- ✅ Scripts (rätt ordning & syntax) -->
+<!-- ✅ Scripts -->
 <script src="mesh-bg.js" defer></script>
 <script src="boot-sequence.js"></script>
 <script>
   function selectRole(role) {
     localStorage.setItem("spawnRole", role);
-    BootSequence.init(); // Startar direkt boot-sekvensen
 
-    // Vänta tills booten är klar, sen gå till app
-    setTimeout(() => {
-      window.location.href = "app.html";
-    }, 2800);
+    // Vänta tills BootSequence finns i window (säker laddning)
+    const tryBoot = () => {
+      if (window.BootSequence && typeof BootSequence.init === "function") {
+        BootSequence.init();
+        setTimeout(() => {
+          window.location.href = "app.html";
+        }, 2800);
+      } else {
+        console.warn("BootSequence not ready yet, retrying...");
+        setTimeout(tryBoot, 100);
+      }
+    };
+    tryBoot();
   }
 </script>
 </body>
