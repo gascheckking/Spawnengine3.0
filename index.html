@@ -42,18 +42,15 @@
 
 <!-- ✅ Scripts -->
 <script src="mesh-bg.js" defer></script>
-<script src="boot-sequence.js"></script>
+<script src="core/ui/boot-sequence.js"></script>
 <script>
   function selectRole(role) {
     localStorage.setItem("spawnRole", role);
 
-    // Vänta tills BootSequence finns i window (säker laddning)
     const tryBoot = () => {
       if (window.BootSequence && typeof BootSequence.init === "function") {
         BootSequence.init();
-        setTimeout(() => {
-          window.location.href = "app.html";
-        }, 2800);
+        setTimeout(() => (window.location.href = "app.html"), 2800);
       } else {
         console.warn("BootSequence not ready yet, retrying...");
         setTimeout(tryBoot, 100);
