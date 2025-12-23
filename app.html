@@ -3,84 +3,105 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SpawnEngine · MeshOS v3.2</title>
+  <title>SpawnEngine OS · MeshOS v3.5 Dark Mythic</title>
 
-  <!-- 🪩 GLOBAL STYLE -->
+  <!-- 🪩 STYLE -->
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="assets/logo.png" />
 
   <!-- 🪄 META -->
-  <meta name="theme-color" content="#040612" />
-  <meta name="description" content="SpawnEngine MeshOS — Modular AI + Onchain Universe" />
+  <meta name="theme-color" content="#030510" />
+  <meta name="description" content="SpawnEngine MeshOS — Dark Mythic Interface" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 </head>
 
 <body data-theme="glassbase">
-  <!-- 🌌 BACKGROUND VISUAL -->
+  <!-- 🌌 BACKGROUND -->
   <canvas id="mesh-bg"></canvas>
+
+  <!-- 🧠 HEADER / TOP BAR -->
+  <header class="mesh-header">
+    <div class="mesh-logo">
+      <img src="assets/logo.png" alt="SpawnEngine Logo" />
+      <div class="mesh-title">
+        <h1>SpawnEngine OS</h1>
+        <p>Mesh Protocol · Dark Mythic Edition</p>
+      </div>
+    </div>
+
+    <div class="mesh-stats">
+      <span>XP: <b id="xpBalance">0</b></span>
+      <span>SPN: <b id="spnBalance">0</b></span>
+      <button id="connectWalletBtn" class="btn-primary">Connect</button>
+    </div>
+  </header>
+
+  <!-- 🔵 LIVE TICKER -->
   <div id="meshTicker">
-  <span>⚙️ Initializing Mesh Kernel...</span>
-  <span>🪩 MeshOS v3.3 Online</span>
-  <span>💠 Connected: Base + Zora + Farcaster</span>
-  <span>🎨 Forge & AI Systems Booted</span>
-</div>
+    <span>⚙️ Booting Mesh Kernel…</span>
+    <span>💠 Connected: Base + Zora + Farcaster</span>
+    <span>🧬 Forge AI Systems Online</span>
+    <span>🪩 Mythic Mode Engaged</span>
+  </div>
 
   <!-- ============================================================
-       SPAWNENGINE · MESHOS v3.2
+       MESH CORE VIEWS
        ============================================================ -->
   <div id="meshApp">
 
-    <!-- 🧠 KERNEL STATUS -->
+    <!-- 🧠 KERNEL -->
     <section id="kernelView" class="view active">
-      <h2>🧠 Mesh Kernel Status</h2>
+      <h2 class="pulse">🧠 Mesh Kernel</h2>
       <div id="meshFeed" class="hud-feed">Initializing MeshCore...</div>
     </section>
 
     <!-- 🧬 FORGE -->
     <section id="forgePanel" class="view">
-      <h2>🧬 Mesh Forge</h2>
-      <div id="forgeTerminal" class="hud-feed">Awaiting AI build...</div>
+      <h2>🧬 Forge AI Console</h2>
+      <div id="forgeTerminal" class="hud-feed">Awaiting AI build…</div>
     </section>
 
-    <!-- 🌐 WORLD HUB -->
+    <!-- 🌐 WORLDS -->
     <section id="worldHubView" class="view">
-      <h2>🌐 SpawnVerse WorldHub</h2>
+      <h2>🌐 WorldHub</h2>
       <div class="worldhub-actions">
-        <input id="worldNameInput" placeholder="Enter world name..." />
+        <input id="worldNameInput" placeholder="Enter world name…" />
         <button id="createWorldBtn" class="btn-primary">Create World</button>
       </div>
       <div id="worldList" class="worldhub-list"></div>
     </section>
 
-    <!-- ⚙️ ARENA -->
+    <!-- ⚔️ ARENA -->
     <section id="arenaView" class="view">
       <h2>⚔️ SpawnArena</h2>
-      <div id="arenaFeed" class="hud-feed">Awaiting events...</div>
+      <div id="arenaFeed" class="hud-feed">Awaiting events…</div>
     </section>
 
-    <!-- 🛰️ TRACKER -->
+    <!-- 📡 TRACKER -->
     <section id="trackerView" class="view">
       <h2>📡 Mesh Tracker</h2>
-      <div id="trackerFeed" class="hud-feed">Tracking initialized...</div>
+      <div id="trackerFeed" class="hud-feed">Tracking initialized…</div>
     </section>
 
-    <!-- 🎭 SUPCAST -->
+    <!-- 💬 SUPCAST -->
     <section id="supcastView" class="view">
       <h2>💬 SupCast Feed</h2>
       <div id="supcastFeed" class="hud-feed"></div>
     </section>
 
-    <!-- 🎨 AI PANEL -->
+    <!-- 🤖 AI PANEL -->
     <section id="aiPanelView" class="view">
       <h2>🤖 AI Panel</h2>
       <div id="aiOutput" class="hud-feed">Ask the Mesh AI anything…</div>
-      <textarea id="aiInput" placeholder="Type a question..."></textarea>
+      <textarea id="aiInput" placeholder="Type a question…"></textarea>
       <button id="aiSend" class="btn-primary">Send to AI</button>
     </section>
   </div>
 
-  <!-- 🌍 NAVIGATION BAR -->
+  <!-- ============================================================
+       NAVIGATION / FOOTER
+       ============================================================ -->
   <nav id="mainNav" class="hud-nav glass">
     <button data-view="kernelView" class="active">Kernel</button>
     <button data-view="forgePanel">Forge</button>
@@ -92,27 +113,23 @@
   </nav>
 
   <!-- ============================================================
-       CORE SYSTEMS
+       CORE SYSTEM SCRIPTS (behålls från din originalfil)
        ============================================================ -->
-
-  <!-- 🧠 Boot System (runs first, triggers MeshKernel when done) -->
   <script type="module" src="./core/ui/boot-sequence.js"></script>
-
-  <!-- Kernel Core -->
   <script type="module" src="./core/kernel/init-kernel.js"></script>
 
-  <!-- Forge Systems -->
+  <!-- Forge -->
   <script type="module" src="./core/forge/forge-ai.js"></script>
   <script type="module" src="./core/forge/forge-ui.js"></script>
   <script type="module" src="./core/forge/forge-terminal.js"></script>
   <script type="module" src="./core/forge/forge-kernel-bridge.js"></script>
 
-  <!-- World Systems -->
+  <!-- Worlds -->
   <script type="module" src="./core/worlds/world-engine.js"></script>
   <script type="module" src="./core/worlds/world-mint.js"></script>
   <script type="module" src="./core/worlds/world-hub.js"></script>
 
-  <!-- Visual Systems -->
+  <!-- Visuals -->
   <script type="module" src="./core/visuals/mesh-pulse.js"></script>
   <script type="module" src="./core/visuals/mesh-visualizer.js"></script>
   <script type="module" src="./core/visuals/asset-registry.js"></script>
@@ -122,28 +139,22 @@
   <script type="module" src="./core/miniapps/miniapp-registry.js"></script>
   <script type="module" src="./core/spawn-arena.js"></script>
 
-  <!-- ============================================================
-       AI SYSTEMS
-       ============================================================ -->
+  <!-- AI -->
   <script type="module" src="./ai/ai-config.js"></script>
   <script type="module" src="./ai/ai-bridge.js"></script>
   <script type="module" src="./ai/ai-core.js"></script>
   <script type="module" src="./ai/ai-worker.js"></script>
 
-  <!-- ============================================================
-       UI MODULES
-       ============================================================ -->
+  <!-- UI Modules -->
   <script type="module" src="./modules/hud/hud.js"></script>
   <script type="module" src="./modules/supcast/supcast.js"></script>
   <script type="module" src="./modules/tracker/tracker.js"></script>
   <script type="module" src="./modules/ai-panel.js"></script>
 
-  <!-- 🪩 Background Mesh -->
+  <!-- Background -->
   <script src="mesh-bg.js" defer></script>
 
-  <!-- ============================================================
-       NAVIGATION LOGIC
-       ============================================================ -->
+  <!-- NAV LOGIC -->
   <script>
     document.querySelectorAll('#mainNav button').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -151,6 +162,7 @@
         document.querySelectorAll('#mainNav button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById(btn.dataset.view).classList.add('active');
+        window.scrollTo(0, 0);
       });
     });
   </script>
