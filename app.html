@@ -3,168 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SpawnEngine OS · MeshOS v3.5 Dark Mythic</title>
-
-  <!-- 🪩 STYLE -->
+  <title>SpawnEngine · MeshOS</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="assets/logo.png" />
-
-  <!-- 🪄 META -->
-  <meta name="theme-color" content="#030510" />
-  <meta name="description" content="SpawnEngine MeshOS — Dark Mythic Interface" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 </head>
 
-<body data-theme="glassbase">
-  <!-- 🌌 BACKGROUND -->
+<body>
   <canvas id="mesh-bg"></canvas>
 
-  <!-- 🧠 HEADER / TOP BAR -->
-  <header class="mesh-header">
-    <div class="mesh-logo">
-      <img src="assets/logo.png" alt="SpawnEngine Logo" />
-      <div class="mesh-title">
-        <h1>SpawnEngine OS</h1>
-        <p>Mesh Protocol · Dark Mythic Edition</p>
-      </div>
-    </div>
-
-    <div class="mesh-stats">
-      <span>XP: <b id="xpBalance">0</b></span>
-      <span>SPN: <b id="spnBalance">0</b></span>
-      <button id="connectWalletBtn" class="btn-primary">Connect</button>
-    </div>
-  </header>
-
-  <!-- 🔵 LIVE TICKER -->
-  <div id="meshTicker">
-    <span>⚙️ Booting Mesh Kernel…</span>
-    <span>💠 Connected: Base + Zora + Farcaster</span>
-    <span>🧬 Forge AI Systems Online</span>
-    <span>🪩 Mythic Mode Engaged</span>
-  </div>
-
-  <!-- ============================================================
-       MESH CORE VIEWS
-       ============================================================ -->
   <div id="meshApp">
-
-    <!-- 🧠 KERNEL -->
+    <!-- KERNEL VIEW -->
     <section id="kernelView" class="view active">
-      <h2 class="pulse">🧠 Mesh Kernel</h2>
-      <div id="meshFeed" class="hud-feed">Initializing MeshCore...</div>
+      <h2>🧠 Mesh Kernel</h2>
+      <div class="hud-feed">Initializing MeshCore...</div>
     </section>
 
-    <!-- 🧬 FORGE -->
+    <!-- FORGE -->
     <section id="forgePanel" class="view">
-      <h2>🧬 Forge AI Console</h2>
-      <div id="forgeTerminal" class="hud-feed">Awaiting AI build…</div>
+      <h2>🧬 Forge</h2>
+      <div class="hud-feed">Awaiting AI build...</div>
     </section>
 
-    <!-- 🌐 WORLDS -->
-    <section id="worldHubView" class="view">
-      <h2>🌐 WorldHub</h2>
-      <div class="worldhub-actions">
-        <input id="worldNameInput" placeholder="Enter world name…" />
-        <button id="createWorldBtn" class="btn-primary">Create World</button>
+    <!-- PROFILE -->
+    <section id="profileView" class="view">
+      <div class="profile-container">
+        <div class="profile-header">
+          <div class="logo-circle"><span>SE</span></div>
+          <div class="title-group">
+            <h1>SPAWNENGINE</h1>
+            <p>Modular onchain engine for packs, XP, badges & modules</p>
+          </div>
+          <div class="connect-btn">Connect</div>
+        </div>
+
+        <div class="live-ticker">
+          LIVE PULL pack_open · 0xA9...93 → Neon Fragments (Fragment)
+        </div>
+
+        <div class="profile-card">
+          <div class="profile-top">
+            <div class="avatar"><span>SE</span></div>
+            <div class="info">
+              <h2>@spawnengine</h2>
+              <p>Mesh owner on Base · XP + packs</p>
+              <p class="modules">Modules: Factory · TokenPack · ReserveGuard</p>
+              <div class="online">ONLINE</div>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat big"><h3>XP STREAK</h3><div class="num">1575</div></div>
+            <div class="stat big"><h3>SPAWN BALANCE</h3><div class="num">497</div></div>
+            <div class="stat small"><h3>TODAY'S EVENTS</h3><div class="num">9</div></div>
+            <div class="stat small"><h3>CONNECTED SURFACES</h3><div class="num">3</div></div>
+          </div>
+
+          <div class="tasks">
+            <h3>Today's loop</h3>
+            <div class="task"><div class="circle"></div>Open pack <span>+50 XP</span></div>
+            <div class="task active"><div class="circle filled"></div>Connect wallet <span>+100 XP</span></div>
+            <div class="task"><div class="circle"></div>Share your mesh <span>+100 XP</span></div>
+          </div>
+        </div>
       </div>
-      <div id="worldList" class="worldhub-list"></div>
-    </section>
-
-    <!-- ⚔️ ARENA -->
-    <section id="arenaView" class="view">
-      <h2>⚔️ SpawnArena</h2>
-      <div id="arenaFeed" class="hud-feed">Awaiting events…</div>
-    </section>
-
-    <!-- 📡 TRACKER -->
-    <section id="trackerView" class="view">
-      <h2>📡 Mesh Tracker</h2>
-      <div id="trackerFeed" class="hud-feed">Tracking initialized…</div>
-    </section>
-
-    <!-- 💬 SUPCAST -->
-    <section id="supcastView" class="view">
-      <h2>💬 SupCast Feed</h2>
-      <div id="supcastFeed" class="hud-feed"></div>
-    </section>
-
-    <!-- 🤖 AI PANEL -->
-    <section id="aiPanelView" class="view">
-      <h2>🤖 AI Panel</h2>
-      <div id="aiOutput" class="hud-feed">Ask the Mesh AI anything…</div>
-      <textarea id="aiInput" placeholder="Type a question…"></textarea>
-      <button id="aiSend" class="btn-primary">Send to AI</button>
     </section>
   </div>
 
-  <!-- ============================================================
-       NAVIGATION / FOOTER
-       ============================================================ -->
   <nav id="mainNav" class="hud-nav glass">
     <button data-view="kernelView" class="active">Kernel</button>
     <button data-view="forgePanel">Forge</button>
-    <button data-view="worldHubView">Worlds</button>
-    <button data-view="arenaView">Arena</button>
-    <button data-view="trackerView">Tracker</button>
-    <button data-view="supcastView">SupCast</button>
-    <button data-view="aiPanelView">AI</button>
+    <button data-view="profileView">Profile</button>
   </nav>
 
-  <!-- ============================================================
-       CORE SYSTEM SCRIPTS (behålls från din originalfil)
-       ============================================================ -->
-  <script type="module" src="./core/ui/boot-sequence.js"></script>
-  <script type="module" src="./core/kernel/init-kernel.js"></script>
-
-  <!-- Forge -->
-  <script type="module" src="./core/forge/forge-ai.js"></script>
-  <script type="module" src="./core/forge/forge-ui.js"></script>
-  <script type="module" src="./core/forge/forge-terminal.js"></script>
-  <script type="module" src="./core/forge/forge-kernel-bridge.js"></script>
-
-  <!-- Worlds -->
-  <script type="module" src="./core/worlds/world-engine.js"></script>
-  <script type="module" src="./core/worlds/world-mint.js"></script>
-  <script type="module" src="./core/worlds/world-hub.js"></script>
-
-  <!-- Visuals -->
-  <script type="module" src="./core/visuals/mesh-pulse.js"></script>
-  <script type="module" src="./core/visuals/mesh-visualizer.js"></script>
-  <script type="module" src="./core/visuals/asset-registry.js"></script>
-
-  <!-- Chain / Miniapps -->
-  <script type="module" src="./core/spawnchain/spawn-chain.js"></script>
-  <script type="module" src="./core/miniapps/miniapp-registry.js"></script>
-  <script type="module" src="./core/spawn-arena.js"></script>
-
-  <!-- AI -->
-  <script type="module" src="./ai/ai-config.js"></script>
-  <script type="module" src="./ai/ai-bridge.js"></script>
-  <script type="module" src="./ai/ai-core.js"></script>
-  <script type="module" src="./ai/ai-worker.js"></script>
-
-  <!-- UI Modules -->
-  <script type="module" src="./modules/hud/hud.js"></script>
-  <script type="module" src="./modules/supcast/supcast.js"></script>
-  <script type="module" src="./modules/tracker/tracker.js"></script>
-  <script type="module" src="./modules/ai-panel.js"></script>
-
-  <!-- Background -->
   <script src="mesh-bg.js" defer></script>
-
-  <!-- NAV LOGIC -->
-  <script>
-    document.querySelectorAll('#mainNav button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('#mainNav button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.view).classList.add('active');
-        window.scrollTo(0, 0);
-      });
-    });
-  </script>
+  <script src="app.js" defer></script>
+  <script src="boot-sequence.js" defer></script>
 </body>
 </html>
