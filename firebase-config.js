@@ -18,6 +18,15 @@ export const db = getFirestore(app);
 
 export async function logMeshEvent(type, message, xp) {
   try {
+
+    if (!navigator.onLine) {
+      const offlineEvents = JSON.parse(localStorage.getItem("meshEventsOffline")) || [];
+      offlineEvents.push({ type, message, xp, timestamp: new Date().toISOString() });
+      localStorage.setItem("meshEventsOffline", JSON.stringify(offlineEvents));
+      console.log("📡 Offline — Event buffered locally:", message);
+      return;
+    }
+
     await addDoc(collection(db, "meshEvents"), {
       type,
       message,
