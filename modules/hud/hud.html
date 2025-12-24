@@ -127,7 +127,37 @@
         </div>
         <div id="worldList" class="world-list"></div>
       </section>
+<!-- UNIVERSE VIEW -->
+<section id="hud-universe" class="hud-view">
+  <h3>🌐 Mesh Universe</h3>
 
+  <div class="hud-card">
+    <h4>Profile</h4>
+    <p id="userHandle">@spawniz</p>
+    <p id="userRole">Alpha Hunter / Trader</p>
+    <p>XP: <span id="xpBalance">0</span> · SPN: <span id="spnBalance">0</span></p>
+    <button id="connectWalletBtn" class="btn-outline">Connect Wallet</button>
+  </div>
+
+  <div class="hud-card">
+    <h4>SPN Token</h4>
+    <p>Price: <span id="tokenPrice">$0.00</span></p>
+    <p>Change: <span id="tokenChange">0%</span></p>
+    <p>TVL: <span id="tokenTVL">0 ETH</span></p>
+    <p>Participants: <span id="tokenUsers">0</span></p>
+  </div>
+
+  <div class="hud-card">
+    <h4>Live Mesh Feed</h4>
+    <ul id="meshFeedList" class="feed-list">
+      <li>Loading activity...</li>
+    </ul>
+  </div>
+
+  <div class="hud-btnrow">
+    <button id="refreshMeshBtn" class="btn-primary">⟳ Refresh Mesh</button>
+  </div>
+</section>
       <!-- 🧩 FORGE TERMINAL -->
       <section id="forgeView" class="hud-view">
         <h2>Forge Terminal</h2>
