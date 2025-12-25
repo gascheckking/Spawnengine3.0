@@ -9,22 +9,25 @@
 </head>
 
 <body>
+  <!-- 🎇 MESH BAKGRUND -->
   <canvas id="mesh-bg"></canvas>
 
+  <!-- 🌌 APP WRAPPER -->
   <div id="meshApp">
-    <!-- KERNEL VIEW -->
+    
+    <!-- 🧠 KERNEL VIEW -->
     <section id="kernelView" class="view active">
       <h2>🧠 Mesh Kernel</h2>
       <div class="hud-feed">Initializing MeshCore...</div>
     </section>
 
-    <!-- FORGE -->
+    <!-- 🧬 FORGE VIEW -->
     <section id="forgePanel" class="view">
       <h2>🧬 Forge</h2>
       <div class="hud-feed">Awaiting AI build...</div>
     </section>
 
-    <!-- PROFILE -->
+    <!-- 👤 PROFILE VIEW -->
     <section id="profileView" class="view">
       <div class="profile-container">
         <div class="profile-header">
@@ -52,10 +55,22 @@
           </div>
 
           <div class="stats-grid">
-            <div class="stat big"><h3>XP STREAK</h3><div class="num">1575</div></div>
-            <div class="stat big"><h3>SPAWN BALANCE</h3><div class="num">497</div></div>
-            <div class="stat small"><h3>TODAY'S EVENTS</h3><div class="num">9</div></div>
-            <div class="stat small"><h3>CONNECTED SURFACES</h3><div class="num">3</div></div>
+            <div class="stat big">
+              <h3>XP STREAK</h3>
+              <div class="num">1575</div>
+            </div>
+            <div class="stat big">
+              <h3>SPAWN BALANCE</h3>
+              <div class="num">497</div>
+            </div>
+            <div class="stat small">
+              <h3>TODAY'S EVENTS</h3>
+              <div class="num">9</div>
+            </div>
+            <div class="stat small">
+              <h3>CONNECTED SURFACES</h3>
+              <div class="num">3</div>
+            </div>
           </div>
 
           <div class="tasks">
@@ -67,14 +82,17 @@
         </div>
       </div>
     </section>
+
   </div>
 
+  <!-- 🧭 NAVIGATION -->
   <nav id="mainNav" class="hud-nav glass">
     <button data-view="kernelView" class="active">Kernel</button>
     <button data-view="forgePanel">Forge</button>
     <button data-view="profileView">Profile</button>
   </nav>
 
+  <!-- 🔁 SCRIPTS -->
   <script src="mesh-bg.js" defer></script>
   <script src="app.js" defer></script>
   <script src="boot-sequence.js" defer></script>
