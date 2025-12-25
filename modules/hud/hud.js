@@ -1,8 +1,8 @@
-/* ============================================================
-   SPAWNENGINE HUD v3.2 — Mesh + HUD logik
-   ============================================================ */
+// ============================================================
+// SPAWNENGINE HUD v3.2 — Mesh + HUD logik
+// ============================================================
 
-// — IMPORTS
+// IMPORTS
 import { getInventory, simulatePackOpen, simulateSynthesis } from "../../api/pack-actions.js";
 import { createTicket, renderSupCastList } from "../supcast/supcast.js";
 import { getHomeFeed } from "../../api/mesh-feed.js";
@@ -10,16 +10,17 @@ import { getProfile, updateWalletStatus } from "../../api/user-profile.js";
 import { getTokenData } from "../../api/spawnengine-token.js";
 import { getSystemActivity } from "../../api/activity.js";
 
-// — GLOBAL STATE
+// STATE
 let balanceXp = 0;
 let role = localStorage.getItem("spawnRole") || "Explorer";
 let inventory = getInventory();
 
-// — DOM READY
+// ON READY
 window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("hudRole").textContent = role;
 
   updateInventory();
+  updateWalletUI();
   bindNavigation();
   bindHUD();
   renderProfile();
@@ -29,7 +30,7 @@ window.addEventListener("DOMContentLoaded", () => {
   toast("HUD v3.2 loaded");
 });
 
-// — NAVIGATION
+// NAVIGATION
 function bindNavigation() {
   const buttons = document.querySelectorAll(".hud-nav button");
   buttons.forEach((btn) =>
@@ -43,45 +44,42 @@ function bindNavigation() {
   );
 }
 
-// — HUD-EVENTS
+// HUD BINDINGS
 function bindHUD() {
-  const xpEl = document.getElementById("hudXp");
-  const spnEl = document.getElementById("hudSpn");
-
-  document.getElementById("hudBoost").addEventListener("click", () => {
+  document.getElementById("hudBoost")?.addEventListener("click", () => {
     balanceXp += 50;
-    xpEl.textContent = `XP: ${balanceXp}`;
+    document.getElementById("hudXp").textContent = `XP: ${balanceXp}`;
     toast("+50 XP claimed");
   });
 
-  document.getElementById("hudRefresh").addEventListener("click", () => {
+  document.getElementById("hudRefresh")?.addEventListener("click", () => {
     const modules = Math.floor(Math.random() * 10) + 1;
     document.getElementById("hudModules").textContent = modules;
     toast(`Mesh synced (${modules} modules)`);
   });
 
-  document.getElementById("lootOpen").addEventListener("click", () => {
+  document.getElementById("lootOpen")?.addEventListener("click", () => {
     const reward = simulatePackOpen();
     inventory = reward.inventory;
     updateInventory();
     toast("🎁 Pack opened!");
   });
 
-  document.getElementById("lootSynth").addEventListener("click", () => {
+  document.getElementById("lootSynth")?.addEventListener("click", () => {
     const res = simulateSynthesis();
     inventory = res.inventory;
     updateInventory();
     toast(res.message);
   });
 
-  document.getElementById("forgeStart").addEventListener("click", () => {
+  document.getElementById("forgeStart")?.addEventListener("click", () => {
     const result = simulateSynthesis();
     document.getElementById("forgeResult").textContent = result.message;
     updateInventory();
     toast("Forge attempt executed");
   });
 
-  document.getElementById("supcastSend").addEventListener("click", () => {
+  document.getElementById("supcastSend")?.addEventListener("click", () => {
     const text = document.getElementById("supcastInput").value.trim();
     if (!text) return toast("Enter message");
     createTicket(text, "General", "@spawniz");
@@ -92,14 +90,6 @@ function bindHUD() {
 
   renderSupCastList("supcastFeed");
 
-  const themeSelect = document.getElementById("hudTheme");
-  themeSelect.value = localStorage.getItem("spawnTheme") || "glassbase";
-  themeSelect.addEventListener("change", (e) => {
-    document.body.dataset.theme = e.target.value;
-    localStorage.setItem("spawnTheme", e.target.value);
-    toast(`Theme set to ${e.target.value}`);
-  });
-
   const tf = document.getElementById("trackerFeed");
   tf.innerHTML = `
     <div>👣 Tracking: ${localStorage.getItem("wallet") || "0x...C0DE"}</div>
@@ -107,79 +97,93 @@ function bindHUD() {
     <div>📈 Loot data synced.</div>`;
 }
 
-// — INVENTORY
+// INVENTORY
 function updateInventory() {
   document.getElementById("hudFrag").textContent = inventory.fragments;
   document.getElementById("hudShard").textContent = inventory.shards;
   document.getElementById("hudRelic").textContent = inventory.relics;
+  document.getElementById("walletBalance").textContent = inventory.spawnTokens || 0;
+  document.getElementById("walletSPN").textContent = inventory.spnBalance || 0;
 }
 
-// — TOAST
-function toast(msg) {
+// TOAST
+function toast(msg, type = "") {
   const el = document.getElementById("hudToast");
   el.textContent = msg;
-  el.classList.add("show");
+  el.className = type ? `show ${type}` : "show";
   setTimeout(() => el.classList.remove("show"), 2000);
 }
 
-// ============================================================
-// 🔁 MESH UNIVERSE LOGIK
-// ============================================================
-
-const xpEl = document.getElementById("xpBalance");
-const spnEl = document.getElementById("spnBalance");
-const roleEl = document.getElementById("userRole");
-const handleEl = document.getElementById("userHandle");
-const walletBtn = document.getElementById("connectWalletBtn");
-const feedList = document.getElementById("meshFeedList");
-const tokenPrice = document.getElementById("tokenPrice");
-const tokenChange = document.getElementById("tokenChange");
-const tokenTVL = document.getElementById("tokenTVL");
-const tokenUsers = document.getElementById("tokenUsers");
-const refreshBtn = document.getElementById("refreshMeshBtn");
-
-// — PROFIL
+// PROFILE
 function renderProfile() {
   const user = getProfile();
-  xpEl.textContent = user.xpBalance;
-  spnEl.textContent = user.spnBalance;
-  roleEl.textContent = user.currentRole;
-  handleEl.textContent = user.handle;
-  walletBtn.textContent = user.isConnected ? "Disconnect Wallet" : "Connect Wallet";
+  document.getElementById("xpBalance").textContent = user.xpBalance;
+  document.getElementById("spnBalance").textContent = user.spnBalance;
+  document.getElementById("userRole").textContent = user.currentRole;
+  document.getElementById("userHandle").textContent = user.handle;
+  document.getElementById("connectWalletBtn").textContent = user.isConnected ? "Disconnect Wallet" : "Connect Wallet";
 }
 
-// — TOKEN
+// TOKEN
 function renderToken() {
   const token = getTokenData();
-  tokenPrice.textContent = `$${token.priceUsd}`;
-  tokenChange.textContent = `${(token.dailyChange * 100).toFixed(1)}%`;
-  tokenTVL.textContent = `${token.tvlEth} ETH`;
-  tokenUsers.textContent = token.participants;
+  document.getElementById("tokenPrice").textContent = `$${token.priceUsd}`;
+  document.getElementById("tokenChange").textContent = `${(token.dailyChange * 100).toFixed(1)}%`;
+  document.getElementById("tokenTVL").textContent = `${token.tvlEth} ETH`;
+  document.getElementById("tokenUsers").textContent = token.participants;
 }
 
-// — FEED
+// FEED
 function renderFeed() {
   const feed = getHomeFeed();
   const system = getSystemActivity();
   const combined = [...feed, ...system.slice(0, 3)];
-  feedList.innerHTML = combined.map(event => `<li>${event}</li>`).join("");
+  document.getElementById("meshFeedList").innerHTML = combined.map(event => `<li>${event}</li>`).join("");
 }
 
-// — WALLET TOGGLE
-walletBtn?.addEventListener("click", () => {
+// WALLET UI
+function updateWalletUI() {
+  const profile = getProfile();
+  if (!profile) return;
+  document.getElementById("walletAddress").textContent = profile.wallet || "Not Connected";
+}
+
+// WALLET ACTIONS
+document.getElementById("walletBuyBtn")?.addEventListener("click", () => {
+  toast("Redirecting to buy provider…", "info");
+});
+
+document.getElementById("walletSendBtn")?.addEventListener("click", () => {
+  const to = prompt("Enter wallet address:");
+  const amt = prompt("Amount to send:");
+  if (to && amt) toast(`Sending ${amt} Tokens to ${to}`, "success");
+});
+
+document.getElementById("walletReceiveBtn")?.addEventListener("click", () => {
+  const addr = getProfile()?.wallet || "0x123";
+  navigator.clipboard.writeText(addr);
+  toast(`Copied: ${addr}`, "success");
+});
+
+document.getElementById("walletBridgeBtn")?.addEventListener("click", () => {
+  toast("Bridge function coming soon!", "info");
+});
+
+document.getElementById("connectWalletBtn")?.addEventListener("click", () => {
   const user = getProfile();
   updateWalletStatus(!user.isConnected);
   renderProfile();
   toast(user.isConnected ? "Wallet connected!" : "Wallet disconnected.");
 });
 
-// — REFRESH BUTTON
-refreshBtn?.addEventListener("click", () => {
+// REFRESH
+document.getElementById("refreshMeshBtn")?.addEventListener("click", () => {
   renderProfile();
   renderToken();
   renderFeed();
   toast("Mesh Universe refreshed.");
 });
+
 // 🎰 SLOT MACHINE
 const rewards = [
   { rewardType: "xp", amount: 50, emoji: "⭐", weight: 40 },
@@ -226,7 +230,7 @@ async function handleSlotSpin() {
 
   btn.disabled = true;
   btn.textContent = "Spinning...";
-  resultDiv.textContent = "The reels are turning...";
+  resultDiv.textContent = "The reels are turning…";
 
   await animateReels(2000);
 
@@ -238,7 +242,7 @@ async function handleSlotSpin() {
 
   updateInventory();
   resultDiv.textContent = `🎉 You won ${reward.amount} ${reward.rewardType.toUpperCase()} ${reward.emoji}`;
-  if (typeof toast === 'function') toast(`+${reward.amount} ${reward.rewardType}`, "success");
+  toast(`+${reward.amount} ${reward.rewardType}`, "success");
 
   btn.disabled = false;
   btn.textContent = "🎰 Spin Again";
@@ -248,8 +252,7 @@ document.getElementById('slotSpinBtn')?.addEventListener('click', handleSlotSpin
 
 // 🔁 XP LOOP
 let xpStreak = parseInt(localStorage.getItem("xpStreak")) || 0;
-const xpStreakEl = document.getElementById("xpStreakCount");
-if (xpStreakEl) xpStreakEl.textContent = xpStreak;
+document.getElementById("xpStreakCount").textContent = xpStreak;
 
 document.getElementById("completeLoopBtn")?.addEventListener("click", () => {
   const tasks = document.querySelectorAll("#loopTasks input[type='checkbox']");
@@ -272,47 +275,9 @@ document.getElementById("completeLoopBtn")?.addEventListener("click", () => {
   xpStreak++;
   localStorage.setItem("xpStreak", xpStreak);
   balanceXp += gainedXP + (xpStreak * 10);
-  xpStreakEl.textContent = xpStreak;
+  document.getElementById("xpStreakCount").textContent = xpStreak;
   document.getElementById("hudXp").textContent = `XP: ${balanceXp}`;
   toast(`🔥 Loop complete! +${gainedXP} XP (+${xpStreak * 10} streak bonus)`);
 
   tasks.forEach(t => (t.checked = false));
-});
-
-// 💼 WALLET
-function updateWalletUI() {
-  const profile = getProfile(); // mock or real
-  const addressEl = document.getElementById("walletAddress");
-  const balanceEl = document.getElementById("walletBalance");
-  const spnEl = document.getElementById("walletSPN");
-
-  if (!profile) return;
-  addressEl.textContent = profile.wallet || "Not Connected";
-  balanceEl.textContent = inventory.spawnTokens || 0;
-  spnEl.textContent = inventory.spnBalance || 0;
-}
-
-document.getElementById("walletBuyBtn")?.addEventListener("click", () => {
-  toast("Redirecting to buy provider...", "info");
-  // TODO: Moonpay/Ramp/Stripe
-});
-
-document.getElementById("walletSendBtn")?.addEventListener("click", () => {
-  const to = prompt("Enter wallet address:");
-  const amt = prompt("Amount to send:");
-  if (to && amt) toast(`Sending ${amt} Tokens to ${to}`, "success");
-});
-
-document.getElementById("walletReceiveBtn")?.addEventListener("click", () => {
-  const addr = getProfile()?.wallet || "0x123";
-  navigator.clipboard.writeText(addr);
-  toast(`Copied: ${addr}`, "success");
-});
-
-document.getElementById("walletBridgeBtn")?.addEventListener("click", () => {
-  toast("Bridge function coming soon!", "info");
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  updateWalletUI();
 });
