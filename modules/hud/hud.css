@@ -1,10 +1,25 @@
 /* ============================================================
-   SPAWNENGINE HUD v3.2 Styles
+   SPAWNENGINE HUD v4 · FULL CSS MERGE
    ============================================================ */
-.hud-container {
-  position: relative;
-  z-index: 2;
-  color: var(--text);
+
+/* — GLOBAL — */
+body {
+  background: #0a0a0a;
+  color: #f0f0f0;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* — VARIABLES (can be set via JS or :root) — */
+:root {
+  --accent: #4df2ff;
+  --accent-alt: #1cc4dd;
+  --text: #f0f0f0;
+  --bg-glass: rgba(20, 20, 20, 0.6);
+  --border: #444;
+  --glow: 0 0 10px rgba(77, 242, 255, 0.2);
+  --radius: 12px;
 }
 
 /* — GLASS EFFECT — */
@@ -50,95 +65,6 @@
   opacity: 0.9;
 }
 
-/* — BUTTONS — */
-.hud-btn,
-.hud-icon,
-.btn-primary,
-.btn-outline {
-  cursor: pointer;
-  border-radius: 8px;
-  border: none;
-  padding: 8px 14px;
-  font-weight: 600;
-  transition: 0.25s ease;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent), var(--accent-alt));
-  color: #050510;
-}
-
-.btn-outline {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-
-.hud-icon {
-  font-size: 1.1rem;
-}
-
-button:hover {
-  transform: scale(1.05);
-  filter: brightness(1.1);
-}
-
-/* — MAIN — */
-main#hudViews {
-  padding: 16px;
-  height: calc(100vh - 120px);
-  overflow-y: auto;
-}
-
-.hud-view {
-  display: none;
-}
-
-.hud-view.active {
-  display: block;
-  animation: fadeIn 0.3s ease;
-}
-
-/* — CARDS & FEEDS — */
-.hud-card {
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 14px;
-  box-shadow: var(--glow);
-}
-
-.hud-feed {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 10px;
-  border-radius: 8px;
-  margin-top: 10px;
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-/* — BUTTON ROW — */
-.hud-btnrow {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  margin-top: 8px;
-}
-
-/* — SUPCAST INPUT — */
-textarea#supcastInput {
-  width: 100%;
-  min-height: 80px;
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 8px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  resize: vertical;
-}
-
 /* — NAVIGATION — */
 .hud-nav {
   position: fixed;
@@ -170,55 +96,104 @@ textarea#supcastInput {
   text-shadow: 0 0 8px var(--accent);
 }
 
-/* — TOAST — */
-#hudToast {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--bg-glass);
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  opacity: 0;
-  transition: 0.3s;
+/* — MAIN LAYOUT — */
+main#hudViews {
+  padding: 16px;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+.hud-view {
+  display: none;
+}
+.hud-view.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+/* — HUD CONTAINER — */
+.hud-container {
+  position: relative;
+  z-index: 2;
   color: var(--text);
+}
+
+/* — CARDS — */
+.hud-card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--glow);
+}
+
+/* — FEEDS — */
+.hud-feed {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
   font-size: 0.9rem;
-  z-index: 99;
+  line-height: 1.4;
 }
 
-#hudToast.show {
-  opacity: 1;
+/* — BUTTONS — */
+.hud-btn,
+.hud-icon,
+.btn-primary,
+.btn-outline {
+  cursor: pointer;
+  border-radius: 8px;
+  border: none;
+  padding: 8px 14px;
+  font-weight: 600;
+  transition: 0.25s ease;
 }
 
-/* — ANIMATIONS — */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+  color: #050510;
 }
 
-/* — RESPONSIVE — */
-@media (max-width: 768px) {
-  .hud-header {
-    flex-direction: column;
-    gap: 6px;
-    text-align: center;
-  }
-  .hud-right {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .hud-card {
-    padding: 12px;
-  }
+.btn-outline {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
 }
-/* 🎰 SLOT MACHINE */
+
+button:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* — BUTTON ROW — */
+.hud-btnrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+/* — XP LOOP — */
+.badge {
+  background: var(--accent);
+  color: #000;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-left: 6px;
+}
+
+.feed-list {
+  list-style: none;
+  padding: 0;
+}
+.feed-list li {
+  margin-bottom: 8px;
+}
+
+/* — SLOT MACHINE — */
 #hud-slot .slot-reels {
   display: flex;
   justify-content: center;
@@ -240,17 +215,7 @@ textarea#supcastInput {
   100% { transform: translateY(-1000%); }
 }
 
-/* 🔁 XP LOOP */
-.badge {
-  background: #4df2ff;
-  color: #000;
-  font-size: 0.75rem;
-  padding: 2px 6px;
-  border-radius: 6px;
-  margin-left: 6px;
-}
-
-/* 💼 WALLET */
+/* — WALLET — */
 #hud-wallet .hud-card {
   margin-bottom: 20px;
 }
@@ -259,4 +224,59 @@ textarea#supcastInput {
   flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
+}
+
+/* — SUPCAST — */
+textarea#supcastInput {
+  width: 100%;
+  min-height: 80px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  resize: vertical;
+}
+
+/* — TOAST — */
+#hudToast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-glass);
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  opacity: 0;
+  transition: 0.3s;
+  color: var(--text);
+  font-size: 0.9rem;
+  z-index: 99;
+}
+#hudToast.show {
+  opacity: 1;
+}
+
+/* — ANIMATIONS — */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* — RESPONSIVE — */
+@media (max-width: 768px) {
+  .hud-header {
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+  }
+  .hud-right {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .hud-card {
+    padding: 12px;
+  }
 }
