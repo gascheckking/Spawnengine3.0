@@ -1,60 +1,83 @@
-<!-- app.html -->
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SpawnEngine</title>
+
+    <!-- Styles -->
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="core/ui/role-select.css" />
     <link rel="stylesheet" href="core/ui/layout-tabs.css" />
+
+    <!-- Scripts -->
     <script src="mesh-bg.js" defer></script>
     <script src="spawnengine-sdk.js" type="module"></script>
   </head>
   <body>
     <canvas id="mesh-bg"></canvas>
 
-    <div class="app-container">
-      <header class="top-tabs">
-        <button class="tab active" onclick="showTab('dashboard')">Dashboard</button>
-        <button class="tab" onclick="showTab('forge')">Forge</button>
-        <button class="tab" onclick="showTab('worlds')">Worlds</button>
-        <button class="tab" onclick="showTab('factory')">Factory</button>
-      </header>
+    <!-- Navigation Tabs -->
+    <header class="mesh-header">
+      <div class="mesh-logo">
+        <img src="assets/logo.png" alt="Logo" />
+        <div class="mesh-title">
+          <h1>SpawnEngine</h1>
+          <p>Modular Onchain Platform</p>
+        </div>
+      </div>
+      <div class="mesh-stats">
+        <span>XP: <strong>1575</strong></span>
+        <span>SPAWN: <strong>497</strong></span>
+        <button class="btn-primary">Connect</button>
+      </div>
+    </header>
 
-      <main>
-        <section id="dashboard" class="tab-view active">
-          <h1 class="tab-title">SpawnEngine Dashboard</h1>
-          <div id="meshFeed" class="mesh-feed"></div>
-        </section>
+    <div id="meshTicker"><span>LIVE · Pull Lab · Forge Events · XP Sync · Casts</span></div>
 
-        <section id="forge" class="tab-view">
-          <h1 class="tab-title">Nebula Forge</h1>
-          <div id="forgePanel" class="forge-panel"></div>
-          <div id="forgeTerminal" class="terminal-container"></div>
-        </section>
+    <!-- Tabs -->
+    <nav class="hud-nav" id="mainNav">
+      <button class="active" data-view="dashboard">Dashboard</button>
+      <button data-view="forge">Forge</button>
+      <button data-view="worlds">Worlds</button>
+      <button data-view="factory">Factory</button>
+    </nav>
 
-        <section id="worlds" class="tab-view">
-          <h1 class="tab-title">World Engine</h1>
-          <div id="worldHubView" class="world-hub"></div>
-        </section>
+    <!-- Main App Container -->
+    <main id="meshApp">
+      <section id="dashboard" class="view active">
+        <h2>SpawnEngine Dashboard</h2>
+        <div id="meshFeed" class="hud-feed">Mesh feed loading...</div>
+      </section>
 
-        <section id="factory" class="tab-view">
-          <h1 class="tab-title">Factory + Miniapps</h1>
-          <div id="factoryView"></div>
-        </section>
-      </main>
-    </div>
+      <section id="forge" class="view">
+        <h2>Nebula Forge</h2>
+        <div id="forgePanel"></div>
+        <div id="forgeTerminal" class="terminal-container"></div>
+      </section>
 
+      <section id="worlds" class="view">
+        <h2>World Engine</h2>
+        <div id="worldHubView" class="hud-feed">Loading world modules...</div>
+      </section>
+
+      <section id="factory" class="view">
+        <h2>Factory & Miniapps</h2>
+        <div id="factoryView" class="hud-feed">Loading factory tools...</div>
+      </section>
+    </main>
+
+    <!-- Tab Switch Logic -->
     <script>
-      function showTab(tabId) {
-        document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
-        document.querySelectorAll(".tab-view").forEach((v) => v.classList.remove("active"));
-        document.querySelector(`#${tabId}`).classList.add("active");
-        document
-          .querySelector(`.tab[onclick="showTab('${tabId}')"]`)
-          .classList.add("active");
-      }
+      document.querySelectorAll("#mainNav button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
+          document.querySelectorAll("#mainNav button").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          document.getElementById(btn.dataset.view).classList.add("active");
+        });
+      });
     </script>
   </body>
 </html>
