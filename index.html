@@ -3,61 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SpawnEngine · MeshOS Role Select</title>
-
+  <title>SpawnEngine · MeshOS</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="assets/logo.png" />
-  <meta name="theme-color" content="#030510" />
+  <link rel="manifest" href="manifest.webmanifest" />
 </head>
-
-<body data-theme="glassbase">
+<body>
   <canvas id="mesh-bg"></canvas>
-
-  <main class="role-container">
-    <div class="role-header">
-      <img src="assets/logo.png" class="logo-large" alt="SpawnEngine" />
-      <h1 class="title-glow">SpawnEngine</h1>
-      <p class="subtitle">Choose your onchain identity and enter the Mesh</p>
-    </div>
-
-    <div class="role-grid">
-      <div class="role-card creator" onclick="selectRole('creator')">
-        <h2>🎨 Creator / Artist</h2>
-        <p>Mint packs, earn XP, and grow your mesh.</p>
+  <div id="meshApp">
+    <section id="kernelView" class="view active">
+      <h2>🧠 Mesh Kernel</h2>
+      <div class="hud-feed">Initializing MeshCore...</div>
+    </section>
+    <section id="forgePanel" class="view">
+      <h2>🧬 Forge</h2>
+      <div class="hud-feed">Awaiting AI build...</div>
+    </section>
+    <section id="profileView" class="view">
+      <div class="profile-container">
+        <div class="profile-header">
+          <div class="logo-circle"><span>SE</span></div>
+          <div class="title-group">
+            <h1>SPAWNENGINE</h1>
+            <p>Modular onchain engine for packs, XP, badges & modules</p>
+          </div>
+          <div class="connect-btn">Connect</div>
+        </div>
+        <div class="live-ticker">
+          LIVE PULL pack_open · 0xA9...93 → Neon Fragments (Fragment)
+        </div>
+        <div class="profile-card">
+          <div class="profile-top">
+            <div class="avatar"><span>SE</span></div>
+            <div class="info">
+              <h2>@spawnengine</h2>
+              <p>Mesh owner on Base · XP + packs</p>
+              <p class="modules">Modules: Factory · TokenPack · ReserveGuard</p>
+              <div class="online">ONLINE</div>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat big"><h3>XP STREAK</h3><div class="num">1575</div></div>
+            <div class="stat big"><h3>SPAWN BALANCE</h3><div class="num">497</div></div>
+            <div class="stat small"><h3>TODAY'S EVENTS</h3><div class="num">9</div></div>
+            <div class="stat small"><h3>CONNECTED SURFACES</h3><div class="num">3</div></div>
+          </div>
+          <div class="tasks">
+            <h3>Today's loop</h3>
+            <div class="task"><div class="circle"></div>Open pack <span>+50 XP</span></div>
+            <div class="task active"><div class="circle filled"></div>Connect wallet <span>+100 XP</span></div>
+            <div class="task"><div class="circle"></div>Share your mesh <span>+100 XP</span></div>
+          </div>
+        </div>
       </div>
-
-      <div class="role-card operator" onclick="selectRole('operator')">
-        <h2>⚙️ Operator / Engineer</h2>
-        <p>Automate XP flows and manage mesh logic.</p>
-      </div>
-
-      <div class="role-card explorer" onclick="selectRole('explorer')">
-        <h2>🌐 Explorer / User</h2>
-        <p>Join quests, open packs, and explore rewards.</p>
-      </div>
-    </div>
-
-    <footer class="role-footer">v3.6 · Dark Mythic Mesh Protocol</footer>
-</main>
-
-<!-- ✅ Scripts -->
-<script src="mesh-bg.js" defer></script>
-<script src="core/ui/boot-sequence.js"></script>
-<script>
-  function selectRole(role) {
-    localStorage.setItem("spawnRole", role);
-
-    const tryBoot = () => {
-      if (window.BootSequence && typeof BootSequence.init === "function") {
-        BootSequence.init();
-        setTimeout(() => (window.location.href = "app.html"), 2800);
-      } else {
-        console.warn("BootSequence not ready yet, retrying...");
-        setTimeout(tryBoot, 100);
-      }
-    };
-    tryBoot();
-  }
-</script>
+    </section>
+  </div>
+  <nav id="mainNav" class="hud-nav glass">
+    <button data-view="kernelView" class="active">Kernel</button>
+    <button data-view="forgePanel">Forge</button>
+    <button data-view="profileView">Profile</button>
+  </nav>
+  <script src="mesh-bg.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="core/ui/boot-sequence.js" defer></script>
 </body>
 </html>
