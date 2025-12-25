@@ -593,3 +593,41 @@ textarea {
   font-weight: bold;
   box-shadow: 0 0 10px rgba(77, 242, 255, 0.4);
 }
+/* === TOP TABS BAR (SPAWNENGINE NAV) === */
+.main-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem 1rem 0;
+  background: #020410;
+  position: fixed;
+  top: 0;
+  left: 0; right: 0;
+  z-index: 500;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.tab {
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #e8eeff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: 0.3s;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  font-family: var(--font);
+}
+
+.tab:hover {
+  background: rgba(255,255,255,0.08);
+  transform: scale(1.03);
+}
+
+.tab.active {
+  background: linear-gradient(135deg, #afffba, #4df2ff);
+  color: #000;
+  box-shadow: 0 0 14px rgba(77,242,255,0.3);
+}
