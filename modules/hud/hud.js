@@ -180,3 +180,139 @@ refreshBtn?.addEventListener("click", () => {
   renderFeed();
   toast("Mesh Universe refreshed.");
 });
+// 🎰 SLOT MACHINE
+const rewards = [
+  { rewardType: "xp", amount: 50, emoji: "⭐", weight: 40 },
+  { rewardType: "xp", amount: 100, emoji: "✨", weight: 20 },
+  { rewardType: "fragments", amount: 1, emoji: "💎", weight: 15 },
+  { rewardType: "fragments", amount: 2, emoji: "💎", weight: 8 },
+  { rewardType: "shards", amount: 3, emoji: "🔹", weight: 10 },
+  { rewardType: "shards", amount: 5, emoji: "🔹", weight: 5 },
+  { rewardType: "relic", amount: 1, emoji: "🏛️", weight: 2 }
+];
+
+function simulateSlotSpin() {
+  const total = rewards.reduce((sum, r) => sum + r.weight, 0);
+  let rand = Math.random() * total;
+  for (const r of rewards) {
+    rand -= r.weight;
+    if (rand <= 0) return r;
+  }
+  return rewards[0];
+}
+
+function animateReels(duration = 1500) {
+  const reels = document.querySelectorAll('#slotReels .reel');
+  const emojis = ["🔒", "⭐", "💎", "🔹", "✨", "🏛️", "🎰"];
+  reels.forEach((reel, i) => {
+    reel.classList.add('spinning');
+    let count = 0;
+    const interval = setInterval(() => {
+      reel.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      count++;
+      if (count > 30) clearInterval(interval);
+    }, 80 - i * 20);
+  });
+  return new Promise(res => setTimeout(() => {
+    document.querySelectorAll('.reel').forEach(r => r.classList.remove('spinning'));
+    res();
+  }, duration));
+}
+
+async function handleSlotSpin() {
+  const btn = document.getElementById('slotSpinBtn');
+  const resultDiv = document.getElementById('slotResult');
+  if (btn.disabled) return;
+
+  btn.disabled = true;
+  btn.textContent = "Spinning...";
+  resultDiv.textContent = "The reels are turning...";
+
+  await animateReels(2000);
+
+  const reward = simulateSlotSpin();
+  document.querySelectorAll('#slotReels .reel').forEach(reel => reel.textContent = reward.emoji);
+
+  if (!inventory[reward.rewardType]) inventory[reward.rewardType] = 0;
+  inventory[reward.rewardType] += reward.amount;
+
+  updateInventory();
+  resultDiv.textContent = `🎉 You won ${reward.amount} ${reward.rewardType.toUpperCase()} ${reward.emoji}`;
+  if (typeof toast === 'function') toast(`+${reward.amount} ${reward.rewardType}`, "success");
+
+  btn.disabled = false;
+  btn.textContent = "🎰 Spin Again";
+}
+
+document.getElementById('slotSpinBtn')?.addEventListener('click', handleSlotSpin);
+
+// 🔁 XP LOOP
+let xpStreak = parseInt(localStorage.getItem("xpStreak")) || 0;
+const xpStreakEl = document.getElementById("xpStreakCount");
+if (xpStreakEl) xpStreakEl.textContent = xpStreak;
+
+document.getElementById("completeLoopBtn")?.addEventListener("click", () => {
+  const tasks = document.querySelectorAll("#loopTasks input[type='checkbox']");
+  let gainedXP = 0;
+  let allCompleted = true;
+
+  tasks.forEach(task => {
+    if (task.checked) {
+      gainedXP += parseInt(task.dataset.xp || "0");
+    } else {
+      allCompleted = false;
+    }
+  });
+
+  if (!allCompleted) {
+    toast("Complete all tasks to get your XP bonus!", "warning");
+    return;
+  }
+
+  xpStreak++;
+  localStorage.setItem("xpStreak", xpStreak);
+  balanceXp += gainedXP + (xpStreak * 10);
+  xpStreakEl.textContent = xpStreak;
+  document.getElementById("hudXp").textContent = `XP: ${balanceXp}`;
+  toast(`🔥 Loop complete! +${gainedXP} XP (+${xpStreak * 10} streak bonus)`);
+
+  tasks.forEach(t => (t.checked = false));
+});
+
+// 💼 WALLET
+function updateWalletUI() {
+  const profile = getProfile(); // mock or real
+  const addressEl = document.getElementById("walletAddress");
+  const balanceEl = document.getElementById("walletBalance");
+  const spnEl = document.getElementById("walletSPN");
+
+  if (!profile) return;
+  addressEl.textContent = profile.wallet || "Not Connected";
+  balanceEl.textContent = inventory.spawnTokens || 0;
+  spnEl.textContent = inventory.spnBalance || 0;
+}
+
+document.getElementById("walletBuyBtn")?.addEventListener("click", () => {
+  toast("Redirecting to buy provider...", "info");
+  // TODO: Moonpay/Ramp/Stripe
+});
+
+document.getElementById("walletSendBtn")?.addEventListener("click", () => {
+  const to = prompt("Enter wallet address:");
+  const amt = prompt("Amount to send:");
+  if (to && amt) toast(`Sending ${amt} Tokens to ${to}`, "success");
+});
+
+document.getElementById("walletReceiveBtn")?.addEventListener("click", () => {
+  const addr = getProfile()?.wallet || "0x123";
+  navigator.clipboard.writeText(addr);
+  toast(`Copied: ${addr}`, "success");
+});
+
+document.getElementById("walletBridgeBtn")?.addEventListener("click", () => {
+  toast("Bridge function coming soon!", "info");
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateWalletUI();
+});
