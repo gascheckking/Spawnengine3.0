@@ -9,26 +9,31 @@
 </head>
 
 <body>
+  <div id="bootOverlay">
+    <div class="boot-logo">⚙️</div>
+    <div class="boot-text">SPAWNENGINE</div>
+    <div class="boot-subtitle">Mesh loading...</div>
+    <div class="boot-bar"><div class="boot-bar-fill" id="bootBarFill"></div></div>
+  </div>
+
   <canvas id="mesh-bg"></canvas>
 
-  <div id="meshApp">
-    <!-- KERNEL VIEW -->
+  <div id="meshApp" class="fade-in">
+    <!-- === Kernel View === -->
     <section id="kernelView" class="view active">
       <h2>🧠 Mesh Kernel</h2>
       <div class="hud-feed">Initializing MeshCore...</div>
     </section>
 
-    <!-- FORGE VIEW -->
+    <!-- === Forge View === -->
     <section id="forgePanel" class="view">
       <h2>🧬 Forge</h2>
       <div class="hud-feed">Awaiting AI build...</div>
-
-      <!-- 🔧 Terminal + Feed for Forge -->
       <div id="forgeTerminal"></div>
-      <div id="meshFeed" class="mesh-feed"></div>
+      <div id="meshFeed"></div>
     </section>
 
-    <!-- PROFILE VIEW -->
+    <!-- === Profile View === -->
     <section id="profileView" class="view">
       <div class="profile-container">
         <div class="profile-header">
@@ -41,7 +46,7 @@
         </div>
 
         <div class="live-ticker">
-          LIVE PULL pack_open · 0xA9...93 → Neon Fragments (Fragment)
+          LIVE PACK_OPEN · Neon Fragment
         </div>
 
         <div class="profile-card">
@@ -64,7 +69,7 @@
 
           <div class="tasks">
             <h3>Today's loop</h3>
-            <div class="task"><div class="circle"></div>Open pack <span>+50 XP</span></div>
+            <div class="task"><div class="circle"></div>Open a test pack <span>+50 XP</span></div>
             <div class="task active"><div class="circle filled"></div>Connect wallet <span>+100 XP</span></div>
             <div class="task"><div class="circle"></div>Share your mesh <span>+100 XP</span></div>
           </div>
@@ -73,7 +78,6 @@
     </section>
   </div>
 
-  <!-- Navigation -->
   <nav id="mainNav" class="hud-nav glass">
     <button data-view="kernelView" class="active">Kernel</button>
     <button data-view="forgePanel">Forge</button>
@@ -83,7 +87,24 @@
   <!-- Scripts -->
   <script src="mesh-bg.js" defer></script>
   <script src="app.js" defer></script>
-  <script src="boot-sequence.js" defer></script>
   <script src="spawnengine-sdk.js" defer></script>
+  <script>
+    // Boot progress
+    window.addEventListener("DOMContentLoaded", () => {
+      let fill = document.getElementById("bootBarFill");
+      let percent = 0;
+      let interval = setInterval(() => {
+        percent += 4;
+        fill.style.width = percent + "%";
+        if (percent >= 100) {
+          clearInterval(interval);
+          document.getElementById("bootOverlay").classList.add("fade-out");
+          setTimeout(() => {
+            document.getElementById("bootOverlay").remove();
+          }, 800);
+        }
+      }, 60);
+    });
+  </script>
 </body>
 </html>
