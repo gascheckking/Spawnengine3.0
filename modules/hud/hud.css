@@ -218,3 +218,45 @@ textarea#supcastInput {
     padding: 12px;
   }
 }
+/* 🎰 SLOT MACHINE */
+#hud-slot .slot-reels {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 60px;
+  margin: 20px 0;
+  height: 80px;
+  overflow: hidden;
+}
+#hud-slot .reel {
+  display: inline-block;
+  transition: transform 0.1s ease-out;
+}
+.spinning {
+  animation: spinReel 1.5s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
+@keyframes spinReel {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-1000%); }
+}
+
+/* 🔁 XP LOOP */
+.badge {
+  background: #4df2ff;
+  color: #000;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-left: 6px;
+}
+
+/* 💼 WALLET */
+#hud-wallet .hud-card {
+  margin-bottom: 20px;
+}
+#hud-wallet .hud-btnrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
