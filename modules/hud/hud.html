@@ -2,19 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SpawnEngine · Mesh HUD</title>
+
+  <!-- ✅ Manifest & Style -->
   <link rel="manifest" href="../../manifest.json" />
   <link rel="stylesheet" href="../../style.css" />
   <link rel="icon" type="image/png" href="../../assets/icons/favicon.png" />
   <link rel="stylesheet" href="hud.css" />
+
+  <!-- ✅ Meta / SEO -->
   <meta name="theme-color" content="#0a0e26" />
   <meta name="description" content="SpawnEngine · Modular Mesh Protocol HUD" />
 </head>
 
 <body data-theme="glassbase">
+  <!-- 🌌 Background -->
   <canvas id="mesh-bg"></canvas>
 
+  <!-- ============================================================
+       SPAWNENGINE HUD v3.2
+       Modular Mesh Interface — XP · Forge · SupCast · Bot · Tracker
+       ============================================================ -->
   <div id="hudApp" class="hud-container">
 
     <!-- HEADER -->
@@ -33,7 +42,6 @@
 
     <!-- MAIN -->
     <main id="hudViews">
-
       <!-- HOME -->
       <section id="hud-home" class="hud-view active">
         <h3>Mesh Overview</h3>
@@ -97,54 +105,20 @@
         <div id="trackerFeed" class="hud-feed"></div>
       </section>
 
-      <!-- XP LOOP -->
-      <section id="hud-loop" class="hud-view">
-        <h3>🔥 Daily XP Loop</h3>
+      <!-- SETTINGS -->
+      <section id="hud-settings" class="hud-view">
+        <h3>Settings</h3>
         <div class="hud-card">
-          <p>Current XP Streak: <span id="xpStreakCount">0</span></p>
-          <ul id="loopTasks" class="feed-list">
-            <li><input type="checkbox" data-xp="50" /> Open a pack <span class="badge">+50 XP</span></li>
-            <li><input type="checkbox" data-xp="75" /> Connect wallet <span class="badge">+75 XP</span></li>
-            <li><input type="checkbox" data-xp="100" /> Share your mesh <span class="badge">+100 XP</span></li>
-          </ul>
-          <div class="hud-btnrow">
-            <button id="completeLoopBtn" class="btn-primary">Complete Loop</button>
-          </div>
+          <label>Theme:</label>
+          <select id="hudTheme">
+            <option value="glassbase">Glass Base</option>
+            <option value="matrix">Matrix Pulse</option>
+            <option value="zoragold">Zora Gold</option>
+          </select>
         </div>
       </section>
 
-      <!-- SLOT MACHINE -->
-      <section id="hud-slot" class="hud-view">
-        <h3>🎰 Daily Slot Machine</h3>
-        <div class="hud-card">
-          <div id="slotReels" class="slot-reels">
-            <span class="reel">🔒</span>
-            <span class="reel">🔒</span>
-            <span class="reel">🔒</span>
-          </div>
-          <button id="slotSpinBtn" class="btn-primary">🎰 Spin Slot</button>
-          <div id="slotResult" class="hud-feed">Press spin to try your luck!</div>
-        </div>
-      </section>
-
-      <!-- WALLET -->
-      <section id="hud-wallet" class="hud-view">
-        <h3>💼 SpawnWallet</h3>
-        <div class="hud-card">
-          <p><strong>Address:</strong> <span id="walletAddress">Loading...</span></p>
-          <p><strong>Balance:</strong> <span id="walletBalance">0</span> SpawnTokens</p>
-          <p><strong>SPN:</strong> <span id="walletSPN">0</span> SPN</p>
-        </div>
-        <div class="hud-btnrow">
-          <button id="walletBuyBtn" class="btn-primary">💳 Buy Tokens</button>
-          <button id="walletSendBtn" class="btn-outline">📤 Send</button>
-          <button id="walletReceiveBtn" class="btn-outline">📥 Receive</button>
-          <button id="walletBridgeBtn" class="btn-outline">🌉 Bridge</button>
-        </div>
-        <div class="hud-feed" id="walletFeed">Ready.</div>
-      </section>
-
-      <!-- WORLD HUB -->
+      <!-- 🧩 WORLD HUB -->
       <section id="worldHubView" class="hud-view">
         <h2>🌐 SpawnVerse WorldHub</h2>
         <div class="world-actions">
@@ -154,35 +128,7 @@
         <div id="worldList" class="world-list"></div>
       </section>
 
-      <!-- UNIVERSE -->
-      <section id="hud-universe" class="hud-view">
-        <h3>🌐 Mesh Universe</h3>
-        <div class="hud-card">
-          <h4>Profile</h4>
-          <p id="userHandle">@spawniz</p>
-          <p id="userRole">Alpha Hunter / Trader</p>
-          <p>XP: <span id="xpBalance">0</span> · SPN: <span id="spnBalance">0</span></p>
-          <button id="connectWalletBtn" class="btn-outline">Connect Wallet</button>
-        </div>
-        <div class="hud-card">
-          <h4>SPN Token</h4>
-          <p>Price: <span id="tokenPrice">$0.00</span></p>
-          <p>Change: <span id="tokenChange">0%</span></p>
-          <p>TVL: <span id="tokenTVL">0 ETH</span></p>
-          <p>Participants: <span id="tokenUsers">0</span></p>
-        </div>
-        <div class="hud-card">
-          <h4>Live Mesh Feed</h4>
-          <ul id="meshFeedList" class="feed-list">
-            <li>Loading activity...</li>
-          </ul>
-        </div>
-        <div class="hud-btnrow">
-          <button id="refreshMeshBtn" class="btn-primary">⟳ Refresh Mesh</button>
-        </div>
-      </section>
-
-      <!-- FORGE TERMINAL -->
+      <!-- 🧩 FORGE TERMINAL -->
       <section id="forgeView" class="hud-view">
         <h2>Forge Terminal</h2>
         <div id="forgeTerminal"></div>
@@ -197,23 +143,23 @@
       <button data-view="hud-supcast">SupCast</button>
       <button data-view="hud-bot">Bot</button>
       <button data-view="hud-tracker">Tracker</button>
-      <button data-view="hud-loop">XP Loop</button>
-      <button data-view="hud-slot">Slot</button>
-      <button data-view="hud-wallet">Wallet</button>
       <button data-view="worldHubView">WorldHub</button>
-      <button data-view="hud-universe">Universe</button>
-      <button data-view="forgeView">Forge Terminal</button>
       <button data-view="hud-settings">Settings</button>
+      <button data-view="forgeView">Forge Terminal</button>
     </nav>
 
-    <!-- TOAST -->
+    <!-- Toast -->
     <div id="hudToast"></div>
   </div>
 
-  <!-- SCRIPTS -->
+    <!-- 🧩 Forge + AI Integration -->
   <script type="module" src="../forge/index.js"></script>
+
+  <!-- ✅ Core Logic -->
   <script type="module" src="../../app.js"></script>
   <script src="../../mesh-bg.js" defer></script>
+
+  <!-- ✅ HUD Logic -->
   <script type="module" src="hud.js"></script>
 </body>
 </html>
