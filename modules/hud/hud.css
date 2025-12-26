@@ -1,282 +1,120 @@
 /* ============================================================
-   SPAWNENGINE HUD v4 · FULL CSS MERGE
+   SPAWNENGINE HUD v3.2 — Mesh UI Core
    ============================================================ */
+import { getInventory, simulatePackOpen, simulateSynthesis } from "../../api/pack-actions.js";
+import { createTicket, getTickets, renderSupCastList } from "../supcast/supcast.js";
 
-/* — GLOBAL — */
-body {
-  background: #0a0a0a;
-  color: #f0f0f0;
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  padding: 0;
-}
+/* — Global State — */
+let balanceXp = 0;
+let balanceSpn = 0.000;
+let role = localStorage.getItem("spawnRole") || "Explorer";
+let inventory = getInventory();
 
-/* — VARIABLES (can be set via JS or :root) — */
-:root {
-  --accent: #4df2ff;
-  --accent-alt: #1cc4dd;
-  --text: #f0f0f0;
-  --bg-glass: rgba(20, 20, 20, 0.6);
-  --border: #444;
-  --glow: 0 0 10px rgba(77, 242, 255, 0.2);
-  --radius: 12px;
-}
-
-/* — GLASS EFFECT — */
-.glass {
-  background: var(--bg-glass);
-  backdrop-filter: blur(14px);
-  border: 1px solid var(--border);
-  box-shadow: var(--glow);
-}
-
-/* — HEADER — */
-.hud-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 5;
-}
-.hud-left {
-  display: flex;
-  align-items: center;
-}
-.hud-logo {
-  width: 28px;
-  height: 28px;
-  margin-right: 8px;
-}
-.hud-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-}
-
-.hud-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.hud-stat {
-  font-size: 0.8rem;
-  opacity: 0.9;
-}
+/* — DOM Ready — */
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("hudRole").textContent = role;
+  updateInventory();
+  bindNavigation();
+  bindHUD();
+  toast("HUD v3.2 loaded");
+});
 
 /* — NAVIGATION — */
-.hud-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  height: 56px;
-  border-top: 1px solid var(--border);
-  background: var(--bg-glass);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-  z-index: 10;
+function bindNavigation() {
+  const buttons = document.querySelectorAll(".hud-nav button");
+  buttons.forEach((btn) =>
+    btn.addEventListener("click", () => {
+      buttons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      const view = btn.dataset.view;
+      document.querySelectorAll(".hud-view").forEach((v) => v.classList.remove("active"));
+      document.getElementById(view).classList.add("active");
+    })
+  );
 }
 
-.hud-nav button {
-  background: transparent;
-  border: none;
-  color: var(--text);
-  font-size: 0.8rem;
-  flex: 1;
-  height: 100%;
+/* — CORE EVENTS — */
+function bindHUD() {
+  const xpEl = document.getElementById("hudXp");
+  const spnEl = document.getElementById("hudSpn");
+
+  /* XP BOOST */
+  document.getElementById("hudBoost").addEventListener("click", () => {
+    balanceXp += 50;
+    xpEl.textContent = `XP: ${balanceXp}`;
+    toast("+50 XP claimed");
+  });
+
+  /* MESH SYNC */
+  document.getElementById("hudRefresh").addEventListener("click", () => {
+    const modules = Math.floor(Math.random() * 10) + 1;
+    document.getElementById("hudModules").textContent = modules;
+    toast(`Mesh synced (${modules} modules)`);
+  });
+
+  /* LOOT */
+  document.getElementById("lootOpen").addEventListener("click", () => {
+    const reward = simulatePackOpen();
+    inventory = reward.inventory;
+    updateInventory();
+    toast("🎁 Pack opened!");
+  });
+
+  document.getElementById("lootSynth").addEventListener("click", () => {
+    const res = simulateSynthesis();
+    inventory = res.inventory;
+    updateInventory();
+    toast(res.message);
+  });
+
+  /* FORGE */
+  document.getElementById("forgeStart").addEventListener("click", () => {
+    const result = simulateSynthesis();
+    document.getElementById("forgeResult").textContent = result.message;
+    updateInventory();
+    toast("Forge attempt executed");
+  });
+
+  /* SUPCAST */
+  document.getElementById("supcastSend").addEventListener("click", () => {
+    const text = document.getElementById("supcastInput").value.trim();
+    if (!text) return toast("Enter message");
+    createTicket(text, "General", "@spawniz");
+    document.getElementById("supcastInput").value = "";
+    renderSupCastList("supcastFeed");
+    toast("🎫 Ticket submitted");
+  });
+
+  renderSupCastList("supcastFeed");
+
+  /* SETTINGS */
+  const themeSelect = document.getElementById("hudTheme");
+  themeSelect.value = localStorage.getItem("spawnTheme") || "glassbase";
+  themeSelect.addEventListener("change", (e) => {
+    document.body.dataset.theme = e.target.value;
+    localStorage.setItem("spawnTheme", e.target.value);
+    toast(`Theme set to ${e.target.value}`);
+  });
+
+  /* TRACKER */
+  const tf = document.getElementById("trackerFeed");
+  tf.innerHTML = `
+    <div>👣 Tracking: ${localStorage.getItem("wallet") || "0x...C0DE"}</div>
+    <div>💸 XP claim event registered.</div>
+    <div>📈 Loot data synced.</div>`;
 }
 
-.hud-nav button.active {
-  color: var(--accent);
-  text-shadow: 0 0 8px var(--accent);
+/* — Inventory UI — */
+function updateInventory() {
+  document.getElementById("hudFrag").textContent = inventory.fragments;
+  document.getElementById("hudShard").textContent = inventory.shards;
+  document.getElementById("hudRelic").textContent = inventory.relics;
 }
 
-/* — MAIN LAYOUT — */
-main#hudViews {
-  padding: 16px;
-  height: calc(100vh - 120px);
-  overflow-y: auto;
-}
-.hud-view {
-  display: none;
-}
-.hud-view.active {
-  display: block;
-  animation: fadeIn 0.3s ease;
-}
-
-/* — HUD CONTAINER — */
-.hud-container {
-  position: relative;
-  z-index: 2;
-  color: var(--text);
-}
-
-/* — CARDS — */
-.hud-card {
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 14px;
-  box-shadow: var(--glow);
-}
-
-/* — FEEDS — */
-.hud-feed {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 10px;
-  border-radius: 8px;
-  margin-top: 10px;
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-/* — BUTTONS — */
-.hud-btn,
-.hud-icon,
-.btn-primary,
-.btn-outline {
-  cursor: pointer;
-  border-radius: 8px;
-  border: none;
-  padding: 8px 14px;
-  font-weight: 600;
-  transition: 0.25s ease;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent), var(--accent-alt));
-  color: #050510;
-}
-
-.btn-outline {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-
-button:hover {
-  transform: scale(1.05);
-  filter: brightness(1.1);
-}
-
-/* — BUTTON ROW — */
-.hud-btnrow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 15px;
-}
-
-/* — XP LOOP — */
-.badge {
-  background: var(--accent);
-  color: #000;
-  font-size: 0.75rem;
-  padding: 2px 6px;
-  border-radius: 6px;
-  margin-left: 6px;
-}
-
-.feed-list {
-  list-style: none;
-  padding: 0;
-}
-.feed-list li {
-  margin-bottom: 8px;
-}
-
-/* — SLOT MACHINE — */
-#hud-slot .slot-reels {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  font-size: 60px;
-  margin: 20px 0;
-  height: 80px;
-  overflow: hidden;
-}
-#hud-slot .reel {
-  display: inline-block;
-  transition: transform 0.1s ease-out;
-}
-.spinning {
-  animation: spinReel 1.5s cubic-bezier(0.33, 1, 0.68, 1) forwards;
-}
-@keyframes spinReel {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-1000%); }
-}
-
-/* — WALLET — */
-#hud-wallet .hud-card {
-  margin-bottom: 20px;
-}
-#hud-wallet .hud-btnrow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
-
-/* — SUPCAST — */
-textarea#supcastInput {
-  width: 100%;
-  min-height: 80px;
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 8px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  resize: vertical;
-}
-
-/* — TOAST — */
-#hudToast {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--bg-glass);
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  opacity: 0;
-  transition: 0.3s;
-  color: var(--text);
-  font-size: 0.9rem;
-  z-index: 99;
-}
-#hudToast.show {
-  opacity: 1;
-}
-
-/* — ANIMATIONS — */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* — RESPONSIVE — */
-@media (max-width: 768px) {
-  .hud-header {
-    flex-direction: column;
-    gap: 6px;
-    text-align: center;
-  }
-  .hud-right {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .hud-card {
-    padding: 12px;
-  }
+/* — Toast — */
+function toast(msg) {
+  const el = document.getElementById("hudToast");
+  el.textContent = msg;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 2000);
 }
