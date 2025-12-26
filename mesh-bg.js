@@ -1,11 +1,4 @@
-// ======================================================
-// 🌌 SPAWNENGINE MESH BACKGROUND v3.1 — Reforge (Final)
-// ------------------------------------------------------
-// Dynamisk interaktiv mesh-bakgrund för SpawnEngine UI.
-// Parallax, glow, touch-stöd och pulse-anrop.
-// ------------------------------------------------------
-// Optimerad för PWA + låg CPU vid idle
-// ======================================================
+// Mesh Background v3.1 — optimerad och PWA-kompatibel
 
 class MeshBackground {
   constructor() {
@@ -28,7 +21,6 @@ class MeshBackground {
     this.init();
   }
 
-  //——— INIT ——//
   init() {
     this.createCanvas();
     this.generateParticles();
@@ -37,7 +29,6 @@ class MeshBackground {
     console.log("%c[MeshBG] Initialized", "color:#3cf6ff");
   }
 
-  //——— CANVAS SETUP ——//
   createCanvas() {
     this.canvas = document.getElementById("mesh-bg") || document.createElement("canvas");
     this.canvas.id = "mesh-bg";
@@ -65,7 +56,6 @@ class MeshBackground {
     this.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
 
-  //——— PARTICLES ——//
   generateParticles() {
     this.particles = [];
     const colors = ["#14b8a6", "#6366f1"];
@@ -93,7 +83,6 @@ class MeshBackground {
     return `#${((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1)}`;
   }
 
-  //——— UPDATE ——//
   updateParticles() {
     const mouseInfluence = this.mouse.x !== null && this.mouse.y !== null;
     this.particles.forEach((p) => {
@@ -161,7 +150,6 @@ class MeshBackground {
     this.ctx.clearRect(0, 0, this.width, this.height);
   }
 
-  //——— ANIMATE ——//
   animate(timestamp = 0) {
     if (!this.isVisible) return;
     const delta = timestamp - this.lastFrameTime;
@@ -178,23 +166,18 @@ class MeshBackground {
     this.animationId = requestAnimationFrame((t) => this.animate(t));
   }
 
-  //——— EVENTS ——//
   bindEvents() {
     window.addEventListener("resize", () => this.resize());
     window.addEventListener("mousemove", (e) => {
       this.mouse.x = e.clientX;
       this.mouse.y = e.clientY;
     });
-    window.addEventListener(
-      "touchmove",
-      (e) => {
-        if (e.touches.length > 0) {
-          this.mouse.x = e.touches[0].clientX;
-          this.mouse.y = e.touches[0].clientY;
-        }
-      },
-      { passive: true }
-    );
+    window.addEventListener("touchmove", (e) => {
+      if (e.touches.length > 0) {
+        this.mouse.x = e.touches[0].clientX;
+        this.mouse.y = e.touches[0].clientY;
+      }
+    }, { passive: true });
     window.addEventListener("scroll", () => {
       this.scrollOffset = window.scrollY;
     });
@@ -208,7 +191,6 @@ class MeshBackground {
     });
   }
 
-  //——— BONUS: ON-CHAIN PULSE ——//
   pulse(color = "#14b8a6", originX = this.width / 2, originY = this.height / 2) {
     const pulseParticles = 14;
     const speed = 2.5;
@@ -244,11 +226,8 @@ class MeshBackground {
   }
 }
 
-//——— INIT ——//
 const meshBgInstance = new MeshBackground();
 window.meshBgInstance = meshBgInstance;
-
-//——— GLOBAL HELPER ——//
 window.spawnMeshPulse = (color = "#14b8a6", x, y) => {
   meshBgInstance.pulse(color, x ?? window.innerWidth / 2, y ?? window.innerHeight / 2);
 };
