@@ -1,38 +1,102 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SPAWNENGINE · Interface</title>
+  <title>SpawnEngine Platform</title>
   <link rel="stylesheet" href="style.css" />
-  <script>
-    function openTab(tab) {
-      window.location.href = tab + '.html';
-    }
-  </script>
+  <script src="mesh-bg.js" defer></script>
+  <script src="app.js" defer></script>
 </head>
 <body>
+
+  <!-- ROLE SELECT SCREEN -->
+  <div id="roleSelectScreen" class="screen active">
+    <div class="role-container">
+      <h1>Choose Your Role</h1>
+      <button onclick="selectRole('Builder')">Builder</button>
+      <button onclick="selectRole('Explorer')">Explorer</button>
+      <button onclick="selectRole('Creator')">Creator</button>
+    </div>
+  </div>
+
+  <!-- INITIALIZING SCREEN -->
+  <div id="bootScreen" class="screen">
+    <div class="boot-logo">⚙️</div>
+    <h1>SPAWNENGINE</h1>
+    <p class="subtitle">Initializing Mesh...</p>
+    <div class="loader-bar">
+      <div id="loaderFill"></div>
+    </div>
+  </div>
+
+  <!-- MESH BACKGROUND -->
   <canvas id="mesh-bg"></canvas>
 
-  <div class="app-container">
-    <header class="top-tabs">
-      <button class="tab" onclick="openTab('dashboard')">Dashboard</button>
-      <button class="tab" onclick="openTab('forge')">Forge</button>
-      <button class="tab" onclick="openTab('worlds')">Worlds</button>
-      <button class="tab" onclick="openTab('factory')">Factory</button>
-      <button class="tab" onclick="openTab('kernel')">Kernel</button>
-      <button class="tab" onclick="openTab('profile')">Profile</button>
-      <button class="tab" onclick="openTab('modules')">Modules</button>
-      <button class="tab" onclick="openTab('settings')">Settings</button>
+  <!-- MAIN PLATFORM -->
+  <div id="app" class="screen">
+
+    <!-- HEADER -->
+    <header class="top-header">
+      <div class="logo-title">
+        <img src="logo.png" alt="Logo" />
+        <div>
+          <h2>SpawnEngine</h2>
+          <p>Modular Onchain OS</p>
+        </div>
+      </div>
+      <div class="stats">
+        <span>XP: <strong>1575</strong></span>
+        <span>SPAWN: <strong>497</strong></span>
+        <button class="connect-btn">Connect</button>
+      </div>
     </header>
 
+    <!-- TABS -->
+    <nav class="tab-nav">
+      <button class="tab active" onclick="showTab('kernel')">Kernel</button>
+      <button class="tab" onclick="showTab('forge')">Forge</button>
+      <button class="tab" onclick="showTab('profile')">Profile</button>
+      <button class="tab" onclick="showTab('worlds')">Worlds</button>
+      <button class="tab" onclick="showTab('factory')">Factory</button>
+      <button class="tab" onclick="showTab('xp')">XP / Badges</button>
+    </nav>
+
+    <!-- TAB CONTENT -->
     <main>
-      <section class="tab-view active">
-        <h1 class="tab-title">Welcome to SPAWNENGINE</h1>
-        <p>Välj en flik ovan för att navigera.</p>
+      <section id="kernel" class="tab-content active">
+        <h1>Kernel</h1>
+        <p>Initializing MeshCore...</p>
+      </section>
+
+      <section id="forge" class="tab-content">
+        <h1>Forge</h1>
+        <div id="forgePanel"></div>
+        <div id="forgeTerminal"></div>
+        <div id="meshFeed"></div>
+      </section>
+
+      <section id="profile" class="tab-content">
+        <h1>Profile</h1>
+        <div class="hud-feed">Profile content here...</div>
+      </section>
+
+      <section id="worlds" class="tab-content">
+        <h1>Worlds</h1>
+        <p>World Engine Placeholder</p>
+      </section>
+
+      <section id="factory" class="tab-content">
+        <h1>Factory</h1>
+        <p>Factory / Miniapps Module</p>
+      </section>
+
+      <section id="xp" class="tab-content">
+        <h1>XP + Badges</h1>
+        <p>Stats, progression and earned modules</p>
       </section>
     </main>
   </div>
+
 </body>
 </html>
