@@ -1,83 +1,38 @@
 <!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SpawnEngine</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SPAWNENGINE · Interface</title>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    function openTab(tab) {
+      window.location.href = tab + '.html';
+    }
+  </script>
+</head>
+<body>
+  <canvas id="mesh-bg"></canvas>
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="core/ui/role-select.css" />
-    <link rel="stylesheet" href="core/ui/layout-tabs.css" />
-
-    <!-- Scripts -->
-    <script src="mesh-bg.js" defer></script>
-    <script src="spawnengine-sdk.js" type="module"></script>
-  </head>
-  <body>
-    <canvas id="mesh-bg"></canvas>
-
-    <!-- Navigation Tabs -->
-    <header class="mesh-header">
-      <div class="mesh-logo">
-        <img src="assets/logo.png" alt="Logo" />
-        <div class="mesh-title">
-          <h1>SpawnEngine</h1>
-          <p>Modular Onchain Platform</p>
-        </div>
-      </div>
-      <div class="mesh-stats">
-        <span>XP: <strong>1575</strong></span>
-        <span>SPAWN: <strong>497</strong></span>
-        <button class="btn-primary">Connect</button>
-      </div>
+  <div class="app-container">
+    <header class="top-tabs">
+      <button class="tab" onclick="openTab('dashboard')">Dashboard</button>
+      <button class="tab" onclick="openTab('forge')">Forge</button>
+      <button class="tab" onclick="openTab('worlds')">Worlds</button>
+      <button class="tab" onclick="openTab('factory')">Factory</button>
+      <button class="tab" onclick="openTab('kernel')">Kernel</button>
+      <button class="tab" onclick="openTab('profile')">Profile</button>
+      <button class="tab" onclick="openTab('modules')">Modules</button>
+      <button class="tab" onclick="openTab('settings')">Settings</button>
     </header>
 
-    <div id="meshTicker"><span>LIVE · Pull Lab · Forge Events · XP Sync · Casts</span></div>
-
-    <!-- Tabs -->
-    <nav class="hud-nav" id="mainNav">
-      <button class="active" data-view="dashboard">Dashboard</button>
-      <button data-view="forge">Forge</button>
-      <button data-view="worlds">Worlds</button>
-      <button data-view="factory">Factory</button>
-    </nav>
-
-    <!-- Main App Container -->
-    <main id="meshApp">
-      <section id="dashboard" class="view active">
-        <h2>SpawnEngine Dashboard</h2>
-        <div id="meshFeed" class="hud-feed">Mesh feed loading...</div>
-      </section>
-
-      <section id="forge" class="view">
-        <h2>Nebula Forge</h2>
-        <div id="forgePanel"></div>
-        <div id="forgeTerminal" class="terminal-container"></div>
-      </section>
-
-      <section id="worlds" class="view">
-        <h2>World Engine</h2>
-        <div id="worldHubView" class="hud-feed">Loading world modules...</div>
-      </section>
-
-      <section id="factory" class="view">
-        <h2>Factory & Miniapps</h2>
-        <div id="factoryView" class="hud-feed">Loading factory tools...</div>
+    <main>
+      <section class="tab-view active">
+        <h1 class="tab-title">Welcome to SPAWNENGINE</h1>
+        <p>Välj en flik ovan för att navigera.</p>
       </section>
     </main>
-
-    <!-- Tab Switch Logic -->
-    <script>
-      document.querySelectorAll("#mainNav button").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
-          document.querySelectorAll("#mainNav button").forEach((b) => b.classList.remove("active"));
-          btn.classList.add("active");
-          document.getElementById(btn.dataset.view).classList.add("active");
-        });
-      });
-    </script>
-  </body>
+  </div>
+</body>
 </html>
