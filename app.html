@@ -1,111 +1,79 @@
-<!-- app.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SPAWNENGINE · MeshOS</title>
+  <title>SpawnEngine · Mesh Dashboard</title>
+
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="icon" type="image/png" href="assets/icons/favicon.png" />
 </head>
 
 <body>
-  <div id="bootOverlay">
-    <div class="boot-logo">⚙️</div>
-    <div class="boot-text">SPAWNENGINE</div>
-    <div class="boot-subtitle">Mesh loading...</div>
-    <div class="boot-bar"><div class="boot-bar-fill" id="bootBarFill"></div></div>
-  </div>
+  <main class="main-container">
+    <header>
+      <h1>🌌 SpawnEngine Mesh Dashboard</h1>
+      <p>Live modular mesh runtime — connected to Forge, Arena, and Chain.</p>
+    </header>
 
-  <canvas id="mesh-bg"></canvas>
-
-  <div id="meshApp" class="fade-in">
-    <!-- === Kernel View === -->
-    <section id="kernelView" class="view active">
-      <h2>🧠 Mesh Kernel</h2>
-      <div class="hud-feed">Initializing MeshCore...</div>
+    <section id="meshFeed" class="card">
+      <h3>🧠 Mesh Kernel Status</h3>
     </section>
 
-    <!-- === Forge View === -->
-    <section id="forgePanel" class="view">
-      <h2>🧬 Forge</h2>
-      <div class="hud-feed">Awaiting AI build...</div>
+    <section id="forgePanel" class="card">
+      <h3>🧬 Forge AI</h3>
       <div id="forgeTerminal"></div>
-      <div id="meshFeed"></div>
     </section>
 
-    <!-- === Profile View === -->
-    <section id="profileView" class="view">
-      <div class="profile-container">
-        <div class="profile-header">
-          <div class="logo-circle"><span>SE</span></div>
-          <div class="title-group">
-            <h1>SPAWNENGINE</h1>
-            <p>Modular onchain engine for packs, XP, badges & modules</p>
-          </div>
-          <div class="connect-btn">Connect</div>
-        </div>
-
-        <div class="live-ticker">
-          LIVE PACK_OPEN · Neon Fragment
-        </div>
-
-        <div class="profile-card">
-          <div class="profile-top">
-            <div class="avatar"><span>SE</span></div>
-            <div class="info">
-              <h2>@spawnengine</h2>
-              <p>Mesh owner on Base · XP + packs</p>
-              <p class="modules">Modules: Factory · TokenPack · ReserveGuard</p>
-              <div class="online">ONLINE</div>
-            </div>
-          </div>
-
-          <div class="stats-grid">
-            <div class="stat big"><h3>XP STREAK</h3><div class="num">1575</div></div>
-            <div class="stat big"><h3>SPAWN BALANCE</h3><div class="num">497</div></div>
-            <div class="stat small"><h3>TODAY'S EVENTS</h3><div class="num">9</div></div>
-            <div class="stat small"><h3>CONNECTED SURFACES</h3><div class="num">3</div></div>
-          </div>
-
-          <div class="tasks">
-            <h3>Today's loop</h3>
-            <div class="task"><div class="circle"></div>Open a test pack <span>+50 XP</span></div>
-            <div class="task active"><div class="circle filled"></div>Connect wallet <span>+100 XP</span></div>
-            <div class="task"><div class="circle"></div>Share your mesh <span>+100 XP</span></div>
-          </div>
-        </div>
-      </div>
+    <section id="worldHubView" class="card">
+      <h3>🌐 WorldHub</h3>
+      <div id="worldList"></div>
     </section>
-  </div>
 
-  <nav id="mainNav" class="hud-nav glass">
-    <button data-view="kernelView" class="active">Kernel</button>
-    <button data-view="forgePanel">Forge</button>
-    <button data-view="profileView">Profile</button>
-  </nav>
+    <section id="arenaSection" class="card">
+      <h3>⚔️ SpawnArena</h3>
+      <p>Track live bounties, contests, and XP events.</p>
+    </section>
 
-  <!-- Scripts -->
-  <script src="mesh-bg.js" defer></script>
-  <script src="app.js" defer></script>
-  <script src="spawnengine-sdk.js" defer></script>
-  <script>
-    // Boot progress
-    window.addEventListener("DOMContentLoaded", () => {
-      let fill = document.getElementById("bootBarFill");
-      let percent = 0;
-      let interval = setInterval(() => {
-        percent += 4;
-        fill.style.width = percent + "%";
-        if (percent >= 100) {
-          clearInterval(interval);
-          document.getElementById("bootOverlay").classList.add("fade-out");
-          setTimeout(() => {
-            document.getElementById("bootOverlay").remove();
-          }, 800);
-        }
-      }, 60);
-    });
-  </script>
+    <footer>
+      <p>SpawnEngine v3.2 · Modular Mesh Protocol · Base / Zora / Farcaster</p>
+    </footer>
+  </main>
+
+  <!-- Core Scripts -->
+  <script src="core/visuals/asset-registry.js"></script>
+  <script src="core/spawnchain/spawn-chain.js"></script>
+  <script src="core/kernel/mesh-kernel.js"></script>
+  <script src="core/kernel/autobuilder.js"></script>
+  <script src="core/kernel/event-loop.js"></script>
+  <script src="core/kernel/mesh-state.js"></script>
+  <script src="core/kernel/mesh-sync.js"></script>
+  <script src="core/kernel/init-kernel.js"></script>
+
+  <!-- Forge System -->
+  <script src="core/forge/forge-ai.js"></script>
+  <script src="core/forge/forge-ui.js"></script>
+  <script src="core/forge/forge-terminal.js"></script>
+  <script src="core/forge/forge-kernel-bridge.js"></script>
+
+  <!-- Worlds -->
+  <script src="core/worlds/world-engine.js"></script>
+  <script src="core/worlds/world-mint.js"></script>
+  <script src="core/worlds/world-hub.js"></script>
+
+  <!-- Miniapps -->
+  <script src="core/miniapps/miniapp-registry.js"></script>
+
+  <!-- Visualizer -->
+  <script src="core/visuals/mesh-pulse.js"></script>
+  <script src="core/visuals/mesh-visualizer.js"></script>
+
+  <!-- AI -->
+  <script src="ai/ai-bridge.js"></script>
+  <script src="ai/ai-worker.js"></script>
+
+  <!-- Init -->
+  <script src="app.js"></script>
 </body>
 </html>
